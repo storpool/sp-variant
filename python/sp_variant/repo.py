@@ -1,47 +1,37 @@
 """Build the "add StorPool repository" archive."""
 
-from __future__ import print_function
-
+import dataclasses
 import datetime
+import pathlib
+import shutil
 import subprocess
 import sys
 
-from typing import Callable, Dict, Optional, Text, Tuple, Type
+from typing import Callable, Dict, Optional, Text, Tuple
 
+import cfg_diag
 import jinja2
-
-from sp.util.backports import pathlib
-from sp.util.file import defs as fdefs
-from sp.util.file import writers
 
 from . import __main__ as vmain
 
 
-class Config(fdefs.Config):  # pylint: disable=too-few-public-methods
+@dataclasses.dataclass(frozen=True)
+class Config(cfg_diag.ConfigDiag):
     """Configuration for the repository setup."""
 
-    def __init__(
-        self,  # type: Config
-        datadir,  # type: pathlib.Path
-        destdir,  # type: pathlib.Path
-        no_date,  # type: bool
-        verbose,  # type: bool
-    ):  # type: (...) -> None
-        super(Config, self).__init__(verbose=verbose)
-        self.datadir = datadir
-        self.destdir = destdir
-        self.no_date = no_date
+    datadir: pathlib.Path
+    destdir: pathlib.Path
+    no_date: bool
 
 
-class Singles(object):
+class Singles:
     """Keep some singleton objects in a controlled way."""
 
-    _jinja2_env = {}  # type: Dict[Text, jinja2.Environment]
-    _jinja2_loaders = {}  # type: Dict[Text, jinja2.BaseLoader]
+    _jinja2_env: Dict[Text, jinja2.Environment] = {}
+    _jinja2_loaders: Dict[Text, jinja2.BaseLoader] = {}
 
     @classmethod
-    def jinja2_env(cls, path):
-        # type: (Type[Singles], pathlib.Path) -> jinja2.Environment
+    def jinja2_env(cls, path: pathlib.Path) -> jinja2.Environment:
         """Instantiate a Jinja2 environment if necessary."""
         abspath = Text(path.absolute())
         if abspath in cls._jinja2_env:
@@ -54,8 +44,7 @@ class Singles(object):
         return env
 
     @classmethod
-    def jinja2_loader(cls, path):
-        # type: (Type[Singles], pathlib.Path) -> jinja2.BaseLoader
+    def jinja2_loader(cls, path: pathlib.Path) -> jinja2.BaseLoader:
         """Instantiate a Jinja2 environment if necessary."""
         abspath = Text(path.absolute())
         if abspath in cls._jinja2_loaders:
@@ -66,22 +55,26 @@ class Singles(object):
         return loader
 
 
-def ensure_none(cfg, path):
-    # type: (Config, pathlib.Path) -> None
+def ensure_none(cfg: Config, path: pathlib.Path) -> None:
     """Remove a file, directory, or other filesystem object altogether."""
     if not path.exists():
         return
     cfg.diag("Removing the existing {path}".format(path=path))
     try:
-        subprocess.check_call(["rm", "-rf", "--", str(path)], shell=False)
+        subprocess.check_call(["rm", "-rf", "--", path])
     except subprocess.CalledProcessError as err:
         raise vmain.VariantFileError(
             "Could not remove {path}: {err}".format(path=path, err=err)
         )
 
 
-def copy_file(cfg, src, dstdir, dstname=None, executable=False):
-    # type: (Config, pathlib.Path, pathlib.Path, Optional[Text], bool) -> None
+def copy_file(
+    cfg: Config,
+    src: pathlib.Path,
+    dstdir: pathlib.Path,
+    dstname: Optional[Text] = None,
+    executable: bool = False,
+) -> None:
     """Copy a file with the appropriate access permissions."""
     if dstname is None:
         dst = dstdir / src.name
@@ -89,13 +82,9 @@ def copy_file(cfg, src, dstdir, dstname=None, executable=False):
         dst = dstdir / dstname
     ensure_none(cfg, dst)
     try:
-        writers.copy_file(
-            src,
-            dst,
-            mode=0o755 if executable else 0o644,
-            cfg=fdefs.Config(verbose=cfg.verbose),
-        )
-    except subprocess.CalledProcessError as err:
+        shutil.copy2(src, dst)
+        dst.chmod(0o755 if executable else 0o644)
+    except (OSError, subprocess.CalledProcessError) as err:
         raise vmain.VariantFileError(
             "Could not copy {src} to {dst}: {err}".format(
                 src=src, dst=dst, err=err
@@ -104,12 +93,12 @@ def copy_file(cfg, src, dstdir, dstname=None, executable=False):
 
 
 def subst_debian_sources(
-    cfg,  # type: Config
-    var,  # type: vmain.Variant
-    src,  # type: pathlib.Path
-    dstdir,  # type: pathlib.Path
-    rtype,  # type: vmain.RepoType
-):  # type: (...) -> None
+    cfg: Config,
+    var: vmain.Variant,
+    src: pathlib.Path,
+    dstdir: pathlib.Path,
+    rtype: vmain.RepoType,
+) -> None:
     """Substitute the placeholder vars in a Debian sources list file."""
     assert isinstance(var.repo, vmain.DebRepo)
     dst = dstdir / (src.stem + rtype.extension + src.suffix)
@@ -149,12 +138,12 @@ def subst_debian_sources(
 
 
 def subst_yum_repo(
-    cfg,  # type: Config
-    var,  # type: vmain.Variant
-    src,  # type: pathlib.Path
-    dstdir,  # type: pathlib.Path
-    rtype,  # type: vmain.RepoType
-):  # type: (...) -> None
+    cfg: Config,
+    var: vmain.Variant,
+    src: pathlib.Path,
+    dstdir: pathlib.Path,
+    rtype: vmain.RepoType,
+) -> None:
     """Substitute the placeholder vars in a Debian sources list file."""
     assert isinstance(var.repo, vmain.YumRepo)
     dst = dstdir / (src.stem + rtype.extension + src.suffix)
@@ -189,8 +178,7 @@ def subst_yum_repo(
         )
 
 
-def build_repo(cfg):
-    # type: (Config) -> pathlib.Path
+def build_repo(cfg: Config) -> pathlib.Path:
     """Build the StorPool repository archive."""
     distname = "add-storpool-repo"
     if not cfg.no_date:
@@ -255,7 +243,7 @@ def build_repo(cfg):
     cfg.diag("Creating {distfile}".format(distfile=distfile))
     try:
         subprocess.check_call(
-            ["tar", "-caf", str(distfile), "-C", str(cfg.destdir), distname],
+            ["tar", "-caf", distfile, "-C", cfg.destdir, distname],
             shell=False,
         )
     except subprocess.CalledProcessError as err:
@@ -267,8 +255,7 @@ def build_repo(cfg):
     return distfile
 
 
-def cmd_build(cfg):
-    # type: (Config) -> None
+def cmd_build(cfg: Config) -> None:
     """Build the StorPool repository archive and output its name."""
     try:
         print(build_repo(cfg=cfg))
@@ -277,8 +264,7 @@ def cmd_build(cfg):
         sys.exit(1)
 
 
-def parse_arguments():
-    # type: () -> Tuple[Config, Callable[[Config], None]]
+def parse_arguments() -> Tuple[Config, Callable[[Config], None]]:
     """Parse the command-line arguments."""
     parser, subp = vmain.base_parser()
 
@@ -319,8 +305,7 @@ def parse_arguments():
     )
 
 
-def main():
-    # type: () -> None
+def main() -> None:
     """Main routine: parse options, detect the variant."""
     cfg, func = parse_arguments()
     func(cfg)
