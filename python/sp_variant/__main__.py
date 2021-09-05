@@ -1468,7 +1468,7 @@ def cmd_command_run(cfg):
 def cmd_features(_cfg):
     # type: (Config) -> None
     """Display the features supported by storpool_variant."""
-    print("Features: storpool=19.01 repo=0.2 variant=1.2")
+    print("Features: repo=0.2 variant={ver}".format(ver=VERSION))
 
 
 def jsonify(obj):
