@@ -7,8 +7,9 @@ from typing import Tuple
 import ddt  # type: ignore
 import pytest
 
-from sp.util.file import temp as ftemp
 from sp_variant import __main__ as spvar
+
+from . import util
 
 
 _LINES_BAD = [
@@ -101,7 +102,7 @@ class TestParseLine(unittest.TestCase):
 def test_parse():
     # type: () -> None
     """Test the functionality of _YAIParser.parse() and .get()."""
-    with ftemp.TemporaryDirectory() as tempd:
+    with util.TemporaryDirectory() as tempd:
         cfile = tempd / "os-release"
         cfile.write_text(spvar.TextType(_CFG_TEXT), encoding="UTF-8")
 

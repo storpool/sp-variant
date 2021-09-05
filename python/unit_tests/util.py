@@ -1,12 +1,17 @@
-"""Routines for creating temporary files and directories."""
+"""Utility functions for the sp_variant tests."""
 
 import contextlib
 import subprocess
+import sys
 import tempfile
 
 from typing import Iterator, Optional, Text, Union  # noqa: H301
 
-from sp.util.backports import pathlib
+
+if sys.version_info[0] < 3:
+    import pathlib2 as pathlib
+else:
+    import pathlib
 
 
 @contextlib.contextmanager
@@ -23,3 +28,6 @@ def TemporaryDirectory(  # pylint: disable=invalid-name
     finally:
         if temp is not None:
             subprocess.call(["rm", "-rf", "--", temp])
+
+
+__all__ = ["pathlib", "TemporaryDirectory"]
