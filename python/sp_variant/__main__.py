@@ -232,7 +232,7 @@ else:
     BytesType = str
 
 
-VERSION = "2021.08.20.1"
+VERSION = "1.2.0"
 
 
 REPO_TYPES = [
