@@ -308,7 +308,7 @@ _DEFAULT_CONFIG = Config()
 
 _VARIANT_DEF = [
     Variant(
-        name="DEBIAN11",
+        name="DEBIAN12",
         family="debian",
         detect=Detect(
             filename="/etc/os-release",
@@ -316,12 +316,12 @@ _VARIANT_DEF = [
                 r"""^
                     PRETTY_NAME= .*
                     Debian \s+ GNU/Linux \s+
-                    (?: bullseye | 11 ) (?: \s | / )
+                    (?: bookworm | 12 ) (?: \s | / )
                 """,
                 re.X,
             ),
             os_id="debian",
-            os_version_regex=re.compile(r"^11$"),
+            os_version_regex=re.compile(r"^12$"),
         ),
         commands=Commands(
             package=CommandsPackage(
@@ -407,6 +407,24 @@ _VARIANT_DEF = [
         systemd_lib="lib/systemd/system",
         file_ext="deb",
         initramfs_flavor="update-initramfs",
+    ),
+    VariantUpdate(
+        name="DEBIAN11",
+        parent="DEBIAN12",
+        detect=Detect(
+            filename="/etc/os-release",
+            regex=re.compile(
+                r"""^
+                    PRETTY_NAME= .*
+                    Debian \s+ GNU/Linux \s+
+                    (?: bullseye | 11 ) (?: \s | / )
+                """,
+                re.X,
+            ),
+            os_id="debian",
+            os_version_regex=re.compile(r"^11$"),
+        ),
+        updates={},
     ),
     VariantUpdate(
         name="DEBIAN10",
