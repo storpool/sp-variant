@@ -1,0 +1,15 @@
+# The StorPool software repository for third-party CentOS RPMs
+
+[storpool-{{ name }}]
+name=StorPool third-party packages for CentOS
+baseurl={{ url }}{{ name }}/centos/$releasever/$basearch/
+enabled=1
+gpgcheck=1
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-StorPool
+
+[storpool-{{ name }}-source]
+name=StorPool third-party packages for CentOS
+baseurl={{ url }}{{ name }}/centos/$releasever/SRPMS/
+enabled=0
+gpgcheck=1
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-StorPool
