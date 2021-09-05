@@ -22,6 +22,7 @@ class Config(cfg_diag.ConfigDiag):
     datadir: pathlib.Path
     destdir: pathlib.Path
     no_date: bool
+    rustbin: Optional[pathlib.Path]
 
 
 class Singles:
@@ -189,10 +190,20 @@ def build_repo(cfg: Config) -> pathlib.Path:
     ensure_none(cfg, distdir)
     distdir.mkdir()
 
-    mainfile = pathlib.Path(__file__).absolute().with_name("__main__.py")
-    copy_file(
-        cfg, mainfile, distdir, dstname="storpool_variant", executable=True
-    )
+    if cfg.rustbin is not None:
+        copy_file(
+            cfg,
+            cfg.rustbin,
+            distdir,
+            dstname="storpool_variant",
+            executable=True,
+        )
+    else:
+        mainfile = pathlib.Path(__file__).absolute().with_name("__main__.py")
+        copy_file(
+            cfg, mainfile, distdir, dstname="storpool_variant", executable=True
+        )
+
     copy_file(
         cfg,
         cfg.datadir / "common/scripts/storpool_variant.sh",
@@ -286,6 +297,13 @@ def parse_arguments() -> Tuple[Config, Callable[[Config], None]]:
         help="The directory to place the repo file in",
     )
     p_build.add_argument(
+        "-r",
+        "--rust-bin",
+        type=pathlib.Path,
+        required=True,
+        help="The Rust storpool_variant executable to use",
+    )
+    p_build.add_argument(
         "--no-date",
         action="store_true",
         default=False,
@@ -299,6 +317,7 @@ def parse_arguments() -> Tuple[Config, Callable[[Config], None]]:
             datadir=pathlib.Path(args.datadir),
             destdir=pathlib.Path(args.destdir),
             no_date=args.no_date,
+            rustbin=args.rust_bin,
             verbose=args.verbose,
         ),
         args.func,

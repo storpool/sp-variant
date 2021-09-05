@@ -24,7 +24,7 @@ all:		${RUST_BIN}
 repo:		all
 		rm -rf -- '${REPO_TMPDIR}'
 		mkdir -- '${REPO_TMPDIR}'
-		${SP_PY3_ENV} -m sp_variant.repo build -d '${CURDIR}/data' -D '${REPO_TMPDIR}' --no-date
+		${SP_PY3_ENV} -m sp_variant.repo build -d '${CURDIR}/data' -D '${REPO_TMPDIR}' -r '${RUST_BIN}' --no-date
 
 ${RUST_BIN}:	Cargo.toml .cargo/config.toml ${RUST_SRC}
 		${SP_CARGO} sp-freeze
