@@ -6,7 +6,7 @@ import os
 
 import pytest
 
-from sp.variant import __main__ as spvar
+from sp_variant import __main__ as spvar
 
 
 def test_get():

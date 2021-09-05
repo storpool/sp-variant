@@ -8,7 +8,7 @@ import ddt  # type: ignore
 import pytest
 
 from sp.util.file import temp as ftemp
-from sp.variant import __main__ as spvar
+from sp_variant import __main__ as spvar
 
 
 _LINES_BAD = [
