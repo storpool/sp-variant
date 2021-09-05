@@ -3,6 +3,7 @@
 from .__main__ import (
     Config,
     Variant,
+    VERSION,
     detect_variant,
     get_variant,
     list_all_packages,
@@ -12,6 +13,7 @@ from .__main__ import (
 __all__ = (
     "Config",
     "Variant",
+    "VERSION",
     "detect_variant",
     "get_variant",
     "list_all_packages",
