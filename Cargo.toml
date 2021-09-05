@@ -1,0 +1,19 @@
+[package]
+name = "sp-variant"
+version = "1.2.0"
+edition = "2018"
+authors = ["StorPool <support@storpool.com>"]
+description = " Detect the Linux distribution for the StorPool build system"
+homepage = "https://github.com/storpool/sp-variant"
+repository = "https://github.com/storpool/sp-variant.git"
+license = "BSD-2-Clause"
+categories = ["command-line-utilities", "config"]
+
+[lib]
+path = "rust/lib.rs"
+
+[dependencies]
+expect-exit = "0.4"
+regex = "1"
+serde = {version="1", features=["derive"]}
+serde_json = "1"
