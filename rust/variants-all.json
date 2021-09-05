@@ -1,0 +1,1285 @@
+{
+  "format": {
+    "version": {
+      "major": 1,
+      "minor": 1
+    }
+  },
+  "order": [
+    "ALMA8",
+    "ROCKY8",
+    "RHEL8",
+    "ORACLE7",
+    "CENTOS6",
+    "CENTOS7",
+    "CENTOS8",
+    "UBUNTU1604",
+    "UBUNTU1804",
+    "UBUNTU2004",
+    "DEBIAN9",
+    "DEBIAN10",
+    "DEBIAN11",
+    "DEBIAN12"
+  ],
+  "variants": {
+    "ALMA8": {
+      "commands": {
+        "package": {
+          "install": [
+            "dnf",
+            "--enablerepo=storpool-contrib",
+            "--enablerepo=powertools",
+            "install",
+            "-q",
+            "-y",
+            "--"
+          ],
+          "list_all": [
+            "rpm",
+            "-qa",
+            "--qf",
+            "%{Name}\\t%{Version}\\t%{Arch}\\tii\\n",
+            "--"
+          ],
+          "purge": [
+            "yum",
+            "remove",
+            "-q",
+            "-y",
+            "--"
+          ],
+          "remove": [
+            "yum",
+            "remove",
+            "-q",
+            "-y",
+            "--"
+          ],
+          "remove_impl": [
+            "rpm",
+            "-e",
+            "--"
+          ],
+          "update_db": [
+            "true"
+          ]
+        },
+        "pkgfile": {
+          "dep_query": [
+            "sh",
+            "-c",
+            "rpm -qpR -- \"$pkg\""
+          ],
+          "install": [
+            "sh",
+            "-c",
+            "\nunset to_install to_reinstall\nfor f in $packages; do\n    package=\"$(rpm -qp \"$f\")\"\n    if rpm -q -- \"$package\"; then\n        to_reinstall=\"$to_reinstall ./$f\"\n    else\n        to_install=\"$to_install ./$f\"\n    fi\ndone\n\nif [ -n \"$to_install\" ]; then\n    dnf install -y --enablerepo=storpool-contrib,powertools --setopt=localpkg_gpgcheck=0 -- $to_install\nfi\nif [ -n \"$to_reinstall\" ]; then\n    dnf reinstall -y --enablerepo=storpool-contrib,powertools --setopt=localpkg_gpgcheck=0 -- $to_reinstall\nfi\n"
+          ]
+        }
+      },
+      "detect": {
+        "filename": "/etc/redhat-release",
+        "os_id": "alma",
+        "os_version_regex": "^8(?:$|\\.[4-9]|\\.[1-9][0-9])",
+        "regex": "^ AlmaLinux \\s .* \\s 8 \\. (?: [4-9] | [1-9][0-9] )"
+      },
+      "family": "redhat",
+      "file_ext": "rpm",
+      "initramfs_flavor": "mkinitrd",
+      "min_sys_python": "2.7",
+      "name": "ALMA8",
+      "package": {
+        "KMOD": "kmod",
+        "LIBCGROUP": "libcgroup-tools",
+        "LIBUDEV": "systemd-libs",
+        "OPENSSL": "openssl-libs",
+        "PERL_AUTODIE": "perl-autodie",
+        "PERL_FILE_PATH": "perl-File-Path",
+        "PERL_LWP_PROTO_HTTPS": "perl-LWP-Protocol-https",
+        "PERL_SYS_SYSLOG": "perl-Sys-Syslog",
+        "PROCPS": "procps-ng",
+        "PYTHON_SIMPLEJSON": "python2-simplejson",
+        "UDEV": "systemd"
+      },
+      "repo": {
+        "keyring": "redhat/repo/RPM-GPG-KEY-StorPool",
+        "yumdef": "redhat/repo/storpool-centos.repo"
+      },
+      "systemd_lib": "usr/lib/systemd/system"
+    },
+    "CENTOS6": {
+      "commands": {
+        "package": {
+          "install": [
+            "yum",
+            "--enablerepo=storpool-contrib",
+            "install",
+            "-q",
+            "-y"
+          ],
+          "list_all": [
+            "rpm",
+            "-qa",
+            "--qf",
+            "%{Name}\\t%{Version}\\t%{Arch}\\tii\\n",
+            "--"
+          ],
+          "purge": [
+            "yum",
+            "remove",
+            "-q",
+            "-y",
+            "--"
+          ],
+          "remove": [
+            "yum",
+            "remove",
+            "-q",
+            "-y",
+            "--"
+          ],
+          "remove_impl": [
+            "rpm",
+            "-e",
+            "--"
+          ],
+          "update_db": [
+            "true"
+          ]
+        },
+        "pkgfile": {
+          "dep_query": [
+            "sh",
+            "-c",
+            "rpm -qpR -- \"$pkg\""
+          ],
+          "install": [
+            "\nunset to_install to_reinstall\nfor f in $packages; do\n    package=\"$(rpm -qp \"$f\")\"\n    if rpm -q -- \"$package\"; then\n        to_reinstall=\"$to_reinstall ./$f\"\n    else\n        to_install=\"$to_install ./$f\"\n    fi\ndone\n\nif [ -n \"$to_install\" ]; then\n    yum install -y --enablerepo=storpool-contrib --setopt=localpkg_gpgcheck=0 -- $to_install\nfi\nif [ -n \"$to_reinstall\" ]; then\n    yum reinstall -y --enablerepo=storpool-contrib --setopt=localpkg_gpgcheck=0 -- $to_reinstall\nfi\n"
+          ]
+        }
+      },
+      "detect": {
+        "filename": "/etc/redhat-release",
+        "os_id": "centos",
+        "os_version_regex": "^6(?:$|\\.[0-9])",
+        "regex": "^ CentOS \\s .* \\s 6 \\."
+      },
+      "family": "redhat",
+      "file_ext": "rpm",
+      "initramfs_flavor": "mkinitrd",
+      "min_sys_python": "2.6",
+      "name": "CENTOS6",
+      "package": {
+        "KMOD": "module-init-tools",
+        "LIBCGROUP": "libcgroup",
+        "LIBUDEV": "libudev",
+        "OPENSSL": "openssl",
+        "PERL_AUTODIE": "perl",
+        "PERL_FILE_PATH": "perl",
+        "PERL_LWP_PROTO_HTTPS": "perl",
+        "PERL_SYS_SYSLOG": "perl",
+        "PROCPS": "procps",
+        "PYTHON_SIMPLEJSON": "python-simplejson",
+        "UDEV": "udev"
+      },
+      "repo": {
+        "keyring": "redhat/repo/RPM-GPG-KEY-StorPool",
+        "yumdef": "redhat/repo/storpool-centos.repo"
+      },
+      "systemd_lib": "usr/lib/systemd/system"
+    },
+    "CENTOS7": {
+      "commands": {
+        "package": {
+          "install": [
+            "yum",
+            "--enablerepo=storpool-contrib",
+            "install",
+            "-q",
+            "-y"
+          ],
+          "list_all": [
+            "rpm",
+            "-qa",
+            "--qf",
+            "%{Name}\\t%{Version}\\t%{Arch}\\tii\\n",
+            "--"
+          ],
+          "purge": [
+            "yum",
+            "remove",
+            "-q",
+            "-y",
+            "--"
+          ],
+          "remove": [
+            "yum",
+            "remove",
+            "-q",
+            "-y",
+            "--"
+          ],
+          "remove_impl": [
+            "rpm",
+            "-e",
+            "--"
+          ],
+          "update_db": [
+            "true"
+          ]
+        },
+        "pkgfile": {
+          "dep_query": [
+            "sh",
+            "-c",
+            "rpm -qpR -- \"$pkg\""
+          ],
+          "install": [
+            "\nunset to_install to_reinstall\nfor f in $packages; do\n    package=\"$(rpm -qp \"$f\")\"\n    if rpm -q -- \"$package\"; then\n        to_reinstall=\"$to_reinstall ./$f\"\n    else\n        to_install=\"$to_install ./$f\"\n    fi\ndone\n\nif [ -n \"$to_install\" ]; then\n    yum install -y --enablerepo=storpool-contrib --setopt=localpkg_gpgcheck=0 -- $to_install\nfi\nif [ -n \"$to_reinstall\" ]; then\n    yum reinstall -y --enablerepo=storpool-contrib --setopt=localpkg_gpgcheck=0 -- $to_reinstall\nfi\n"
+          ]
+        }
+      },
+      "detect": {
+        "filename": "/etc/redhat-release",
+        "os_id": "centos",
+        "os_version_regex": "^7(?:$|\\.[0-9])",
+        "regex": "^ (?: CentOS | Virtuozzo ) \\s .* \\s 7 \\."
+      },
+      "family": "redhat",
+      "file_ext": "rpm",
+      "initramfs_flavor": "mkinitrd",
+      "min_sys_python": "2.7",
+      "name": "CENTOS7",
+      "package": {
+        "KMOD": "kmod",
+        "LIBCGROUP": "libcgroup-tools",
+        "LIBUDEV": "systemd-libs",
+        "OPENSSL": "openssl-libs",
+        "PERL_AUTODIE": "perl-autodie",
+        "PERL_FILE_PATH": "perl-File-Path",
+        "PERL_LWP_PROTO_HTTPS": "perl-LWP-Protocol-https",
+        "PERL_SYS_SYSLOG": "perl-Sys-Syslog",
+        "PROCPS": "procps-ng",
+        "PYTHON_SIMPLEJSON": "python2-simplejson",
+        "UDEV": "systemd"
+      },
+      "repo": {
+        "keyring": "redhat/repo/RPM-GPG-KEY-StorPool",
+        "yumdef": "redhat/repo/storpool-centos.repo"
+      },
+      "systemd_lib": "usr/lib/systemd/system"
+    },
+    "CENTOS8": {
+      "commands": {
+        "package": {
+          "install": [
+            "dnf",
+            "--enablerepo=storpool-contrib",
+            "--enablerepo=powertools",
+            "install",
+            "-q",
+            "-y",
+            "--"
+          ],
+          "list_all": [
+            "rpm",
+            "-qa",
+            "--qf",
+            "%{Name}\\t%{Version}\\t%{Arch}\\tii\\n",
+            "--"
+          ],
+          "purge": [
+            "yum",
+            "remove",
+            "-q",
+            "-y",
+            "--"
+          ],
+          "remove": [
+            "yum",
+            "remove",
+            "-q",
+            "-y",
+            "--"
+          ],
+          "remove_impl": [
+            "rpm",
+            "-e",
+            "--"
+          ],
+          "update_db": [
+            "true"
+          ]
+        },
+        "pkgfile": {
+          "dep_query": [
+            "sh",
+            "-c",
+            "rpm -qpR -- \"$pkg\""
+          ],
+          "install": [
+            "sh",
+            "-c",
+            "\nunset to_install to_reinstall\nfor f in $packages; do\n    package=\"$(rpm -qp \"$f\")\"\n    if rpm -q -- \"$package\"; then\n        to_reinstall=\"$to_reinstall ./$f\"\n    else\n        to_install=\"$to_install ./$f\"\n    fi\ndone\n\nif [ -n \"$to_install\" ]; then\n    dnf install -y --enablerepo=storpool-contrib,powertools --setopt=localpkg_gpgcheck=0 -- $to_install\nfi\nif [ -n \"$to_reinstall\" ]; then\n    dnf reinstall -y --enablerepo=storpool-contrib,powertools --setopt=localpkg_gpgcheck=0 -- $to_reinstall\nfi\n"
+          ]
+        }
+      },
+      "detect": {
+        "filename": "/etc/redhat-release",
+        "os_id": "centos",
+        "os_version_regex": "^8(?:$|\\.[4-9]|\\.[1-9][0-9])",
+        "regex": "^ CentOS \\s .* \\s 8 \\. (?: [3-9] | (?: [12][0-9] ) )"
+      },
+      "family": "redhat",
+      "file_ext": "rpm",
+      "initramfs_flavor": "mkinitrd",
+      "min_sys_python": "2.7",
+      "name": "CENTOS8",
+      "package": {
+        "KMOD": "kmod",
+        "LIBCGROUP": "libcgroup-tools",
+        "LIBUDEV": "systemd-libs",
+        "OPENSSL": "openssl-libs",
+        "PERL_AUTODIE": "perl-autodie",
+        "PERL_FILE_PATH": "perl-File-Path",
+        "PERL_LWP_PROTO_HTTPS": "perl-LWP-Protocol-https",
+        "PERL_SYS_SYSLOG": "perl-Sys-Syslog",
+        "PROCPS": "procps-ng",
+        "PYTHON_SIMPLEJSON": "python2-simplejson",
+        "UDEV": "systemd"
+      },
+      "repo": {
+        "keyring": "redhat/repo/RPM-GPG-KEY-StorPool",
+        "yumdef": "redhat/repo/storpool-centos.repo"
+      },
+      "systemd_lib": "usr/lib/systemd/system"
+    },
+    "DEBIAN10": {
+      "commands": {
+        "package": {
+          "install": [
+            "env",
+            "DEBIAN_FRONTEND=noninteractive",
+            "apt-get",
+            "-q",
+            "-y",
+            "--no-install-recommends",
+            "install",
+            "--"
+          ],
+          "list_all": [
+            "dpkg-query",
+            "-W",
+            "-f",
+            "${Package}\\t${Version}\\t${Architecture}\\t${db:Status-Abbrev}\\n",
+            "--"
+          ],
+          "purge": [
+            "env",
+            "DEBIAN_FRONTEND=noninteractive",
+            "apt-get",
+            "-q",
+            "-y",
+            "purge",
+            "--"
+          ],
+          "remove": [
+            "env",
+            "DEBIAN_FRONTEND=noninteractive",
+            "apt-get",
+            "-q",
+            "-y",
+            "remove",
+            "--"
+          ],
+          "remove_impl": [
+            "env",
+            "DEBIAN_FRONTEND=noninteractive",
+            "dpkg",
+            "-r",
+            "--"
+          ],
+          "update_db": [
+            "apt-get",
+            "-q",
+            "-y",
+            "update"
+          ]
+        },
+        "pkgfile": {
+          "dep_query": [
+            "sh",
+            "-c",
+            "dpkg-deb -f -- \"$pkg\" 'Depends' | sed -e 's/ *, */,/g' | tr ',' \"\\n\""
+          ],
+          "install": [
+            "sh",
+            "-c",
+            "env DEBIAN_FRONTEND=noninteractive apt-get install --no-install-recommends --reinstall -y -o DPkg::Options::=--force-confnew -- $packages"
+          ]
+        }
+      },
+      "detect": {
+        "filename": "/etc/os-release",
+        "os_id": "debian",
+        "os_version_regex": "^10$",
+        "regex": "^\n                    PRETTY_NAME= .*\n                    Debian \\s+ GNU/Linux \\s+\n                    (?: buster | 10 ) (?: \\s | / )\n                "
+      },
+      "family": "debian",
+      "file_ext": "deb",
+      "initramfs_flavor": "update-initramfs",
+      "min_sys_python": "2.7",
+      "name": "DEBIAN10",
+      "package": {
+        "BINDINGS_PYTHON": "python",
+        "BINDINGS_PYTHON_CONFGET": "python-confget",
+        "BINDINGS_PYTHON_SIMPLEJSON": "python-simplejson",
+        "CGROUP": "cgroup-tools",
+        "CPUPOWER": "linux-cpupower",
+        "LIBSSL": "libssl1.1",
+        "MCELOG": "mcelog"
+      },
+      "repo": {
+        "codename": "buster",
+        "keyring": "debian/repo/storpool-keyring.gpg",
+        "req_packages": [
+          "ca-certificates"
+        ],
+        "sources": "debian/repo/storpool.sources",
+        "vendor": "debian"
+      },
+      "systemd_lib": "lib/systemd/system"
+    },
+    "DEBIAN11": {
+      "commands": {
+        "package": {
+          "install": [
+            "env",
+            "DEBIAN_FRONTEND=noninteractive",
+            "apt-get",
+            "-q",
+            "-y",
+            "--no-install-recommends",
+            "install",
+            "--"
+          ],
+          "list_all": [
+            "dpkg-query",
+            "-W",
+            "-f",
+            "${Package}\\t${Version}\\t${Architecture}\\t${db:Status-Abbrev}\\n",
+            "--"
+          ],
+          "purge": [
+            "env",
+            "DEBIAN_FRONTEND=noninteractive",
+            "apt-get",
+            "-q",
+            "-y",
+            "purge",
+            "--"
+          ],
+          "remove": [
+            "env",
+            "DEBIAN_FRONTEND=noninteractive",
+            "apt-get",
+            "-q",
+            "-y",
+            "remove",
+            "--"
+          ],
+          "remove_impl": [
+            "env",
+            "DEBIAN_FRONTEND=noninteractive",
+            "dpkg",
+            "-r",
+            "--"
+          ],
+          "update_db": [
+            "apt-get",
+            "-q",
+            "-y",
+            "update"
+          ]
+        },
+        "pkgfile": {
+          "dep_query": [
+            "sh",
+            "-c",
+            "dpkg-deb -f -- \"$pkg\" 'Depends' | sed -e 's/ *, */,/g' | tr ',' \"\\n\""
+          ],
+          "install": [
+            "sh",
+            "-c",
+            "env DEBIAN_FRONTEND=noninteractive apt-get install --no-install-recommends --reinstall -y -o DPkg::Options::=--force-confnew -- $packages"
+          ]
+        }
+      },
+      "detect": {
+        "filename": "/etc/os-release",
+        "os_id": "debian",
+        "os_version_regex": "^11$",
+        "regex": "^\n                    PRETTY_NAME= .*\n                    Debian \\s+ GNU/Linux \\s+\n                    (?: bullseye | 11 ) (?: \\s | / )\n                "
+      },
+      "family": "debian",
+      "file_ext": "deb",
+      "initramfs_flavor": "update-initramfs",
+      "min_sys_python": "3.9",
+      "name": "DEBIAN11",
+      "package": {
+        "BINDINGS_PYTHON": "python3",
+        "BINDINGS_PYTHON_CONFGET": "python3-confget",
+        "BINDINGS_PYTHON_SIMPLEJSON": "python3-simplejson",
+        "CGROUP": "cgroup-tools",
+        "CPUPOWER": "linux-cpupower",
+        "LIBSSL": "libssl1.1",
+        "MCELOG": "mcelog"
+      },
+      "repo": {
+        "codename": "unstable",
+        "keyring": "debian/repo/storpool-keyring.gpg",
+        "req_packages": [
+          "ca-certificates"
+        ],
+        "sources": "debian/repo/storpool.sources",
+        "vendor": "debian"
+      },
+      "systemd_lib": "lib/systemd/system"
+    },
+    "DEBIAN12": {
+      "commands": {
+        "package": {
+          "install": [
+            "env",
+            "DEBIAN_FRONTEND=noninteractive",
+            "apt-get",
+            "-q",
+            "-y",
+            "--no-install-recommends",
+            "install",
+            "--"
+          ],
+          "list_all": [
+            "dpkg-query",
+            "-W",
+            "-f",
+            "${Package}\\t${Version}\\t${Architecture}\\t${db:Status-Abbrev}\\n",
+            "--"
+          ],
+          "purge": [
+            "env",
+            "DEBIAN_FRONTEND=noninteractive",
+            "apt-get",
+            "-q",
+            "-y",
+            "purge",
+            "--"
+          ],
+          "remove": [
+            "env",
+            "DEBIAN_FRONTEND=noninteractive",
+            "apt-get",
+            "-q",
+            "-y",
+            "remove",
+            "--"
+          ],
+          "remove_impl": [
+            "env",
+            "DEBIAN_FRONTEND=noninteractive",
+            "dpkg",
+            "-r",
+            "--"
+          ],
+          "update_db": [
+            "apt-get",
+            "-q",
+            "-y",
+            "update"
+          ]
+        },
+        "pkgfile": {
+          "dep_query": [
+            "sh",
+            "-c",
+            "dpkg-deb -f -- \"$pkg\" 'Depends' | sed -e 's/ *, */,/g' | tr ',' \"\\n\""
+          ],
+          "install": [
+            "sh",
+            "-c",
+            "env DEBIAN_FRONTEND=noninteractive apt-get install --no-install-recommends --reinstall -y -o DPkg::Options::=--force-confnew -- $packages"
+          ]
+        }
+      },
+      "detect": {
+        "filename": "/etc/os-release",
+        "os_id": "debian",
+        "os_version_regex": "^12$",
+        "regex": "^\n                    PRETTY_NAME= .*\n                    Debian \\s+ GNU/Linux \\s+\n                    (?: bookworm | 12 ) (?: \\s | / )\n                "
+      },
+      "family": "debian",
+      "file_ext": "deb",
+      "initramfs_flavor": "update-initramfs",
+      "min_sys_python": "3.9",
+      "name": "DEBIAN12",
+      "package": {
+        "BINDINGS_PYTHON": "python3",
+        "BINDINGS_PYTHON_CONFGET": "python3-confget",
+        "BINDINGS_PYTHON_SIMPLEJSON": "python3-simplejson",
+        "CGROUP": "cgroup-tools",
+        "CPUPOWER": "linux-cpupower",
+        "LIBSSL": "libssl1.1",
+        "MCELOG": "mcelog"
+      },
+      "repo": {
+        "codename": "unstable",
+        "keyring": "debian/repo/storpool-keyring.gpg",
+        "req_packages": [
+          "ca-certificates"
+        ],
+        "sources": "debian/repo/storpool.sources",
+        "vendor": "debian"
+      },
+      "systemd_lib": "lib/systemd/system"
+    },
+    "DEBIAN9": {
+      "commands": {
+        "package": {
+          "install": [
+            "env",
+            "DEBIAN_FRONTEND=noninteractive",
+            "apt-get",
+            "-q",
+            "-y",
+            "--no-install-recommends",
+            "install",
+            "--"
+          ],
+          "list_all": [
+            "dpkg-query",
+            "-W",
+            "-f",
+            "${Package}\\t${Version}\\t${Architecture}\\t${db:Status-Abbrev}\\n",
+            "--"
+          ],
+          "purge": [
+            "env",
+            "DEBIAN_FRONTEND=noninteractive",
+            "apt-get",
+            "-q",
+            "-y",
+            "purge",
+            "--"
+          ],
+          "remove": [
+            "env",
+            "DEBIAN_FRONTEND=noninteractive",
+            "apt-get",
+            "-q",
+            "-y",
+            "remove",
+            "--"
+          ],
+          "remove_impl": [
+            "env",
+            "DEBIAN_FRONTEND=noninteractive",
+            "dpkg",
+            "-r",
+            "--"
+          ],
+          "update_db": [
+            "apt-get",
+            "-q",
+            "-y",
+            "update"
+          ]
+        },
+        "pkgfile": {
+          "dep_query": [
+            "sh",
+            "-c",
+            "dpkg-deb -f -- \"$pkg\" 'Depends' | sed -e 's/ *, */,/g' | tr ',' \"\\n\""
+          ],
+          "install": [
+            "sh",
+            "-c",
+            "env DEBIAN_FRONTEND=noninteractive apt-get install --no-install-recommends --reinstall -y -o DPkg::Options::=--force-confnew -- $packages"
+          ]
+        }
+      },
+      "detect": {
+        "filename": "/etc/os-release",
+        "os_id": "debian",
+        "os_version_regex": "^9$",
+        "regex": "^\n                    PRETTY_NAME= .*\n                    Debian \\s+ GNU/Linux \\s+\n                    (?: stretch | 9 ) (?: \\s | / )\n                "
+      },
+      "family": "debian",
+      "file_ext": "deb",
+      "initramfs_flavor": "update-initramfs",
+      "min_sys_python": "2.7",
+      "name": "DEBIAN9",
+      "package": {
+        "BINDINGS_PYTHON": "python",
+        "BINDINGS_PYTHON_CONFGET": "python-confget",
+        "BINDINGS_PYTHON_SIMPLEJSON": "python-simplejson",
+        "CGROUP": "cgroup-tools",
+        "CPUPOWER": "linux-cpupower",
+        "LIBSSL": "libssl1.1",
+        "MCELOG": "mcelog"
+      },
+      "repo": {
+        "codename": "stretch",
+        "keyring": "debian/repo/storpool-keyring.gpg",
+        "req_packages": [
+          "apt-transport-https",
+          "ca-certificates"
+        ],
+        "sources": "debian/repo/storpool.sources",
+        "vendor": "debian"
+      },
+      "systemd_lib": "lib/systemd/system"
+    },
+    "ORACLE7": {
+      "commands": {
+        "package": {
+          "install": [
+            "yum",
+            "--enablerepo=storpool-contrib",
+            "install",
+            "-q",
+            "-y"
+          ],
+          "list_all": [
+            "rpm",
+            "-qa",
+            "--qf",
+            "%{Name}\\t%{Version}\\t%{Arch}\\tii\\n",
+            "--"
+          ],
+          "purge": [
+            "yum",
+            "remove",
+            "-q",
+            "-y",
+            "--"
+          ],
+          "remove": [
+            "yum",
+            "remove",
+            "-q",
+            "-y",
+            "--"
+          ],
+          "remove_impl": [
+            "rpm",
+            "-e",
+            "--"
+          ],
+          "update_db": [
+            "true"
+          ]
+        },
+        "pkgfile": {
+          "dep_query": [
+            "sh",
+            "-c",
+            "rpm -qpR -- \"$pkg\""
+          ],
+          "install": [
+            "\nunset to_install to_reinstall\nfor f in $packages; do\n    package=\"$(rpm -qp \"$f\")\"\n    if rpm -q -- \"$package\"; then\n        to_reinstall=\"$to_reinstall ./$f\"\n    else\n        to_install=\"$to_install ./$f\"\n    fi\ndone\n\nif [ -n \"$to_install\" ]; then\n    yum install -y --enablerepo=storpool-contrib --setopt=localpkg_gpgcheck=0 -- $to_install\nfi\nif [ -n \"$to_reinstall\" ]; then\n    yum reinstall -y --enablerepo=storpool-contrib --setopt=localpkg_gpgcheck=0 -- $to_reinstall\nfi\n"
+          ]
+        }
+      },
+      "detect": {
+        "filename": "/etc/oracle-release",
+        "os_id": "ol",
+        "os_version_regex": "^7(?:$|\\.[0-9])",
+        "regex": "^ Oracle \\s+ Linux \\s .* \\s 7 \\."
+      },
+      "family": "redhat",
+      "file_ext": "rpm",
+      "initramfs_flavor": "mkinitrd",
+      "min_sys_python": "2.7",
+      "name": "ORACLE7",
+      "package": {
+        "KMOD": "kmod",
+        "LIBCGROUP": "libcgroup-tools",
+        "LIBUDEV": "systemd-libs",
+        "OPENSSL": "openssl-libs",
+        "PERL_AUTODIE": "perl-autodie",
+        "PERL_FILE_PATH": "perl-File-Path",
+        "PERL_LWP_PROTO_HTTPS": "perl-LWP-Protocol-https",
+        "PERL_SYS_SYSLOG": "perl-Sys-Syslog",
+        "PROCPS": "procps-ng",
+        "PYTHON_SIMPLEJSON": "python2-simplejson",
+        "UDEV": "systemd"
+      },
+      "repo": {
+        "keyring": "redhat/repo/RPM-GPG-KEY-StorPool",
+        "yumdef": "redhat/repo/storpool-centos.repo"
+      },
+      "systemd_lib": "usr/lib/systemd/system"
+    },
+    "RHEL8": {
+      "commands": {
+        "package": {
+          "install": [
+            "dnf",
+            "--enablerepo=storpool-contrib",
+            "--enablerepo=codeready-builder-for-rhel-8-x86_64-rpms",
+            "install",
+            "-q",
+            "-y",
+            "--"
+          ],
+          "list_all": [
+            "rpm",
+            "-qa",
+            "--qf",
+            "%{Name}\\t%{Version}\\t%{Arch}\\tii\\n",
+            "--"
+          ],
+          "purge": [
+            "yum",
+            "remove",
+            "-q",
+            "-y",
+            "--"
+          ],
+          "remove": [
+            "yum",
+            "remove",
+            "-q",
+            "-y",
+            "--"
+          ],
+          "remove_impl": [
+            "rpm",
+            "-e",
+            "--"
+          ],
+          "update_db": [
+            "true"
+          ]
+        },
+        "pkgfile": {
+          "dep_query": [
+            "sh",
+            "-c",
+            "rpm -qpR -- \"$pkg\""
+          ],
+          "install": [
+            "sh",
+            "-c",
+            "\nunset to_install to_reinstall\nfor f in $packages; do\n    package=\"$(rpm -qp \"$f\")\"\n    if rpm -q -- \"$package\"; then\n        to_reinstall=\"$to_reinstall ./$f\"\n    else\n        to_install=\"$to_install ./$f\"\n    fi\ndone\n\nif [ -n \"$to_install\" ]; then\n    dnf install -y --enablerepo=storpool-contrib,codeready-builder-for-rhel-8-x86_64-rpms --setopt=localpkg_gpgcheck=0 -- $to_install\nfi\nif [ -n \"$to_reinstall\" ]; then\n    dnf reinstall -y --enablerepo=storpool-contrib,codeready-builder-for-rhel-8-x86_64-rpms --setopt=localpkg_gpgcheck=0 -- $to_reinstall\nfi\n"
+          ]
+        }
+      },
+      "detect": {
+        "filename": "/etc/redhat-release",
+        "os_id": "rhel",
+        "os_version_regex": "^8(?:$|\\.[4-9]|\\.[1-9][0-9])",
+        "regex": "^ Red \\s+ Hat \\s+ Enterprise \\s+ Linux \\s .* \\s 8 \\. (?: [4-9] | [1-9][0-9] )"
+      },
+      "family": "redhat",
+      "file_ext": "rpm",
+      "initramfs_flavor": "mkinitrd",
+      "min_sys_python": "2.7",
+      "name": "RHEL8",
+      "package": {
+        "KMOD": "kmod",
+        "LIBCGROUP": "libcgroup-tools",
+        "LIBUDEV": "systemd-libs",
+        "OPENSSL": "openssl-libs",
+        "PERL_AUTODIE": "perl-autodie",
+        "PERL_FILE_PATH": "perl-File-Path",
+        "PERL_LWP_PROTO_HTTPS": "perl-LWP-Protocol-https",
+        "PERL_SYS_SYSLOG": "perl-Sys-Syslog",
+        "PROCPS": "procps-ng",
+        "PYTHON_SIMPLEJSON": "python2-simplejson",
+        "UDEV": "systemd"
+      },
+      "repo": {
+        "keyring": "redhat/repo/RPM-GPG-KEY-StorPool",
+        "yumdef": "redhat/repo/storpool-centos.repo"
+      },
+      "systemd_lib": "usr/lib/systemd/system"
+    },
+    "ROCKY8": {
+      "commands": {
+        "package": {
+          "install": [
+            "dnf",
+            "--enablerepo=storpool-contrib",
+            "--enablerepo=powertools",
+            "install",
+            "-q",
+            "-y",
+            "--"
+          ],
+          "list_all": [
+            "rpm",
+            "-qa",
+            "--qf",
+            "%{Name}\\t%{Version}\\t%{Arch}\\tii\\n",
+            "--"
+          ],
+          "purge": [
+            "yum",
+            "remove",
+            "-q",
+            "-y",
+            "--"
+          ],
+          "remove": [
+            "yum",
+            "remove",
+            "-q",
+            "-y",
+            "--"
+          ],
+          "remove_impl": [
+            "rpm",
+            "-e",
+            "--"
+          ],
+          "update_db": [
+            "true"
+          ]
+        },
+        "pkgfile": {
+          "dep_query": [
+            "sh",
+            "-c",
+            "rpm -qpR -- \"$pkg\""
+          ],
+          "install": [
+            "sh",
+            "-c",
+            "\nunset to_install to_reinstall\nfor f in $packages; do\n    package=\"$(rpm -qp \"$f\")\"\n    if rpm -q -- \"$package\"; then\n        to_reinstall=\"$to_reinstall ./$f\"\n    else\n        to_install=\"$to_install ./$f\"\n    fi\ndone\n\nif [ -n \"$to_install\" ]; then\n    dnf install -y --enablerepo=storpool-contrib,powertools --setopt=localpkg_gpgcheck=0 -- $to_install\nfi\nif [ -n \"$to_reinstall\" ]; then\n    dnf reinstall -y --enablerepo=storpool-contrib,powertools --setopt=localpkg_gpgcheck=0 -- $to_reinstall\nfi\n"
+          ]
+        }
+      },
+      "detect": {
+        "filename": "/etc/redhat-release",
+        "os_id": "rocky",
+        "os_version_regex": "^8(?:$|\\.[4-9]|\\.[1-9][0-9])",
+        "regex": "^ Rocky \\s+ Linux \\s .* \\s 8 \\. (?: [4-9] | [1-9][0-9] )"
+      },
+      "family": "redhat",
+      "file_ext": "rpm",
+      "initramfs_flavor": "mkinitrd",
+      "min_sys_python": "2.7",
+      "name": "ROCKY8",
+      "package": {
+        "KMOD": "kmod",
+        "LIBCGROUP": "libcgroup-tools",
+        "LIBUDEV": "systemd-libs",
+        "OPENSSL": "openssl-libs",
+        "PERL_AUTODIE": "perl-autodie",
+        "PERL_FILE_PATH": "perl-File-Path",
+        "PERL_LWP_PROTO_HTTPS": "perl-LWP-Protocol-https",
+        "PERL_SYS_SYSLOG": "perl-Sys-Syslog",
+        "PROCPS": "procps-ng",
+        "PYTHON_SIMPLEJSON": "python2-simplejson",
+        "UDEV": "systemd"
+      },
+      "repo": {
+        "keyring": "redhat/repo/RPM-GPG-KEY-StorPool",
+        "yumdef": "redhat/repo/storpool-centos.repo"
+      },
+      "systemd_lib": "usr/lib/systemd/system"
+    },
+    "UBUNTU1604": {
+      "commands": {
+        "package": {
+          "install": [
+            "env",
+            "DEBIAN_FRONTEND=noninteractive",
+            "apt-get",
+            "-q",
+            "-y",
+            "--no-install-recommends",
+            "install",
+            "--"
+          ],
+          "list_all": [
+            "dpkg-query",
+            "-W",
+            "-f",
+            "${Package}\\t${Version}\\t${Architecture}\\t${db:Status-Abbrev}\\n",
+            "--"
+          ],
+          "purge": [
+            "env",
+            "DEBIAN_FRONTEND=noninteractive",
+            "apt-get",
+            "-q",
+            "-y",
+            "purge",
+            "--"
+          ],
+          "remove": [
+            "env",
+            "DEBIAN_FRONTEND=noninteractive",
+            "apt-get",
+            "-q",
+            "-y",
+            "remove",
+            "--"
+          ],
+          "remove_impl": [
+            "env",
+            "DEBIAN_FRONTEND=noninteractive",
+            "dpkg",
+            "-r",
+            "--"
+          ],
+          "update_db": [
+            "apt-get",
+            "-q",
+            "-y",
+            "update"
+          ]
+        },
+        "pkgfile": {
+          "dep_query": [
+            "sh",
+            "-c",
+            "dpkg-deb -f -- \"$pkg\" 'Depends' | sed -e 's/ *, */,/g' | tr ',' \"\\n\""
+          ],
+          "install": [
+            "sh",
+            "-c",
+            "env DEBIAN_FRONTEND=noninteractive apt-get install --no-install-recommends --reinstall -y -o DPkg::Options::=--force-confnew -- $packages"
+          ]
+        }
+      },
+      "detect": {
+        "filename": "/etc/os-release",
+        "os_id": "ubuntu",
+        "os_version_regex": "^16\\.04$",
+        "regex": "^ PRETTY_NAME= .* Ubuntu \\s+ 16 \\. 04 "
+      },
+      "family": "debian",
+      "file_ext": "deb",
+      "initramfs_flavor": "update-initramfs",
+      "min_sys_python": "2.7",
+      "name": "UBUNTU1604",
+      "package": {
+        "BINDINGS_PYTHON": "python",
+        "BINDINGS_PYTHON_CONFGET": "python-confget",
+        "BINDINGS_PYTHON_SIMPLEJSON": "python-simplejson",
+        "CGROUP": "cgroup-tools",
+        "CPUPOWER": "linux-tools-generic",
+        "LIBSSL": "libssl1.0.0",
+        "MCELOG": "bash",
+        "mcelog": "mcelog"
+      },
+      "repo": {
+        "codename": "xenial",
+        "keyring": "debian/repo/storpool-keyring.gpg",
+        "req_packages": [
+          "apt-transport-https",
+          "ca-certificates"
+        ],
+        "sources": "debian/repo/storpool.sources",
+        "vendor": "ubuntu"
+      },
+      "systemd_lib": "lib/systemd/system"
+    },
+    "UBUNTU1804": {
+      "commands": {
+        "package": {
+          "install": [
+            "env",
+            "DEBIAN_FRONTEND=noninteractive",
+            "apt-get",
+            "-q",
+            "-y",
+            "--no-install-recommends",
+            "install",
+            "--"
+          ],
+          "list_all": [
+            "dpkg-query",
+            "-W",
+            "-f",
+            "${Package}\\t${Version}\\t${Architecture}\\t${db:Status-Abbrev}\\n",
+            "--"
+          ],
+          "purge": [
+            "env",
+            "DEBIAN_FRONTEND=noninteractive",
+            "apt-get",
+            "-q",
+            "-y",
+            "purge",
+            "--"
+          ],
+          "remove": [
+            "env",
+            "DEBIAN_FRONTEND=noninteractive",
+            "apt-get",
+            "-q",
+            "-y",
+            "remove",
+            "--"
+          ],
+          "remove_impl": [
+            "env",
+            "DEBIAN_FRONTEND=noninteractive",
+            "dpkg",
+            "-r",
+            "--"
+          ],
+          "update_db": [
+            "apt-get",
+            "-q",
+            "-y",
+            "update"
+          ]
+        },
+        "pkgfile": {
+          "dep_query": [
+            "sh",
+            "-c",
+            "dpkg-deb -f -- \"$pkg\" 'Depends' | sed -e 's/ *, */,/g' | tr ',' \"\\n\""
+          ],
+          "install": [
+            "sh",
+            "-c",
+            "env DEBIAN_FRONTEND=noninteractive apt-get install --no-install-recommends --reinstall -y -o DPkg::Options::=--force-confnew -- $packages"
+          ]
+        }
+      },
+      "detect": {
+        "filename": "/etc/os-release",
+        "os_id": "ubuntu",
+        "os_version_regex": "^18\\.04$",
+        "regex": "^ PRETTY_NAME= .* Ubuntu \\s+ 18 \\. 04 "
+      },
+      "family": "debian",
+      "file_ext": "deb",
+      "initramfs_flavor": "update-initramfs",
+      "min_sys_python": "2.7",
+      "name": "UBUNTU1804",
+      "package": {
+        "BINDINGS_PYTHON": "python",
+        "BINDINGS_PYTHON_CONFGET": "python-confget",
+        "BINDINGS_PYTHON_SIMPLEJSON": "python-simplejson",
+        "CGROUP": "cgroup-tools",
+        "CPUPOWER": "linux-tools-generic",
+        "LIBSSL": "libssl1.1",
+        "MCELOG": "bash"
+      },
+      "repo": {
+        "codename": "bionic",
+        "keyring": "debian/repo/storpool-keyring.gpg",
+        "req_packages": [
+          "ca-certificates"
+        ],
+        "sources": "debian/repo/storpool.sources",
+        "vendor": "ubuntu"
+      },
+      "systemd_lib": "lib/systemd/system"
+    },
+    "UBUNTU2004": {
+      "commands": {
+        "package": {
+          "install": [
+            "env",
+            "DEBIAN_FRONTEND=noninteractive",
+            "apt-get",
+            "-q",
+            "-y",
+            "--no-install-recommends",
+            "install",
+            "--"
+          ],
+          "list_all": [
+            "dpkg-query",
+            "-W",
+            "-f",
+            "${Package}\\t${Version}\\t${Architecture}\\t${db:Status-Abbrev}\\n",
+            "--"
+          ],
+          "purge": [
+            "env",
+            "DEBIAN_FRONTEND=noninteractive",
+            "apt-get",
+            "-q",
+            "-y",
+            "purge",
+            "--"
+          ],
+          "remove": [
+            "env",
+            "DEBIAN_FRONTEND=noninteractive",
+            "apt-get",
+            "-q",
+            "-y",
+            "remove",
+            "--"
+          ],
+          "remove_impl": [
+            "env",
+            "DEBIAN_FRONTEND=noninteractive",
+            "dpkg",
+            "-r",
+            "--"
+          ],
+          "update_db": [
+            "apt-get",
+            "-q",
+            "-y",
+            "update"
+          ]
+        },
+        "pkgfile": {
+          "dep_query": [
+            "sh",
+            "-c",
+            "dpkg-deb -f -- \"$pkg\" 'Depends' | sed -e 's/ *, */,/g' | tr ',' \"\\n\""
+          ],
+          "install": [
+            "sh",
+            "-c",
+            "env DEBIAN_FRONTEND=noninteractive apt-get install --no-install-recommends --reinstall -y -o DPkg::Options::=--force-confnew -- $packages"
+          ]
+        }
+      },
+      "detect": {
+        "filename": "/etc/os-release",
+        "os_id": "ubuntu",
+        "os_version_regex": "^20\\.04$",
+        "regex": "^ PRETTY_NAME= .* (?: Ubuntu \\s+ 20 \\. 04 | Mint \\s+ 20 ) "
+      },
+      "family": "debian",
+      "file_ext": "deb",
+      "initramfs_flavor": "update-initramfs",
+      "min_sys_python": "3.8",
+      "name": "UBUNTU2004",
+      "package": {
+        "BINDINGS_PYTHON": "python3",
+        "BINDINGS_PYTHON_CONFGET": "python3-confget",
+        "BINDINGS_PYTHON_SIMPLEJSON": "python3-simplejson",
+        "CGROUP": "cgroup-tools",
+        "CPUPOWER": "linux-tools-generic",
+        "LIBSSL": "libssl1.1",
+        "MCELOG": "bash"
+      },
+      "repo": {
+        "codename": "focal",
+        "keyring": "debian/repo/storpool-keyring.gpg",
+        "req_packages": [
+          "ca-certificates"
+        ],
+        "sources": "debian/repo/storpool.sources",
+        "vendor": "ubuntu"
+      },
+      "systemd_lib": "lib/systemd/system"
+    }
+  },
+  "version": "1.2.0"
+}
