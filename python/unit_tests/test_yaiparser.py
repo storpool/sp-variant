@@ -93,7 +93,8 @@ class TestParseLine(unittest.TestCase):
         """Make sure parse_line() works on valid text.
 
         So we silently assume that `==` works between str and unicode on
-        Python 2.x... let's go with that for now."""
+        Python 2.x... let's go with that for now.
+        """
         assert self.yai.parse_line(line) == res
 
 

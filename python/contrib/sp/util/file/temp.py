@@ -4,7 +4,7 @@ import contextlib
 import subprocess
 import tempfile
 
-from typing import Iterator, Optional, Text, Union
+from typing import Iterator, Optional, Text, Union  # noqa: H301
 
 from sp.util.backports import pathlib
 

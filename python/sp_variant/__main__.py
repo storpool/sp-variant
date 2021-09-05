@@ -24,7 +24,7 @@ import sys
 
 try:
     from typing import (
-        Any,
+        Any,  # noqa: H301
         Callable,
         Dict,
         Iterable,

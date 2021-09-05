@@ -1,7 +1,7 @@
 """Build variant definitions and commands."""
 
 from .__main__ import (
-    Config,
+    Config,  # noqa: H301
     Variant,
     VERSION,
     detect_variant,
