@@ -12,8 +12,14 @@ categories = ["command-line-utilities", "config"]
 [lib]
 path = "rust/lib.rs"
 
+[[bin]]
+name = "storpool_variant"
+path = "rust/bin.rs"
+
 [dependencies]
+clap = "2"
 expect-exit = "0.4"
+nix = "0.22"
 regex = "1"
 serde = {version="1", features=["derive"]}
 serde_json = "1"
