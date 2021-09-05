@@ -285,14 +285,14 @@ def parse_arguments() -> Tuple[Config, Callable[[Config], None]]:
     p_build.add_argument(
         "-d",
         "--datadir",
-        type=str,
+        type=pathlib.Path,
         required=True,
         help="The directory to place the repo file in",
     )
     p_build.add_argument(
         "-D",
         "--destdir",
-        type=str,
+        type=pathlib.Path,
         required=True,
         help="The directory to place the repo file in",
     )
@@ -314,8 +314,8 @@ def parse_arguments() -> Tuple[Config, Callable[[Config], None]]:
     args = parser.parse_args()
     return (
         Config(
-            datadir=pathlib.Path(args.datadir),
-            destdir=pathlib.Path(args.destdir),
+            datadir=args.datadir,
+            destdir=args.destdir,
             no_date=args.no_date,
             rustbin=args.rust_bin,
             verbose=args.verbose,
