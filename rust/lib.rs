@@ -14,15 +14,37 @@ use std::io;
 use expect_exit::ExpectedResult;
 use serde::{Deserialize, Serialize};
 
+#[macro_use]
+extern crate quick_error;
+
 pub mod data;
 
 #[cfg(test)]
 pub mod tests;
 
-pub use data::{VariantError, VariantKind};
+pub use data::VariantKind;
 
 /// The features supported by this module and the storpool_variant executable.
 pub const FEATURES: [(&str, &str); 1] = [("variant", "1.2")];
+
+quick_error! {
+    /// An error that occurred while determining the Linux variant.
+    #[derive(Debug)]
+    pub enum VariantError {
+        /// An invalid variant name was specified.
+        BadVariant(name: String) {
+            display("Unknown variant '{}'", name)
+        }
+        /// A file to be examined could not be read.
+        FileRead(variant: String, filename: String, err: io::Error) {
+            display("Checking for {}: could not read {}: {}", variant, filename, err)
+        }
+        /// None of the variants matched.
+        UnknownVariant {
+            display("Could not detect the current host's build variant")
+        }
+    }
+}
 
 /// The version of the variant definition format data.
 #[derive(Debug, Serialize, Deserialize)]
@@ -158,19 +180,16 @@ pub fn detect_from(variants: &VariantDefTop) -> Result<&Variant, Box<dyn error::
             }
             Err(err) => {
                 if err.kind() != io::ErrorKind::NotFound {
-                    return Err(VariantError::boxed(format!(
-                        "Checking for {}: could not read {}: {}",
-                        var.kind.as_ref(),
-                        var.detect.filename,
-                        err
+                    return Err(Box::new(VariantError::FileRead(
+                        var.kind.as_ref().to_string(),
+                        var.detect.filename.clone(),
+                        err,
                     )));
                 }
             }
         };
     }
-    Err(VariantError::boxed(
-        "Could not detect the current host's build variant".to_string(),
-    ))
+    Err(Box::new(VariantError::UnknownVariant))
 }
 
 /// Get the variant with the specified name from the supplied data.

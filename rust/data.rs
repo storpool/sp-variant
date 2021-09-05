@@ -6,32 +6,11 @@
 //! The full data is provided by the external ``variants-all.json`` file in
 //! the StorPool source tree.
 
-use std::error;
-use std::fmt;
 use std::str::FromStr;
 
 use serde::{Deserialize, Serialize};
 
-/// An error that occurred while handling the OS variant data.
-#[derive(Debug)]
-pub struct VariantError {
-    msg: String,
-}
-
-impl fmt::Display for VariantError {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "{}", self.msg)
-    }
-}
-
-impl error::Error for VariantError {}
-
-impl VariantError {
-    /// Return a `Box` containing an error object.
-    pub fn boxed(msg: String) -> Box<dyn error::Error> {
-        Box::new(Self { msg })
-    }
-}
+use crate::VariantError;
 
 /// The supported StorPool build variants (OS distribution, version, etc).
 #[derive(Debug, Clone, PartialEq, Hash, Eq, Serialize, Deserialize)]
@@ -123,9 +102,7 @@ impl FromStr for VariantKind {
             VariantKind::UBUNTU1604_NAME => Ok(VariantKind::UBUNTU1604),
             VariantKind::UBUNTU1804_NAME => Ok(VariantKind::UBUNTU1804),
             VariantKind::UBUNTU2004_NAME => Ok(VariantKind::UBUNTU2004),
-            other => Err(VariantError {
-                msg: format!("Unrecognized variant '{}'", other),
-            }),
+            other => Err(VariantError::BadVariant(other.to_string())),
         }
     }
 }
