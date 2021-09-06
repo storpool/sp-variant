@@ -45,6 +45,9 @@ ${RUST_BIN}:	Cargo.toml .cargo/config.toml ${RUST_SRC} ${RUST_VARIANT_JSON}
 		${SP_CARGO} build --release --offline
 		${SP_CARGO} test --release --offline
 
+test-docker:	repo
+		${SP_PY3_ENV} -m test_docker -r '${REPO_BUILT}' -v
+
 clean:		clean-repo clean-rust
 
 clean-repo:
@@ -54,4 +57,4 @@ clean-rust:
 		${SP_CARGO} clean
 		rm -f -- Cargo.lock
 
-.PHONY:		all repo clean clean-repo clean-rust
+.PHONY:		all repo test-docker clean clean-repo clean-rust
