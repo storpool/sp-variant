@@ -141,7 +141,7 @@ def filter_docker_images(
     res = {}
     for var in var_data.values():
         for image in (var.builder.base_image, "builder:" + var.builder.alias):
-            if image == "IGNORE":
+            if image in ("IGNORE", "centos:6"):
                 continue
             if image in images:
                 res[image] = var.name
