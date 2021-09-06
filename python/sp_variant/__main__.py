@@ -96,6 +96,14 @@ try:
         ],
     )
 
+    Builder = NamedTuple(  # pylint: disable=invalid-name
+        "Builder",
+        [
+            ("alias", Text),
+            ("base_image", Text),
+        ],
+    )
+
     Variant = NamedTuple(  # pylint: disable=invalid-name
         "Variant",
         [
@@ -109,6 +117,7 @@ try:
             ("systemd_lib", Text),
             ("file_ext", Text),
             ("initramfs_flavor", Text),
+            ("builder", Builder),
         ],
     )
 
@@ -190,6 +199,14 @@ except ImportError:
         ],
     )
 
+    Builder = collections.namedtuple(  # type: ignore
+        "Builder",
+        [
+            "alias",
+            "base_image",
+        ],
+    )
+
     Variant = collections.namedtuple(  # type: ignore
         "Variant",
         [
@@ -203,6 +220,7 @@ except ImportError:
             "systemd_lib",
             "file_ext",
             "initramfs_flavor",
+            "builder",
         ],
     )
 
@@ -232,7 +250,7 @@ else:
     BytesType = str
 
 
-VERSION = "1.2.0"
+VERSION = "1.3.0"
 
 
 REPO_TYPES = [
@@ -407,6 +425,7 @@ _VARIANT_DEF = [
         systemd_lib="lib/systemd/system",
         file_ext="deb",
         initramfs_flavor="update-initramfs",
+        builder=Builder(alias="debian12", base_image="debian:unstable"),
     ),
     VariantUpdate(
         name="DEBIAN11",
@@ -424,7 +443,9 @@ _VARIANT_DEF = [
             os_id="debian",
             os_version_regex=re.compile(r"^11$"),
         ),
-        updates={},
+        updates={
+            "builder": {"alias": "debian11", "base_image": "debian:bullseye"}
+        },
     ),
     VariantUpdate(
         name="DEBIAN10",
@@ -452,6 +473,7 @@ _VARIANT_DEF = [
                 "BINDINGS_PYTHON_CONFGET": "python-confget",
                 "BINDINGS_PYTHON_SIMPLEJSON": "python-simplejson",
             },
+            "builder": {"alias": "debian10", "base_image": "debian:buster"},
         },
     ),
     VariantUpdate(
@@ -475,6 +497,7 @@ _VARIANT_DEF = [
                 "codename": "stretch",
                 "req_packages": ["apt-transport-https", "ca-certificates"],
             },
+            "builder": {"alias": "debian9", "base_image": "debian:stretch"},
         },
     ),
     VariantUpdate(
@@ -499,6 +522,7 @@ _VARIANT_DEF = [
                 "CPUPOWER": "linux-tools-generic",
                 "MCELOG": "bash",
             },
+            "builder": {"alias": "ubuntu20.04", "base_image": "ubuntu:focal"},
         },
     ),
     VariantUpdate(
@@ -523,6 +547,7 @@ _VARIANT_DEF = [
                 "BINDINGS_PYTHON_CONFGET": "python-confget",
                 "BINDINGS_PYTHON_SIMPLEJSON": "python-simplejson",
             },
+            "builder": {"alias": "ubuntu18.04", "base_image": "ubuntu:bionic"},
         },
     ),
     VariantUpdate(
@@ -546,6 +571,7 @@ _VARIANT_DEF = [
                 "LIBSSL": "libssl1.0.0",
                 "mcelog": "mcelog",
             },
+            "builder": {"alias": "ubuntu16.04", "base_image": "ubuntu:xenial"},
         },
     ),
     Variant(
@@ -649,6 +675,7 @@ fi
         systemd_lib="usr/lib/systemd/system",
         file_ext="rpm",
         initramfs_flavor="mkinitrd",
+        builder=Builder(alias="centos8", base_image="centos:8"),
     ),
     VariantUpdate(
         name="CENTOS7",
@@ -695,6 +722,7 @@ fi
                     ],
                 },
             },
+            "builder": {"alias": "centos7", "base_image": "centos:7"},
         },
     ),
     VariantUpdate(
@@ -721,6 +749,7 @@ fi
                 "PROCPS": "procps",
                 "UDEV": "udev",
             },
+            "builder": {"alias": "centos6", "base_image": "centos:6"},
         },
     ),
     VariantUpdate(
@@ -732,7 +761,9 @@ fi
             os_id="ol",
             os_version_regex=re.compile(r"^7(?:$|\.[0-9])"),
         ),
-        updates={},
+        updates={
+            "builder": {"alias": "oracle7", "base_image": "IGNORE"},
+        },
     ),
     VariantUpdate(
         name="RHEL8",
@@ -787,7 +818,8 @@ fi
 """,  # noqa: E501  pylint: disable=line-too-long
                     ]
                 },
-            }
+            },
+            "builder": {"alias": "rhel8", "base_image": "redhat/ubi8:reg"},
         },
     ),
     VariantUpdate(
@@ -802,7 +834,12 @@ fi
             os_id="rocky",
             os_version_regex=re.compile(r"^8(?:$|\.[4-9]|\.[1-9][0-9])"),
         ),
-        updates={},
+        updates={
+            "builder": {
+                "alias": "rocky8",
+                "base_image": "rockylinux/rockylinux:8",
+            },
+        },
     ),
     VariantUpdate(
         name="ALMA8",
@@ -815,7 +852,12 @@ fi
             os_id="alma",
             os_version_regex=re.compile(r"^8(?:$|\.[4-9]|\.[1-9][0-9])"),
         ),
-        updates={},
+        updates={
+            "builder": {
+                "alias": "alma8",
+                "base_image": "almalinux/almalinux:8",
+            },
+        },
     ),
 ]  # type: (List[Union[Variant, VariantUpdate]])
 
@@ -1075,6 +1117,7 @@ def merge_into_parent(cfg, parent, child):
             systemd_lib=parent.systemd_lib,
             file_ext=parent.file_ext,
             initramfs_flavor=parent.initramfs_flavor,
+            builder=parent.builder,
         ),
         child.updates,
     )
@@ -1498,7 +1541,7 @@ def cmd_show(cfg):
     if cfg.command == "all":
         data = jsonify(
             {
-                "format": {"version": {"major": 1, "minor": 1}},
+                "format": {"version": {"major": 1, "minor": 2}},
                 "version": VERSION,
                 "variants": VARIANTS,
                 "order": [var.name for var in _DETECT_ORDER],
@@ -1514,7 +1557,7 @@ def cmd_show(cfg):
             sys.exit("Invalid build variant '{name}'".format(name=cfg.command))
         data = jsonify(
             {
-                "format": {"version": {"major": 1, "minor": 1}},
+                "format": {"version": {"major": 1, "minor": 2}},
                 "version": VERSION,
                 "variant": var,
             }

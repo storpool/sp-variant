@@ -26,7 +26,7 @@ pub mod tests;
 pub use data::VariantKind;
 
 /// The features supported by this module and the storpool_variant executable.
-pub const FEATURES: [(&str, &str); 1] = [("variant", "1.2")];
+pub const FEATURES: [(&str, &str); 1] = [("variant", "1.3")];
 
 quick_error! {
     /// An error that occurred while determining the Linux variant.
@@ -116,6 +116,15 @@ pub enum Repo {
     Yum(YumRepo),
 }
 
+/// StorPool builder data.
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct Builder {
+    /// The builder name.
+    pub alias: String,
+    /// The base Docker image that the builder is generated from.
+    pub base_image: String,
+}
+
 /// A single StorPool build variant with all its options.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Variant {
@@ -140,6 +149,8 @@ pub struct Variant {
     pub file_ext: String,
     /// The type of initramfs-generating tools.
     pub initramfs_flavor: String,
+    /// The data specific to the StorPool builder containers.
+    pub builder: Builder,
 }
 
 /// The internal variant format data: all build variants, some more info.

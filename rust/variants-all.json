@@ -2,7 +2,7 @@
   "format": {
     "version": {
       "major": 1,
-      "minor": 1
+      "minor": 2
     }
   },
   "order": [
@@ -23,6 +23,10 @@
   ],
   "variants": {
     "ALMA8": {
+      "builder": {
+        "alias": "alma8",
+        "base_image": "almalinux/almalinux:8"
+      },
       "commands": {
         "package": {
           "install": [
@@ -108,6 +112,10 @@
       "systemd_lib": "usr/lib/systemd/system"
     },
     "CENTOS6": {
+      "builder": {
+        "alias": "centos6",
+        "base_image": "centos:6"
+      },
       "commands": {
         "package": {
           "install": [
@@ -189,6 +197,10 @@
       "systemd_lib": "usr/lib/systemd/system"
     },
     "CENTOS7": {
+      "builder": {
+        "alias": "centos7",
+        "base_image": "centos:7"
+      },
       "commands": {
         "package": {
           "install": [
@@ -270,6 +282,10 @@
       "systemd_lib": "usr/lib/systemd/system"
     },
     "CENTOS8": {
+      "builder": {
+        "alias": "centos8",
+        "base_image": "centos:8"
+      },
       "commands": {
         "package": {
           "install": [
@@ -355,6 +371,10 @@
       "systemd_lib": "usr/lib/systemd/system"
     },
     "DEBIAN10": {
+      "builder": {
+        "alias": "debian10",
+        "base_image": "debian:buster"
+      },
       "commands": {
         "package": {
           "install": [
@@ -451,6 +471,10 @@
       "systemd_lib": "lib/systemd/system"
     },
     "DEBIAN11": {
+      "builder": {
+        "alias": "debian11",
+        "base_image": "debian:bullseye"
+      },
       "commands": {
         "package": {
           "install": [
@@ -547,6 +571,10 @@
       "systemd_lib": "lib/systemd/system"
     },
     "DEBIAN12": {
+      "builder": {
+        "alias": "debian12",
+        "base_image": "debian:unstable"
+      },
       "commands": {
         "package": {
           "install": [
@@ -643,6 +671,10 @@
       "systemd_lib": "lib/systemd/system"
     },
     "DEBIAN9": {
+      "builder": {
+        "alias": "debian9",
+        "base_image": "debian:stretch"
+      },
       "commands": {
         "package": {
           "install": [
@@ -740,6 +772,10 @@
       "systemd_lib": "lib/systemd/system"
     },
     "ORACLE7": {
+      "builder": {
+        "alias": "oracle7",
+        "base_image": "IGNORE"
+      },
       "commands": {
         "package": {
           "install": [
@@ -821,6 +857,10 @@
       "systemd_lib": "usr/lib/systemd/system"
     },
     "RHEL8": {
+      "builder": {
+        "alias": "rhel8",
+        "base_image": "redhat/ubi8:reg"
+      },
       "commands": {
         "package": {
           "install": [
@@ -906,6 +946,10 @@
       "systemd_lib": "usr/lib/systemd/system"
     },
     "ROCKY8": {
+      "builder": {
+        "alias": "rocky8",
+        "base_image": "rockylinux/rockylinux:8"
+      },
       "commands": {
         "package": {
           "install": [
@@ -991,6 +1035,10 @@
       "systemd_lib": "usr/lib/systemd/system"
     },
     "UBUNTU1604": {
+      "builder": {
+        "alias": "ubuntu16.04",
+        "base_image": "ubuntu:xenial"
+      },
       "commands": {
         "package": {
           "install": [
@@ -1089,6 +1137,10 @@
       "systemd_lib": "lib/systemd/system"
     },
     "UBUNTU1804": {
+      "builder": {
+        "alias": "ubuntu18.04",
+        "base_image": "ubuntu:bionic"
+      },
       "commands": {
         "package": {
           "install": [
@@ -1185,6 +1237,10 @@
       "systemd_lib": "lib/systemd/system"
     },
     "UBUNTU2004": {
+      "builder": {
+        "alias": "ubuntu20.04",
+        "base_image": "ubuntu:focal"
+      },
       "commands": {
         "package": {
           "install": [
@@ -1281,5 +1337,5 @@
       "systemd_lib": "lib/systemd/system"
     }
   },
-  "version": "1.2.0"
+  "version": "1.3.0"
 }
