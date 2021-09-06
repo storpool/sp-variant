@@ -40,6 +40,10 @@ quick_error! {
         FileRead(variant: String, filename: String, err: io::Error) {
             display("Checking for {}: could not read {}: {}", variant, filename, err)
         }
+        /// Unexpected error parsing the /etc/os-release file.
+        OsRelease(err: Box<dyn error::Error>) {
+            display("Could not parse the /etc/os-release file: {}", err)
+        }
         /// None of the variants matched.
         UnknownVariant {
             display("Could not detect the current host's build variant")
@@ -72,6 +76,10 @@ pub struct Detect {
     pub filename: String,
     /// The regular expression pattern to look for in the file.
     pub regex: String,
+    /// The "ID" field in the /etc/os-release file.
+    pub os_id: String,
+    /// The regular expression pattern for the "VERSION_ID" os-release field.
+    pub os_version_regex: String,
 }
 
 /// Debian package repository data.
@@ -163,6 +171,38 @@ pub fn detect() -> Result<Variant, Box<dyn error::Error>> {
 
 /// Detect the current host's variant from the supplied data.
 pub fn detect_from(variants: &VariantDefTop) -> Result<&Variant, Box<dyn error::Error>> {
+    match yai::parse("/etc/os-release") {
+        Ok(data) => {
+            if let Some(os_id) = data.get("ID") {
+                if let Some(version_id) = data.get("VERSION_ID") {
+                    for kind in &variants.order {
+                        let var = &variants.variants[kind];
+                        if var.detect.os_id != *os_id {
+                            continue;
+                        }
+                        let re_ver = regex::RegexBuilder::new(&var.detect.os_version_regex)
+                            .ignore_whitespace(true)
+                            .build()
+                            .unwrap();
+                        if re_ver.is_match(version_id) {
+                            return Ok(var);
+                        }
+                    }
+                }
+            }
+            // Fall through to the PRETTY_NAME processing.
+        }
+        Err(err) => {
+            let ignore = match err.downcast_ref::<io::Error>() {
+                Some(io_err) => io_err.kind() == io::ErrorKind::NotFound,
+                None => false,
+            };
+            if !ignore {
+                return Err(Box::new(VariantError::OsRelease(err)));
+            }
+        }
+    }
+
     for kind in &variants.order {
         let var = &variants.variants[kind];
         let re_line = regex::RegexBuilder::new(&var.detect.regex)
