@@ -18,6 +18,7 @@ use serde::{Deserialize, Serialize};
 extern crate quick_error;
 
 pub mod data;
+pub mod yai;
 
 #[cfg(test)]
 pub mod tests;
