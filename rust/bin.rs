@@ -332,8 +332,17 @@ fn cmd_show(varfull: &VariantDefTop, config: ShowConfig) {
     match config.name == "all" {
         true => print!("{}", full),
         false => {
-            let var =
-                sp_variant::get_from(varfull, &config.name).or_exit_e_("Invalid variant name");
+            let var = sp_variant::get_from(
+                varfull,
+                match &*config.name {
+                    "current" => sp_variant::detect_from(varfull)
+                        .or_exit_e_("Cannot detect the current variant")
+                        .kind
+                        .as_ref(),
+                    other => other,
+                },
+            )
+            .or_exit_e_("Invalid variant name");
             println!("{}", serde_json::to_string_pretty(&var).unwrap());
         }
     };
