@@ -29,6 +29,7 @@ class SimpleBuilder(NamedTuple):
 
     alias: str
     base_image: str
+    utf8_locale: str
 
 
 class SimpleVariant(NamedTuple):
@@ -119,6 +120,7 @@ def extract_variants_data(
             builder=SimpleBuilder(
                 alias=var["builder"]["alias"],
                 base_image=var["builder"]["base_image"],
+                utf8_locale=var["builder"]["utf8_locale"],
             ),
         )
 
@@ -264,7 +266,11 @@ async def test_detect(
 
 
 async def run_add_repo_for_image(
-    cfg: Config, spdir: pathlib.Path, addsh: pathlib.Path, image: str
+    cfg: Config,
+    spdir: pathlib.Path,
+    addsh: pathlib.Path,
+    image: str,
+    variant: SimpleVariant,
 ) -> Tuple[bytes, bytes, int]:
     """Run `add-storpool-repo` in a single new Docker container."""
     cfg.diag(f"{image}: starting a container")
@@ -276,6 +282,8 @@ async def run_add_repo_for_image(
         f"{spdir}:/sp:ro",
         "--",
         image,
+        "env",
+        "LC_ALL=" + variant.builder.utf8_locale,
         "/sp/" + str(addsh.relative_to(spdir)),
         env=cfg.utf8_env,
         stdout=aprocess.PIPE,
@@ -333,7 +341,10 @@ def analyze_add_repo_single(
 
 
 async def test_add_repo(
-    cfg: Config, spdir: pathlib.Path, ordered: List[Tuple[str, str]]
+    cfg: Config,
+    spdir: pathlib.Path,
+    ordered: List[Tuple[str, str]],
+    var_data: Dict[str, SimpleVariant],
 ) -> List[str]:
     """Run `storpool_variant detect` for all the images."""
     cfg.diag("Preparing the add-repo script")
@@ -367,8 +378,8 @@ echo 'Done, it seems'
     cfg.diag("Spawning the add-repo containers")
     gathering = asyncio.gather(
         *(
-            run_add_repo_for_image(cfg, spdir, addsh, image)
-            for image, _ in ordered
+            run_add_repo_for_image(cfg, spdir, addsh, image, var_data[variant])
+            for image, variant in ordered
         ),
         return_exceptions=True,
     )
@@ -408,7 +419,7 @@ async def main() -> None:
         if errors:
             sys.exit("`storpool_variant detect` errors: " + "\n".join(errors))
 
-        errors = await test_add_repo(cfg, spdir, ordered)
+        errors = await test_add_repo(cfg, spdir, ordered, var_data)
         if errors:
             sys.exit("`add-storpool-repo.sh` errors: " + "\n".join(errors))
 
