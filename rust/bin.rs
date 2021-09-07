@@ -89,9 +89,9 @@ fn detect_variant(varfull: &VariantDefTop) -> &Variant {
     sp_variant::detect_from(varfull).or_exit_e_("Could not detect the current build variant")
 }
 
-fn cmd_features() {
-    let (major, minor) = sp_variant::get_format_version();
-    let program_version = sp_variant::get_program_version();
+fn cmd_features(varfull: &VariantDefTop) {
+    let (major, minor) = sp_variant::get_format_version_from(varfull);
+    let program_version = sp_variant::get_program_version_from(varfull);
     println!(
         "Features: format={}.{} variant={}",
         major, minor, program_version
@@ -358,11 +358,12 @@ fn cmd_show(varfull: &VariantDefTop, config: ShowConfig) {
 }
 
 fn main() {
-    let program_version = sp_variant::get_program_version();
+    let varfull = sp_variant::build_variants();
+    let program_version = sp_variant::get_program_version_from(&varfull);
     let app = {
         let valid_repo_types: Vec<&str> = REPO_TYPES.iter().map(|rtype| rtype.name).collect();
         clap::App::new("storpool_variant")
-            .version(&*program_version)
+            .version(&**program_version)
             .author("StorPool <support@storpool.com>")
             .about("storpool_variant: handle OS distribution- and version-specific tasks")
             .subcommand(
@@ -500,18 +501,15 @@ fn main() {
                 Some((_, handler)) => {
                     let mode = handler(subc_matches);
                     match mode {
-                        Mode::Features => cmd_features(),
-                        mode => {
-                            let varfull = sp_variant::build_variants();
-                            match mode {
-                                Mode::CommandList => cmd_command_list(&varfull),
-                                Mode::CommandRun(config) => cmd_command_run(&varfull, config),
-                                Mode::Detect => cmd_detect(&varfull),
-                                Mode::Features => panic!("nope"),
-                                Mode::RepoAdd(config) => cmd_repo_add(&varfull, config),
-                                Mode::Show(config) => cmd_show(&varfull, config),
-                            }
-                        }
+                        Mode::Features => cmd_features(&varfull),
+                        mode => match mode {
+                            Mode::CommandList => cmd_command_list(&varfull),
+                            Mode::CommandRun(config) => cmd_command_run(&varfull, config),
+                            Mode::Detect => cmd_detect(&varfull),
+                            Mode::Features => panic!("nope"),
+                            Mode::RepoAdd(config) => cmd_repo_add(&varfull, config),
+                            Mode::Show(config) => cmd_show(&varfull, config),
+                        },
                     }
                 }
                 None => expect_exit::exit(matches.usage()),
