@@ -123,6 +123,10 @@ pub struct Builder {
     pub alias: String,
     /// The base Docker image that the builder is generated from.
     pub base_image: String,
+    /// The base kernel OS package.
+    pub kernel_package: String,
+    /// The name of the locale to use for clean UTF-8 output.
+    pub utf8_locale: String,
 }
 
 /// A single StorPool build variant with all its options.

@@ -25,7 +25,9 @@
     "ALMA8": {
       "builder": {
         "alias": "alma8",
-        "base_image": "almalinux/almalinux:8"
+        "base_image": "almalinux/almalinux:8",
+        "kernel_package": "kernel-core",
+        "utf8_locale": "C.utf8"
       },
       "commands": {
         "package": {
@@ -114,7 +116,9 @@
     "CENTOS6": {
       "builder": {
         "alias": "centos6",
-        "base_image": "centos:6"
+        "base_image": "centos:6",
+        "kernel_package": "kernel",
+        "utf8_locale": "C"
       },
       "commands": {
         "package": {
@@ -199,7 +203,9 @@
     "CENTOS7": {
       "builder": {
         "alias": "centos7",
-        "base_image": "centos:7"
+        "base_image": "centos:7",
+        "kernel_package": "kernel",
+        "utf8_locale": "C.utf8"
       },
       "commands": {
         "package": {
@@ -284,7 +290,9 @@
     "CENTOS8": {
       "builder": {
         "alias": "centos8",
-        "base_image": "centos:8"
+        "base_image": "centos:8",
+        "kernel_package": "kernel-core",
+        "utf8_locale": "C.utf8"
       },
       "commands": {
         "package": {
@@ -373,7 +381,9 @@
     "DEBIAN10": {
       "builder": {
         "alias": "debian10",
-        "base_image": "debian:buster"
+        "base_image": "debian:buster",
+        "kernel_package": "linux-headers",
+        "utf8_locale": "C.UTF-8"
       },
       "commands": {
         "package": {
@@ -473,7 +483,9 @@
     "DEBIAN11": {
       "builder": {
         "alias": "debian11",
-        "base_image": "debian:bullseye"
+        "base_image": "debian:bullseye",
+        "kernel_package": "linux-headers",
+        "utf8_locale": "C.UTF-8"
       },
       "commands": {
         "package": {
@@ -573,7 +585,9 @@
     "DEBIAN12": {
       "builder": {
         "alias": "debian12",
-        "base_image": "debian:unstable"
+        "base_image": "debian:unstable",
+        "kernel_package": "linux-headers",
+        "utf8_locale": "C.UTF-8"
       },
       "commands": {
         "package": {
@@ -673,7 +687,9 @@
     "DEBIAN9": {
       "builder": {
         "alias": "debian9",
-        "base_image": "debian:stretch"
+        "base_image": "debian:stretch",
+        "kernel_package": "linux-headers",
+        "utf8_locale": "C.UTF-8"
       },
       "commands": {
         "package": {
@@ -774,7 +790,9 @@
     "ORACLE7": {
       "builder": {
         "alias": "oracle7",
-        "base_image": "IGNORE"
+        "base_image": "IGNORE",
+        "kernel_package": "kernel",
+        "utf8_locale": "C.utf8"
       },
       "commands": {
         "package": {
@@ -859,7 +877,9 @@
     "RHEL8": {
       "builder": {
         "alias": "rhel8",
-        "base_image": "redhat/ubi8:reg"
+        "base_image": "redhat/ubi8:reg",
+        "kernel_package": "kernel-core",
+        "utf8_locale": "C.utf8"
       },
       "commands": {
         "package": {
@@ -948,7 +968,9 @@
     "ROCKY8": {
       "builder": {
         "alias": "rocky8",
-        "base_image": "rockylinux/rockylinux:8"
+        "base_image": "rockylinux/rockylinux:8",
+        "kernel_package": "kernel-core",
+        "utf8_locale": "C.utf8"
       },
       "commands": {
         "package": {
@@ -1037,7 +1059,9 @@
     "UBUNTU1604": {
       "builder": {
         "alias": "ubuntu16.04",
-        "base_image": "ubuntu:xenial"
+        "base_image": "ubuntu:xenial",
+        "kernel_package": "linux-headers",
+        "utf8_locale": "C.UTF-8"
       },
       "commands": {
         "package": {
@@ -1139,7 +1163,9 @@
     "UBUNTU1804": {
       "builder": {
         "alias": "ubuntu18.04",
-        "base_image": "ubuntu:bionic"
+        "base_image": "ubuntu:bionic",
+        "kernel_package": "linux-headers",
+        "utf8_locale": "C.UTF-8"
       },
       "commands": {
         "package": {
@@ -1239,7 +1265,9 @@
     "UBUNTU2004": {
       "builder": {
         "alias": "ubuntu20.04",
-        "base_image": "ubuntu:focal"
+        "base_image": "ubuntu:focal",
+        "kernel_package": "linux-headers",
+        "utf8_locale": "C.UTF-8"
       },
       "commands": {
         "package": {

@@ -101,6 +101,8 @@ try:
         [
             ("alias", Text),
             ("base_image", Text),
+            ("kernel_package", Text),
+            ("utf8_locale", Text),
         ],
     )
 
@@ -204,6 +206,8 @@ except ImportError:
         [
             "alias",
             "base_image",
+            "kernel_package",
+            "utf8_locale",
         ],
     )
 
@@ -425,7 +429,12 @@ _VARIANT_DEF = [
         systemd_lib="lib/systemd/system",
         file_ext="deb",
         initramfs_flavor="update-initramfs",
-        builder=Builder(alias="debian12", base_image="debian:unstable"),
+        builder=Builder(
+            alias="debian12",
+            base_image="debian:unstable",
+            kernel_package="linux-headers",
+            utf8_locale="C.UTF-8",
+        ),
     ),
     VariantUpdate(
         name="DEBIAN11",
@@ -675,7 +684,12 @@ fi
         systemd_lib="usr/lib/systemd/system",
         file_ext="rpm",
         initramfs_flavor="mkinitrd",
-        builder=Builder(alias="centos8", base_image="centos:8"),
+        builder=Builder(
+            alias="centos8",
+            base_image="centos:8",
+            kernel_package="kernel-core",
+            utf8_locale="C.utf8",
+        ),
     ),
     VariantUpdate(
         name="CENTOS7",
@@ -722,7 +736,11 @@ fi
                     ],
                 },
             },
-            "builder": {"alias": "centos7", "base_image": "centos:7"},
+            "builder": {
+                "alias": "centos7",
+                "base_image": "centos:7",
+                "kernel_package": "kernel",
+            },
         },
     ),
     VariantUpdate(
@@ -749,7 +767,11 @@ fi
                 "PROCPS": "procps",
                 "UDEV": "udev",
             },
-            "builder": {"alias": "centos6", "base_image": "centos:6"},
+            "builder": {
+                "alias": "centos6",
+                "base_image": "centos:6",
+                "utf8_locale": "C",
+            },
         },
     ),
     VariantUpdate(
