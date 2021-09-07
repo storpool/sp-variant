@@ -19,6 +19,7 @@ use std::process;
 
 use expect_exit::ExpectedWithError;
 use nix::unistd;
+use serde::{Deserialize, Serialize};
 
 use sp_variant::{self, Variant, VariantDefTop};
 
@@ -47,6 +48,13 @@ struct CommandRunConfig {
 #[derive(Debug)]
 struct ShowConfig {
     name: String,
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+struct SingleVariant {
+    format: sp_variant::VariantFormat,
+    variant: Variant,
+    version: String,
 }
 
 #[derive(Debug)]
@@ -82,13 +90,11 @@ fn detect_variant(varfull: &VariantDefTop) -> &Variant {
 }
 
 fn cmd_features() {
+    let (major, minor) = sp_variant::get_format_version();
+    let program_version = sp_variant::get_program_version();
     println!(
-        "Features: {}",
-        sp_variant::FEATURES
-            .iter()
-            .map(|(name, version)| format!("{}={}", name, version))
-            .collect::<Vec<String>>()
-            .join(" ")
+        "Features: format={}.{} variant={}",
+        major, minor, program_version
     );
 }
 
@@ -343,22 +349,25 @@ fn cmd_show(varfull: &VariantDefTop, config: ShowConfig) {
                 },
             )
             .or_exit_e_("Invalid variant name");
-            println!("{}", serde_json::to_string_pretty(&var).unwrap());
+            let (major, minor) = sp_variant::get_format_version_from(varfull);
+            let single = SingleVariant {
+                format: sp_variant::VariantFormat {
+                    version: sp_variant::VariantFormatVersion { major, minor },
+                },
+                variant: var.clone(),
+                version: sp_variant::get_program_version(),
+            };
+            println!("{}", serde_json::to_string_pretty(&single).unwrap());
         }
     };
 }
 
 fn main() {
+    let program_version = sp_variant::get_program_version();
     let app = {
         let valid_repo_types: Vec<&str> = REPO_TYPES.iter().map(|rtype| rtype.name).collect();
         clap::App::new("storpool_variant")
-            .version(
-                sp_variant::FEATURES
-                    .iter()
-                    .find(|(name, _)| *name == "variant")
-                    .unwrap()
-                    .1,
-            )
+            .version(&*program_version)
             .author("StorPool <support@storpool.com>")
             .about("storpool_variant: handle OS distribution- and version-specific tasks")
             .subcommand(

@@ -25,9 +25,6 @@ pub mod tests;
 
 pub use data::VariantKind;
 
-/// The features supported by this module and the storpool_variant executable.
-pub const FEATURES: [(&str, &str); 1] = [("variant", "1.3")];
-
 quick_error! {
     /// An error that occurred while determining the Linux variant.
     #[derive(Debug)]
@@ -52,16 +49,19 @@ quick_error! {
 }
 
 /// The version of the variant definition format data.
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct VariantFormatVersion {
-    major: u32,
-    minor: u32,
+    /// The version major number.
+    pub major: u32,
+    /// The version minor number.
+    pub minor: u32,
 }
 
 /// The internal format of the variant definition format data.
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct VariantFormat {
-    version: VariantFormatVersion,
+    /// The version of the metadata format.
+    pub version: VariantFormatVersion,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -163,6 +163,7 @@ pub struct VariantDefTop {
     format: VariantFormat,
     order: Vec<VariantKind>,
     variants: HashMap<VariantKind, Variant>,
+    version: String,
 }
 
 /// Build the list of StorPool variants from the JSON description
@@ -258,4 +259,24 @@ pub fn get_from<'a>(
         .variants
         .get(&kind)
         .expect_result(|| format!("No data for the {} variant", name))
+}
+
+/// Get the metadata format version of the variant data.
+pub fn get_format_version() -> (u32, u32) {
+    get_format_version_from(&build_variants())
+}
+
+/// Get the metadata format version of the supplied variant data structure.
+pub fn get_format_version_from(variants: &VariantDefTop) -> (u32, u32) {
+    (variants.format.version.major, variants.format.version.minor)
+}
+
+/// Get the program version from the variant data.
+pub fn get_program_version() -> String {
+    get_program_version_from(&build_variants()).clone()
+}
+
+/// Get the program version from the supplied variant data structure.
+pub fn get_program_version_from(variants: &VariantDefTop) -> &String {
+    &variants.version
 }
