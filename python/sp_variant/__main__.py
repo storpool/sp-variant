@@ -741,6 +741,7 @@ fi
                 "alias": "centos7",
                 "base_image": "centos:7",
                 "kernel_package": "kernel",
+                "utf8_locale": "C",
             },
         },
     ),
@@ -771,7 +772,6 @@ fi
             "builder": {
                 "alias": "centos6",
                 "base_image": "centos:6",
-                "utf8_locale": "C",
             },
         },
     ),

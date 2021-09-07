@@ -205,7 +205,7 @@
         "alias": "centos7",
         "base_image": "centos:7",
         "kernel_package": "kernel",
-        "utf8_locale": "C.utf8"
+        "utf8_locale": "C"
       },
       "commands": {
         "package": {
@@ -792,7 +792,7 @@
         "alias": "oracle7",
         "base_image": "IGNORE",
         "kernel_package": "kernel",
-        "utf8_locale": "C.utf8"
+        "utf8_locale": "C"
       },
       "commands": {
         "package": {
