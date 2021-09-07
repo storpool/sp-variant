@@ -12,7 +12,7 @@ from typing import Callable, Dict, Optional, Text, Tuple  # noqa: H301
 import cfg_diag
 import jinja2
 
-from . import __main__ as vmain
+from sp_variant import __main__ as vmain
 
 
 @dataclasses.dataclass(frozen=True)

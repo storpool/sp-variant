@@ -29,7 +29,7 @@ ${REPO_BUILT}:	all
 		rm -rf -- '${REPO_TMPDIR}'
 		[ ! -f '${REPO_BUILT}' ]
 		mkdir -- '${REPO_TMPDIR}'
-		${SP_PY3_ENV} -m sp_variant.repo build -d '${CURDIR}/data' -D '${REPO_TMPDIR}' -r '${RUST_BIN}' --no-date
+		${SP_PY3_ENV} -m sp_build_repo build -d '${CURDIR}/data' -D '${REPO_TMPDIR}' -r '${RUST_BIN}' --no-date
 		[ -f '${REPO_BUILT}' ]
 
 repo:		${REPO_BUILT}
