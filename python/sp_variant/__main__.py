@@ -255,6 +255,7 @@ else:
 
 
 VERSION = "1.3.0"
+FORMAT_VERSION = (1, 2)
 
 
 REPO_TYPES = [
@@ -1533,7 +1534,11 @@ def cmd_command_run(cfg):
 def cmd_features(_cfg):
     # type: (Config) -> None
     """Display the features supported by storpool_variant."""
-    print("Features: repo=0.2 variant={ver}".format(ver=VERSION))
+    print(
+        "Features: repo=0.2 variant={ver} format={f_major}.{f_minor}".format(
+            ver=VERSION, f_major=FORMAT_VERSION[0], f_minor=FORMAT_VERSION[1]
+        )
+    )
 
 
 def jsonify(obj):
@@ -1563,7 +1568,12 @@ def cmd_show(cfg):
     if cfg.command == "all":
         data = jsonify(
             {
-                "format": {"version": {"major": 1, "minor": 2}},
+                "format": {
+                    "version": {
+                        "major": FORMAT_VERSION[0],
+                        "minor": FORMAT_VERSION[1],
+                    }
+                },
                 "version": VERSION,
                 "variants": VARIANTS,
                 "order": [var.name for var in _DETECT_ORDER],
@@ -1579,7 +1589,12 @@ def cmd_show(cfg):
             sys.exit("Invalid build variant '{name}'".format(name=cfg.command))
         data = jsonify(
             {
-                "format": {"version": {"major": 1, "minor": 2}},
+                "format": {
+                    "version": {
+                        "major": FORMAT_VERSION[0],
+                        "minor": FORMAT_VERSION[1],
+                    }
+                },
                 "version": VERSION,
                 "variant": var,
             }
