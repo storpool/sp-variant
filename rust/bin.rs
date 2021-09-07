@@ -338,17 +338,12 @@ fn cmd_show(varfull: &VariantDefTop, config: ShowConfig) {
     match config.name == "all" {
         true => print!("{}", full),
         false => {
-            let var = sp_variant::get_from(
-                varfull,
-                match &*config.name {
-                    "current" => sp_variant::detect_from(varfull)
-                        .or_exit_e_("Cannot detect the current variant")
-                        .kind
-                        .as_ref(),
-                    other => other,
-                },
-            )
-            .or_exit_e_("Invalid variant name");
+            let var = match &*config.name {
+                "current" => {
+                    sp_variant::detect_from(varfull).or_exit_e_("Cannot detect the current variant")
+                }
+                other => sp_variant::get_from(varfull, other).or_exit_e_("Invalid variant name"),
+            };
             let (major, minor) = sp_variant::get_format_version_from(varfull);
             let single = SingleVariant {
                 format: sp_variant::VariantFormat {
