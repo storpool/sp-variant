@@ -29,6 +29,16 @@ def test_get():
         spvar.get_variant("whee")
 
 
+def test_roundtrip():
+    # type: () -> None
+    """Run through the variants with some minimal sanity checks."""
+    spvar.build_variants(spvar.Config(verbose=False))
+    assert spvar.VARIANTS
+    for name in spvar.VARIANTS:
+        var = spvar.get_variant(name)
+        assert var.name == name
+
+
 def test_detect():
     # type: () -> None
     """Make sure that detect_variant() returns a reasonably valid result."""
