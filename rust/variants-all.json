@@ -1058,7 +1058,7 @@
     },
     "UBUNTU1604": {
       "builder": {
-        "alias": "ubuntu16.04",
+        "alias": "ubuntu-16.04",
         "base_image": "ubuntu:xenial",
         "kernel_package": "linux-headers",
         "utf8_locale": "C.UTF-8"
@@ -1162,7 +1162,7 @@
     },
     "UBUNTU1804": {
       "builder": {
-        "alias": "ubuntu18.04",
+        "alias": "ubuntu-18.04",
         "base_image": "ubuntu:bionic",
         "kernel_package": "linux-headers",
         "utf8_locale": "C.UTF-8"
@@ -1264,7 +1264,7 @@
     },
     "UBUNTU2004": {
       "builder": {
-        "alias": "ubuntu20.04",
+        "alias": "ubuntu-20.04",
         "base_image": "ubuntu:focal",
         "kernel_package": "linux-headers",
         "utf8_locale": "C.UTF-8"
