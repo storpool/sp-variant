@@ -261,6 +261,18 @@ pub fn get_from<'a>(
         .expect_result(|| format!("No data for the {} variant", name))
 }
 
+/// Get the variant with the specified builder alias from the supplied data.
+pub fn get_by_alias_from<'a>(
+    variants: &'a VariantDefTop,
+    alias: &str,
+) -> Result<&'a Variant, Box<dyn error::Error>> {
+    variants
+        .variants
+        .values()
+        .find(|var| var.builder.alias == alias)
+        .expect_result(|| format!("No variant with the {} alias", alias))
+}
+
 /// Get the metadata format version of the variant data.
 pub fn get_format_version() -> (u32, u32) {
     get_format_version_from(&build_variants())

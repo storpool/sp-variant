@@ -21,10 +21,14 @@ fn test_roundtrip() -> Result<(), Box<dyn error::Error>> {
         let var = &all.variants[&kind];
 
         let name = var.kind.as_ref().to_string();
-        println!("- name {}", name);
+        let alias = &var.builder.alias;
+        println!("- name {} alias {}", name, alias);
         assert_eq!(var.kind, *kind);
         assert!(!seen.contains(&name));
         seen.insert(name);
+
+        let avar = crate::get_by_alias_from(&all, alias).unwrap();
+        assert_eq!(avar.kind, *kind);
     }
 
     let mut seen_vec: Vec<String> = seen.drain().collect();
