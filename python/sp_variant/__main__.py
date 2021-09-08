@@ -1196,6 +1196,20 @@ def get_by_alias(alias, cfg=_DEFAULT_CONFIG):
     raise VariantKeyError("No variant with alias {alias}".format(alias=alias))
 
 
+def get_all_variants(cfg=_DEFAULT_CONFIG):
+    # type: (Config) -> Dict[Text, Variant]
+    """Return information about all the supported variants."""
+    build_variants(cfg)
+    return dict(VARIANTS)
+
+
+def get_all_variants_in_order(cfg=_DEFAULT_CONFIG):
+    # type: (Config) -> List[Variant]
+    """Return information about all supported variants in detect order."""
+    build_variants(cfg)
+    return list(_DETECT_ORDER)
+
+
 def detect_variant(cfg=_DEFAULT_CONFIG):
     # type: (Config) -> Variant
     """Detect the build variant for the current host."""
