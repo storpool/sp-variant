@@ -37,6 +37,8 @@ def test_roundtrip():
     for name in spvar.VARIANTS:
         var = spvar.get_variant(name)
         assert var.name == name
+        avar = spvar.get_by_alias(var.builder.alias)
+        assert avar == var
 
 
 def test_detect():

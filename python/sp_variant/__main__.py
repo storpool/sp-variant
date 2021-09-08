@@ -1186,6 +1186,16 @@ def get_variant(name, cfg=_DEFAULT_CONFIG):
         raise VariantKeyError("No variant named {name}".format(name=name))
 
 
+def get_by_alias(alias, cfg=_DEFAULT_CONFIG):
+    # type: (Text, Config) -> Variant
+    """Return the variant with the specified name."""
+    build_variants(cfg)
+    for var in VARIANTS.values():
+        if var.builder.alias == alias:
+            return var
+    raise VariantKeyError("No variant with alias {alias}".format(alias=alias))
+
+
 def detect_variant(cfg=_DEFAULT_CONFIG):
     # type: (Config) -> Variant
     """Detect the build variant for the current host."""
