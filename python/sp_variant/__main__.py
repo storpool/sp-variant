@@ -532,7 +532,7 @@ _VARIANT_DEF = [
                 "CPUPOWER": "linux-tools-generic",
                 "MCELOG": "bash",
             },
-            "builder": {"alias": "ubuntu20.04", "base_image": "ubuntu:focal"},
+            "builder": {"alias": "ubuntu-20.04", "base_image": "ubuntu:focal"},
         },
     ),
     VariantUpdate(
@@ -557,7 +557,10 @@ _VARIANT_DEF = [
                 "BINDINGS_PYTHON_CONFGET": "python-confget",
                 "BINDINGS_PYTHON_SIMPLEJSON": "python-simplejson",
             },
-            "builder": {"alias": "ubuntu18.04", "base_image": "ubuntu:bionic"},
+            "builder": {
+                "alias": "ubuntu-18.04",
+                "base_image": "ubuntu:bionic",
+            },
         },
     ),
     VariantUpdate(
@@ -581,7 +584,10 @@ _VARIANT_DEF = [
                 "LIBSSL": "libssl1.0.0",
                 "mcelog": "mcelog",
             },
-            "builder": {"alias": "ubuntu16.04", "base_image": "ubuntu:xenial"},
+            "builder": {
+                "alias": "ubuntu-16.04",
+                "base_image": "ubuntu:xenial",
+            },
         },
     ),
     Variant(
