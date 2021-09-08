@@ -3,6 +3,7 @@
 from .__main__ import (
     Config,  # noqa: H301
     Variant,
+    VariantError,
     VERSION,
     detect_variant,
     get_all_variants,
@@ -16,6 +17,7 @@ from .__main__ import (
 __all__ = (
     "Config",
     "Variant",
+    "VariantError",
     "VERSION",
     "detect_variant",
     "get_all_variants",
