@@ -39,7 +39,7 @@ ${RUST_VARIANT_JSON}:	${PYTHON_MAIN}
 
 ${RUST_BIN}:	Cargo.toml .cargo/config.toml ${RUST_SRC} ${RUST_VARIANT_JSON}
 		${SP_CARGO} sp-freeze
-		${SP_CARGO} clean
+		[ -n '${NO_CARGO_CLEAN}' ] || ${SP_CARGO} clean
 		rm -f -- Cargo.lock
 		${SP_CARGO} fmt -- --check
 		${SP_CARGO} build --release --offline
