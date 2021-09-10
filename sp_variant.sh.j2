@@ -1,0 +1,423 @@
+#!/bin/sh
+
+set -e
+
+usage()
+{
+	cat <<'EOUSAGE'
+Usage:  sp_variant command run [-N] category.command [arg...]
+	sp_variant detect
+	sp_variant features
+	sp_variant repo add
+	sp_variant show all
+	sp_variant show current
+	sp_variant show VARIANT
+EOUSAGE
+}
+
+detect_from_os_release()
+{
+	if [ ! -r /etc/os-release ]; then
+		return
+	fi
+
+	local output="$(unset ID VERSION_ID; . /etc/os-release; printf -- '%s::%s\n' "$ID" "$VERSION_ID")"
+	local os_id="${output%%::*}" version_id="${output#*::}"
+	if [ -z "$os_id" ] || [ -z "$version_id" ]; then
+		return
+	fi
+	{% for name, var in variants|dictsort %}
+	if [ "$os_id" = '{{ var.detect.os_id }}' ] && printf -- '%s\n' "$version_id" | grep -Eqe '{{ var.detect.os_version_regex.pattern }}'; then
+		printf -- '%s\n' '{{ name }}'
+		return
+	fi
+	{% endfor %}
+}
+
+cmd_detect()
+{
+	local res
+
+	if [ "$#" -ne 0 ]; then
+		usage 1>&2
+		exit 1
+	fi
+
+	res="$(detect_from_os_release)"
+	if [ -n "$res" ]; then
+		printf -- '%s\n' "$res"
+		return
+	fi
+
+	{% for name in order %}
+	if [ -r '{{ variants[name].detect.filename }}' ] && grep -Eqe '{{ variants[name].detect.regex.pattern|regexunx }}' -- '{{ variants[name].detect.filename }}'; then
+		printf -- '%s\n' '{{ name }}'
+		return
+	fi
+	{% endfor %}
+
+	echo "Could not detect the current host's build variant" 1>&2
+	exit 1
+}
+
+{% for name, var in variants_json|dictsort %}
+show_{{ name }}()
+{
+	cat <<'EOVARIANT_JSON'
+  {{ var }}
+EOVARIANT_JSON
+}
+{% endfor %}
+
+cmd_show_all()
+{
+	if [ "$#" -ne 0 ]; then
+		usage 1>&2
+		exit 1
+	fi
+
+	cat <<'EOPROLOGUE'
+{
+  "format": {
+    "version": {
+      "major": {{ format_version[0] }},
+      "minor": {{ format_version[1] }}
+    }
+  },
+  "order": [
+  {%- for name in order %}
+    "{{ name }}"{% if loop.revindex > 1 %},{% endif %}
+  {%- endfor %}
+  ],
+  "variants": {
+EOPROLOGUE
+
+  {% for name in variants|sort %}
+  printf -- '    "%s": ' '{{ name }}'
+  show_{{ name }}
+  {% if loop.revindex > 1 %}echo ','{% endif %}
+  {%- endfor %}
+
+	cat <<'EOEPILOGUE'
+  },
+  "version": "{{ version }}"
+}
+EOEPILOGUE
+}
+
+show_variant()
+{
+	local variant="$1"
+
+	cat <<'EOPROLOGUE'
+{
+  "format": {
+    "version": {
+      "major": {{ format_version[0] }},
+      "minor": {{ format_version[1] }}
+    }
+  },
+  "variant":
+EOPROLOGUE
+
+	eval "'show_$variant'"
+
+	cat <<'EOEPILOGUE'
+  ,
+  "version": "{{ version }}"
+}
+EOEPILOGUE
+}
+
+cmd_show_current()
+{
+	if [ "$#" -ne 0 ]; then
+		usage 1>&2
+		exit 1
+	fi
+
+	local variant="$(cmd_detect)"
+	[ -n "$variant" ]
+
+	show_variant "$variant"
+}
+
+run_command()
+{
+	local name="$1" noop="$2" command="$3"
+	shift 3
+
+	local cmd_cat="${command%%.*}" cmd_item="${command#*.}"
+	if [ "$command" = "$cmd_cat" ] || [ "$cmd_item" != "${cmd_item%.*}" ]; then
+		echo "Invalid command specification '$command'" 1>&2
+		exit 1
+	fi
+
+	case "$name" in
+		{% for name, var in variants|dictsort %}
+		{{ name }})
+			case "$cmd_cat" in
+				{% for cat_name in var.commands._fields|sort %}
+				{{ cat_name }})
+					case "$cmd_item" in
+						{% for cmd_name in var.commands|attr(cat_name)|attr("_fields")|sort %}
+						{{ cmd_name }})
+							$noop {% for word in var.commands|attr(cat_name)|attr(cmd_name) %}'{{ word }}' {% endfor %} "$@"
+							;;
+						{% endfor %}
+
+						*)
+							echo "Invalid command '$cmd_item' in the '$cmd_cat' category" 1>&2
+							exit 1
+							;;
+					esac
+					;;
+				{% endfor %}
+
+				*)
+					echo "Invalid command category '$cmd_cat'" 1>&2
+					exit 1
+					;;
+			esac
+			;;
+		{% endfor %}
+
+		*)
+			echo "Internal error: invalid variant '$name'" 1>&2
+			exit 1
+			;;
+	esac
+}
+
+copy_file()
+{
+	local src="$1" dstdir="$2"
+	if [ ! -f "$src" ]; then
+		echo "Internal error: no $src file to copy to $dstdir" 1>&2
+		exit 1
+	fi
+	if [ -z "$dstdir" ]; then
+		echo "Internal error: no destination specified for $src" 1>&2
+		exit 1
+	fi
+	if [ ! -d "$dstdir" ]; then
+		echo "Internal error: no $dstdir directory" 1>&2
+		exit 1
+	fi
+
+	local dst="$dstdir/$(basename -- "$src")"
+	install -o root -g root -m 644 -- "$src" "$dst"
+}
+
+repo_add_extension()
+{
+	local filename="$1" repotype="$2"
+	local basename="${filename%.*}"
+	local ext="${filename##*.}"
+
+	local suffix='-invalid'
+	case "$repotype" in
+		{% for rtype, rdef in repotypes|dictsort %}
+		{{ rtype }})
+			suffix='{{ rdef.extension }}'
+			;;
+		{% endfor %}
+
+		*)
+			echo "Invalid repository type '$repotype'" 1>&2
+			exit 1
+			;;
+	esac
+
+	printf -- '%s%s.%s\n' "$basename" "$suffix" "$ext"
+}
+
+repo_add_yum()
+{
+	local name="$1" vdir="$2" repotype="$3" yumdef="$4" keyring="$5"
+
+	local yumbase="$(basename -- "$yumdef")"
+	local repofile="$(repo_add_extension "$yumbase" "$repotype")"
+	[ -n "$repofile" ]
+	copy_file "$vdir/$repofile" /etc/yum.repos.d
+
+	local keybase="$(basename -- "$keyring")"
+	copy_file "$vdir/$keybase" /etc/pki/rpm-gpg
+
+	if [ -n "$(command -v rpmkeys)" ]; then
+		rpmkeys --import "/etc/pki/rpm-gpg/$(basename -- "$keybase")"
+	fi
+
+	yum --disablerepo='*' --enablerepo="storpool-$repotype" clean metadata
+}
+
+repo_add_deb()
+{
+	local name="$1" vdir="$2" repotype="$3" srcdef="$4" keyring="$5" packages="$6"
+
+	# $packages is unquoted on purpose: there may be more than one.
+	run_command "$name" '' package.install $packages
+
+	local srcbase="$(basename -- "$srcdef")"
+	local repofile="$(repo_add_extension "$srcbase" "$repotype")"
+	[ -n "$repofile" ]
+	copy_file "$vdir/$repofile" /etc/apt/sources.list.d
+
+	local keybase="$(basename -- "$keyring")"
+	copy_file "$vdir/$keybase" /usr/share/keyrings
+
+	apt-get update
+}
+
+cmd_repo_add()
+{
+	local repodir="$(dirname -- "$0")" repotype='contrib'
+	local o
+	while getopts 'd:t:' o; do
+		case "$o" in
+			d)
+				repodir="$OPTARG"
+				;;
+
+			t)
+				repotype="$OPTARG"
+				;;
+
+			*)
+				usage 1>&2
+				exit 1
+				;;
+		esac
+	done
+	shift "$((OPTIND - 1))"
+	if [ "$#" -ne 0 ]; then
+		usage 1>&2
+		exit 1
+	fi
+
+	local variant="$(cmd_detect)"
+	local vdir="$repodir/$variant"
+	if [ ! -d "$vdir" ]; then
+		echo "No $vdir directory" 1>&2
+		exit 1
+	fi
+
+	case "$variant" in
+		{% for name, var in variants|dictsort %}
+		{{ name }})
+			{% if var.family == "debian" %}
+			repo_add_deb '{{ name }}' "$vdir" "$repotype" '{{ var.repo.sources }}' '{{ var.repo.keyring }}' '{{ var.repo.req_packages|join(" ") }}'
+			{% else %}
+			repo_add_yum '{{ name }}' "$vdir" "$repotype" '{{ var.repo.yumdef }}' '{{ var.repo.keyring }}'
+			{% endif %}
+			;;
+		{% endfor %}
+	esac
+}
+
+cmd_command_run()
+{
+	local noop=''
+	while getopts 'N' o; do
+		case "$o" in
+			N)
+				noop='echo'
+				;;
+
+			*)
+				usage 1>&2
+				exit 1
+				;;
+		esac
+	done
+	shift "$((OPTIND - 1))"
+
+	local variant="$(cmd_detect)"
+	[ -n "$variant" ]
+
+	run_command "$variant" "$noop" "$@"
+}
+
+cmd_command()
+{
+	case "$1" in
+		run)
+			shift
+			cmd_command_run "$@"
+			;;
+
+		*)
+			usage 1>&2
+			exit 1
+			;;
+	esac
+}
+
+cmd_features()
+{
+	echo 'Features: format={{ format_version[0] }}.{{ format_version[1] }} version={{ version }}'
+}
+
+case "$1" in
+	command)
+		shift
+		cmd_command "$@"
+		;;
+
+	detect)
+		shift
+		cmd_detect "$@"
+		;;
+
+	features)
+		shift
+		cmd_features "$@"
+		;;
+
+	repo)
+		shift
+		case "$1" in
+			add)
+				shift
+				cmd_repo_add "$@"
+				;;
+
+			*)
+				usage 1>&2
+				exit 1
+				;;
+		esac
+		;;
+
+	show)
+		shift
+		case "$1" in
+			all)
+				shift
+				cmd_show_all "$@"
+				;;
+
+			current)
+				shift
+				cmd_show_current "$@"
+				;;
+
+			{% for name in variants|sort %}
+			{{ name }})
+				show_variant '{{ name }}'
+				;;
+			{% endfor %}
+
+			*)
+				usage 1>&2
+				exit 1
+				;;
+		esac
+		;;
+
+	*)
+		usage 1>&2
+		exit 1
+		;;
+esac
+
