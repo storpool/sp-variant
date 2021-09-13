@@ -572,7 +572,7 @@
         "MCELOG": "mcelog"
       },
       "repo": {
-        "codename": "unstable",
+        "codename": "bullseye",
         "keyring": "debian/repo/storpool-keyring.gpg",
         "req_packages": [
           "ca-certificates"

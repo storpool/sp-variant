@@ -454,7 +454,8 @@ _VARIANT_DEF = [
             os_version_regex=re.compile(r"^11$"),
         ),
         updates={
-            "builder": {"alias": "debian11", "base_image": "debian:bullseye"}
+            "repo": {"codename": "bullseye"},
+            "builder": {"alias": "debian11", "base_image": "debian:bullseye"},
         },
     ),
     VariantUpdate(
