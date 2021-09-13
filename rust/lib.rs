@@ -137,6 +137,8 @@ pub struct Variant {
     pub kind: VariantKind,
     /// The OS "family" that this distribution belongs to.
     pub family: String,
+    /// The name of the variant that this one is based on.
+    pub parent: String,
     /// The ways to check whether we are running this variant.
     pub detect: Detect,
     /// The OS commands to execute for particular purposes.

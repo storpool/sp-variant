@@ -110,6 +110,7 @@ try:
         "Variant",
         [
             ("name", Text),
+            ("parent", Text),
             ("family", Text),
             ("detect", Detect),
             ("commands", Commands),
@@ -215,6 +216,7 @@ except ImportError:
         "Variant",
         [
             "name",
+            "parent",
             "family",
             "detect",
             "commands",
@@ -332,6 +334,7 @@ _DEFAULT_CONFIG = Config()
 _VARIANT_DEF = [
     Variant(
         name="DEBIAN12",
+        parent="",
         family="debian",
         detect=Detect(
             filename="/etc/os-release",
@@ -593,6 +596,7 @@ _VARIANT_DEF = [
     ),
     Variant(
         name="CENTOS8",
+        parent="",
         family="redhat",
         detect=Detect(
             filename="/etc/redhat-release",
@@ -1138,6 +1142,7 @@ def merge_into_parent(cfg, parent, child):
     return update_namedtuple(
         Variant(
             name=child.name,
+            parent=parent.name,
             family=parent.family,
             detect=child.detect,
             commands=parent.commands,
