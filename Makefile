@@ -56,7 +56,11 @@ ${SH_BIN}:	${SH_SRC} python/sp_build_repo/subst.py ${PYTHON_MAIN}
 test-docker:	repo
 		${SP_PY3_ENV} -m test_docker -r '${REPO_BUILT}' -v
 
-clean:		clean-repo clean-rust clean-sh
+clean:		clean-py clean-repo clean-rust clean-sh
+
+clean-py:
+		find -- '${CURDIR}/python' -type d \( -name __pycache__ -or -name '*.egg-info' \) -exec rm -rf -- '{}' +
+		find -- '${CURDIR}/python' -type f -name '*.pyc' -exec rm -- '{}' +
 
 clean-repo:
 		rm -rf -- '${REPO_TMPDIR}'
@@ -68,4 +72,4 @@ clean-rust:
 clean-sh:
 		rm -f -- '${SH_BIN}'
 
-.PHONY:		all repo test-docker clean clean-repo clean-rust clean-sh
+.PHONY:		all repo test-docker clean clean-py clean-repo clean-rust clean-sh
