@@ -279,6 +279,7 @@ show_ALMA8()
     "PYTHON_SIMPLEJSON": "python2-simplejson",
     "UDEV": "systemd"
   },
+  "parent": "CENTOS8",
   "repo": {
     "keyring": "redhat/repo/RPM-GPG-KEY-StorPool",
     "yumdef": "redhat/repo/storpool-centos.repo"
@@ -372,6 +373,7 @@ show_CENTOS6()
     "PYTHON_SIMPLEJSON": "python-simplejson",
     "UDEV": "udev"
   },
+  "parent": "CENTOS7",
   "repo": {
     "keyring": "redhat/repo/RPM-GPG-KEY-StorPool",
     "yumdef": "redhat/repo/storpool-centos.repo"
@@ -465,6 +467,7 @@ show_CENTOS7()
     "PYTHON_SIMPLEJSON": "python2-simplejson",
     "UDEV": "systemd"
   },
+  "parent": "CENTOS8",
   "repo": {
     "keyring": "redhat/repo/RPM-GPG-KEY-StorPool",
     "yumdef": "redhat/repo/storpool-centos.repo"
@@ -562,6 +565,7 @@ show_CENTOS8()
     "PYTHON_SIMPLEJSON": "python2-simplejson",
     "UDEV": "systemd"
   },
+  "parent": "",
   "repo": {
     "keyring": "redhat/repo/RPM-GPG-KEY-StorPool",
     "yumdef": "redhat/repo/storpool-centos.repo"
@@ -665,6 +669,7 @@ show_DEBIAN10()
     "LIBSSL": "libssl1.1",
     "MCELOG": "mcelog"
   },
+  "parent": "DEBIAN11",
   "repo": {
     "codename": "buster",
     "keyring": "debian/repo/storpool-keyring.gpg",
@@ -773,6 +778,7 @@ show_DEBIAN11()
     "LIBSSL": "libssl1.1",
     "MCELOG": "mcelog"
   },
+  "parent": "DEBIAN12",
   "repo": {
     "codename": "bullseye",
     "keyring": "debian/repo/storpool-keyring.gpg",
@@ -881,6 +887,7 @@ show_DEBIAN12()
     "LIBSSL": "libssl1.1",
     "MCELOG": "mcelog"
   },
+  "parent": "",
   "repo": {
     "codename": "unstable",
     "keyring": "debian/repo/storpool-keyring.gpg",
@@ -989,6 +996,7 @@ show_DEBIAN9()
     "LIBSSL": "libssl1.1",
     "MCELOG": "mcelog"
   },
+  "parent": "DEBIAN10",
   "repo": {
     "codename": "stretch",
     "keyring": "debian/repo/storpool-keyring.gpg",
@@ -1088,6 +1096,7 @@ show_ORACLE7()
     "PYTHON_SIMPLEJSON": "python2-simplejson",
     "UDEV": "systemd"
   },
+  "parent": "CENTOS7",
   "repo": {
     "keyring": "redhat/repo/RPM-GPG-KEY-StorPool",
     "yumdef": "redhat/repo/storpool-centos.repo"
@@ -1185,6 +1194,7 @@ show_RHEL8()
     "PYTHON_SIMPLEJSON": "python2-simplejson",
     "UDEV": "systemd"
   },
+  "parent": "CENTOS8",
   "repo": {
     "keyring": "redhat/repo/RPM-GPG-KEY-StorPool",
     "yumdef": "redhat/repo/storpool-centos.repo"
@@ -1282,6 +1292,7 @@ show_ROCKY8()
     "PYTHON_SIMPLEJSON": "python2-simplejson",
     "UDEV": "systemd"
   },
+  "parent": "CENTOS8",
   "repo": {
     "keyring": "redhat/repo/RPM-GPG-KEY-StorPool",
     "yumdef": "redhat/repo/storpool-centos.repo"
@@ -1386,6 +1397,7 @@ show_UBUNTU1604()
     "MCELOG": "bash",
     "mcelog": "mcelog"
   },
+  "parent": "UBUNTU1804",
   "repo": {
     "codename": "xenial",
     "keyring": "debian/repo/storpool-keyring.gpg",
@@ -1495,6 +1507,7 @@ show_UBUNTU1804()
     "LIBSSL": "libssl1.1",
     "MCELOG": "bash"
   },
+  "parent": "UBUNTU2004",
   "repo": {
     "codename": "bionic",
     "keyring": "debian/repo/storpool-keyring.gpg",
@@ -1603,6 +1616,7 @@ show_UBUNTU2004()
     "LIBSSL": "libssl1.1",
     "MCELOG": "bash"
   },
+  "parent": "DEBIAN11",
   "repo": {
     "codename": "focal",
     "keyring": "debian/repo/storpool-keyring.gpg",
