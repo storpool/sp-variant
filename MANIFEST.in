@@ -1,0 +1,11 @@
+include Cargo.toml
+include Makefile
+include MANIFEST-build-repo.in
+include NEWS.md
+include setup-build-repo.cfg
+include sp_variant.sh.j2
+include tox.ini
+recursive-include .cargo *.toml
+recursive-include data *
+recursive-include python *.py *.pyi *.typed
+recursive-include rust *.rs *.json

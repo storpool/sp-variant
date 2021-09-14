@@ -95,14 +95,15 @@ pydist-build-repo:
 		rm -rf build
 		[ ! -d dist ] || find dist -type f \( -name 'sp-build-repo*' -or -name 'sp_build_repo*' \) -delete
 		[ ! -f setup-variant.cfg ]
-		[ ! -f MANIFEST.in ]
+		[ ! -f MANIFEST-variant.in ]
 		[ -f setup-build-repo.cfg ]
 		[ -f MANIFEST-build-repo.in ]
+		mv -fv MANIFEST.in MANIFEST-variant.in
 		mv -fv setup.cfg setup-variant.cfg
 		cp -fv setup-build-repo.cfg setup.cfg
 		cp -fv MANIFEST-build-repo.in MANIFEST.in
-		${SP_PYTHON3} -m build --sdist || { mv -fv setup-variant.cfg setup.cfg; rm -f MANIFEST.in; false; }
+		${SP_PYTHON3} -m build --sdist || { mv -fv MANIFEST-variant.in MANIFEST.in; mv -fv setup-variant.cfg setup.cfg; false; }
+		mv -fv MANIFEST-variant.in MANIFEST.in
 		mv -fv setup-variant.cfg setup.cfg
-		rm -f MANIFEST.in
 
 .PHONY:		all repo test test-trivial test-docker test-tox-delay clean clean-py clean-repo clean-rust clean-sh pydist pydist-build-repo
