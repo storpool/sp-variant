@@ -79,4 +79,9 @@ clean-rust:
 clean-sh:
 		rm -f -- '${SH_BIN}'
 
-.PHONY:		all repo test-docker clean clean-py clean-repo clean-rust clean-sh
+pydist:
+		rm -rf build
+		[ ! -d dist ] || find dist -type f \( -name 'sp-variant*' -or -name 'sp_variant*' \) -delete
+		${SP_PYTHON3} -m build --sdist --wheel
+
+.PHONY:		all repo test-docker clean clean-py clean-repo clean-rust clean-sh pydist
