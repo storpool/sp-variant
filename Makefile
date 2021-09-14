@@ -23,6 +23,10 @@ REPO_BUILT=	${REPO_TMPDIR}/add-storpool-repo.tar.gz
 TEMP_CURRENT_JSON?=	${CURDIR}/current-variant.json
 
 all:		${RUST_BIN} ${SH_BIN}
+
+test:		test-trivial test-tox-delay
+
+test-trivial:	all
 		${SP_PY3_INVOKE} show current > '${TEMP_CURRENT_JSON}'
 		${RUST_BIN} features
 		${RUST_BIN} detect
@@ -36,7 +40,7 @@ all:		${RUST_BIN} ${SH_BIN}
 		${SP_PY3_INVOKE} command list
 		${SP_PY3_INVOKE} show all | diff -u '${CURDIR}/rust/variants-all.json' -
 
-${REPO_BUILT}:	all
+${REPO_BUILT}:	all test-trivial
 		rm -rf -- '${REPO_TMPDIR}'
 		[ ! -f '${REPO_BUILT}' ]
 		mkdir -- '${REPO_TMPDIR}'
@@ -101,4 +105,4 @@ pydist-build-repo:
 		mv -fv setup-variant.cfg setup.cfg
 		rm -f MANIFEST.in
 
-.PHONY:		all repo test-docker test-tox-delay clean clean-py clean-repo clean-rust clean-sh pydist pydist-build-repo
+.PHONY:		all repo test test-trivial test-docker test-tox-delay clean clean-py clean-repo clean-rust clean-sh pydist pydist-build-repo
