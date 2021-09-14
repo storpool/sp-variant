@@ -15,6 +15,9 @@ import jinja2
 from sp_variant import __main__ as vmain
 
 
+VERSION = "0.1.0"
+
+
 @dataclasses.dataclass(frozen=True)
 class Config(cfg_diag.ConfigDiag):
     """Configuration for the repository setup."""
