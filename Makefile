@@ -62,6 +62,9 @@ ${SH_BIN}:	${SH_SRC} python/sp_build_repo/subst.py ${PYTHON_MAIN}
 test-docker:	repo
 		${SP_PY3_ENV} -m test_docker -r '${REPO_BUILT}' -v
 
+test-tox-delay:
+		tox_delay -p all -e unit-tests-2,unit-tests-3 -- -p all
+
 clean:		clean-py clean-repo clean-rust clean-sh
 
 clean-py:
@@ -98,4 +101,4 @@ pydist-build-repo:
 		mv -fv setup-variant.cfg setup.cfg
 		rm -f MANIFEST.in
 
-.PHONY:		all repo test-docker clean clean-py clean-repo clean-rust clean-sh pydist pydist-build-repo
+.PHONY:		all repo test-docker test-tox-delay clean clean-py clean-repo clean-rust clean-sh pydist pydist-build-repo
