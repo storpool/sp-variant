@@ -123,6 +123,8 @@ pub struct Builder {
     pub alias: String,
     /// The base Docker image that the builder is generated from.
     pub base_image: String,
+    /// The branch used by the sp-pkg tool to specify the variant.
+    pub branch: String,
     /// The base kernel OS package.
     pub kernel_package: String,
     /// The name of the locale to use for clean UTF-8 output.

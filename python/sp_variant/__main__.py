@@ -101,6 +101,7 @@ try:
         [
             ("alias", Text),
             ("base_image", Text),
+            ("branch", Text),
             ("kernel_package", Text),
             ("utf8_locale", Text),
         ],
@@ -207,6 +208,7 @@ except ImportError:
         [
             "alias",
             "base_image",
+            "branch",
             "kernel_package",
             "utf8_locale",
         ],
@@ -436,6 +438,7 @@ _VARIANT_DEF = [
         builder=Builder(
             alias="debian12",
             base_image="debian:unstable",
+            branch="debian/unstable",
             kernel_package="linux-headers",
             utf8_locale="C.UTF-8",
         ),
@@ -458,7 +461,11 @@ _VARIANT_DEF = [
         ),
         updates={
             "repo": {"codename": "bullseye"},
-            "builder": {"alias": "debian11", "base_image": "debian:bullseye"},
+            "builder": {
+                "alias": "debian11",
+                "base_image": "debian:bullseye",
+                "branch": "debian/bullseye",
+            },
         },
     ),
     VariantUpdate(
@@ -487,7 +494,11 @@ _VARIANT_DEF = [
                 "BINDINGS_PYTHON_CONFGET": "python-confget",
                 "BINDINGS_PYTHON_SIMPLEJSON": "python-simplejson",
             },
-            "builder": {"alias": "debian10", "base_image": "debian:buster"},
+            "builder": {
+                "alias": "debian10",
+                "base_image": "debian:buster",
+                "branch": "debian/buster",
+            },
         },
     ),
     VariantUpdate(
@@ -511,7 +522,11 @@ _VARIANT_DEF = [
                 "codename": "stretch",
                 "req_packages": ["apt-transport-https", "ca-certificates"],
             },
-            "builder": {"alias": "debian9", "base_image": "debian:stretch"},
+            "builder": {
+                "alias": "debian9",
+                "base_image": "debian:stretch",
+                "branch": "debian/stretch",
+            },
         },
     ),
     VariantUpdate(
@@ -536,7 +551,11 @@ _VARIANT_DEF = [
                 "CPUPOWER": "linux-tools-generic",
                 "MCELOG": "bash",
             },
-            "builder": {"alias": "ubuntu-20.04", "base_image": "ubuntu:focal"},
+            "builder": {
+                "alias": "ubuntu-20.04",
+                "base_image": "ubuntu:focal",
+                "branch": "ubuntu/focal",
+            },
         },
     ),
     VariantUpdate(
@@ -564,6 +583,7 @@ _VARIANT_DEF = [
             "builder": {
                 "alias": "ubuntu-18.04",
                 "base_image": "ubuntu:bionic",
+                "branch": "ubuntu/bionic",
             },
         },
     ),
@@ -591,6 +611,7 @@ _VARIANT_DEF = [
             "builder": {
                 "alias": "ubuntu-16.04",
                 "base_image": "ubuntu:xenial",
+                "branch": "ubuntu/xenial",
             },
         },
     ),
@@ -699,6 +720,7 @@ fi
         builder=Builder(
             alias="centos8",
             base_image="centos:8",
+            branch="centos/8",
             kernel_package="kernel-core",
             utf8_locale="C.utf8",
         ),
@@ -751,6 +773,7 @@ fi
             "builder": {
                 "alias": "centos7",
                 "base_image": "centos:7",
+                "branch": "centos/7",
                 "kernel_package": "kernel",
                 "utf8_locale": "C",
             },
@@ -783,6 +806,7 @@ fi
             "builder": {
                 "alias": "centos6",
                 "base_image": "centos:6",
+                "branch": "centos/6",
             },
         },
     ),
@@ -796,7 +820,11 @@ fi
             os_version_regex=re.compile(r"^7(?:$|\.[0-9])"),
         ),
         updates={
-            "builder": {"alias": "oracle7", "base_image": "IGNORE"},
+            "builder": {
+                "alias": "oracle7",
+                "base_image": "IGNORE",
+                "branch": "",
+            },
         },
     ),
     VariantUpdate(
@@ -853,7 +881,11 @@ fi
                     ]
                 },
             },
-            "builder": {"alias": "rhel8", "base_image": "redhat/ubi8:reg"},
+            "builder": {
+                "alias": "rhel8",
+                "base_image": "redhat/ubi8:reg",
+                "branch": "",
+            },
         },
     ),
     VariantUpdate(
@@ -872,6 +904,7 @@ fi
             "builder": {
                 "alias": "rocky8",
                 "base_image": "rockylinux/rockylinux:8",
+                "branch": "",
             },
         },
     ),
@@ -890,6 +923,7 @@ fi
             "builder": {
                 "alias": "alma8",
                 "base_image": "almalinux/almalinux:8",
+                "branch": "",
             },
         },
     ),
