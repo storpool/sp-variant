@@ -198,6 +198,7 @@ show_ALMA8()
   "builder": {
     "alias": "alma8",
     "base_image": "almalinux/almalinux:8",
+    "branch": "",
     "kernel_package": "kernel-core",
     "utf8_locale": "C.utf8"
   },
@@ -296,6 +297,7 @@ show_CENTOS6()
   "builder": {
     "alias": "centos6",
     "base_image": "centos:6",
+    "branch": "centos/6",
     "kernel_package": "kernel",
     "utf8_locale": "C"
   },
@@ -390,6 +392,7 @@ show_CENTOS7()
   "builder": {
     "alias": "centos7",
     "base_image": "centos:7",
+    "branch": "centos/7",
     "kernel_package": "kernel",
     "utf8_locale": "C"
   },
@@ -484,6 +487,7 @@ show_CENTOS8()
   "builder": {
     "alias": "centos8",
     "base_image": "centos:8",
+    "branch": "centos/8",
     "kernel_package": "kernel-core",
     "utf8_locale": "C.utf8"
   },
@@ -582,6 +586,7 @@ show_DEBIAN10()
   "builder": {
     "alias": "debian10",
     "base_image": "debian:buster",
+    "branch": "debian/buster",
     "kernel_package": "linux-headers",
     "utf8_locale": "C.UTF-8"
   },
@@ -691,6 +696,7 @@ show_DEBIAN11()
   "builder": {
     "alias": "debian11",
     "base_image": "debian:bullseye",
+    "branch": "debian/bullseye",
     "kernel_package": "linux-headers",
     "utf8_locale": "C.UTF-8"
   },
@@ -800,6 +806,7 @@ show_DEBIAN12()
   "builder": {
     "alias": "debian12",
     "base_image": "debian:unstable",
+    "branch": "debian/unstable",
     "kernel_package": "linux-headers",
     "utf8_locale": "C.UTF-8"
   },
@@ -909,6 +916,7 @@ show_DEBIAN9()
   "builder": {
     "alias": "debian9",
     "base_image": "debian:stretch",
+    "branch": "debian/stretch",
     "kernel_package": "linux-headers",
     "utf8_locale": "C.UTF-8"
   },
@@ -1019,6 +1027,7 @@ show_ORACLE7()
   "builder": {
     "alias": "oracle7",
     "base_image": "IGNORE",
+    "branch": "",
     "kernel_package": "kernel",
     "utf8_locale": "C"
   },
@@ -1113,6 +1122,7 @@ show_RHEL8()
   "builder": {
     "alias": "rhel8",
     "base_image": "redhat/ubi8:reg",
+    "branch": "",
     "kernel_package": "kernel-core",
     "utf8_locale": "C.utf8"
   },
@@ -1211,6 +1221,7 @@ show_ROCKY8()
   "builder": {
     "alias": "rocky8",
     "base_image": "rockylinux/rockylinux:8",
+    "branch": "",
     "kernel_package": "kernel-core",
     "utf8_locale": "C.utf8"
   },
@@ -1309,6 +1320,7 @@ show_UBUNTU1604()
   "builder": {
     "alias": "ubuntu-16.04",
     "base_image": "ubuntu:xenial",
+    "branch": "ubuntu/xenial",
     "kernel_package": "linux-headers",
     "utf8_locale": "C.UTF-8"
   },
@@ -1420,6 +1432,7 @@ show_UBUNTU1804()
   "builder": {
     "alias": "ubuntu-18.04",
     "base_image": "ubuntu:bionic",
+    "branch": "ubuntu/bionic",
     "kernel_package": "linux-headers",
     "utf8_locale": "C.UTF-8"
   },
@@ -1529,6 +1542,7 @@ show_UBUNTU2004()
   "builder": {
     "alias": "ubuntu-20.04",
     "base_image": "ubuntu:focal",
+    "branch": "ubuntu/focal",
     "kernel_package": "linux-headers",
     "utf8_locale": "C.UTF-8"
   },
