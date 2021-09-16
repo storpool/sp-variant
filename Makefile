@@ -1,6 +1,7 @@
 #!/usr/bin/make -f
 
-RUST_SRC=	$(wildcard rust/*.rs)
+RUST_DATA=	rust/data.rs
+RUST_SRC=	rust/bin.rs rust/lib.rs rust/tests.rs rust/yai.rs ${RUST_DATA}
 RUST_RELEASE=	${CURDIR}/target/x86_64-unknown-linux-musl/release
 RUST_BIN=	${RUST_RELEASE}/storpool_variant
 RUST_VARIANT_JSON=	${CURDIR}/rust/variants-all.json
@@ -51,6 +52,10 @@ repo:		${REPO_BUILT}
 
 ${RUST_VARIANT_JSON}:	${PYTHON_MAIN}
 		${SP_PY3_INVOKE} show all > '${RUST_VARIANT_JSON}' || { rm -f -- '${RUST_VARIANT_JSON}'; false; }
+
+${RUST_DATA}:	${RUST_DATA}.j2 python/sp_build_repo/subst.py ${PYTHON_MAIN}
+		${SP_PY3_ENV} -m sp_build_repo.subst -m 644 -t '${RUST_DATA}.j2' -o '${RUST_DATA}' -v || { rm -f -- '${RUST_DATA}'; false; }
+		${SP_CARGO} fmt -- '${RUST_DATA}'
 
 ${RUST_BIN}:	Cargo.toml .cargo/config.toml ${RUST_SRC} ${RUST_VARIANT_JSON}
 		${SP_CARGO} sp-freeze
