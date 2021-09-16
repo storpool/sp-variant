@@ -3026,6 +3026,8 @@ cmd_repo_add()
 			;;
 		
 	esac
+
+	install -o root -g root -m 755 -- "$0" /usr/sbin/sp_variant
 }
 
 cmd_command_run()
