@@ -23,14 +23,14 @@ pub enum VariantKind {
     CENTOS7,
     /// CENTOS8
     CENTOS8,
+    /// DEBIAN9
+    DEBIAN9,
     /// DEBIAN10
     DEBIAN10,
     /// DEBIAN11
     DEBIAN11,
     /// DEBIAN12
     DEBIAN12,
-    /// DEBIAN9
-    DEBIAN9,
     /// ORACLE7
     ORACLE7,
     /// RHEL8
@@ -50,10 +50,10 @@ impl VariantKind {
     const CENTOS6_NAME: &'static str = "CENTOS6";
     const CENTOS7_NAME: &'static str = "CENTOS7";
     const CENTOS8_NAME: &'static str = "CENTOS8";
+    const DEBIAN9_NAME: &'static str = "DEBIAN9";
     const DEBIAN10_NAME: &'static str = "DEBIAN10";
     const DEBIAN11_NAME: &'static str = "DEBIAN11";
     const DEBIAN12_NAME: &'static str = "DEBIAN12";
-    const DEBIAN9_NAME: &'static str = "DEBIAN9";
     const ORACLE7_NAME: &'static str = "ORACLE7";
     const RHEL8_NAME: &'static str = "RHEL8";
     const ROCKY8_NAME: &'static str = "ROCKY8";
@@ -69,10 +69,10 @@ impl AsRef<str> for VariantKind {
             VariantKind::CENTOS6 => VariantKind::CENTOS6_NAME,
             VariantKind::CENTOS7 => VariantKind::CENTOS7_NAME,
             VariantKind::CENTOS8 => VariantKind::CENTOS8_NAME,
+            VariantKind::DEBIAN9 => VariantKind::DEBIAN9_NAME,
             VariantKind::DEBIAN10 => VariantKind::DEBIAN10_NAME,
             VariantKind::DEBIAN11 => VariantKind::DEBIAN11_NAME,
             VariantKind::DEBIAN12 => VariantKind::DEBIAN12_NAME,
-            VariantKind::DEBIAN9 => VariantKind::DEBIAN9_NAME,
             VariantKind::ORACLE7 => VariantKind::ORACLE7_NAME,
             VariantKind::RHEL8 => VariantKind::RHEL8_NAME,
             VariantKind::ROCKY8 => VariantKind::ROCKY8_NAME,
@@ -92,10 +92,10 @@ impl FromStr for VariantKind {
             VariantKind::CENTOS6_NAME => Ok(VariantKind::CENTOS6),
             VariantKind::CENTOS7_NAME => Ok(VariantKind::CENTOS7),
             VariantKind::CENTOS8_NAME => Ok(VariantKind::CENTOS8),
+            VariantKind::DEBIAN9_NAME => Ok(VariantKind::DEBIAN9),
             VariantKind::DEBIAN10_NAME => Ok(VariantKind::DEBIAN10),
             VariantKind::DEBIAN11_NAME => Ok(VariantKind::DEBIAN11),
             VariantKind::DEBIAN12_NAME => Ok(VariantKind::DEBIAN12),
-            VariantKind::DEBIAN9_NAME => Ok(VariantKind::DEBIAN9),
             VariantKind::ORACLE7_NAME => Ok(VariantKind::ORACLE7),
             VariantKind::RHEL8_NAME => Ok(VariantKind::RHEL8),
             VariantKind::ROCKY8_NAME => Ok(VariantKind::ROCKY8),

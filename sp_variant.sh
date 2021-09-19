@@ -47,6 +47,11 @@ detect_from_os_release()
 		return
 	fi
 	
+	if [ "$os_id" = 'debian' ] && printf -- '%s\n' "$version_id" | grep -Eqe '^9$'; then
+		printf -- '%s\n' 'DEBIAN9'
+		return
+	fi
+	
 	if [ "$os_id" = 'debian' ] && printf -- '%s\n' "$version_id" | grep -Eqe '^10$'; then
 		printf -- '%s\n' 'DEBIAN10'
 		return
@@ -59,11 +64,6 @@ detect_from_os_release()
 	
 	if [ "$os_id" = 'debian' ] && printf -- '%s\n' "$version_id" | grep -Eqe '^12$'; then
 		printf -- '%s\n' 'DEBIAN12'
-		return
-	fi
-	
-	if [ "$os_id" = 'debian' ] && printf -- '%s\n' "$version_id" | grep -Eqe '^9$'; then
-		printf -- '%s\n' 'DEBIAN9'
 		return
 	fi
 	
@@ -579,6 +579,117 @@ show_CENTOS8()
 EOVARIANT_JSON
 }
 
+show_DEBIAN9()
+{
+	cat <<'EOVARIANT_JSON'
+  {
+  "builder": {
+    "alias": "debian9",
+    "base_image": "debian:stretch",
+    "branch": "debian/stretch",
+    "kernel_package": "linux-headers",
+    "utf8_locale": "C.UTF-8"
+  },
+  "commands": {
+    "package": {
+      "install": [
+        "env",
+        "DEBIAN_FRONTEND=noninteractive",
+        "apt-get",
+        "-q",
+        "-y",
+        "--no-install-recommends",
+        "install",
+        "--"
+      ],
+      "list_all": [
+        "dpkg-query",
+        "-W",
+        "-f",
+        "${Package}\\t${Version}\\t${Architecture}\\t${db:Status-Abbrev}\\n",
+        "--"
+      ],
+      "purge": [
+        "env",
+        "DEBIAN_FRONTEND=noninteractive",
+        "apt-get",
+        "-q",
+        "-y",
+        "purge",
+        "--"
+      ],
+      "remove": [
+        "env",
+        "DEBIAN_FRONTEND=noninteractive",
+        "apt-get",
+        "-q",
+        "-y",
+        "remove",
+        "--"
+      ],
+      "remove_impl": [
+        "env",
+        "DEBIAN_FRONTEND=noninteractive",
+        "dpkg",
+        "-r",
+        "--"
+      ],
+      "update_db": [
+        "apt-get",
+        "-q",
+        "-y",
+        "update"
+      ]
+    },
+    "pkgfile": {
+      "dep_query": [
+        "sh",
+        "-c",
+        "dpkg-deb -f -- \"$pkg\" 'Depends' | sed -e 's/ *, */,/g' | tr ',' \"\\n\""
+      ],
+      "install": [
+        "sh",
+        "-c",
+        "env DEBIAN_FRONTEND=noninteractive apt-get install --no-install-recommends --reinstall -y -o DPkg::Options::=--force-confnew -- $packages"
+      ]
+    }
+  },
+  "detect": {
+    "filename": "/etc/os-release",
+    "os_id": "debian",
+    "os_version_regex": "^9$",
+    "regex": "^\n                    PRETTY_NAME= .*\n                    Debian \\s+ GNU/Linux \\s+\n                    (?: stretch | 9 ) (?: \\s | / )\n                "
+  },
+  "family": "debian",
+  "file_ext": "deb",
+  "initramfs_flavor": "update-initramfs",
+  "min_sys_python": "2.7",
+  "name": "DEBIAN9",
+  "package": {
+    "BINDINGS_PYTHON": "python",
+    "BINDINGS_PYTHON_CONFGET": "python-confget",
+    "BINDINGS_PYTHON_SIMPLEJSON": "python-simplejson",
+    "CGROUP": "cgroup-tools",
+    "CPUPOWER": "linux-cpupower",
+    "LIBSSL": "libssl1.1",
+    "MCELOG": "mcelog"
+  },
+  "parent": "DEBIAN10",
+  "repo": {
+    "codename": "stretch",
+    "keyring": "debian/repo/storpool-keyring.gpg",
+    "req_packages": [
+      "apt-transport-https",
+      "ca-certificates"
+    ],
+    "sources": "debian/repo/storpool.sources",
+    "vendor": "debian"
+  },
+  "systemd_lib": "lib/systemd/system"
+}
+EOVARIANT_JSON
+}
+
 show_DEBIAN10()
 {
 	cat <<'EOVARIANT_JSON'
@@ -899,117 +1010,6 @@ show_DEBIAN12()
     "codename": "unstable",
     "keyring": "debian/repo/storpool-keyring.gpg",
     "req_packages": [
-      "ca-certificates"
-    ],
-    "sources": "debian/repo/storpool.sources",
-    "vendor": "debian"
-  },
-  "systemd_lib": "lib/systemd/system"
-}
-EOVARIANT_JSON
-}
-
-show_DEBIAN9()
-{
-	cat <<'EOVARIANT_JSON'
-  {
-  "builder": {
-    "alias": "debian9",
-    "base_image": "debian:stretch",
-    "branch": "debian/stretch",
-    "kernel_package": "linux-headers",
-    "utf8_locale": "C.UTF-8"
-  },
-  "commands": {
-    "package": {
-      "install": [
-        "env",
-        "DEBIAN_FRONTEND=noninteractive",
-        "apt-get",
-        "-q",
-        "-y",
-        "--no-install-recommends",
-        "install",
-        "--"
-      ],
-      "list_all": [
-        "dpkg-query",
-        "-W",
-        "-f",
-        "${Package}\\t${Version}\\t${Architecture}\\t${db:Status-Abbrev}\\n",
-        "--"
-      ],
-      "purge": [
-        "env",
-        "DEBIAN_FRONTEND=noninteractive",
-        "apt-get",
-        "-q",
-        "-y",
-        "purge",
-        "--"
-      ],
-      "remove": [
-        "env",
-        "DEBIAN_FRONTEND=noninteractive",
-        "apt-get",
-        "-q",
-        "-y",
-        "remove",
-        "--"
-      ],
-      "remove_impl": [
-        "env",
-        "DEBIAN_FRONTEND=noninteractive",
-        "dpkg",
-        "-r",
-        "--"
-      ],
-      "update_db": [
-        "apt-get",
-        "-q",
-        "-y",
-        "update"
-      ]
-    },
-    "pkgfile": {
-      "dep_query": [
-        "sh",
-        "-c",
-        "dpkg-deb -f -- \"$pkg\" 'Depends' | sed -e 's/ *, */,/g' | tr ',' \"\\n\""
-      ],
-      "install": [
-        "sh",
-        "-c",
-        "env DEBIAN_FRONTEND=noninteractive apt-get install --no-install-recommends --reinstall -y -o DPkg::Options::=--force-confnew -- $packages"
-      ]
-    }
-  },
-  "detect": {
-    "filename": "/etc/os-release",
-    "os_id": "debian",
-    "os_version_regex": "^9$",
-    "regex": "^\n                    PRETTY_NAME= .*\n                    Debian \\s+ GNU/Linux \\s+\n                    (?: stretch | 9 ) (?: \\s | / )\n                "
-  },
-  "family": "debian",
-  "file_ext": "deb",
-  "initramfs_flavor": "update-initramfs",
-  "min_sys_python": "2.7",
-  "name": "DEBIAN9",
-  "package": {
-    "BINDINGS_PYTHON": "python",
-    "BINDINGS_PYTHON_CONFGET": "python-confget",
-    "BINDINGS_PYTHON_SIMPLEJSON": "python-simplejson",
-    "CGROUP": "cgroup-tools",
-    "CPUPOWER": "linux-cpupower",
-    "LIBSSL": "libssl1.1",
-    "MCELOG": "mcelog"
-  },
-  "parent": "DEBIAN10",
-  "repo": {
-    "codename": "stretch",
-    "keyring": "debian/repo/storpool-keyring.gpg",
-    "req_packages": [
-      "apt-transport-https",
       "ca-certificates"
     ],
     "sources": "debian/repo/storpool.sources",
@@ -1693,6 +1693,9 @@ EOPROLOGUE
   printf -- '    "%s": ' 'CENTOS8'
   show_CENTOS8
   echo ','
+  printf -- '    "%s": ' 'DEBIAN9'
+  show_DEBIAN9
+  echo ','
   printf -- '    "%s": ' 'DEBIAN10'
   show_DEBIAN10
   echo ','
@@ -1701,9 +1704,6 @@ EOPROLOGUE
   echo ','
   printf -- '    "%s": ' 'DEBIAN12'
   show_DEBIAN12
-  echo ','
-  printf -- '    "%s": ' 'DEBIAN9'
-  show_DEBIAN9
   echo ','
   printf -- '    "%s": ' 'ORACLE7'
   show_ORACLE7
@@ -2109,6 +2109,71 @@ fi
 			esac
 			;;
 		
+		DEBIAN9)
+			case "$cmd_cat" in
+				
+				package)
+					case "$cmd_item" in
+						
+						install)
+							$noop 'env' 'DEBIAN_FRONTEND=noninteractive' 'apt-get' '-q' '-y' '--no-install-recommends' 'install' '--'  "$@"
+							;;
+						
+						list_all)
+							$noop 'dpkg-query' '-W' '-f' '${Package}\t${Version}\t${Architecture}\t${db:Status-Abbrev}\n' '--'  "$@"
+							;;
+						
+						purge)
+							$noop 'env' 'DEBIAN_FRONTEND=noninteractive' 'apt-get' '-q' '-y' 'purge' '--'  "$@"
+							;;
+						
+						remove)
+							$noop 'env' 'DEBIAN_FRONTEND=noninteractive' 'apt-get' '-q' '-y' 'remove' '--'  "$@"
+							;;
+						
+						remove_impl)
+							$noop 'env' 'DEBIAN_FRONTEND=noninteractive' 'dpkg' '-r' '--'  "$@"
+							;;
+						
+						update_db)
+							$noop 'apt-get' '-q' '-y' 'update'  "$@"
+							;;
+						
+
+						*)
+							echo "Invalid command '$cmd_item' in the '$cmd_cat' category" 1>&2
+							exit 1
+							;;
+					esac
+					;;
+				
+				pkgfile)
+					case "$cmd_item" in
+						
+						dep_query)
+							$noop 'sh' '-c' 'dpkg-deb -f -- "$pkg" 'Depends' | sed -e 's/ *, */,/g' | tr ',' "\n"'  "$@"
+							;;
+						
+						install)
+							$noop 'sh' '-c' 'env DEBIAN_FRONTEND=noninteractive apt-get install --no-install-recommends --reinstall -y -o DPkg::Options::=--force-confnew -- $packages'  "$@"
+							;;
+						
+
+						*)
+							echo "Invalid command '$cmd_item' in the '$cmd_cat' category" 1>&2
+							exit 1
+							;;
+					esac
+					;;
+				
+
+				*)
+					echo "Invalid command category '$cmd_cat'" 1>&2
+					exit 1
+					;;
+			esac
+			;;
+		
 		DEBIAN10)
 			case "$cmd_cat" in
 				
@@ -2240,71 +2305,6 @@ fi
 			;;
 		
 		DEBIAN12)
-			case "$cmd_cat" in
-				
-				package)
-					case "$cmd_item" in
-						
-						install)
-							$noop 'env' 'DEBIAN_FRONTEND=noninteractive' 'apt-get' '-q' '-y' '--no-install-recommends' 'install' '--'  "$@"
-							;;
-						
-						list_all)
-							$noop 'dpkg-query' '-W' '-f' '${Package}\t${Version}\t${Architecture}\t${db:Status-Abbrev}\n' '--'  "$@"
-							;;
-						
-						purge)
-							$noop 'env' 'DEBIAN_FRONTEND=noninteractive' 'apt-get' '-q' '-y' 'purge' '--'  "$@"
-							;;
-						
-						remove)
-							$noop 'env' 'DEBIAN_FRONTEND=noninteractive' 'apt-get' '-q' '-y' 'remove' '--'  "$@"
-							;;
-						
-						remove_impl)
-							$noop 'env' 'DEBIAN_FRONTEND=noninteractive' 'dpkg' '-r' '--'  "$@"
-							;;
-						
-						update_db)
-							$noop 'apt-get' '-q' '-y' 'update'  "$@"
-							;;
-						
-
-						*)
-							echo "Invalid command '$cmd_item' in the '$cmd_cat' category" 1>&2
-							exit 1
-							;;
-					esac
-					;;
-				
-				pkgfile)
-					case "$cmd_item" in
-						
-						dep_query)
-							$noop 'sh' '-c' 'dpkg-deb -f -- "$pkg" 'Depends' | sed -e 's/ *, */,/g' | tr ',' "\n"'  "$@"
-							;;
-						
-						install)
-							$noop 'sh' '-c' 'env DEBIAN_FRONTEND=noninteractive apt-get install --no-install-recommends --reinstall -y -o DPkg::Options::=--force-confnew -- $packages'  "$@"
-							;;
-						
-
-						*)
-							echo "Invalid command '$cmd_item' in the '$cmd_cat' category" 1>&2
-							exit 1
-							;;
-					esac
-					;;
-				
-
-				*)
-					echo "Invalid command category '$cmd_cat'" 1>&2
-					exit 1
-					;;
-			esac
-			;;
-		
-		DEBIAN9)
 			case "$cmd_cat" in
 				
 				package)
@@ -2965,6 +2965,12 @@ cmd_repo_add()
 			
 			;;
 		
+		DEBIAN9)
+			
+			repo_add_deb 'DEBIAN9' "$vdir" "$repotype" 'debian/repo/storpool.sources' 'debian/repo/storpool-keyring.gpg' 'apt-transport-https ca-certificates'
+			
+			;;
+		
 		DEBIAN10)
 			
 			repo_add_deb 'DEBIAN10' "$vdir" "$repotype" 'debian/repo/storpool.sources' 'debian/repo/storpool-keyring.gpg' 'ca-certificates'
@@ -2980,12 +2986,6 @@ cmd_repo_add()
 		DEBIAN12)
 			
 			repo_add_deb 'DEBIAN12' "$vdir" "$repotype" 'debian/repo/storpool.sources' 'debian/repo/storpool-keyring.gpg' 'ca-certificates'
-			
-			;;
-		
-		DEBIAN9)
-			
-			repo_add_deb 'DEBIAN9' "$vdir" "$repotype" 'debian/repo/storpool.sources' 'debian/repo/storpool-keyring.gpg' 'apt-transport-https ca-certificates'
 			
 			;;
 		
@@ -3134,6 +3134,10 @@ case "$1" in
 				show_variant 'CENTOS8'
 				;;
 			
+			DEBIAN9)
+				show_variant 'DEBIAN9'
+				;;
+			
 			DEBIAN10)
 				show_variant 'DEBIAN10'
 				;;
@@ -3144,10 +3148,6 @@ case "$1" in
 			
 			DEBIAN12)
 				show_variant 'DEBIAN12'
-				;;
-			
-			DEBIAN9)
-				show_variant 'DEBIAN9'
 				;;
 			
 			ORACLE7)
