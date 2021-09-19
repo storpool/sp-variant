@@ -26,7 +26,7 @@ detect_from_os_release()
 	if [ -z "$os_id" ] || [ -z "$version_id" ]; then
 		return
 	fi
-	{% for name, var in variants|dictsort %}
+	{% for name, var in variants|dictvsort %}
 	if [ "$os_id" = '{{ var.detect.os_id }}' ] && printf -- '%s\n' "$version_id" | grep -Eqe '{{ var.detect.os_version_regex.pattern }}'; then
 		printf -- '%s\n' '{{ name }}'
 		return
@@ -60,7 +60,7 @@ cmd_detect()
 	exit 1
 }
 
-{% for name, var in variants_json|dictsort %}
+{% for name, var in variants_json|dictvsort %}
 show_{{ name }}()
 {
 	cat <<'EOVARIANT_JSON'
@@ -92,7 +92,7 @@ cmd_show_all()
   "variants": {
 EOPROLOGUE
 
-  {% for name in variants|sort %}
+  {% for name in variants|vsort %}
   printf -- '    "%s": ' '{{ name }}'
   show_{{ name }}
   {% if loop.revindex > 1 %}echo ','{% endif %}
@@ -154,7 +154,7 @@ run_command()
 	fi
 
 	case "$name" in
-		{% for name, var in variants|dictsort %}
+		{% for name, var in variants|dictvsort %}
 		{{ name }})
 			case "$cmd_cat" in
 				{% for cat_name in var.commands._fields|sort %}
@@ -217,7 +217,7 @@ repo_add_extension()
 
 	local suffix='-invalid'
 	case "$repotype" in
-		{% for rtype, rdef in repotypes|dictsort %}
+		{% for rtype, rdef in repotypes|dictvsort %}
 		{{ rtype }})
 			suffix='{{ rdef.extension }}'
 			;;
@@ -303,7 +303,7 @@ cmd_repo_add()
 	fi
 
 	case "$variant" in
-		{% for name, var in variants|dictsort %}
+		{% for name, var in variants|dictvsort %}
 		{{ name }})
 			{% if var.family == "debian" %}
 			repo_add_deb '{{ name }}' "$vdir" "$repotype" '{{ var.repo.sources }}' '{{ var.repo.keyring }}' '{{ var.repo.req_packages|join(" ") }}'
@@ -404,7 +404,7 @@ case "$1" in
 				cmd_show_current "$@"
 				;;
 
-			{% for name in variants|sort %}
+			{% for name in variants|vsort %}
 			{{ name }})
 				show_variant '{{ name }}'
 				;;

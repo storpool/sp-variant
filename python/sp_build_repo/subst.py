@@ -2,11 +2,15 @@
 
 import argparse
 import dataclasses
+import functools
 import json
 import pathlib
 
+from typing import Dict, List, Tuple  # noqa: H301
+
 import cfg_diag
 import jinja2
+import trivver
 
 from sp_variant import __main__ as variant
 
@@ -71,6 +75,27 @@ def regex_un_x(value: str) -> str:
     )
 
 
+def dictvsort(
+    data: Dict[str, variant.Variant]
+) -> List[Tuple[str, variant.Variant]]:
+    """Sort a dict of variants by name, preserving some numerical order."""
+
+    def compare(
+        left: Tuple[str, variant.Variant], right: Tuple[str, variant.Variant]
+    ) -> int:
+        """Compare two variants by name."""
+        res = trivver.compare(left[0], right[0])
+        assert res != 0
+        return res
+
+    return sorted(data.items(), key=functools.cmp_to_key(compare))
+
+
+def vsort(names: List[str]) -> List[str]:
+    """Sort a list of variant names, preserving some numerical order."""
+    return sorted(names, key=trivver.key_compare)
+
+
 def build_json(var: variant.Variant) -> str:
     """Represent the variant data as a JSON string."""
     return json.dumps(variant.jsonify(var), sort_keys=True, indent=2)
@@ -87,7 +112,9 @@ def substitute(cfg: Config) -> None:
         loader=jinja2.FileSystemLoader(cfg.template.parent),
         undefined=jinja2.StrictUndefined,
     )
+    jenv.filters["dictvsort"] = dictvsort
     jenv.filters["regexunx"] = regex_un_x
+    jenv.filters["vsort"] = vsort
     jvars = {
         "format_version": variant.FORMAT_VERSION,
         "order": [var.name for var in variants],

@@ -15,14 +15,14 @@ use crate::VariantError;
 /// The supported StorPool build variants (OS distribution, version, etc).
 #[derive(Debug, Clone, PartialEq, Hash, Eq, Serialize, Deserialize)]
 pub enum VariantKind {
-    {%- for name in variants|sort -%}
+    {%- for name in variants|vsort -%}
     /// {{ name }}
     {{ name }},
     {%- endfor -%}
 }
 
 impl VariantKind {
-    {%- for name in variants|sort -%}
+    {%- for name in variants|vsort -%}
     const {{ name }}_NAME: &'static str = "{{ name }}";
     {%- endfor -%}
 }
@@ -30,7 +30,7 @@ impl VariantKind {
 impl AsRef<str> for VariantKind {
     fn as_ref(&self) -> &str {
         match self {
-            {%- for name in variants|sort -%}
+            {%- for name in variants|vsort -%}
             VariantKind::{{ name }} => VariantKind::{{ name }}_NAME,
             {%- endfor -%}
         }
@@ -42,7 +42,7 @@ impl FromStr for VariantKind {
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         match s {
-            {%- for name in variants|sort -%}
+            {%- for name in variants|vsort -%}
             VariantKind::{{ name }}_NAME => Ok(VariantKind::{{ name }}),
             {%- endfor -%}
             other => Err(VariantError::BadVariant(other.to_string())),
