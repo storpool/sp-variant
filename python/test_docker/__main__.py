@@ -20,6 +20,7 @@ import utf8_locale
 class Config(cfg_diag.ConfigDiag):
     """Runtime configuration for the Docker test runner."""
 
+    images_filter: Optional[str]
     repo_file: pathlib.Path
     utf8_env: Dict[str, str]
 
@@ -43,6 +44,12 @@ def parse_args() -> Config:
     """Parse the command-line arguments."""
     parser = argparse.ArgumentParser(prog="test_docker")
     parser.add_argument(
+        "-i",
+        "--images-filter",
+        type=str,
+        help="Only process images with names containing this string",
+    )
+    parser.add_argument(
         "-r",
         "--repo-file",
         type=pathlib.Path,
@@ -58,6 +65,7 @@ def parse_args() -> Config:
 
     args = parser.parse_args()
     return Config(
+        images_filter=args.images_filter,
         repo_file=args.repo_file,
         utf8_env=utf8_locale.get_utf8_env(),
         verbose=args.verbose,
@@ -139,6 +147,8 @@ def filter_docker_images(
             env=cfg.utf8_env,
         ).splitlines()
     )
+    if cfg.images_filter is not None:
+        images = {name for name in images if cfg.images_filter in name}
 
     res = {}
     for var in var_data.values():

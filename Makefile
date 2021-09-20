@@ -69,7 +69,7 @@ ${SH_BIN}:	${SH_SRC} python/sp_build_repo/subst.py ${PYTHON_MAIN}
 		${SP_PY3_ENV} -m sp_build_repo.subst -m 755 -t '${SH_SRC}' -o '${SH_BIN}' -v || { rm -f -- '${SH_BIN}'; false; }
 
 test-docker:	repo
-		${SP_PY3_ENV} -m test_docker -r '${REPO_BUILT}' -v
+		${SP_PY3_ENV} -m test_docker -r '${REPO_BUILT}' -v ${TEST_DOCKER_ARGS}
 
 test-tox-delay:
 		tox_delay -p all -e unit-tests-2,unit-tests-3 -- -p all
