@@ -111,6 +111,7 @@ try:
         "Variant",
         [
             ("name", Text),
+            ("descr", Text),
             ("parent", Text),
             ("family", Text),
             ("detect", Detect),
@@ -129,6 +130,7 @@ try:
         "VariantUpdate",
         [
             ("name", Text),
+            ("descr", Text),
             ("parent", Text),
             ("detect", Detect),
             ("updates", Dict[str, Any]),
@@ -218,6 +220,7 @@ except ImportError:
         "Variant",
         [
             "name",
+            "descr",
             "parent",
             "family",
             "detect",
@@ -236,6 +239,7 @@ except ImportError:
         "VariantUpdate",
         [
             "name",
+            "descr",
             "parent",
             "detect",
             "updates",
@@ -259,7 +263,7 @@ else:
 
 
 VERSION = "1.4.0"
-FORMAT_VERSION = (1, 2)
+FORMAT_VERSION = (1, 3)
 
 
 REPO_TYPES = [
@@ -336,6 +340,7 @@ _DEFAULT_CONFIG = Config()
 _VARIANT_DEF = [
     Variant(
         name="DEBIAN12",
+        descr="Debian 12.x (bookworm/unstable)",
         parent="",
         family="debian",
         detect=Detect(
@@ -445,6 +450,7 @@ _VARIANT_DEF = [
     ),
     VariantUpdate(
         name="DEBIAN11",
+        descr="Debian 11.x (bullseye)",
         parent="DEBIAN12",
         detect=Detect(
             filename="/etc/os-release",
@@ -470,6 +476,7 @@ _VARIANT_DEF = [
     ),
     VariantUpdate(
         name="DEBIAN10",
+        descr="Debian 10.x (buster)",
         parent="DEBIAN11",
         detect=Detect(
             filename="/etc/os-release",
@@ -503,6 +510,7 @@ _VARIANT_DEF = [
     ),
     VariantUpdate(
         name="DEBIAN9",
+        descr="Debian 9.x (stretch)",
         parent="DEBIAN10",
         detect=Detect(
             filename="/etc/os-release",
@@ -531,6 +539,7 @@ _VARIANT_DEF = [
     ),
     VariantUpdate(
         name="UBUNTU2004",
+        descr="Ubuntu 20.04 LTS (Focal Fossa)",
         parent="DEBIAN11",
         detect=Detect(
             filename="/etc/os-release",
@@ -560,6 +569,7 @@ _VARIANT_DEF = [
     ),
     VariantUpdate(
         name="UBUNTU1804",
+        descr="Ubuntu 18.04 LTS (Bionic Beaver)",
         parent="UBUNTU2004",
         detect=Detect(
             filename="/etc/os-release",
@@ -589,6 +599,7 @@ _VARIANT_DEF = [
     ),
     VariantUpdate(
         name="UBUNTU1604",
+        descr="Ubuntu 16.04 LTS (Xenial Xerus)",
         parent="UBUNTU1804",
         detect=Detect(
             filename="/etc/os-release",
@@ -617,6 +628,7 @@ _VARIANT_DEF = [
     ),
     Variant(
         name="CENTOS8",
+        descr="CentOS 8.x",
         parent="",
         family="redhat",
         detect=Detect(
@@ -727,6 +739,7 @@ fi
     ),
     VariantUpdate(
         name="CENTOS7",
+        descr="CentOS 7.x",
         parent="CENTOS8",
         detect=Detect(
             filename="/etc/redhat-release",
@@ -781,6 +794,7 @@ fi
     ),
     VariantUpdate(
         name="CENTOS6",
+        descr="CentOS 6.x",
         parent="CENTOS7",
         detect=Detect(
             filename="/etc/redhat-release",
@@ -812,6 +826,7 @@ fi
     ),
     VariantUpdate(
         name="ORACLE7",
+        descr="Oracle Linux 7.x",
         parent="CENTOS7",
         detect=Detect(
             filename="/etc/oracle-release",
@@ -829,6 +844,7 @@ fi
     ),
     VariantUpdate(
         name="RHEL8",
+        descr="RedHat Enterprise Linux 8.x",
         parent="CENTOS8",
         detect=Detect(
             filename="/etc/redhat-release",
@@ -890,6 +906,7 @@ fi
     ),
     VariantUpdate(
         name="ROCKY8",
+        descr="Rocky Linux 8.x",
         parent="CENTOS8",
         detect=Detect(
             filename="/etc/redhat-release",
@@ -910,6 +927,7 @@ fi
     ),
     VariantUpdate(
         name="ALMA8",
+        descr="AlmaLinux 8.x",
         parent="CENTOS8",
         detect=Detect(
             filename="/etc/redhat-release",
@@ -1176,6 +1194,7 @@ def merge_into_parent(cfg, parent, child):
     return update_namedtuple(
         Variant(
             name=child.name,
+            descr=child.descr,
             parent=parent.name,
             family=parent.family,
             detect=child.detect,

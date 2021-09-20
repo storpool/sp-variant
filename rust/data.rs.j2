@@ -15,8 +15,8 @@ use crate::VariantError;
 /// The supported StorPool build variants (OS distribution, version, etc).
 #[derive(Debug, Clone, PartialEq, Hash, Eq, Serialize, Deserialize)]
 pub enum VariantKind {
-    {%- for name in variants|vsort -%}
-    /// {{ name }}
+    {%- for name, var in variants|dictvsort -%}
+    /// {{ var.descr }}
     {{ name }},
     {%- endfor -%}
 }

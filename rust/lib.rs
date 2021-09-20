@@ -137,6 +137,8 @@ pub struct Variant {
     /// Which variant is that?
     #[serde(rename = "name")]
     pub kind: VariantKind,
+    /// The human-readable description of the variant.
+    pub descr: String,
     /// The OS "family" that this distribution belongs to.
     pub family: String,
     /// The name of the variant that this one is based on.
