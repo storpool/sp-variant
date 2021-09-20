@@ -303,27 +303,24 @@ async def run_add_repo_for_image(
     assert proc.stdout is not None
     assert proc.stderr is not None
 
-    (r_out, r_err) = (b"", b"")
-    (r_out_still, r_err_still) = (True, True)
-    while r_out_still or r_err_still:
-        if r_out_still:
-            line = await proc.stdout.readline()
-            if line:
-                cfg.diag(f"{image}: read a stdout line: {line!r}")
-                r_out += line
-            else:
-                cfg.diag(f"{image}: no more stdout")
-                r_out_still = False
+    async def read_stream(stype: str, stream: asyncio.StreamReader) -> bytes:
+        """Read lines from a stream, output them, gather them."""
+        cfg.diag(f"{image}: waiting for {stype} lines")
+        res = b""
+        while True:
+            line = await stream.readline()
+            if not line:
+                cfg.diag(f"{image}: no more {stype}")
+                break
 
-        if r_err_still:
-            line = await proc.stderr.readline()
-            if line:
-                cfg.diag(f"{image}: read a stderr line: {line!r}")
-                r_err += line
-            else:
-                cfg.diag(f"{image}: no more stderr")
-                r_err_still = False
+            cfg.diag(f"{image}: read a {stype} line: {line!r}")
+            res += line
 
+        return res
+
+    r_out, r_err = await asyncio.gather(
+        read_stream("stdout", proc.stdout), read_stream("stderr", proc.stderr)
+    )
     res = await proc.wait()
     return (r_out, r_err, res)
 
