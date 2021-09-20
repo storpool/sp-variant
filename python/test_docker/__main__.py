@@ -368,6 +368,15 @@ async def test_add_repo(
 set -e
 set -x
 
+# Parsing JSON without jq? Yeah, sure, why not...
+echo 'Checking for a Debian-like variant'
+if /sp/storpool_variant show current | tr "\n" ' ' | grep -Eqe '"family"[[:space:]]*:[[:space:]]*"debian"'; then
+    echo 'Running apt-get update'
+    apt-get update
+else
+    echo 'No apt-get update necessary'
+fi
+
 echo 'Running add-storpool-repo'
 /sp/add-storpool-repo.sh
 
