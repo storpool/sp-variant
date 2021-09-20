@@ -15,33 +15,33 @@ use crate::VariantError;
 /// The supported StorPool build variants (OS distribution, version, etc).
 #[derive(Debug, Clone, PartialEq, Hash, Eq, Serialize, Deserialize)]
 pub enum VariantKind {
-    /// ALMA8
+    /// AlmaLinux 8.x
     ALMA8,
-    /// CENTOS6
+    /// CentOS 6.x
     CENTOS6,
-    /// CENTOS7
+    /// CentOS 7.x
     CENTOS7,
-    /// CENTOS8
+    /// CentOS 8.x
     CENTOS8,
-    /// DEBIAN9
+    /// Debian 9.x (stretch)
     DEBIAN9,
-    /// DEBIAN10
+    /// Debian 10.x (buster)
     DEBIAN10,
-    /// DEBIAN11
+    /// Debian 11.x (bullseye)
     DEBIAN11,
-    /// DEBIAN12
+    /// Debian 12.x (bookworm/unstable)
     DEBIAN12,
-    /// ORACLE7
+    /// Oracle Linux 7.x
     ORACLE7,
-    /// RHEL8
+    /// RedHat Enterprise Linux 8.x
     RHEL8,
-    /// ROCKY8
+    /// Rocky Linux 8.x
     ROCKY8,
-    /// UBUNTU1604
+    /// Ubuntu 16.04 LTS (Xenial Xerus)
     UBUNTU1604,
-    /// UBUNTU1804
+    /// Ubuntu 18.04 LTS (Bionic Beaver)
     UBUNTU1804,
-    /// UBUNTU2004
+    /// Ubuntu 20.04 LTS (Focal Fossa)
     UBUNTU2004,
 }
 

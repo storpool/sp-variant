@@ -256,6 +256,7 @@ show_ALMA8()
       ]
     }
   },
+  "descr": "AlmaLinux 8.x",
   "detect": {
     "filename": "/etc/redhat-release",
     "os_id": "alma",
@@ -351,6 +352,7 @@ show_CENTOS6()
       ]
     }
   },
+  "descr": "CentOS 6.x",
   "detect": {
     "filename": "/etc/redhat-release",
     "os_id": "centos",
@@ -446,6 +448,7 @@ show_CENTOS7()
       ]
     }
   },
+  "descr": "CentOS 7.x",
   "detect": {
     "filename": "/etc/redhat-release",
     "os_id": "centos",
@@ -545,6 +548,7 @@ show_CENTOS8()
       ]
     }
   },
+  "descr": "CentOS 8.x",
   "detect": {
     "filename": "/etc/redhat-release",
     "os_id": "centos",
@@ -654,6 +658,7 @@ show_DEBIAN9()
       ]
     }
   },
+  "descr": "Debian 9.x (stretch)",
   "detect": {
     "filename": "/etc/os-release",
     "os_id": "debian",
@@ -765,6 +770,7 @@ show_DEBIAN10()
       ]
     }
   },
+  "descr": "Debian 10.x (buster)",
   "detect": {
     "filename": "/etc/os-release",
     "os_id": "debian",
@@ -875,6 +881,7 @@ show_DEBIAN11()
       ]
     }
   },
+  "descr": "Debian 11.x (bullseye)",
   "detect": {
     "filename": "/etc/os-release",
     "os_id": "debian",
@@ -985,6 +992,7 @@ show_DEBIAN12()
       ]
     }
   },
+  "descr": "Debian 12.x (bookworm/unstable)",
   "detect": {
     "filename": "/etc/os-release",
     "os_id": "debian",
@@ -1081,6 +1089,7 @@ show_ORACLE7()
       ]
     }
   },
+  "descr": "Oracle Linux 7.x",
   "detect": {
     "filename": "/etc/oracle-release",
     "os_id": "ol",
@@ -1180,6 +1189,7 @@ show_RHEL8()
       ]
     }
   },
+  "descr": "RedHat Enterprise Linux 8.x",
   "detect": {
     "filename": "/etc/redhat-release",
     "os_id": "rhel",
@@ -1279,6 +1289,7 @@ show_ROCKY8()
       ]
     }
   },
+  "descr": "Rocky Linux 8.x",
   "detect": {
     "filename": "/etc/redhat-release",
     "os_id": "rocky",
@@ -1388,6 +1399,7 @@ show_UBUNTU1604()
       ]
     }
   },
+  "descr": "Ubuntu 16.04 LTS (Xenial Xerus)",
   "detect": {
     "filename": "/etc/os-release",
     "os_id": "ubuntu",
@@ -1500,6 +1512,7 @@ show_UBUNTU1804()
       ]
     }
   },
+  "descr": "Ubuntu 18.04 LTS (Bionic Beaver)",
   "detect": {
     "filename": "/etc/os-release",
     "os_id": "ubuntu",
@@ -1610,6 +1623,7 @@ show_UBUNTU2004()
       ]
     }
   },
+  "descr": "Ubuntu 20.04 LTS (Focal Fossa)",
   "detect": {
     "filename": "/etc/os-release",
     "os_id": "ubuntu",
@@ -1658,7 +1672,7 @@ cmd_show_all()
   "format": {
     "version": {
       "major": 1,
-      "minor": 2
+      "minor": 3
     }
   },
   "order": [
@@ -1740,7 +1754,7 @@ show_variant()
   "format": {
     "version": {
       "major": 1,
-      "minor": 2
+      "minor": 3
     }
   },
   "variant":
@@ -3070,7 +3084,7 @@ cmd_command()
 
 cmd_features()
 {
-	echo 'Features: format=1.2 version=1.4.0'
+	echo 'Features: format=1.3 version=1.4.0'
 }
 
 case "$1" in

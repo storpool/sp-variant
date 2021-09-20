@@ -2,7 +2,7 @@
   "format": {
     "version": {
       "major": 1,
-      "minor": 2
+      "minor": 3
     }
   },
   "order": [
@@ -84,6 +84,7 @@
           ]
         }
       },
+      "descr": "AlmaLinux 8.x",
       "detect": {
         "filename": "/etc/redhat-release",
         "os_id": "alma",
@@ -173,6 +174,7 @@
           ]
         }
       },
+      "descr": "CentOS 6.x",
       "detect": {
         "filename": "/etc/redhat-release",
         "os_id": "centos",
@@ -262,6 +264,7 @@
           ]
         }
       },
+      "descr": "CentOS 7.x",
       "detect": {
         "filename": "/etc/redhat-release",
         "os_id": "centos",
@@ -355,6 +358,7 @@
           ]
         }
       },
+      "descr": "CentOS 8.x",
       "detect": {
         "filename": "/etc/redhat-release",
         "os_id": "centos",
@@ -458,6 +462,7 @@
           ]
         }
       },
+      "descr": "Debian 10.x (buster)",
       "detect": {
         "filename": "/etc/os-release",
         "os_id": "debian",
@@ -562,6 +567,7 @@
           ]
         }
       },
+      "descr": "Debian 11.x (bullseye)",
       "detect": {
         "filename": "/etc/os-release",
         "os_id": "debian",
@@ -666,6 +672,7 @@
           ]
         }
       },
+      "descr": "Debian 12.x (bookworm/unstable)",
       "detect": {
         "filename": "/etc/os-release",
         "os_id": "debian",
@@ -770,6 +777,7 @@
           ]
         }
       },
+      "descr": "Debian 9.x (stretch)",
       "detect": {
         "filename": "/etc/os-release",
         "os_id": "debian",
@@ -861,6 +869,7 @@
           ]
         }
       },
+      "descr": "Oracle Linux 7.x",
       "detect": {
         "filename": "/etc/oracle-release",
         "os_id": "ol",
@@ -954,6 +963,7 @@
           ]
         }
       },
+      "descr": "RedHat Enterprise Linux 8.x",
       "detect": {
         "filename": "/etc/redhat-release",
         "os_id": "rhel",
@@ -1047,6 +1057,7 @@
           ]
         }
       },
+      "descr": "Rocky Linux 8.x",
       "detect": {
         "filename": "/etc/redhat-release",
         "os_id": "rocky",
@@ -1150,6 +1161,7 @@
           ]
         }
       },
+      "descr": "Ubuntu 16.04 LTS (Xenial Xerus)",
       "detect": {
         "filename": "/etc/os-release",
         "os_id": "ubuntu",
@@ -1256,6 +1268,7 @@
           ]
         }
       },
+      "descr": "Ubuntu 18.04 LTS (Bionic Beaver)",
       "detect": {
         "filename": "/etc/os-release",
         "os_id": "ubuntu",
@@ -1360,6 +1373,7 @@
           ]
         }
       },
+      "descr": "Ubuntu 20.04 LTS (Focal Fossa)",
       "detect": {
         "filename": "/etc/os-release",
         "os_id": "ubuntu",
