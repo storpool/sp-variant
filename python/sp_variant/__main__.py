@@ -1461,6 +1461,27 @@ def repo_add_yum(cfg, var, vardir):
     # type: (Config, Variant, Text) -> None
     """Install the StorPool RedHat/CentOS-like repo configuration."""
     assert isinstance(var.repo, YumRepo)
+
+    try:
+        subprocess.check_call(
+            [
+                "yum",
+                "--disablerepo=storpool-*'",
+                "install",
+                "-q",
+                "-y",
+                "ca-certificates",
+            ],
+            shell=False,
+        )
+    except subprocess.CalledProcessError as err:
+        raise VariantFileError(
+            (
+                "Could not install the required "
+                "ca-certificates package: {err}"
+            ).format(err=err)
+        )
+
     copy_file(
         cfg,
         os.path.join(

@@ -236,6 +236,8 @@ repo_add_yum()
 {
 	local name="$1" vdir="$2" repotype="$3" yumdef="$4" keyring="$5"
 
+	yum --disablerepo='storpool-*' install -q -y ca-certificates
+
 	local yumbase="$(basename -- "$yumdef")"
 	local repofile="$(repo_add_extension "$yumbase" "$repotype")"
 	[ -n "$repofile" ]

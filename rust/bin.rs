@@ -231,6 +231,21 @@ fn repo_add_deb(var: &Variant, config: RepoAddConfig, vdir: &str, repo: &sp_vari
 }
 
 fn repo_add_yum(config: RepoAddConfig, vdir: &str, repo: &sp_variant::YumRepo) {
+    let run_yum_install_certs = || {
+        run_command(
+            &[
+                "yum".to_string(),
+                "--disablerepo=storpool-*".to_string(),
+                "install".to_string(),
+                "-q".to_string(),
+                "-y".to_string(),
+                "ca-certificates".to_string(),
+            ],
+            "Could not update the package database",
+            config.noop,
+        );
+    };
+
     let copy_yumdef_file = || {
         let yumdef_orig = repo.yumdef.rsplit('/').next().unwrap();
         let (yumdef_base, yumdef_ext) = yumdef_orig.rsplit_once('.').unwrap();
@@ -277,6 +292,7 @@ fn repo_add_yum(config: RepoAddConfig, vdir: &str, repo: &sp_variant::YumRepo) {
         );
     };
 
+    run_yum_install_certs();
     copy_yumdef_file();
     copy_keyring_file();
     run_rpmkeys();
