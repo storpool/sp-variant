@@ -20,7 +20,8 @@ extern crate quick_error;
 #[macro_use]
 extern crate lazy_static;
 
-pub mod data;
+mod data;
+
 pub mod yai;
 
 #[cfg(test)]
@@ -176,7 +177,7 @@ pub struct VariantDefTop {
 }
 
 /// Build the list of StorPool variants from the JSON description
-/// in the [`crate::data`] module.
+/// in the internal `data` module.
 pub fn build_variants() -> &'static VariantDefTop {
     lazy_static! {
         static ref JSON_BYTES: Vec<u8> = data::get_json_def();

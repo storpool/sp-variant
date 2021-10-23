@@ -350,9 +350,8 @@ fn cmd_command_run(varfull: &VariantDefTop, config: CommandRunConfig) {
 }
 
 fn cmd_show(varfull: &VariantDefTop, config: ShowConfig) {
-    let full = String::from_utf8(sp_variant::data::get_json_def()).unwrap();
     match config.name == "all" {
-        true => print!("{}", full),
+        true => print!("{}", serde_json::to_string(varfull).unwrap()),
         false => {
             let var = match &*config.name {
                 "current" => {
