@@ -6,6 +6,7 @@
 //! The full data is provided by the external ``variants-all.json`` file in
 //! the StorPool source tree.
 
+use std::collections::HashMap;
 use std::str::FromStr;
 
 use serde::{Deserialize, Serialize};
@@ -107,7 +108,2165 @@ impl FromStr for VariantKind {
     }
 }
 
-/// Return the JSON definition of the StorPool variants.
-pub fn get_json_def() -> Vec<u8> {
-    include_bytes!("variants-all.json").to_vec()
+/// Return the definition of the StorPool variants.
+pub fn get_variants() -> &'static super::VariantDefTop {
+    lazy_static! {
+        static ref DEF_TOP: super::VariantDefTop = super::VariantDefTop {
+            format: super::VariantFormat {
+                version: super::VariantFormatVersion {
+                    major: 1,
+                    minor: 3,
+                },
+            },
+            order: vec![
+                    VariantKind::ALMA8,
+                    VariantKind::ROCKY8,
+                    VariantKind::RHEL8,
+                    VariantKind::ORACLE7,
+                    VariantKind::CENTOS6,
+                    VariantKind::CENTOS7,
+                    VariantKind::CENTOS8,
+                    VariantKind::UBUNTU1604,
+                    VariantKind::UBUNTU1804,
+                    VariantKind::UBUNTU2004,
+                    VariantKind::DEBIAN9,
+                    VariantKind::DEBIAN10,
+                    VariantKind::DEBIAN11,
+                    VariantKind::DEBIAN12,
+            ],
+            variants: HashMap::from(
+                [
+                    (
+                            VariantKind::ALMA8,
+                            super::Variant {
+                                kind: VariantKind::ALMA8,
+                                descr: "AlmaLinux 8.x".to_string(),
+                                family: "redhat".to_string(),
+                                parent: "CENTOS8".to_string(),
+                                detect: super::Detect {
+                                    filename: "/etc/redhat-release".to_string(),
+                                    regex: r"^ AlmaLinux \s .* \s 8 \. (?: [4-9] | [1-9][0-9] )".to_string(),
+                                    os_id: "alma".to_string(),
+                                    os_version_regex: r"^8(?:$|\.[4-9]|\.[1-9][0-9])".to_string(),
+                                },
+                                commands: HashMap::from(
+                                    [
+                                        (
+                                            "package".to_string(),
+                                            HashMap::from(
+                                                [
+                                                    (
+                                                        "install".to_string(),
+                                                        vec![
+                                                            "dnf".to_string(),
+                                                            "--enablerepo=storpool-contrib".to_string(),
+                                                            "--enablerepo=powertools".to_string(),
+                                                            "install".to_string(),
+                                                            "-q".to_string(),
+                                                            "-y".to_string(),
+                                                            "--".to_string(),
+                                                        ],
+                                                    ),
+                                                    (
+                                                        "list_all".to_string(),
+                                                        vec![
+                                                            "rpm".to_string(),
+                                                            "-qa".to_string(),
+                                                            "--qf".to_string(),
+                                                            "%{Name}\\t%{Version}\\t%{Arch}\\tii\\n".to_string(),
+                                                            "--".to_string(),
+                                                        ],
+                                                    ),
+                                                    (
+                                                        "purge".to_string(),
+                                                        vec![
+                                                            "yum".to_string(),
+                                                            "remove".to_string(),
+                                                            "-q".to_string(),
+                                                            "-y".to_string(),
+                                                            "--".to_string(),
+                                                        ],
+                                                    ),
+                                                    (
+                                                        "remove".to_string(),
+                                                        vec![
+                                                            "yum".to_string(),
+                                                            "remove".to_string(),
+                                                            "-q".to_string(),
+                                                            "-y".to_string(),
+                                                            "--".to_string(),
+                                                        ],
+                                                    ),
+                                                    (
+                                                        "remove_impl".to_string(),
+                                                        vec![
+                                                            "rpm".to_string(),
+                                                            "-e".to_string(),
+                                                            "--".to_string(),
+                                                        ],
+                                                    ),
+                                                    (
+                                                        "update_db".to_string(),
+                                                        vec![
+                                                            "true".to_string(),
+                                                        ],
+                                                    ),
+                                                ]
+                                            ),
+                                        ),
+                                        (
+                                            "pkgfile".to_string(),
+                                            HashMap::from(
+                                                [
+                                                    (
+                                                        "dep_query".to_string(),
+                                                        vec![
+                                                            "sh".to_string(),
+                                                            "-c".to_string(),
+                                                            "rpm -qpR -- \"$pkg\"".to_string(),
+                                                        ],
+                                                    ),
+                                                    (
+                                                        "install".to_string(),
+                                                        vec![
+                                                            "sh".to_string(),
+                                                            "-c".to_string(),
+                                                            "
+unset to_install to_reinstall
+for f in $packages; do
+    package=\"$(rpm -qp \"$f\")\"
+    if rpm -q -- \"$package\"; then
+        to_reinstall=\"$to_reinstall ./$f\"
+    else
+        to_install=\"$to_install ./$f\"
+    fi
+done
+
+if [ -n \"$to_install\" ]; then
+    dnf install -y --enablerepo=storpool-contrib,powertools --setopt=localpkg_gpgcheck=0 -- $to_install
+fi
+if [ -n \"$to_reinstall\" ]; then
+    dnf reinstall -y --enablerepo=storpool-contrib,powertools --setopt=localpkg_gpgcheck=0 -- $to_reinstall
+fi
+".to_string(),
+                                                        ],
+                                                    ),
+                                                ]
+                                            ),
+                                        ),
+                                    ]
+                                ),
+                                min_sys_python: "2.7".to_string(),
+                                repo:
+                                    super::Repo::Yum(super::YumRepo {
+                                        yumdef: "redhat/repo/storpool-centos.repo".to_string(),
+                                        keyring: "redhat/repo/RPM-GPG-KEY-StorPool".to_string(),
+                                    }),
+
+                                package: HashMap::from(
+                                    [
+                                        ("KMOD".to_string(), "kmod".to_string()),
+                                        ("LIBCGROUP".to_string(), "libcgroup-tools".to_string()),
+                                        ("LIBUDEV".to_string(), "systemd-libs".to_string()),
+                                        ("OPENSSL".to_string(), "openssl-libs".to_string()),
+                                        ("PERL_AUTODIE".to_string(), "perl-autodie".to_string()),
+                                        ("PERL_FILE_PATH".to_string(), "perl-File-Path".to_string()),
+                                        ("PERL_LWP_PROTO_HTTPS".to_string(), "perl-LWP-Protocol-https".to_string()),
+                                        ("PERL_SYS_SYSLOG".to_string(), "perl-Sys-Syslog".to_string()),
+                                        ("PROCPS".to_string(), "procps-ng".to_string()),
+                                        ("PYTHON_SIMPLEJSON".to_string(), "python2-simplejson".to_string()),
+                                        ("UDEV".to_string(), "systemd".to_string()),
+                                    ]
+                                ),
+                                systemd_lib: "usr/lib/systemd/system".to_string(),
+                                file_ext: "rpm".to_string(),
+                                initramfs_flavor: "mkinitrd".to_string(),
+                                builder: super::Builder {
+                                    alias: "alma8".to_string(),
+                                    base_image: "almalinux/almalinux:8".to_string(),
+                                    branch: "".to_string(),
+                                    kernel_package: "kernel-core".to_string(),
+                                    utf8_locale: "C.utf8".to_string(),
+                                },
+                            },
+                    ),
+                    (
+                            VariantKind::CENTOS6,
+                            super::Variant {
+                                kind: VariantKind::CENTOS6,
+                                descr: "CentOS 6.x".to_string(),
+                                family: "redhat".to_string(),
+                                parent: "CENTOS7".to_string(),
+                                detect: super::Detect {
+                                    filename: "/etc/redhat-release".to_string(),
+                                    regex: r"^ CentOS \s .* \s 6 \.".to_string(),
+                                    os_id: "centos".to_string(),
+                                    os_version_regex: r"^6(?:$|\.[0-9])".to_string(),
+                                },
+                                commands: HashMap::from(
+                                    [
+                                        (
+                                            "package".to_string(),
+                                            HashMap::from(
+                                                [
+                                                    (
+                                                        "install".to_string(),
+                                                        vec![
+                                                            "yum".to_string(),
+                                                            "--enablerepo=storpool-contrib".to_string(),
+                                                            "install".to_string(),
+                                                            "-q".to_string(),
+                                                            "-y".to_string(),
+                                                        ],
+                                                    ),
+                                                    (
+                                                        "list_all".to_string(),
+                                                        vec![
+                                                            "rpm".to_string(),
+                                                            "-qa".to_string(),
+                                                            "--qf".to_string(),
+                                                            "%{Name}\\t%{Version}\\t%{Arch}\\tii\\n".to_string(),
+                                                            "--".to_string(),
+                                                        ],
+                                                    ),
+                                                    (
+                                                        "purge".to_string(),
+                                                        vec![
+                                                            "yum".to_string(),
+                                                            "remove".to_string(),
+                                                            "-q".to_string(),
+                                                            "-y".to_string(),
+                                                            "--".to_string(),
+                                                        ],
+                                                    ),
+                                                    (
+                                                        "remove".to_string(),
+                                                        vec![
+                                                            "yum".to_string(),
+                                                            "remove".to_string(),
+                                                            "-q".to_string(),
+                                                            "-y".to_string(),
+                                                            "--".to_string(),
+                                                        ],
+                                                    ),
+                                                    (
+                                                        "remove_impl".to_string(),
+                                                        vec![
+                                                            "rpm".to_string(),
+                                                            "-e".to_string(),
+                                                            "--".to_string(),
+                                                        ],
+                                                    ),
+                                                    (
+                                                        "update_db".to_string(),
+                                                        vec![
+                                                            "true".to_string(),
+                                                        ],
+                                                    ),
+                                                ]
+                                            ),
+                                        ),
+                                        (
+                                            "pkgfile".to_string(),
+                                            HashMap::from(
+                                                [
+                                                    (
+                                                        "dep_query".to_string(),
+                                                        vec![
+                                                            "sh".to_string(),
+                                                            "-c".to_string(),
+                                                            "rpm -qpR -- \"$pkg\"".to_string(),
+                                                        ],
+                                                    ),
+                                                    (
+                                                        "install".to_string(),
+                                                        vec![
+                                                            "
+unset to_install to_reinstall
+for f in $packages; do
+    package=\"$(rpm -qp \"$f\")\"
+    if rpm -q -- \"$package\"; then
+        to_reinstall=\"$to_reinstall ./$f\"
+    else
+        to_install=\"$to_install ./$f\"
+    fi
+done
+
+if [ -n \"$to_install\" ]; then
+    yum install -y --enablerepo=storpool-contrib --setopt=localpkg_gpgcheck=0 -- $to_install
+fi
+if [ -n \"$to_reinstall\" ]; then
+    yum reinstall -y --enablerepo=storpool-contrib --setopt=localpkg_gpgcheck=0 -- $to_reinstall
+fi
+".to_string(),
+                                                        ],
+                                                    ),
+                                                ]
+                                            ),
+                                        ),
+                                    ]
+                                ),
+                                min_sys_python: "2.6".to_string(),
+                                repo:
+                                    super::Repo::Yum(super::YumRepo {
+                                        yumdef: "redhat/repo/storpool-centos.repo".to_string(),
+                                        keyring: "redhat/repo/RPM-GPG-KEY-StorPool".to_string(),
+                                    }),
+
+                                package: HashMap::from(
+                                    [
+                                        ("KMOD".to_string(), "module-init-tools".to_string()),
+                                        ("LIBCGROUP".to_string(), "libcgroup".to_string()),
+                                        ("LIBUDEV".to_string(), "libudev".to_string()),
+                                        ("OPENSSL".to_string(), "openssl".to_string()),
+                                        ("PERL_AUTODIE".to_string(), "perl".to_string()),
+                                        ("PERL_FILE_PATH".to_string(), "perl".to_string()),
+                                        ("PERL_LWP_PROTO_HTTPS".to_string(), "perl".to_string()),
+                                        ("PERL_SYS_SYSLOG".to_string(), "perl".to_string()),
+                                        ("PROCPS".to_string(), "procps".to_string()),
+                                        ("PYTHON_SIMPLEJSON".to_string(), "python-simplejson".to_string()),
+                                        ("UDEV".to_string(), "udev".to_string()),
+                                    ]
+                                ),
+                                systemd_lib: "usr/lib/systemd/system".to_string(),
+                                file_ext: "rpm".to_string(),
+                                initramfs_flavor: "mkinitrd".to_string(),
+                                builder: super::Builder {
+                                    alias: "centos6".to_string(),
+                                    base_image: "centos:6".to_string(),
+                                    branch: "centos/6".to_string(),
+                                    kernel_package: "kernel".to_string(),
+                                    utf8_locale: "C".to_string(),
+                                },
+                            },
+                    ),
+                    (
+                            VariantKind::CENTOS7,
+                            super::Variant {
+                                kind: VariantKind::CENTOS7,
+                                descr: "CentOS 7.x".to_string(),
+                                family: "redhat".to_string(),
+                                parent: "CENTOS8".to_string(),
+                                detect: super::Detect {
+                                    filename: "/etc/redhat-release".to_string(),
+                                    regex: r"^ (?: CentOS | Virtuozzo ) \s .* \s 7 \.".to_string(),
+                                    os_id: "centos".to_string(),
+                                    os_version_regex: r"^7(?:$|\.[0-9])".to_string(),
+                                },
+                                commands: HashMap::from(
+                                    [
+                                        (
+                                            "package".to_string(),
+                                            HashMap::from(
+                                                [
+                                                    (
+                                                        "install".to_string(),
+                                                        vec![
+                                                            "yum".to_string(),
+                                                            "--enablerepo=storpool-contrib".to_string(),
+                                                            "install".to_string(),
+                                                            "-q".to_string(),
+                                                            "-y".to_string(),
+                                                        ],
+                                                    ),
+                                                    (
+                                                        "list_all".to_string(),
+                                                        vec![
+                                                            "rpm".to_string(),
+                                                            "-qa".to_string(),
+                                                            "--qf".to_string(),
+                                                            "%{Name}\\t%{Version}\\t%{Arch}\\tii\\n".to_string(),
+                                                            "--".to_string(),
+                                                        ],
+                                                    ),
+                                                    (
+                                                        "purge".to_string(),
+                                                        vec![
+                                                            "yum".to_string(),
+                                                            "remove".to_string(),
+                                                            "-q".to_string(),
+                                                            "-y".to_string(),
+                                                            "--".to_string(),
+                                                        ],
+                                                    ),
+                                                    (
+                                                        "remove".to_string(),
+                                                        vec![
+                                                            "yum".to_string(),
+                                                            "remove".to_string(),
+                                                            "-q".to_string(),
+                                                            "-y".to_string(),
+                                                            "--".to_string(),
+                                                        ],
+                                                    ),
+                                                    (
+                                                        "remove_impl".to_string(),
+                                                        vec![
+                                                            "rpm".to_string(),
+                                                            "-e".to_string(),
+                                                            "--".to_string(),
+                                                        ],
+                                                    ),
+                                                    (
+                                                        "update_db".to_string(),
+                                                        vec![
+                                                            "true".to_string(),
+                                                        ],
+                                                    ),
+                                                ]
+                                            ),
+                                        ),
+                                        (
+                                            "pkgfile".to_string(),
+                                            HashMap::from(
+                                                [
+                                                    (
+                                                        "dep_query".to_string(),
+                                                        vec![
+                                                            "sh".to_string(),
+                                                            "-c".to_string(),
+                                                            "rpm -qpR -- \"$pkg\"".to_string(),
+                                                        ],
+                                                    ),
+                                                    (
+                                                        "install".to_string(),
+                                                        vec![
+                                                            "
+unset to_install to_reinstall
+for f in $packages; do
+    package=\"$(rpm -qp \"$f\")\"
+    if rpm -q -- \"$package\"; then
+        to_reinstall=\"$to_reinstall ./$f\"
+    else
+        to_install=\"$to_install ./$f\"
+    fi
+done
+
+if [ -n \"$to_install\" ]; then
+    yum install -y --enablerepo=storpool-contrib --setopt=localpkg_gpgcheck=0 -- $to_install
+fi
+if [ -n \"$to_reinstall\" ]; then
+    yum reinstall -y --enablerepo=storpool-contrib --setopt=localpkg_gpgcheck=0 -- $to_reinstall
+fi
+".to_string(),
+                                                        ],
+                                                    ),
+                                                ]
+                                            ),
+                                        ),
+                                    ]
+                                ),
+                                min_sys_python: "2.7".to_string(),
+                                repo:
+                                    super::Repo::Yum(super::YumRepo {
+                                        yumdef: "redhat/repo/storpool-centos.repo".to_string(),
+                                        keyring: "redhat/repo/RPM-GPG-KEY-StorPool".to_string(),
+                                    }),
+
+                                package: HashMap::from(
+                                    [
+                                        ("KMOD".to_string(), "kmod".to_string()),
+                                        ("LIBCGROUP".to_string(), "libcgroup-tools".to_string()),
+                                        ("LIBUDEV".to_string(), "systemd-libs".to_string()),
+                                        ("OPENSSL".to_string(), "openssl-libs".to_string()),
+                                        ("PERL_AUTODIE".to_string(), "perl-autodie".to_string()),
+                                        ("PERL_FILE_PATH".to_string(), "perl-File-Path".to_string()),
+                                        ("PERL_LWP_PROTO_HTTPS".to_string(), "perl-LWP-Protocol-https".to_string()),
+                                        ("PERL_SYS_SYSLOG".to_string(), "perl-Sys-Syslog".to_string()),
+                                        ("PROCPS".to_string(), "procps-ng".to_string()),
+                                        ("PYTHON_SIMPLEJSON".to_string(), "python2-simplejson".to_string()),
+                                        ("UDEV".to_string(), "systemd".to_string()),
+                                    ]
+                                ),
+                                systemd_lib: "usr/lib/systemd/system".to_string(),
+                                file_ext: "rpm".to_string(),
+                                initramfs_flavor: "mkinitrd".to_string(),
+                                builder: super::Builder {
+                                    alias: "centos7".to_string(),
+                                    base_image: "centos:7".to_string(),
+                                    branch: "centos/7".to_string(),
+                                    kernel_package: "kernel".to_string(),
+                                    utf8_locale: "C".to_string(),
+                                },
+                            },
+                    ),
+                    (
+                            VariantKind::CENTOS8,
+                            super::Variant {
+                                kind: VariantKind::CENTOS8,
+                                descr: "CentOS 8.x".to_string(),
+                                family: "redhat".to_string(),
+                                parent: "".to_string(),
+                                detect: super::Detect {
+                                    filename: "/etc/redhat-release".to_string(),
+                                    regex: r"^ CentOS \s .* \s 8 \. (?: [3-9] | (?: [12][0-9] ) )".to_string(),
+                                    os_id: "centos".to_string(),
+                                    os_version_regex: r"^8(?:$|\.[4-9]|\.[1-9][0-9])".to_string(),
+                                },
+                                commands: HashMap::from(
+                                    [
+                                        (
+                                            "package".to_string(),
+                                            HashMap::from(
+                                                [
+                                                    (
+                                                        "install".to_string(),
+                                                        vec![
+                                                            "dnf".to_string(),
+                                                            "--enablerepo=storpool-contrib".to_string(),
+                                                            "--enablerepo=powertools".to_string(),
+                                                            "install".to_string(),
+                                                            "-q".to_string(),
+                                                            "-y".to_string(),
+                                                            "--".to_string(),
+                                                        ],
+                                                    ),
+                                                    (
+                                                        "list_all".to_string(),
+                                                        vec![
+                                                            "rpm".to_string(),
+                                                            "-qa".to_string(),
+                                                            "--qf".to_string(),
+                                                            "%{Name}\\t%{Version}\\t%{Arch}\\tii\\n".to_string(),
+                                                            "--".to_string(),
+                                                        ],
+                                                    ),
+                                                    (
+                                                        "purge".to_string(),
+                                                        vec![
+                                                            "yum".to_string(),
+                                                            "remove".to_string(),
+                                                            "-q".to_string(),
+                                                            "-y".to_string(),
+                                                            "--".to_string(),
+                                                        ],
+                                                    ),
+                                                    (
+                                                        "remove".to_string(),
+                                                        vec![
+                                                            "yum".to_string(),
+                                                            "remove".to_string(),
+                                                            "-q".to_string(),
+                                                            "-y".to_string(),
+                                                            "--".to_string(),
+                                                        ],
+                                                    ),
+                                                    (
+                                                        "remove_impl".to_string(),
+                                                        vec![
+                                                            "rpm".to_string(),
+                                                            "-e".to_string(),
+                                                            "--".to_string(),
+                                                        ],
+                                                    ),
+                                                    (
+                                                        "update_db".to_string(),
+                                                        vec![
+                                                            "true".to_string(),
+                                                        ],
+                                                    ),
+                                                ]
+                                            ),
+                                        ),
+                                        (
+                                            "pkgfile".to_string(),
+                                            HashMap::from(
+                                                [
+                                                    (
+                                                        "dep_query".to_string(),
+                                                        vec![
+                                                            "sh".to_string(),
+                                                            "-c".to_string(),
+                                                            "rpm -qpR -- \"$pkg\"".to_string(),
+                                                        ],
+                                                    ),
+                                                    (
+                                                        "install".to_string(),
+                                                        vec![
+                                                            "sh".to_string(),
+                                                            "-c".to_string(),
+                                                            "
+unset to_install to_reinstall
+for f in $packages; do
+    package=\"$(rpm -qp \"$f\")\"
+    if rpm -q -- \"$package\"; then
+        to_reinstall=\"$to_reinstall ./$f\"
+    else
+        to_install=\"$to_install ./$f\"
+    fi
+done
+
+if [ -n \"$to_install\" ]; then
+    dnf install -y --enablerepo=storpool-contrib,powertools --setopt=localpkg_gpgcheck=0 -- $to_install
+fi
+if [ -n \"$to_reinstall\" ]; then
+    dnf reinstall -y --enablerepo=storpool-contrib,powertools --setopt=localpkg_gpgcheck=0 -- $to_reinstall
+fi
+".to_string(),
+                                                        ],
+                                                    ),
+                                                ]
+                                            ),
+                                        ),
+                                    ]
+                                ),
+                                min_sys_python: "2.7".to_string(),
+                                repo:
+                                    super::Repo::Yum(super::YumRepo {
+                                        yumdef: "redhat/repo/storpool-centos.repo".to_string(),
+                                        keyring: "redhat/repo/RPM-GPG-KEY-StorPool".to_string(),
+                                    }),
+
+                                package: HashMap::from(
+                                    [
+                                        ("KMOD".to_string(), "kmod".to_string()),
+                                        ("LIBCGROUP".to_string(), "libcgroup-tools".to_string()),
+                                        ("LIBUDEV".to_string(), "systemd-libs".to_string()),
+                                        ("OPENSSL".to_string(), "openssl-libs".to_string()),
+                                        ("PERL_AUTODIE".to_string(), "perl-autodie".to_string()),
+                                        ("PERL_FILE_PATH".to_string(), "perl-File-Path".to_string()),
+                                        ("PERL_LWP_PROTO_HTTPS".to_string(), "perl-LWP-Protocol-https".to_string()),
+                                        ("PERL_SYS_SYSLOG".to_string(), "perl-Sys-Syslog".to_string()),
+                                        ("PROCPS".to_string(), "procps-ng".to_string()),
+                                        ("PYTHON_SIMPLEJSON".to_string(), "python2-simplejson".to_string()),
+                                        ("UDEV".to_string(), "systemd".to_string()),
+                                    ]
+                                ),
+                                systemd_lib: "usr/lib/systemd/system".to_string(),
+                                file_ext: "rpm".to_string(),
+                                initramfs_flavor: "mkinitrd".to_string(),
+                                builder: super::Builder {
+                                    alias: "centos8".to_string(),
+                                    base_image: "centos:8".to_string(),
+                                    branch: "centos/8".to_string(),
+                                    kernel_package: "kernel-core".to_string(),
+                                    utf8_locale: "C.utf8".to_string(),
+                                },
+                            },
+                    ),
+                    (
+                            VariantKind::DEBIAN9,
+                            super::Variant {
+                                kind: VariantKind::DEBIAN9,
+                                descr: "Debian 9.x (stretch)".to_string(),
+                                family: "debian".to_string(),
+                                parent: "DEBIAN10".to_string(),
+                                detect: super::Detect {
+                                    filename: "/etc/os-release".to_string(),
+                                    regex: r"^
+                    PRETTY_NAME= .*
+                    Debian \s+ GNU/Linux \s+
+                    (?: stretch | 9 ) (?: \s | / )
+                ".to_string(),
+                                    os_id: "debian".to_string(),
+                                    os_version_regex: r"^9$".to_string(),
+                                },
+                                commands: HashMap::from(
+                                    [
+                                        (
+                                            "package".to_string(),
+                                            HashMap::from(
+                                                [
+                                                    (
+                                                        "install".to_string(),
+                                                        vec![
+                                                            "env".to_string(),
+                                                            "DEBIAN_FRONTEND=noninteractive".to_string(),
+                                                            "apt-get".to_string(),
+                                                            "-q".to_string(),
+                                                            "-y".to_string(),
+                                                            "--no-install-recommends".to_string(),
+                                                            "install".to_string(),
+                                                            "--".to_string(),
+                                                        ],
+                                                    ),
+                                                    (
+                                                        "list_all".to_string(),
+                                                        vec![
+                                                            "dpkg-query".to_string(),
+                                                            "-W".to_string(),
+                                                            "-f".to_string(),
+                                                            "${Package}\\t${Version}\\t${Architecture}\\t${db:Status-Abbrev}\\n".to_string(),
+                                                            "--".to_string(),
+                                                        ],
+                                                    ),
+                                                    (
+                                                        "purge".to_string(),
+                                                        vec![
+                                                            "env".to_string(),
+                                                            "DEBIAN_FRONTEND=noninteractive".to_string(),
+                                                            "apt-get".to_string(),
+                                                            "-q".to_string(),
+                                                            "-y".to_string(),
+                                                            "purge".to_string(),
+                                                            "--".to_string(),
+                                                        ],
+                                                    ),
+                                                    (
+                                                        "remove".to_string(),
+                                                        vec![
+                                                            "env".to_string(),
+                                                            "DEBIAN_FRONTEND=noninteractive".to_string(),
+                                                            "apt-get".to_string(),
+                                                            "-q".to_string(),
+                                                            "-y".to_string(),
+                                                            "remove".to_string(),
+                                                            "--".to_string(),
+                                                        ],
+                                                    ),
+                                                    (
+                                                        "remove_impl".to_string(),
+                                                        vec![
+                                                            "env".to_string(),
+                                                            "DEBIAN_FRONTEND=noninteractive".to_string(),
+                                                            "dpkg".to_string(),
+                                                            "-r".to_string(),
+                                                            "--".to_string(),
+                                                        ],
+                                                    ),
+                                                    (
+                                                        "update_db".to_string(),
+                                                        vec![
+                                                            "apt-get".to_string(),
+                                                            "-q".to_string(),
+                                                            "-y".to_string(),
+                                                            "update".to_string(),
+                                                        ],
+                                                    ),
+                                                ]
+                                            ),
+                                        ),
+                                        (
+                                            "pkgfile".to_string(),
+                                            HashMap::from(
+                                                [
+                                                    (
+                                                        "dep_query".to_string(),
+                                                        vec![
+                                                            "sh".to_string(),
+                                                            "-c".to_string(),
+                                                            "dpkg-deb -f -- \"$pkg\" 'Depends' | sed -e 's/ *, */,/g' | tr ',' \"\\n\"".to_string(),
+                                                        ],
+                                                    ),
+                                                    (
+                                                        "install".to_string(),
+                                                        vec![
+                                                            "sh".to_string(),
+                                                            "-c".to_string(),
+                                                            "env DEBIAN_FRONTEND=noninteractive apt-get install --no-install-recommends --reinstall -y -o DPkg::Options::=--force-confnew -- $packages".to_string(),
+                                                        ],
+                                                    ),
+                                                ]
+                                            ),
+                                        ),
+                                    ]
+                                ),
+                                min_sys_python: "2.7".to_string(),
+                                repo:
+                                    super::Repo::Deb(super::DebRepo {
+                                        codename: "stretch".to_string(),
+                                        vendor: "debian".to_string(),
+                                        sources: "debian/repo/storpool.sources".to_string(),
+                                        keyring: "debian/repo/storpool-keyring.gpg".to_string(),
+                                        req_packages: vec![
+                                            "apt-transport-https".to_string(),
+                                            "ca-certificates".to_string(),
+                                        ],
+                                    }),
+
+                                package: HashMap::from(
+                                    [
+                                        ("BINDINGS_PYTHON".to_string(), "python".to_string()),
+                                        ("BINDINGS_PYTHON_CONFGET".to_string(), "python-confget".to_string()),
+                                        ("BINDINGS_PYTHON_SIMPLEJSON".to_string(), "python-simplejson".to_string()),
+                                        ("CGROUP".to_string(), "cgroup-tools".to_string()),
+                                        ("CPUPOWER".to_string(), "linux-cpupower".to_string()),
+                                        ("LIBSSL".to_string(), "libssl1.1".to_string()),
+                                        ("MCELOG".to_string(), "mcelog".to_string()),
+                                    ]
+                                ),
+                                systemd_lib: "lib/systemd/system".to_string(),
+                                file_ext: "deb".to_string(),
+                                initramfs_flavor: "update-initramfs".to_string(),
+                                builder: super::Builder {
+                                    alias: "debian9".to_string(),
+                                    base_image: "debian:stretch".to_string(),
+                                    branch: "debian/stretch".to_string(),
+                                    kernel_package: "linux-headers".to_string(),
+                                    utf8_locale: "C.UTF-8".to_string(),
+                                },
+                            },
+                    ),
+                    (
+                            VariantKind::DEBIAN10,
+                            super::Variant {
+                                kind: VariantKind::DEBIAN10,
+                                descr: "Debian 10.x (buster)".to_string(),
+                                family: "debian".to_string(),
+                                parent: "DEBIAN11".to_string(),
+                                detect: super::Detect {
+                                    filename: "/etc/os-release".to_string(),
+                                    regex: r"^
+                    PRETTY_NAME= .*
+                    Debian \s+ GNU/Linux \s+
+                    (?: buster | 10 ) (?: \s | / )
+                ".to_string(),
+                                    os_id: "debian".to_string(),
+                                    os_version_regex: r"^10$".to_string(),
+                                },
+                                commands: HashMap::from(
+                                    [
+                                        (
+                                            "package".to_string(),
+                                            HashMap::from(
+                                                [
+                                                    (
+                                                        "install".to_string(),
+                                                        vec![
+                                                            "env".to_string(),
+                                                            "DEBIAN_FRONTEND=noninteractive".to_string(),
+                                                            "apt-get".to_string(),
+                                                            "-q".to_string(),
+                                                            "-y".to_string(),
+                                                            "--no-install-recommends".to_string(),
+                                                            "install".to_string(),
+                                                            "--".to_string(),
+                                                        ],
+                                                    ),
+                                                    (
+                                                        "list_all".to_string(),
+                                                        vec![
+                                                            "dpkg-query".to_string(),
+                                                            "-W".to_string(),
+                                                            "-f".to_string(),
+                                                            "${Package}\\t${Version}\\t${Architecture}\\t${db:Status-Abbrev}\\n".to_string(),
+                                                            "--".to_string(),
+                                                        ],
+                                                    ),
+                                                    (
+                                                        "purge".to_string(),
+                                                        vec![
+                                                            "env".to_string(),
+                                                            "DEBIAN_FRONTEND=noninteractive".to_string(),
+                                                            "apt-get".to_string(),
+                                                            "-q".to_string(),
+                                                            "-y".to_string(),
+                                                            "purge".to_string(),
+                                                            "--".to_string(),
+                                                        ],
+                                                    ),
+                                                    (
+                                                        "remove".to_string(),
+                                                        vec![
+                                                            "env".to_string(),
+                                                            "DEBIAN_FRONTEND=noninteractive".to_string(),
+                                                            "apt-get".to_string(),
+                                                            "-q".to_string(),
+                                                            "-y".to_string(),
+                                                            "remove".to_string(),
+                                                            "--".to_string(),
+                                                        ],
+                                                    ),
+                                                    (
+                                                        "remove_impl".to_string(),
+                                                        vec![
+                                                            "env".to_string(),
+                                                            "DEBIAN_FRONTEND=noninteractive".to_string(),
+                                                            "dpkg".to_string(),
+                                                            "-r".to_string(),
+                                                            "--".to_string(),
+                                                        ],
+                                                    ),
+                                                    (
+                                                        "update_db".to_string(),
+                                                        vec![
+                                                            "apt-get".to_string(),
+                                                            "-q".to_string(),
+                                                            "-y".to_string(),
+                                                            "update".to_string(),
+                                                        ],
+                                                    ),
+                                                ]
+                                            ),
+                                        ),
+                                        (
+                                            "pkgfile".to_string(),
+                                            HashMap::from(
+                                                [
+                                                    (
+                                                        "dep_query".to_string(),
+                                                        vec![
+                                                            "sh".to_string(),
+                                                            "-c".to_string(),
+                                                            "dpkg-deb -f -- \"$pkg\" 'Depends' | sed -e 's/ *, */,/g' | tr ',' \"\\n\"".to_string(),
+                                                        ],
+                                                    ),
+                                                    (
+                                                        "install".to_string(),
+                                                        vec![
+                                                            "sh".to_string(),
+                                                            "-c".to_string(),
+                                                            "env DEBIAN_FRONTEND=noninteractive apt-get install --no-install-recommends --reinstall -y -o DPkg::Options::=--force-confnew -- $packages".to_string(),
+                                                        ],
+                                                    ),
+                                                ]
+                                            ),
+                                        ),
+                                    ]
+                                ),
+                                min_sys_python: "2.7".to_string(),
+                                repo:
+                                    super::Repo::Deb(super::DebRepo {
+                                        codename: "buster".to_string(),
+                                        vendor: "debian".to_string(),
+                                        sources: "debian/repo/storpool.sources".to_string(),
+                                        keyring: "debian/repo/storpool-keyring.gpg".to_string(),
+                                        req_packages: vec![
+                                            "ca-certificates".to_string(),
+                                        ],
+                                    }),
+
+                                package: HashMap::from(
+                                    [
+                                        ("BINDINGS_PYTHON".to_string(), "python".to_string()),
+                                        ("BINDINGS_PYTHON_CONFGET".to_string(), "python-confget".to_string()),
+                                        ("BINDINGS_PYTHON_SIMPLEJSON".to_string(), "python-simplejson".to_string()),
+                                        ("CGROUP".to_string(), "cgroup-tools".to_string()),
+                                        ("CPUPOWER".to_string(), "linux-cpupower".to_string()),
+                                        ("LIBSSL".to_string(), "libssl1.1".to_string()),
+                                        ("MCELOG".to_string(), "mcelog".to_string()),
+                                    ]
+                                ),
+                                systemd_lib: "lib/systemd/system".to_string(),
+                                file_ext: "deb".to_string(),
+                                initramfs_flavor: "update-initramfs".to_string(),
+                                builder: super::Builder {
+                                    alias: "debian10".to_string(),
+                                    base_image: "debian:buster".to_string(),
+                                    branch: "debian/buster".to_string(),
+                                    kernel_package: "linux-headers".to_string(),
+                                    utf8_locale: "C.UTF-8".to_string(),
+                                },
+                            },
+                    ),
+                    (
+                            VariantKind::DEBIAN11,
+                            super::Variant {
+                                kind: VariantKind::DEBIAN11,
+                                descr: "Debian 11.x (bullseye)".to_string(),
+                                family: "debian".to_string(),
+                                parent: "DEBIAN12".to_string(),
+                                detect: super::Detect {
+                                    filename: "/etc/os-release".to_string(),
+                                    regex: r"^
+                    PRETTY_NAME= .*
+                    Debian \s+ GNU/Linux \s+
+                    (?: bullseye | 11 ) (?: \s | / )
+                ".to_string(),
+                                    os_id: "debian".to_string(),
+                                    os_version_regex: r"^11$".to_string(),
+                                },
+                                commands: HashMap::from(
+                                    [
+                                        (
+                                            "package".to_string(),
+                                            HashMap::from(
+                                                [
+                                                    (
+                                                        "install".to_string(),
+                                                        vec![
+                                                            "env".to_string(),
+                                                            "DEBIAN_FRONTEND=noninteractive".to_string(),
+                                                            "apt-get".to_string(),
+                                                            "-q".to_string(),
+                                                            "-y".to_string(),
+                                                            "--no-install-recommends".to_string(),
+                                                            "install".to_string(),
+                                                            "--".to_string(),
+                                                        ],
+                                                    ),
+                                                    (
+                                                        "list_all".to_string(),
+                                                        vec![
+                                                            "dpkg-query".to_string(),
+                                                            "-W".to_string(),
+                                                            "-f".to_string(),
+                                                            "${Package}\\t${Version}\\t${Architecture}\\t${db:Status-Abbrev}\\n".to_string(),
+                                                            "--".to_string(),
+                                                        ],
+                                                    ),
+                                                    (
+                                                        "purge".to_string(),
+                                                        vec![
+                                                            "env".to_string(),
+                                                            "DEBIAN_FRONTEND=noninteractive".to_string(),
+                                                            "apt-get".to_string(),
+                                                            "-q".to_string(),
+                                                            "-y".to_string(),
+                                                            "purge".to_string(),
+                                                            "--".to_string(),
+                                                        ],
+                                                    ),
+                                                    (
+                                                        "remove".to_string(),
+                                                        vec![
+                                                            "env".to_string(),
+                                                            "DEBIAN_FRONTEND=noninteractive".to_string(),
+                                                            "apt-get".to_string(),
+                                                            "-q".to_string(),
+                                                            "-y".to_string(),
+                                                            "remove".to_string(),
+                                                            "--".to_string(),
+                                                        ],
+                                                    ),
+                                                    (
+                                                        "remove_impl".to_string(),
+                                                        vec![
+                                                            "env".to_string(),
+                                                            "DEBIAN_FRONTEND=noninteractive".to_string(),
+                                                            "dpkg".to_string(),
+                                                            "-r".to_string(),
+                                                            "--".to_string(),
+                                                        ],
+                                                    ),
+                                                    (
+                                                        "update_db".to_string(),
+                                                        vec![
+                                                            "apt-get".to_string(),
+                                                            "-q".to_string(),
+                                                            "-y".to_string(),
+                                                            "update".to_string(),
+                                                        ],
+                                                    ),
+                                                ]
+                                            ),
+                                        ),
+                                        (
+                                            "pkgfile".to_string(),
+                                            HashMap::from(
+                                                [
+                                                    (
+                                                        "dep_query".to_string(),
+                                                        vec![
+                                                            "sh".to_string(),
+                                                            "-c".to_string(),
+                                                            "dpkg-deb -f -- \"$pkg\" 'Depends' | sed -e 's/ *, */,/g' | tr ',' \"\\n\"".to_string(),
+                                                        ],
+                                                    ),
+                                                    (
+                                                        "install".to_string(),
+                                                        vec![
+                                                            "sh".to_string(),
+                                                            "-c".to_string(),
+                                                            "env DEBIAN_FRONTEND=noninteractive apt-get install --no-install-recommends --reinstall -y -o DPkg::Options::=--force-confnew -- $packages".to_string(),
+                                                        ],
+                                                    ),
+                                                ]
+                                            ),
+                                        ),
+                                    ]
+                                ),
+                                min_sys_python: "3.9".to_string(),
+                                repo:
+                                    super::Repo::Deb(super::DebRepo {
+                                        codename: "bullseye".to_string(),
+                                        vendor: "debian".to_string(),
+                                        sources: "debian/repo/storpool.sources".to_string(),
+                                        keyring: "debian/repo/storpool-keyring.gpg".to_string(),
+                                        req_packages: vec![
+                                            "ca-certificates".to_string(),
+                                        ],
+                                    }),
+
+                                package: HashMap::from(
+                                    [
+                                        ("BINDINGS_PYTHON".to_string(), "python3".to_string()),
+                                        ("BINDINGS_PYTHON_CONFGET".to_string(), "python3-confget".to_string()),
+                                        ("BINDINGS_PYTHON_SIMPLEJSON".to_string(), "python3-simplejson".to_string()),
+                                        ("CGROUP".to_string(), "cgroup-tools".to_string()),
+                                        ("CPUPOWER".to_string(), "linux-cpupower".to_string()),
+                                        ("LIBSSL".to_string(), "libssl1.1".to_string()),
+                                        ("MCELOG".to_string(), "mcelog".to_string()),
+                                    ]
+                                ),
+                                systemd_lib: "lib/systemd/system".to_string(),
+                                file_ext: "deb".to_string(),
+                                initramfs_flavor: "update-initramfs".to_string(),
+                                builder: super::Builder {
+                                    alias: "debian11".to_string(),
+                                    base_image: "debian:bullseye".to_string(),
+                                    branch: "debian/bullseye".to_string(),
+                                    kernel_package: "linux-headers".to_string(),
+                                    utf8_locale: "C.UTF-8".to_string(),
+                                },
+                            },
+                    ),
+                    (
+                            VariantKind::DEBIAN12,
+                            super::Variant {
+                                kind: VariantKind::DEBIAN12,
+                                descr: "Debian 12.x (bookworm/unstable)".to_string(),
+                                family: "debian".to_string(),
+                                parent: "".to_string(),
+                                detect: super::Detect {
+                                    filename: "/etc/os-release".to_string(),
+                                    regex: r"^
+                    PRETTY_NAME= .*
+                    Debian \s+ GNU/Linux \s+
+                    (?: bookworm | 12 ) (?: \s | / )
+                ".to_string(),
+                                    os_id: "debian".to_string(),
+                                    os_version_regex: r"^12$".to_string(),
+                                },
+                                commands: HashMap::from(
+                                    [
+                                        (
+                                            "package".to_string(),
+                                            HashMap::from(
+                                                [
+                                                    (
+                                                        "install".to_string(),
+                                                        vec![
+                                                            "env".to_string(),
+                                                            "DEBIAN_FRONTEND=noninteractive".to_string(),
+                                                            "apt-get".to_string(),
+                                                            "-q".to_string(),
+                                                            "-y".to_string(),
+                                                            "--no-install-recommends".to_string(),
+                                                            "install".to_string(),
+                                                            "--".to_string(),
+                                                        ],
+                                                    ),
+                                                    (
+                                                        "list_all".to_string(),
+                                                        vec![
+                                                            "dpkg-query".to_string(),
+                                                            "-W".to_string(),
+                                                            "-f".to_string(),
+                                                            "${Package}\\t${Version}\\t${Architecture}\\t${db:Status-Abbrev}\\n".to_string(),
+                                                            "--".to_string(),
+                                                        ],
+                                                    ),
+                                                    (
+                                                        "purge".to_string(),
+                                                        vec![
+                                                            "env".to_string(),
+                                                            "DEBIAN_FRONTEND=noninteractive".to_string(),
+                                                            "apt-get".to_string(),
+                                                            "-q".to_string(),
+                                                            "-y".to_string(),
+                                                            "purge".to_string(),
+                                                            "--".to_string(),
+                                                        ],
+                                                    ),
+                                                    (
+                                                        "remove".to_string(),
+                                                        vec![
+                                                            "env".to_string(),
+                                                            "DEBIAN_FRONTEND=noninteractive".to_string(),
+                                                            "apt-get".to_string(),
+                                                            "-q".to_string(),
+                                                            "-y".to_string(),
+                                                            "remove".to_string(),
+                                                            "--".to_string(),
+                                                        ],
+                                                    ),
+                                                    (
+                                                        "remove_impl".to_string(),
+                                                        vec![
+                                                            "env".to_string(),
+                                                            "DEBIAN_FRONTEND=noninteractive".to_string(),
+                                                            "dpkg".to_string(),
+                                                            "-r".to_string(),
+                                                            "--".to_string(),
+                                                        ],
+                                                    ),
+                                                    (
+                                                        "update_db".to_string(),
+                                                        vec![
+                                                            "apt-get".to_string(),
+                                                            "-q".to_string(),
+                                                            "-y".to_string(),
+                                                            "update".to_string(),
+                                                        ],
+                                                    ),
+                                                ]
+                                            ),
+                                        ),
+                                        (
+                                            "pkgfile".to_string(),
+                                            HashMap::from(
+                                                [
+                                                    (
+                                                        "dep_query".to_string(),
+                                                        vec![
+                                                            "sh".to_string(),
+                                                            "-c".to_string(),
+                                                            "dpkg-deb -f -- \"$pkg\" 'Depends' | sed -e 's/ *, */,/g' | tr ',' \"\\n\"".to_string(),
+                                                        ],
+                                                    ),
+                                                    (
+                                                        "install".to_string(),
+                                                        vec![
+                                                            "sh".to_string(),
+                                                            "-c".to_string(),
+                                                            "env DEBIAN_FRONTEND=noninteractive apt-get install --no-install-recommends --reinstall -y -o DPkg::Options::=--force-confnew -- $packages".to_string(),
+                                                        ],
+                                                    ),
+                                                ]
+                                            ),
+                                        ),
+                                    ]
+                                ),
+                                min_sys_python: "3.9".to_string(),
+                                repo:
+                                    super::Repo::Deb(super::DebRepo {
+                                        codename: "unstable".to_string(),
+                                        vendor: "debian".to_string(),
+                                        sources: "debian/repo/storpool.sources".to_string(),
+                                        keyring: "debian/repo/storpool-keyring.gpg".to_string(),
+                                        req_packages: vec![
+                                            "ca-certificates".to_string(),
+                                        ],
+                                    }),
+
+                                package: HashMap::from(
+                                    [
+                                        ("BINDINGS_PYTHON".to_string(), "python3".to_string()),
+                                        ("BINDINGS_PYTHON_CONFGET".to_string(), "python3-confget".to_string()),
+                                        ("BINDINGS_PYTHON_SIMPLEJSON".to_string(), "python3-simplejson".to_string()),
+                                        ("CGROUP".to_string(), "cgroup-tools".to_string()),
+                                        ("CPUPOWER".to_string(), "linux-cpupower".to_string()),
+                                        ("LIBSSL".to_string(), "libssl1.1".to_string()),
+                                        ("MCELOG".to_string(), "mcelog".to_string()),
+                                    ]
+                                ),
+                                systemd_lib: "lib/systemd/system".to_string(),
+                                file_ext: "deb".to_string(),
+                                initramfs_flavor: "update-initramfs".to_string(),
+                                builder: super::Builder {
+                                    alias: "debian12".to_string(),
+                                    base_image: "debian:unstable".to_string(),
+                                    branch: "debian/unstable".to_string(),
+                                    kernel_package: "linux-headers".to_string(),
+                                    utf8_locale: "C.UTF-8".to_string(),
+                                },
+                            },
+                    ),
+                    (
+                            VariantKind::ORACLE7,
+                            super::Variant {
+                                kind: VariantKind::ORACLE7,
+                                descr: "Oracle Linux 7.x".to_string(),
+                                family: "redhat".to_string(),
+                                parent: "CENTOS7".to_string(),
+                                detect: super::Detect {
+                                    filename: "/etc/oracle-release".to_string(),
+                                    regex: r"^ Oracle \s+ Linux \s .* \s 7 \.".to_string(),
+                                    os_id: "ol".to_string(),
+                                    os_version_regex: r"^7(?:$|\.[0-9])".to_string(),
+                                },
+                                commands: HashMap::from(
+                                    [
+                                        (
+                                            "package".to_string(),
+                                            HashMap::from(
+                                                [
+                                                    (
+                                                        "install".to_string(),
+                                                        vec![
+                                                            "yum".to_string(),
+                                                            "--enablerepo=storpool-contrib".to_string(),
+                                                            "install".to_string(),
+                                                            "-q".to_string(),
+                                                            "-y".to_string(),
+                                                        ],
+                                                    ),
+                                                    (
+                                                        "list_all".to_string(),
+                                                        vec![
+                                                            "rpm".to_string(),
+                                                            "-qa".to_string(),
+                                                            "--qf".to_string(),
+                                                            "%{Name}\\t%{Version}\\t%{Arch}\\tii\\n".to_string(),
+                                                            "--".to_string(),
+                                                        ],
+                                                    ),
+                                                    (
+                                                        "purge".to_string(),
+                                                        vec![
+                                                            "yum".to_string(),
+                                                            "remove".to_string(),
+                                                            "-q".to_string(),
+                                                            "-y".to_string(),
+                                                            "--".to_string(),
+                                                        ],
+                                                    ),
+                                                    (
+                                                        "remove".to_string(),
+                                                        vec![
+                                                            "yum".to_string(),
+                                                            "remove".to_string(),
+                                                            "-q".to_string(),
+                                                            "-y".to_string(),
+                                                            "--".to_string(),
+                                                        ],
+                                                    ),
+                                                    (
+                                                        "remove_impl".to_string(),
+                                                        vec![
+                                                            "rpm".to_string(),
+                                                            "-e".to_string(),
+                                                            "--".to_string(),
+                                                        ],
+                                                    ),
+                                                    (
+                                                        "update_db".to_string(),
+                                                        vec![
+                                                            "true".to_string(),
+                                                        ],
+                                                    ),
+                                                ]
+                                            ),
+                                        ),
+                                        (
+                                            "pkgfile".to_string(),
+                                            HashMap::from(
+                                                [
+                                                    (
+                                                        "dep_query".to_string(),
+                                                        vec![
+                                                            "sh".to_string(),
+                                                            "-c".to_string(),
+                                                            "rpm -qpR -- \"$pkg\"".to_string(),
+                                                        ],
+                                                    ),
+                                                    (
+                                                        "install".to_string(),
+                                                        vec![
+                                                            "
+unset to_install to_reinstall
+for f in $packages; do
+    package=\"$(rpm -qp \"$f\")\"
+    if rpm -q -- \"$package\"; then
+        to_reinstall=\"$to_reinstall ./$f\"
+    else
+        to_install=\"$to_install ./$f\"
+    fi
+done
+
+if [ -n \"$to_install\" ]; then
+    yum install -y --enablerepo=storpool-contrib --setopt=localpkg_gpgcheck=0 -- $to_install
+fi
+if [ -n \"$to_reinstall\" ]; then
+    yum reinstall -y --enablerepo=storpool-contrib --setopt=localpkg_gpgcheck=0 -- $to_reinstall
+fi
+".to_string(),
+                                                        ],
+                                                    ),
+                                                ]
+                                            ),
+                                        ),
+                                    ]
+                                ),
+                                min_sys_python: "2.7".to_string(),
+                                repo:
+                                    super::Repo::Yum(super::YumRepo {
+                                        yumdef: "redhat/repo/storpool-centos.repo".to_string(),
+                                        keyring: "redhat/repo/RPM-GPG-KEY-StorPool".to_string(),
+                                    }),
+
+                                package: HashMap::from(
+                                    [
+                                        ("KMOD".to_string(), "kmod".to_string()),
+                                        ("LIBCGROUP".to_string(), "libcgroup-tools".to_string()),
+                                        ("LIBUDEV".to_string(), "systemd-libs".to_string()),
+                                        ("OPENSSL".to_string(), "openssl-libs".to_string()),
+                                        ("PERL_AUTODIE".to_string(), "perl-autodie".to_string()),
+                                        ("PERL_FILE_PATH".to_string(), "perl-File-Path".to_string()),
+                                        ("PERL_LWP_PROTO_HTTPS".to_string(), "perl-LWP-Protocol-https".to_string()),
+                                        ("PERL_SYS_SYSLOG".to_string(), "perl-Sys-Syslog".to_string()),
+                                        ("PROCPS".to_string(), "procps-ng".to_string()),
+                                        ("PYTHON_SIMPLEJSON".to_string(), "python2-simplejson".to_string()),
+                                        ("UDEV".to_string(), "systemd".to_string()),
+                                    ]
+                                ),
+                                systemd_lib: "usr/lib/systemd/system".to_string(),
+                                file_ext: "rpm".to_string(),
+                                initramfs_flavor: "mkinitrd".to_string(),
+                                builder: super::Builder {
+                                    alias: "oracle7".to_string(),
+                                    base_image: "IGNORE".to_string(),
+                                    branch: "".to_string(),
+                                    kernel_package: "kernel".to_string(),
+                                    utf8_locale: "C".to_string(),
+                                },
+                            },
+                    ),
+                    (
+                            VariantKind::RHEL8,
+                            super::Variant {
+                                kind: VariantKind::RHEL8,
+                                descr: "RedHat Enterprise Linux 8.x".to_string(),
+                                family: "redhat".to_string(),
+                                parent: "CENTOS8".to_string(),
+                                detect: super::Detect {
+                                    filename: "/etc/redhat-release".to_string(),
+                                    regex: r"^ Red \s+ Hat \s+ Enterprise \s+ Linux \s .* \s 8 \. (?: [4-9] | [1-9][0-9] )".to_string(),
+                                    os_id: "rhel".to_string(),
+                                    os_version_regex: r"^8(?:$|\.[4-9]|\.[1-9][0-9])".to_string(),
+                                },
+                                commands: HashMap::from(
+                                    [
+                                        (
+                                            "package".to_string(),
+                                            HashMap::from(
+                                                [
+                                                    (
+                                                        "install".to_string(),
+                                                        vec![
+                                                            "dnf".to_string(),
+                                                            "--enablerepo=storpool-contrib".to_string(),
+                                                            "--enablerepo=codeready-builder-for-rhel-8-x86_64-rpms".to_string(),
+                                                            "install".to_string(),
+                                                            "-q".to_string(),
+                                                            "-y".to_string(),
+                                                            "--".to_string(),
+                                                        ],
+                                                    ),
+                                                    (
+                                                        "list_all".to_string(),
+                                                        vec![
+                                                            "rpm".to_string(),
+                                                            "-qa".to_string(),
+                                                            "--qf".to_string(),
+                                                            "%{Name}\\t%{Version}\\t%{Arch}\\tii\\n".to_string(),
+                                                            "--".to_string(),
+                                                        ],
+                                                    ),
+                                                    (
+                                                        "purge".to_string(),
+                                                        vec![
+                                                            "yum".to_string(),
+                                                            "remove".to_string(),
+                                                            "-q".to_string(),
+                                                            "-y".to_string(),
+                                                            "--".to_string(),
+                                                        ],
+                                                    ),
+                                                    (
+                                                        "remove".to_string(),
+                                                        vec![
+                                                            "yum".to_string(),
+                                                            "remove".to_string(),
+                                                            "-q".to_string(),
+                                                            "-y".to_string(),
+                                                            "--".to_string(),
+                                                        ],
+                                                    ),
+                                                    (
+                                                        "remove_impl".to_string(),
+                                                        vec![
+                                                            "rpm".to_string(),
+                                                            "-e".to_string(),
+                                                            "--".to_string(),
+                                                        ],
+                                                    ),
+                                                    (
+                                                        "update_db".to_string(),
+                                                        vec![
+                                                            "true".to_string(),
+                                                        ],
+                                                    ),
+                                                ]
+                                            ),
+                                        ),
+                                        (
+                                            "pkgfile".to_string(),
+                                            HashMap::from(
+                                                [
+                                                    (
+                                                        "dep_query".to_string(),
+                                                        vec![
+                                                            "sh".to_string(),
+                                                            "-c".to_string(),
+                                                            "rpm -qpR -- \"$pkg\"".to_string(),
+                                                        ],
+                                                    ),
+                                                    (
+                                                        "install".to_string(),
+                                                        vec![
+                                                            "sh".to_string(),
+                                                            "-c".to_string(),
+                                                            "
+unset to_install to_reinstall
+for f in $packages; do
+    package=\"$(rpm -qp \"$f\")\"
+    if rpm -q -- \"$package\"; then
+        to_reinstall=\"$to_reinstall ./$f\"
+    else
+        to_install=\"$to_install ./$f\"
+    fi
+done
+
+if [ -n \"$to_install\" ]; then
+    dnf install -y --enablerepo=storpool-contrib,codeready-builder-for-rhel-8-x86_64-rpms --setopt=localpkg_gpgcheck=0 -- $to_install
+fi
+if [ -n \"$to_reinstall\" ]; then
+    dnf reinstall -y --enablerepo=storpool-contrib,codeready-builder-for-rhel-8-x86_64-rpms --setopt=localpkg_gpgcheck=0 -- $to_reinstall
+fi
+".to_string(),
+                                                        ],
+                                                    ),
+                                                ]
+                                            ),
+                                        ),
+                                    ]
+                                ),
+                                min_sys_python: "2.7".to_string(),
+                                repo:
+                                    super::Repo::Yum(super::YumRepo {
+                                        yumdef: "redhat/repo/storpool-centos.repo".to_string(),
+                                        keyring: "redhat/repo/RPM-GPG-KEY-StorPool".to_string(),
+                                    }),
+
+                                package: HashMap::from(
+                                    [
+                                        ("KMOD".to_string(), "kmod".to_string()),
+                                        ("LIBCGROUP".to_string(), "libcgroup-tools".to_string()),
+                                        ("LIBUDEV".to_string(), "systemd-libs".to_string()),
+                                        ("OPENSSL".to_string(), "openssl-libs".to_string()),
+                                        ("PERL_AUTODIE".to_string(), "perl-autodie".to_string()),
+                                        ("PERL_FILE_PATH".to_string(), "perl-File-Path".to_string()),
+                                        ("PERL_LWP_PROTO_HTTPS".to_string(), "perl-LWP-Protocol-https".to_string()),
+                                        ("PERL_SYS_SYSLOG".to_string(), "perl-Sys-Syslog".to_string()),
+                                        ("PROCPS".to_string(), "procps-ng".to_string()),
+                                        ("PYTHON_SIMPLEJSON".to_string(), "python2-simplejson".to_string()),
+                                        ("UDEV".to_string(), "systemd".to_string()),
+                                    ]
+                                ),
+                                systemd_lib: "usr/lib/systemd/system".to_string(),
+                                file_ext: "rpm".to_string(),
+                                initramfs_flavor: "mkinitrd".to_string(),
+                                builder: super::Builder {
+                                    alias: "rhel8".to_string(),
+                                    base_image: "redhat/ubi8:reg".to_string(),
+                                    branch: "".to_string(),
+                                    kernel_package: "kernel-core".to_string(),
+                                    utf8_locale: "C.utf8".to_string(),
+                                },
+                            },
+                    ),
+                    (
+                            VariantKind::ROCKY8,
+                            super::Variant {
+                                kind: VariantKind::ROCKY8,
+                                descr: "Rocky Linux 8.x".to_string(),
+                                family: "redhat".to_string(),
+                                parent: "CENTOS8".to_string(),
+                                detect: super::Detect {
+                                    filename: "/etc/redhat-release".to_string(),
+                                    regex: r"^ Rocky \s+ Linux \s .* \s 8 \. (?: [4-9] | [1-9][0-9] )".to_string(),
+                                    os_id: "rocky".to_string(),
+                                    os_version_regex: r"^8(?:$|\.[4-9]|\.[1-9][0-9])".to_string(),
+                                },
+                                commands: HashMap::from(
+                                    [
+                                        (
+                                            "package".to_string(),
+                                            HashMap::from(
+                                                [
+                                                    (
+                                                        "install".to_string(),
+                                                        vec![
+                                                            "dnf".to_string(),
+                                                            "--enablerepo=storpool-contrib".to_string(),
+                                                            "--enablerepo=powertools".to_string(),
+                                                            "install".to_string(),
+                                                            "-q".to_string(),
+                                                            "-y".to_string(),
+                                                            "--".to_string(),
+                                                        ],
+                                                    ),
+                                                    (
+                                                        "list_all".to_string(),
+                                                        vec![
+                                                            "rpm".to_string(),
+                                                            "-qa".to_string(),
+                                                            "--qf".to_string(),
+                                                            "%{Name}\\t%{Version}\\t%{Arch}\\tii\\n".to_string(),
+                                                            "--".to_string(),
+                                                        ],
+                                                    ),
+                                                    (
+                                                        "purge".to_string(),
+                                                        vec![
+                                                            "yum".to_string(),
+                                                            "remove".to_string(),
+                                                            "-q".to_string(),
+                                                            "-y".to_string(),
+                                                            "--".to_string(),
+                                                        ],
+                                                    ),
+                                                    (
+                                                        "remove".to_string(),
+                                                        vec![
+                                                            "yum".to_string(),
+                                                            "remove".to_string(),
+                                                            "-q".to_string(),
+                                                            "-y".to_string(),
+                                                            "--".to_string(),
+                                                        ],
+                                                    ),
+                                                    (
+                                                        "remove_impl".to_string(),
+                                                        vec![
+                                                            "rpm".to_string(),
+                                                            "-e".to_string(),
+                                                            "--".to_string(),
+                                                        ],
+                                                    ),
+                                                    (
+                                                        "update_db".to_string(),
+                                                        vec![
+                                                            "true".to_string(),
+                                                        ],
+                                                    ),
+                                                ]
+                                            ),
+                                        ),
+                                        (
+                                            "pkgfile".to_string(),
+                                            HashMap::from(
+                                                [
+                                                    (
+                                                        "dep_query".to_string(),
+                                                        vec![
+                                                            "sh".to_string(),
+                                                            "-c".to_string(),
+                                                            "rpm -qpR -- \"$pkg\"".to_string(),
+                                                        ],
+                                                    ),
+                                                    (
+                                                        "install".to_string(),
+                                                        vec![
+                                                            "sh".to_string(),
+                                                            "-c".to_string(),
+                                                            "
+unset to_install to_reinstall
+for f in $packages; do
+    package=\"$(rpm -qp \"$f\")\"
+    if rpm -q -- \"$package\"; then
+        to_reinstall=\"$to_reinstall ./$f\"
+    else
+        to_install=\"$to_install ./$f\"
+    fi
+done
+
+if [ -n \"$to_install\" ]; then
+    dnf install -y --enablerepo=storpool-contrib,powertools --setopt=localpkg_gpgcheck=0 -- $to_install
+fi
+if [ -n \"$to_reinstall\" ]; then
+    dnf reinstall -y --enablerepo=storpool-contrib,powertools --setopt=localpkg_gpgcheck=0 -- $to_reinstall
+fi
+".to_string(),
+                                                        ],
+                                                    ),
+                                                ]
+                                            ),
+                                        ),
+                                    ]
+                                ),
+                                min_sys_python: "2.7".to_string(),
+                                repo:
+                                    super::Repo::Yum(super::YumRepo {
+                                        yumdef: "redhat/repo/storpool-centos.repo".to_string(),
+                                        keyring: "redhat/repo/RPM-GPG-KEY-StorPool".to_string(),
+                                    }),
+
+                                package: HashMap::from(
+                                    [
+                                        ("KMOD".to_string(), "kmod".to_string()),
+                                        ("LIBCGROUP".to_string(), "libcgroup-tools".to_string()),
+                                        ("LIBUDEV".to_string(), "systemd-libs".to_string()),
+                                        ("OPENSSL".to_string(), "openssl-libs".to_string()),
+                                        ("PERL_AUTODIE".to_string(), "perl-autodie".to_string()),
+                                        ("PERL_FILE_PATH".to_string(), "perl-File-Path".to_string()),
+                                        ("PERL_LWP_PROTO_HTTPS".to_string(), "perl-LWP-Protocol-https".to_string()),
+                                        ("PERL_SYS_SYSLOG".to_string(), "perl-Sys-Syslog".to_string()),
+                                        ("PROCPS".to_string(), "procps-ng".to_string()),
+                                        ("PYTHON_SIMPLEJSON".to_string(), "python2-simplejson".to_string()),
+                                        ("UDEV".to_string(), "systemd".to_string()),
+                                    ]
+                                ),
+                                systemd_lib: "usr/lib/systemd/system".to_string(),
+                                file_ext: "rpm".to_string(),
+                                initramfs_flavor: "mkinitrd".to_string(),
+                                builder: super::Builder {
+                                    alias: "rocky8".to_string(),
+                                    base_image: "rockylinux/rockylinux:8".to_string(),
+                                    branch: "".to_string(),
+                                    kernel_package: "kernel-core".to_string(),
+                                    utf8_locale: "C.utf8".to_string(),
+                                },
+                            },
+                    ),
+                    (
+                            VariantKind::UBUNTU1604,
+                            super::Variant {
+                                kind: VariantKind::UBUNTU1604,
+                                descr: "Ubuntu 16.04 LTS (Xenial Xerus)".to_string(),
+                                family: "debian".to_string(),
+                                parent: "UBUNTU1804".to_string(),
+                                detect: super::Detect {
+                                    filename: "/etc/os-release".to_string(),
+                                    regex: r"^ PRETTY_NAME= .* Ubuntu \s+ 16 \. 04 ".to_string(),
+                                    os_id: "ubuntu".to_string(),
+                                    os_version_regex: r"^16\.04$".to_string(),
+                                },
+                                commands: HashMap::from(
+                                    [
+                                        (
+                                            "package".to_string(),
+                                            HashMap::from(
+                                                [
+                                                    (
+                                                        "install".to_string(),
+                                                        vec![
+                                                            "env".to_string(),
+                                                            "DEBIAN_FRONTEND=noninteractive".to_string(),
+                                                            "apt-get".to_string(),
+                                                            "-q".to_string(),
+                                                            "-y".to_string(),
+                                                            "--no-install-recommends".to_string(),
+                                                            "install".to_string(),
+                                                            "--".to_string(),
+                                                        ],
+                                                    ),
+                                                    (
+                                                        "list_all".to_string(),
+                                                        vec![
+                                                            "dpkg-query".to_string(),
+                                                            "-W".to_string(),
+                                                            "-f".to_string(),
+                                                            "${Package}\\t${Version}\\t${Architecture}\\t${db:Status-Abbrev}\\n".to_string(),
+                                                            "--".to_string(),
+                                                        ],
+                                                    ),
+                                                    (
+                                                        "purge".to_string(),
+                                                        vec![
+                                                            "env".to_string(),
+                                                            "DEBIAN_FRONTEND=noninteractive".to_string(),
+                                                            "apt-get".to_string(),
+                                                            "-q".to_string(),
+                                                            "-y".to_string(),
+                                                            "purge".to_string(),
+                                                            "--".to_string(),
+                                                        ],
+                                                    ),
+                                                    (
+                                                        "remove".to_string(),
+                                                        vec![
+                                                            "env".to_string(),
+                                                            "DEBIAN_FRONTEND=noninteractive".to_string(),
+                                                            "apt-get".to_string(),
+                                                            "-q".to_string(),
+                                                            "-y".to_string(),
+                                                            "remove".to_string(),
+                                                            "--".to_string(),
+                                                        ],
+                                                    ),
+                                                    (
+                                                        "remove_impl".to_string(),
+                                                        vec![
+                                                            "env".to_string(),
+                                                            "DEBIAN_FRONTEND=noninteractive".to_string(),
+                                                            "dpkg".to_string(),
+                                                            "-r".to_string(),
+                                                            "--".to_string(),
+                                                        ],
+                                                    ),
+                                                    (
+                                                        "update_db".to_string(),
+                                                        vec![
+                                                            "apt-get".to_string(),
+                                                            "-q".to_string(),
+                                                            "-y".to_string(),
+                                                            "update".to_string(),
+                                                        ],
+                                                    ),
+                                                ]
+                                            ),
+                                        ),
+                                        (
+                                            "pkgfile".to_string(),
+                                            HashMap::from(
+                                                [
+                                                    (
+                                                        "dep_query".to_string(),
+                                                        vec![
+                                                            "sh".to_string(),
+                                                            "-c".to_string(),
+                                                            "dpkg-deb -f -- \"$pkg\" 'Depends' | sed -e 's/ *, */,/g' | tr ',' \"\\n\"".to_string(),
+                                                        ],
+                                                    ),
+                                                    (
+                                                        "install".to_string(),
+                                                        vec![
+                                                            "sh".to_string(),
+                                                            "-c".to_string(),
+                                                            "env DEBIAN_FRONTEND=noninteractive apt-get install --no-install-recommends --reinstall -y -o DPkg::Options::=--force-confnew -- $packages".to_string(),
+                                                        ],
+                                                    ),
+                                                ]
+                                            ),
+                                        ),
+                                    ]
+                                ),
+                                min_sys_python: "2.7".to_string(),
+                                repo:
+                                    super::Repo::Deb(super::DebRepo {
+                                        codename: "xenial".to_string(),
+                                        vendor: "ubuntu".to_string(),
+                                        sources: "debian/repo/storpool.sources".to_string(),
+                                        keyring: "debian/repo/storpool-keyring.gpg".to_string(),
+                                        req_packages: vec![
+                                            "apt-transport-https".to_string(),
+                                            "ca-certificates".to_string(),
+                                        ],
+                                    }),
+
+                                package: HashMap::from(
+                                    [
+                                        ("BINDINGS_PYTHON".to_string(), "python".to_string()),
+                                        ("BINDINGS_PYTHON_CONFGET".to_string(), "python-confget".to_string()),
+                                        ("BINDINGS_PYTHON_SIMPLEJSON".to_string(), "python-simplejson".to_string()),
+                                        ("CGROUP".to_string(), "cgroup-tools".to_string()),
+                                        ("CPUPOWER".to_string(), "linux-tools-generic".to_string()),
+                                        ("LIBSSL".to_string(), "libssl1.0.0".to_string()),
+                                        ("MCELOG".to_string(), "bash".to_string()),
+                                        ("mcelog".to_string(), "mcelog".to_string()),
+                                    ]
+                                ),
+                                systemd_lib: "lib/systemd/system".to_string(),
+                                file_ext: "deb".to_string(),
+                                initramfs_flavor: "update-initramfs".to_string(),
+                                builder: super::Builder {
+                                    alias: "ubuntu-16.04".to_string(),
+                                    base_image: "ubuntu:xenial".to_string(),
+                                    branch: "ubuntu/xenial".to_string(),
+                                    kernel_package: "linux-headers".to_string(),
+                                    utf8_locale: "C.UTF-8".to_string(),
+                                },
+                            },
+                    ),
+                    (
+                            VariantKind::UBUNTU1804,
+                            super::Variant {
+                                kind: VariantKind::UBUNTU1804,
+                                descr: "Ubuntu 18.04 LTS (Bionic Beaver)".to_string(),
+                                family: "debian".to_string(),
+                                parent: "UBUNTU2004".to_string(),
+                                detect: super::Detect {
+                                    filename: "/etc/os-release".to_string(),
+                                    regex: r"^ PRETTY_NAME= .* Ubuntu \s+ 18 \. 04 ".to_string(),
+                                    os_id: "ubuntu".to_string(),
+                                    os_version_regex: r"^18\.04$".to_string(),
+                                },
+                                commands: HashMap::from(
+                                    [
+                                        (
+                                            "package".to_string(),
+                                            HashMap::from(
+                                                [
+                                                    (
+                                                        "install".to_string(),
+                                                        vec![
+                                                            "env".to_string(),
+                                                            "DEBIAN_FRONTEND=noninteractive".to_string(),
+                                                            "apt-get".to_string(),
+                                                            "-q".to_string(),
+                                                            "-y".to_string(),
+                                                            "--no-install-recommends".to_string(),
+                                                            "install".to_string(),
+                                                            "--".to_string(),
+                                                        ],
+                                                    ),
+                                                    (
+                                                        "list_all".to_string(),
+                                                        vec![
+                                                            "dpkg-query".to_string(),
+                                                            "-W".to_string(),
+                                                            "-f".to_string(),
+                                                            "${Package}\\t${Version}\\t${Architecture}\\t${db:Status-Abbrev}\\n".to_string(),
+                                                            "--".to_string(),
+                                                        ],
+                                                    ),
+                                                    (
+                                                        "purge".to_string(),
+                                                        vec![
+                                                            "env".to_string(),
+                                                            "DEBIAN_FRONTEND=noninteractive".to_string(),
+                                                            "apt-get".to_string(),
+                                                            "-q".to_string(),
+                                                            "-y".to_string(),
+                                                            "purge".to_string(),
+                                                            "--".to_string(),
+                                                        ],
+                                                    ),
+                                                    (
+                                                        "remove".to_string(),
+                                                        vec![
+                                                            "env".to_string(),
+                                                            "DEBIAN_FRONTEND=noninteractive".to_string(),
+                                                            "apt-get".to_string(),
+                                                            "-q".to_string(),
+                                                            "-y".to_string(),
+                                                            "remove".to_string(),
+                                                            "--".to_string(),
+                                                        ],
+                                                    ),
+                                                    (
+                                                        "remove_impl".to_string(),
+                                                        vec![
+                                                            "env".to_string(),
+                                                            "DEBIAN_FRONTEND=noninteractive".to_string(),
+                                                            "dpkg".to_string(),
+                                                            "-r".to_string(),
+                                                            "--".to_string(),
+                                                        ],
+                                                    ),
+                                                    (
+                                                        "update_db".to_string(),
+                                                        vec![
+                                                            "apt-get".to_string(),
+                                                            "-q".to_string(),
+                                                            "-y".to_string(),
+                                                            "update".to_string(),
+                                                        ],
+                                                    ),
+                                                ]
+                                            ),
+                                        ),
+                                        (
+                                            "pkgfile".to_string(),
+                                            HashMap::from(
+                                                [
+                                                    (
+                                                        "dep_query".to_string(),
+                                                        vec![
+                                                            "sh".to_string(),
+                                                            "-c".to_string(),
+                                                            "dpkg-deb -f -- \"$pkg\" 'Depends' | sed -e 's/ *, */,/g' | tr ',' \"\\n\"".to_string(),
+                                                        ],
+                                                    ),
+                                                    (
+                                                        "install".to_string(),
+                                                        vec![
+                                                            "sh".to_string(),
+                                                            "-c".to_string(),
+                                                            "env DEBIAN_FRONTEND=noninteractive apt-get install --no-install-recommends --reinstall -y -o DPkg::Options::=--force-confnew -- $packages".to_string(),
+                                                        ],
+                                                    ),
+                                                ]
+                                            ),
+                                        ),
+                                    ]
+                                ),
+                                min_sys_python: "2.7".to_string(),
+                                repo:
+                                    super::Repo::Deb(super::DebRepo {
+                                        codename: "bionic".to_string(),
+                                        vendor: "ubuntu".to_string(),
+                                        sources: "debian/repo/storpool.sources".to_string(),
+                                        keyring: "debian/repo/storpool-keyring.gpg".to_string(),
+                                        req_packages: vec![
+                                            "ca-certificates".to_string(),
+                                        ],
+                                    }),
+
+                                package: HashMap::from(
+                                    [
+                                        ("BINDINGS_PYTHON".to_string(), "python".to_string()),
+                                        ("BINDINGS_PYTHON_CONFGET".to_string(), "python-confget".to_string()),
+                                        ("BINDINGS_PYTHON_SIMPLEJSON".to_string(), "python-simplejson".to_string()),
+                                        ("CGROUP".to_string(), "cgroup-tools".to_string()),
+                                        ("CPUPOWER".to_string(), "linux-tools-generic".to_string()),
+                                        ("LIBSSL".to_string(), "libssl1.1".to_string()),
+                                        ("MCELOG".to_string(), "bash".to_string()),
+                                    ]
+                                ),
+                                systemd_lib: "lib/systemd/system".to_string(),
+                                file_ext: "deb".to_string(),
+                                initramfs_flavor: "update-initramfs".to_string(),
+                                builder: super::Builder {
+                                    alias: "ubuntu-18.04".to_string(),
+                                    base_image: "ubuntu:bionic".to_string(),
+                                    branch: "ubuntu/bionic".to_string(),
+                                    kernel_package: "linux-headers".to_string(),
+                                    utf8_locale: "C.UTF-8".to_string(),
+                                },
+                            },
+                    ),
+                    (
+                            VariantKind::UBUNTU2004,
+                            super::Variant {
+                                kind: VariantKind::UBUNTU2004,
+                                descr: "Ubuntu 20.04 LTS (Focal Fossa)".to_string(),
+                                family: "debian".to_string(),
+                                parent: "DEBIAN11".to_string(),
+                                detect: super::Detect {
+                                    filename: "/etc/os-release".to_string(),
+                                    regex: r"^ PRETTY_NAME= .* (?: Ubuntu \s+ 20 \. 04 | Mint \s+ 20 ) ".to_string(),
+                                    os_id: "ubuntu".to_string(),
+                                    os_version_regex: r"^20\.04$".to_string(),
+                                },
+                                commands: HashMap::from(
+                                    [
+                                        (
+                                            "package".to_string(),
+                                            HashMap::from(
+                                                [
+                                                    (
+                                                        "install".to_string(),
+                                                        vec![
+                                                            "env".to_string(),
+                                                            "DEBIAN_FRONTEND=noninteractive".to_string(),
+                                                            "apt-get".to_string(),
+                                                            "-q".to_string(),
+                                                            "-y".to_string(),
+                                                            "--no-install-recommends".to_string(),
+                                                            "install".to_string(),
+                                                            "--".to_string(),
+                                                        ],
+                                                    ),
+                                                    (
+                                                        "list_all".to_string(),
+                                                        vec![
+                                                            "dpkg-query".to_string(),
+                                                            "-W".to_string(),
+                                                            "-f".to_string(),
+                                                            "${Package}\\t${Version}\\t${Architecture}\\t${db:Status-Abbrev}\\n".to_string(),
+                                                            "--".to_string(),
+                                                        ],
+                                                    ),
+                                                    (
+                                                        "purge".to_string(),
+                                                        vec![
+                                                            "env".to_string(),
+                                                            "DEBIAN_FRONTEND=noninteractive".to_string(),
+                                                            "apt-get".to_string(),
+                                                            "-q".to_string(),
+                                                            "-y".to_string(),
+                                                            "purge".to_string(),
+                                                            "--".to_string(),
+                                                        ],
+                                                    ),
+                                                    (
+                                                        "remove".to_string(),
+                                                        vec![
+                                                            "env".to_string(),
+                                                            "DEBIAN_FRONTEND=noninteractive".to_string(),
+                                                            "apt-get".to_string(),
+                                                            "-q".to_string(),
+                                                            "-y".to_string(),
+                                                            "remove".to_string(),
+                                                            "--".to_string(),
+                                                        ],
+                                                    ),
+                                                    (
+                                                        "remove_impl".to_string(),
+                                                        vec![
+                                                            "env".to_string(),
+                                                            "DEBIAN_FRONTEND=noninteractive".to_string(),
+                                                            "dpkg".to_string(),
+                                                            "-r".to_string(),
+                                                            "--".to_string(),
+                                                        ],
+                                                    ),
+                                                    (
+                                                        "update_db".to_string(),
+                                                        vec![
+                                                            "apt-get".to_string(),
+                                                            "-q".to_string(),
+                                                            "-y".to_string(),
+                                                            "update".to_string(),
+                                                        ],
+                                                    ),
+                                                ]
+                                            ),
+                                        ),
+                                        (
+                                            "pkgfile".to_string(),
+                                            HashMap::from(
+                                                [
+                                                    (
+                                                        "dep_query".to_string(),
+                                                        vec![
+                                                            "sh".to_string(),
+                                                            "-c".to_string(),
+                                                            "dpkg-deb -f -- \"$pkg\" 'Depends' | sed -e 's/ *, */,/g' | tr ',' \"\\n\"".to_string(),
+                                                        ],
+                                                    ),
+                                                    (
+                                                        "install".to_string(),
+                                                        vec![
+                                                            "sh".to_string(),
+                                                            "-c".to_string(),
+                                                            "env DEBIAN_FRONTEND=noninteractive apt-get install --no-install-recommends --reinstall -y -o DPkg::Options::=--force-confnew -- $packages".to_string(),
+                                                        ],
+                                                    ),
+                                                ]
+                                            ),
+                                        ),
+                                    ]
+                                ),
+                                min_sys_python: "3.8".to_string(),
+                                repo:
+                                    super::Repo::Deb(super::DebRepo {
+                                        codename: "focal".to_string(),
+                                        vendor: "ubuntu".to_string(),
+                                        sources: "debian/repo/storpool.sources".to_string(),
+                                        keyring: "debian/repo/storpool-keyring.gpg".to_string(),
+                                        req_packages: vec![
+                                            "ca-certificates".to_string(),
+                                        ],
+                                    }),
+
+                                package: HashMap::from(
+                                    [
+                                        ("BINDINGS_PYTHON".to_string(), "python3".to_string()),
+                                        ("BINDINGS_PYTHON_CONFGET".to_string(), "python3-confget".to_string()),
+                                        ("BINDINGS_PYTHON_SIMPLEJSON".to_string(), "python3-simplejson".to_string()),
+                                        ("CGROUP".to_string(), "cgroup-tools".to_string()),
+                                        ("CPUPOWER".to_string(), "linux-tools-generic".to_string()),
+                                        ("LIBSSL".to_string(), "libssl1.1".to_string()),
+                                        ("MCELOG".to_string(), "bash".to_string()),
+                                    ]
+                                ),
+                                systemd_lib: "lib/systemd/system".to_string(),
+                                file_ext: "deb".to_string(),
+                                initramfs_flavor: "update-initramfs".to_string(),
+                                builder: super::Builder {
+                                    alias: "ubuntu-20.04".to_string(),
+                                    base_image: "ubuntu:focal".to_string(),
+                                    branch: "ubuntu/focal".to_string(),
+                                    kernel_package: "linux-headers".to_string(),
+                                    utf8_locale: "C.UTF-8".to_string(),
+                                },
+                            },
+                    ),
+                ]
+            ),
+            version: "2.0.0".to_string(),
+        };
+    }
+    if DEF_TOP.format.version.major != 1 {
+        panic!(
+            "Internal error: JSON variant definition: version {:?}",
+            DEF_TOP.format.version
+        );
+    }
+    &DEF_TOP
 }
