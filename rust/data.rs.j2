@@ -6,6 +6,7 @@
 //! The full data is provided by the external ``variants-all.json`` file in
 //! the StorPool source tree.
 
+use std::collections::HashMap;
 use std::str::FromStr;
 
 use serde::{Deserialize, Serialize};
@@ -50,7 +51,111 @@ impl FromStr for VariantKind {
     }
 }
 
-/// Return the JSON definition of the StorPool variants.
-pub fn get_json_def() -> Vec<u8> {
-    include_bytes!("variants-all.json").to_vec()
+/// Return the definition of the StorPool variants.
+pub fn get_variants() -> &'static super::VariantDefTop {
+    lazy_static! {
+        static ref DEF_TOP: super::VariantDefTop = super::VariantDefTop {
+            format: super::VariantFormat {
+                version: super::VariantFormatVersion {
+                    major: {{ format_version[0] }},
+                    minor: {{ format_version[1] }},
+                },
+            },
+            order: vec![
+                {%- for name in order %}
+                    VariantKind::{{name}},
+                {%- endfor %}
+            ],
+            variants: HashMap::from(
+                [
+                    {%- for name, var in variants|dictvsort %}
+                    (
+                            VariantKind::{{ name }},
+                            super::Variant {
+                                kind: VariantKind::{{ name }},
+                                descr: "{{ var.descr }}".to_string(),
+                                family: "{{ var.family }}".to_string(),
+                                parent: "{{ var.parent }}".to_string(),
+                                detect: super::Detect {
+                                    filename: "{{ var.detect.filename }}".to_string(),
+                                    regex: r"{{ var.detect.regex.pattern }}".to_string(),
+                                    os_id: "{{ var.detect.os_id }}".to_string(),
+                                    os_version_regex: r"{{ var.detect.os_version_regex.pattern }}".to_string(),
+                                },
+                                commands: HashMap::from(
+                                    [
+                                        {%- for cat_name in var.commands._fields|sort %}
+                                        (
+                                            "{{ cat_name }}".to_string(),
+                                            HashMap::from(
+                                                [
+                                                    {%- for cmd_name in var.commands|attr(cat_name)|attr("_fields")|sort %}
+                                                    (
+                                                        "{{ cmd_name }}".to_string(),
+                                                        vec![
+                                                            {%- for word in var.commands|attr(cat_name)|attr(cmd_name) %}
+                                                            "{{ word|replace("\\", "\\\\")|replace('"', '\\"') }}".to_string(),
+                                                            {%- endfor %}
+                                                        ],
+                                                    ),
+                                                    {%- endfor %}
+                                                ]
+                                            ),
+                                        ),
+                                        {%- endfor %}
+                                    ]
+                                ),
+                                min_sys_python: "{{ var.min_sys_python }}".to_string(),
+                                repo: {% if var.family == "redhat" %}
+                                    super::Repo::Yum(super::YumRepo {
+                                        yumdef: "{{ var.repo.yumdef }}".to_string(),
+                                        keyring: "{{ var.repo.keyring }}".to_string(),
+                                    }),
+                                    {% elif var.family == "debian" %}
+                                    super::Repo::Deb(super::DebRepo {
+                                        codename: "{{ var.repo.codename }}".to_string(),
+                                        vendor: "{{ var.repo.vendor }}".to_string(),
+                                        sources: "{{ var.repo.sources }}".to_string(),
+                                        keyring: "{{ var.repo.keyring }}".to_string(),
+                                        req_packages: vec![
+                                            {%- for pkg in var.repo.req_packages %}
+                                            "{{ pkg }}".to_string(),
+                                            {%- endfor %}
+                                        ],
+                                    }),
+                                    {% else %}
+                                    INVALID!,
+                                    {% endif %}
+                                package: HashMap::from(
+                                    [
+                                        {%- for pkg_name, pkg in var.package|dictsort %}
+                                        ("{{ pkg_name }}".to_string(), "{{ pkg }}".to_string()),
+                                        {%- endfor %}
+                                    ]
+                                ),
+                                systemd_lib: "{{ var.systemd_lib }}".to_string(),
+                                file_ext: "{{ var.file_ext }}".to_string(),
+                                initramfs_flavor: "{{ var.initramfs_flavor }}".to_string(),
+                                builder: super::Builder {
+                                    alias: "{{ var.builder.alias }}".to_string(),
+                                    base_image: "{{ var.builder.base_image }}".to_string(),
+                                    branch: "{{ var.builder.branch }}".to_string(),
+                                    kernel_package: "{{ var.builder.kernel_package }}".to_string(),
+                                    utf8_locale: "{{ var.builder.utf8_locale }}".to_string(),
+                                },
+                            },
+                    ),
+                    {%- endfor %}
+                ]
+            ),
+            version: "{{ version }}".to_string(),
+        };
+    }
+    if DEF_TOP.format.version.major != 1 {
+        panic!(
+            "Internal error: JSON variant definition: version {:?}",
+            DEF_TOP.format.version
+        );
+    }
+    &DEF_TOP
 }

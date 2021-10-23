@@ -176,23 +176,9 @@ pub struct VariantDefTop {
     version: String,
 }
 
-/// Build the list of StorPool variants from the JSON description
-/// in the internal `data` module.
+/// Get the list of StorPool variants from the internal `data` module.
 pub fn build_variants() -> &'static VariantDefTop {
-    lazy_static! {
-        static ref JSON_BYTES: Vec<u8> = data::get_json_def();
-        static ref FMT_TOP: VariantFormatTop = serde_json::from_slice(&JSON_BYTES).unwrap();
-    }
-    if FMT_TOP.format.version.major != 1 {
-        panic!(
-            "Internal error: JSON variant definition: version {:?}",
-            FMT_TOP.format.version
-        );
-    }
-    lazy_static! {
-        static ref DEF_TOP: VariantDefTop = serde_json::from_slice(&JSON_BYTES).unwrap();
-    }
-    &DEF_TOP
+    data::get_variants()
 }
 
 /// Detect the variant that this host is currently running.
