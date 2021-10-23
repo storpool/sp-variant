@@ -299,11 +299,11 @@ pub fn get_format_version_from(variants: &VariantDefTop) -> (u32, u32) {
 }
 
 /// Get the program version from the variant data.
-pub fn get_program_version() -> String {
-    get_program_version_from(build_variants()).clone()
+pub fn get_program_version() -> &'static str {
+    get_program_version_from(build_variants())
 }
 
 /// Get the program version from the supplied variant data structure.
-pub fn get_program_version_from(variants: &VariantDefTop) -> &String {
+pub fn get_program_version_from(variants: &VariantDefTop) -> &str {
     &variants.version
 }

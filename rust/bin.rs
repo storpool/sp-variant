@@ -365,7 +365,7 @@ fn cmd_show(varfull: &VariantDefTop, config: ShowConfig) {
                     version: sp_variant::VariantFormatVersion { major, minor },
                 },
                 variant: var.clone(),
-                version: sp_variant::get_program_version(),
+                version: sp_variant::get_program_version().to_string(),
             };
             println!("{}", serde_json::to_string_pretty(&single).unwrap());
         }
@@ -378,7 +378,7 @@ fn main() {
     let app = {
         let valid_repo_types: Vec<&str> = REPO_TYPES.iter().map(|rtype| rtype.name).collect();
         clap::App::new("storpool_variant")
-            .version(&**program_version)
+            .version(program_version)
             .author("StorPool <support@storpool.com>")
             .about("storpool_variant: handle OS distribution- and version-specific tasks")
             .subcommand(
