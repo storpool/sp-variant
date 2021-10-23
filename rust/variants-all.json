@@ -1407,5 +1407,5 @@
       "systemd_lib": "lib/systemd/system"
     }
   },
-  "version": "1.4.0"
+  "version": "2.0.0"
 }
