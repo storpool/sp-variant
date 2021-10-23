@@ -17,6 +17,9 @@ use serde::{Deserialize, Serialize};
 #[macro_use]
 extern crate quick_error;
 
+#[macro_use]
+extern crate lazy_static;
+
 pub mod data;
 pub mod yai;
 
@@ -174,21 +177,26 @@ pub struct VariantDefTop {
 
 /// Build the list of StorPool variants from the JSON description
 /// in the [`crate::data`] module.
-pub fn build_variants() -> VariantDefTop {
-    let json_bytes = data::get_json_def();
-    let fmt_top: VariantFormatTop = serde_json::from_slice(&json_bytes).unwrap();
-    if fmt_top.format.version.major != 1 {
+pub fn build_variants() -> &'static VariantDefTop {
+    lazy_static! {
+        static ref JSON_BYTES: Vec<u8> = data::get_json_def();
+        static ref FMT_TOP: VariantFormatTop = serde_json::from_slice(&JSON_BYTES).unwrap();
+    }
+    if FMT_TOP.format.version.major != 1 {
         panic!(
             "Internal error: JSON variant definition: version {:?}",
-            fmt_top.format.version
+            FMT_TOP.format.version
         );
     }
-    serde_json::from_slice(&json_bytes).unwrap()
+    lazy_static! {
+        static ref DEF_TOP: VariantDefTop = serde_json::from_slice(&JSON_BYTES).unwrap();
+    }
+    &DEF_TOP
 }
 
 /// Detect the variant that this host is currently running.
 pub fn detect() -> Result<Variant, Box<dyn error::Error>> {
-    detect_from(&build_variants()).map(|var| var.clone())
+    detect_from(build_variants()).map(|var| var.clone())
 }
 
 /// Detect the current host's variant from the supplied data.
@@ -281,7 +289,7 @@ pub fn get_by_alias_from<'a>(
 
 /// Get the metadata format version of the variant data.
 pub fn get_format_version() -> (u32, u32) {
-    get_format_version_from(&build_variants())
+    get_format_version_from(build_variants())
 }
 
 /// Get the metadata format version of the supplied variant data structure.
@@ -291,7 +299,7 @@ pub fn get_format_version_from(variants: &VariantDefTop) -> (u32, u32) {
 
 /// Get the program version from the variant data.
 pub fn get_program_version() -> String {
-    get_program_version_from(&build_variants()).clone()
+    get_program_version_from(build_variants()).clone()
 }
 
 /// Get the program version from the supplied variant data structure.

@@ -375,7 +375,7 @@ fn cmd_show(varfull: &VariantDefTop, config: ShowConfig) {
 
 fn main() {
     let varfull = sp_variant::build_variants();
-    let program_version = sp_variant::get_program_version_from(&varfull);
+    let program_version = sp_variant::get_program_version_from(varfull);
     let app = {
         let valid_repo_types: Vec<&str> = REPO_TYPES.iter().map(|rtype| rtype.name).collect();
         clap::App::new("storpool_variant")
@@ -517,14 +517,14 @@ fn main() {
                 Some((_, handler)) => {
                     let mode = handler(subc_matches);
                     match mode {
-                        Mode::Features => cmd_features(&varfull),
+                        Mode::Features => cmd_features(varfull),
                         mode => match mode {
-                            Mode::CommandList => cmd_command_list(&varfull),
-                            Mode::CommandRun(config) => cmd_command_run(&varfull, config),
-                            Mode::Detect => cmd_detect(&varfull),
+                            Mode::CommandList => cmd_command_list(varfull),
+                            Mode::CommandRun(config) => cmd_command_run(varfull, config),
+                            Mode::Detect => cmd_detect(varfull),
                             Mode::Features => panic!("nope"),
-                            Mode::RepoAdd(config) => cmd_repo_add(&varfull, config),
-                            Mode::Show(config) => cmd_show(&varfull, config),
+                            Mode::RepoAdd(config) => cmd_repo_add(varfull, config),
+                            Mode::Show(config) => cmd_show(varfull, config),
                         },
                     }
                 }

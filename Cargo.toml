@@ -20,6 +20,7 @@ path = "rust/bin.rs"
 [dependencies]
 clap = "2"
 expect-exit = "0.4"
+lazy_static = "1"
 nix = "0.22"
 regex = "1"
 quick-error = "2"
