@@ -11,9 +11,17 @@
 - sh:
   - Install ourselves as `/usr/sbin/sp_variant` in `repo add` so that
     other programs may use this helper.
+- python:
+  - Fix the program name in the usage message of the `sp_variant` and
+    `sp_build_repo` tools.
 - rust:
+  - INCOMPATIBLE CHANGE: change the return type of `get_program_version()`
+    and `get_program_version_from()` from `String` to `&str`.
   - Autogenerate the VariantKind enum.
   - Use the new Variant.descr field in the documentation.
+  - Make the `sp_variant::data` module private.
+  - Create the variants' data structure directly, do not decode a JSON
+    document.
 - build-repo:
   - Use trivver to sort DEBIAN9 before DEBIAN10.
 - test-docker:
