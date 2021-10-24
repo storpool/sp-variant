@@ -1,6 +1,6 @@
 # Change log for the sp-variant library
 
-## 2.0.0 (not yet)
+## 2.0.0 (2021-10-24)
 
 - all:
   - Add a "descr" field to the variant containing a brief
