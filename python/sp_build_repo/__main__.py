@@ -280,7 +280,7 @@ def cmd_build(cfg: Config) -> None:
 
 def parse_arguments() -> Tuple[Config, Callable[[Config], None]]:
     """Parse the command-line arguments."""
-    parser, subp = vmain.base_parser()
+    parser, subp = vmain.base_parser(prog="sp_build_repo")
 
     p_build = subp.add_parser(
         "build", help="Detect the build variant for a remote host"

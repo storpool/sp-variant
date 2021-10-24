@@ -1712,10 +1712,10 @@ def cmd_show(cfg):
     print(json.dumps(data, sort_keys=True, indent=2))
 
 
-def base_parser():
-    # type: () -> Tuple[argparse.ArgumentParser, argparse._SubParsersAction]
+def base_parser(prog):
+    # type: (str) -> Tuple[argparse.ArgumentParser, argparse._SubParsersAction]
     """Build a parser with the options used by all the sp.variant tools."""
-    parser = argparse.ArgumentParser()
+    parser = argparse.ArgumentParser(prog=prog)
     parser.add_argument(
         "-v",
         "--verbose",
@@ -1730,7 +1730,7 @@ def base_parser():
 def parse_arguments():
     # type: () -> Tuple[Config, Callable[[Config], None]]
     """Parse the command-line arguments."""
-    parser, subp = base_parser()
+    parser, subp = base_parser(prog="storpool_variant")
 
     p_cmd = subp.add_parser("command", help="Distribition-specific commands")
     subp_cmd = p_cmd.add_subparsers()
