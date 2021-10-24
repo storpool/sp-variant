@@ -4,7 +4,6 @@ RUST_DATA=	rust/data.rs
 RUST_SRC=	rust/bin.rs rust/lib.rs rust/tests.rs rust/yai.rs ${RUST_DATA}
 RUST_RELEASE=	${CURDIR}/target/x86_64-unknown-linux-musl/release
 RUST_BIN=	${RUST_RELEASE}/storpool_variant
-RUST_VARIANT_JSON=	${CURDIR}/rust/variants-all.json
 
 SH_SRC=		sp_variant.sh.j2
 SH_BIN=		sp_variant.sh
@@ -22,6 +21,7 @@ REPO_TMPDIR?=	${CURDIR}/repo-build
 REPO_BUILT=	${REPO_TMPDIR}/add-storpool-repo.tar.gz
 
 TEMP_CURRENT_JSON?=	${CURDIR}/current-variant.json
+TEMP_ALL_JSON?=		${CURDIR}/all-variants.json
 
 all:		${RUST_BIN} ${SH_BIN}
 
@@ -29,17 +29,18 @@ test:		test-trivial test-tox-delay
 
 test-trivial:	all
 		${SP_PY3_INVOKE} show current > '${TEMP_CURRENT_JSON}'
+		${SP_PY3_INVOKE} show all > '${TEMP_ALL_JSON}'
 		${RUST_BIN} features
 		${RUST_BIN} detect
 		${RUST_BIN} command list
 		${RUST_BIN} show current | ${SP_PY3_NORMALIZE} | diff -u '${TEMP_CURRENT_JSON}' -
 		${CURDIR}/${SH_BIN} detect
-		${CURDIR}/${SH_BIN} show all | ${SP_PY3_NORMALIZE} | diff -u '${CURDIR}/rust/variants-all.json' -
+		${CURDIR}/${SH_BIN} show all | ${SP_PY3_NORMALIZE} | diff -u '${TEMP_ALL_JSON}' -
 		${CURDIR}/${SH_BIN} show current | ${SP_PY3_NORMALIZE} | diff -u '${TEMP_CURRENT_JSON}' -
 		${SP_PY3_INVOKE} features
 		${SP_PY3_INVOKE} detect
 		${SP_PY3_INVOKE} command list
-		${SP_PY3_INVOKE} show all | diff -u '${CURDIR}/rust/variants-all.json' -
+		${SP_PY3_INVOKE} show all | diff -u '${TEMP_ALL_JSON}' -
 
 ${REPO_BUILT}:	all test-trivial
 		rm -rf -- '${REPO_TMPDIR}'
@@ -50,14 +51,11 @@ ${REPO_BUILT}:	all test-trivial
 
 repo:		${REPO_BUILT}
 
-${RUST_VARIANT_JSON}:	${PYTHON_MAIN}
-		${SP_PY3_INVOKE} show all > '${RUST_VARIANT_JSON}' || { rm -f -- '${RUST_VARIANT_JSON}'; false; }
-
 ${RUST_DATA}:	${RUST_DATA}.j2 python/sp_build_repo/subst.py ${PYTHON_MAIN}
 		${SP_PY3_ENV} -m sp_build_repo.subst -m 644 -t '${RUST_DATA}.j2' -o '${RUST_DATA}' -v || { rm -f -- '${RUST_DATA}'; false; }
 		${SP_CARGO} fmt -- '${RUST_DATA}'
 
-${RUST_BIN}:	Cargo.toml .cargo/config.toml ${RUST_SRC} ${RUST_VARIANT_JSON}
+${RUST_BIN}:	Cargo.toml .cargo/config.toml ${RUST_SRC}
 		[ -n '${NO_CARGO_FREEZE}' ] || ${SP_CARGO} sp-freeze
 		[ -n '${NO_CARGO_CLEAN}' ] || ${SP_CARGO} clean
 		rm -f -- Cargo.lock
@@ -79,7 +77,7 @@ clean:		clean-py clean-repo clean-rust clean-sh
 clean-py:
 		find -- '${CURDIR}/python' -type d \( -name __pycache__ -or -name '*.egg-info' \) -exec rm -rf -- '{}' +
 		find -- '${CURDIR}/python' -type f -name '*.pyc' -exec rm -- '{}' +
-		rm -f -- '${TEMP_CURRENT_JSON}'
+		rm -f -- '${TEMP_CURRENT_JSON}' '${TEMP_ALL_JSON}'
 
 clean-repo:
 		rm -rf -- '${REPO_TMPDIR}'
