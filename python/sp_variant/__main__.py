@@ -538,9 +538,38 @@ _VARIANT_DEF = [
         },
     ),
     VariantUpdate(
+        name="UBUNTU2110",
+        descr="Ubuntu 21.10 LTS (Impish Indri)",
+        parent="DEBIAN12",
+        detect=Detect(
+            filename="/etc/os-release",
+            regex=re.compile(
+                r"^ PRETTY_NAME= .* (?: Ubuntu \s+ 21 \. 10 | Mint \s+ 21 ) ",
+                re.X,
+            ),
+            os_id="ubuntu",
+            os_version_regex=re.compile(r"^21\.10$"),
+        ),
+        updates={
+            "repo": {
+                "vendor": "ubuntu",
+                "codename": "impish",
+            },
+            "package": {
+                "CPUPOWER": "linux-tools-generic",
+                "MCELOG": "bash",
+            },
+            "builder": {
+                "alias": "ubuntu-21.10",
+                "base_image": "ubuntu:impish",
+                "branch": "ubuntu/impish",
+            },
+        },
+    ),
+    VariantUpdate(
         name="UBUNTU2004",
         descr="Ubuntu 20.04 LTS (Focal Fossa)",
-        parent="DEBIAN11",
+        parent="UBUNTU2110",
         detect=Detect(
             filename="/etc/os-release",
             regex=re.compile(
@@ -556,10 +585,6 @@ _VARIANT_DEF = [
                 "codename": "focal",
             },
             "min_sys_python": "3.8",
-            "package": {
-                "CPUPOWER": "linux-tools-generic",
-                "MCELOG": "bash",
-            },
             "builder": {
                 "alias": "ubuntu-20.04",
                 "base_image": "ubuntu:focal",
