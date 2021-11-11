@@ -2255,7 +2255,7 @@ fi
                     ),
                 ]
             ),
-            version: "2.0.0".to_string(),
+            version: "2.1.0".to_string(),
         };
     }
     if DEF_TOP.format.version.major != 1 {
