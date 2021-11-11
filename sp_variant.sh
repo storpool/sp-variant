@@ -217,7 +217,7 @@ show_ALMA8()
         "rpm",
         "-qa",
         "--qf",
-        "%{Name}\\t%{Version}\\t%{Arch}\\tii\\n",
+        "%{Name}\\t%{EVR}\\t%{Arch}\\tii\\n",
         "--"
       ],
       "purge": [
@@ -315,7 +315,7 @@ show_CENTOS6()
         "rpm",
         "-qa",
         "--qf",
-        "%{Name}\\t%{Version}\\t%{Arch}\\tii\\n",
+        "%{Name}\\t%{EVR}\\t%{Arch}\\tii\\n",
         "--"
       ],
       "purge": [
@@ -411,7 +411,7 @@ show_CENTOS7()
         "rpm",
         "-qa",
         "--qf",
-        "%{Name}\\t%{Version}\\t%{Arch}\\tii\\n",
+        "%{Name}\\t%{EVR}\\t%{Arch}\\tii\\n",
         "--"
       ],
       "purge": [
@@ -509,7 +509,7 @@ show_CENTOS8()
         "rpm",
         "-qa",
         "--qf",
-        "%{Name}\\t%{Version}\\t%{Arch}\\tii\\n",
+        "%{Name}\\t%{EVR}\\t%{Arch}\\tii\\n",
         "--"
       ],
       "purge": [
@@ -1052,7 +1052,7 @@ show_ORACLE7()
         "rpm",
         "-qa",
         "--qf",
-        "%{Name}\\t%{Version}\\t%{Arch}\\tii\\n",
+        "%{Name}\\t%{EVR}\\t%{Arch}\\tii\\n",
         "--"
       ],
       "purge": [
@@ -1150,7 +1150,7 @@ show_RHEL8()
         "rpm",
         "-qa",
         "--qf",
-        "%{Name}\\t%{Version}\\t%{Arch}\\tii\\n",
+        "%{Name}\\t%{EVR}\\t%{Arch}\\tii\\n",
         "--"
       ],
       "purge": [
@@ -1250,7 +1250,7 @@ show_ROCKY8()
         "rpm",
         "-qa",
         "--qf",
-        "%{Name}\\t%{Version}\\t%{Arch}\\tii\\n",
+        "%{Name}\\t%{EVR}\\t%{Arch}\\tii\\n",
         "--"
       ],
       "purge": [
@@ -1806,7 +1806,7 @@ run_command()
 							;;
 						
 						list_all)
-							$noop 'rpm' '-qa' '--qf' '%{Name}\t%{Version}\t%{Arch}\tii\n' '--'  "$@"
+							$noop 'rpm' '-qa' '--qf' '%{Name}\t%{EVR}\t%{Arch}\tii\n' '--'  "$@"
 							;;
 						
 						purge)
@@ -1888,7 +1888,7 @@ fi
 							;;
 						
 						list_all)
-							$noop 'rpm' '-qa' '--qf' '%{Name}\t%{Version}\t%{Arch}\tii\n' '--'  "$@"
+							$noop 'rpm' '-qa' '--qf' '%{Name}\t%{EVR}\t%{Arch}\tii\n' '--'  "$@"
 							;;
 						
 						purge)
@@ -1970,7 +1970,7 @@ fi
 							;;
 						
 						list_all)
-							$noop 'rpm' '-qa' '--qf' '%{Name}\t%{Version}\t%{Arch}\tii\n' '--'  "$@"
+							$noop 'rpm' '-qa' '--qf' '%{Name}\t%{EVR}\t%{Arch}\tii\n' '--'  "$@"
 							;;
 						
 						purge)
@@ -2052,7 +2052,7 @@ fi
 							;;
 						
 						list_all)
-							$noop 'rpm' '-qa' '--qf' '%{Name}\t%{Version}\t%{Arch}\tii\n' '--'  "$@"
+							$noop 'rpm' '-qa' '--qf' '%{Name}\t%{EVR}\t%{Arch}\tii\n' '--'  "$@"
 							;;
 						
 						purge)
@@ -2394,7 +2394,7 @@ fi
 							;;
 						
 						list_all)
-							$noop 'rpm' '-qa' '--qf' '%{Name}\t%{Version}\t%{Arch}\tii\n' '--'  "$@"
+							$noop 'rpm' '-qa' '--qf' '%{Name}\t%{EVR}\t%{Arch}\tii\n' '--'  "$@"
 							;;
 						
 						purge)
@@ -2476,7 +2476,7 @@ fi
 							;;
 						
 						list_all)
-							$noop 'rpm' '-qa' '--qf' '%{Name}\t%{Version}\t%{Arch}\tii\n' '--'  "$@"
+							$noop 'rpm' '-qa' '--qf' '%{Name}\t%{EVR}\t%{Arch}\tii\n' '--'  "$@"
 							;;
 						
 						purge)
@@ -2558,7 +2558,7 @@ fi
 							;;
 						
 						list_all)
-							$noop 'rpm' '-qa' '--qf' '%{Name}\t%{Version}\t%{Arch}\tii\n' '--'  "$@"
+							$noop 'rpm' '-qa' '--qf' '%{Name}\t%{EVR}\t%{Arch}\tii\n' '--'  "$@"
 							;;
 						
 						purge)
