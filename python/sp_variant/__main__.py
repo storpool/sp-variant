@@ -655,7 +655,7 @@ _VARIANT_DEF = [
                     "rpm",
                     "-qa",
                     "--qf",
-                    r"%{Name}\t%{Version}\t%{Arch}\tii\n",
+                    r"%{Name}\t%{EVR}\t%{Arch}\tii\n",
                     "--",
                 ],
                 purge=[
