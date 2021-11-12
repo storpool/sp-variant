@@ -2,6 +2,12 @@
 
 ## 2.1.0 (not yet)
 
+- all:
+  - On RedHat-derived distributions, the `package.list_all` command now
+    displays the full epoch:version-release (EVR) string instead of
+    only the version component.
+  - Add support for Ubuntu 21.10 (Impish Indri).
+
 ## 2.0.0 (2021-10-24)
 
 - all:
