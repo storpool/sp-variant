@@ -1,6 +1,6 @@
 # Change log for the sp-variant library
 
-## 2.1.0 (not yet)
+## 2.1.0 (2021-11-15)
 
 - all:
   - On RedHat-derived distributions, the `package.list_all` command now
