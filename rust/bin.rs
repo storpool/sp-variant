@@ -105,7 +105,6 @@ fn run_command(cmdvec: &[String], action: &str, noop: bool) {
         println!("Would run `{}`", cmdstr);
         return;
     }
-    println!("Running `{}`", cmdstr);
 
     let status = process::Command::new(&cmdvec[0])
         .args(&cmdvec[1..])
