@@ -109,15 +109,11 @@ fn parse_line(
 pub fn parse<P: AsRef<path::Path>>(
     path: P,
 ) -> Result<HashMap<String, String>, Box<dyn error::Error>> {
-    let contents = fs::read_to_string(path)?;
     let re_line = regex::Regex::new(RE_LINE).unwrap();
-    let mut res = HashMap::new();
-    for line in contents.lines() {
-        if let Some((name, value)) = parse_line(&re_line, line)? {
-            res.insert(name, value);
-        }
-    }
-    Ok(res)
+    fs::read_to_string(path)?
+        .lines()
+        .filter_map(|line| parse_line(&re_line, line).transpose())
+        .collect()
 }
 
 #[cfg(test)]
