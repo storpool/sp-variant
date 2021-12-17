@@ -507,8 +507,11 @@ fn main() {
     match &matches.subcommand {
         Some(subcommand) => {
             let (subc_name, subc_matches) = get_subc_name(subcommand);
-            match cmds.iter().find(|(name, _)| *name == subc_name) {
-                Some((_, handler)) => match handler(subc_matches) {
+            match cmds
+                .iter()
+                .find_map(|(name, handler)| (*name == subc_name).then(|| handler))
+            {
+                Some(handler) => match handler(subc_matches) {
                     Mode::Features => cmd_features(varfull),
                     Mode::CommandList => cmd_command_list(varfull),
                     Mode::CommandRun(config) => cmd_command_run(varfull, config),
