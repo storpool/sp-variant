@@ -1204,7 +1204,7 @@ def update_namedtuple(data, updates):
                 )
             )
 
-    updated = type(data)(**newv)  # type: ignore
+    updated = type(data)(**newv)
     return updated
 
 
