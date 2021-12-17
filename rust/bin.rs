@@ -27,7 +27,6 @@ use sp_variant::{self, Variant, VariantDefTop};
 struct RepoType<'a> {
     name: &'a str,
     extension: &'a str,
-    url: &'a str,
 }
 
 #[derive(Debug)]
@@ -71,17 +70,14 @@ const REPO_TYPES: &[RepoType; 3] = &[
     RepoType {
         name: "contrib",
         extension: "",
-        url: "https://repo.storpool.com/public/",
     },
     RepoType {
         name: "staging",
         extension: "-staging",
-        url: "https://repo.storpool.com/public/",
     },
     RepoType {
         name: "infra",
         extension: "-infra",
-        url: "https://intrepo.storpool.com/repo/",
     },
 ];
 
