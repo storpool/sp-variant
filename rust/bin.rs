@@ -508,20 +508,14 @@ fn main() {
         Some(subcommand) => {
             let (subc_name, subc_matches) = get_subc_name(subcommand);
             match cmds.iter().find(|(name, _)| *name == subc_name) {
-                Some((_, handler)) => {
-                    let mode = handler(subc_matches);
-                    match mode {
-                        Mode::Features => cmd_features(varfull),
-                        mode => match mode {
-                            Mode::CommandList => cmd_command_list(varfull),
-                            Mode::CommandRun(config) => cmd_command_run(varfull, config),
-                            Mode::Detect => cmd_detect(varfull),
-                            Mode::Features => panic!("nope"),
-                            Mode::RepoAdd(config) => cmd_repo_add(varfull, config),
-                            Mode::Show(config) => cmd_show(varfull, config),
-                        },
-                    }
-                }
+                Some((_, handler)) => match handler(subc_matches) {
+                    Mode::Features => cmd_features(varfull),
+                    Mode::CommandList => cmd_command_list(varfull),
+                    Mode::CommandRun(config) => cmd_command_run(varfull, config),
+                    Mode::Detect => cmd_detect(varfull),
+                    Mode::RepoAdd(config) => cmd_repo_add(varfull, config),
+                    Mode::Show(config) => cmd_show(varfull, config),
+                },
                 None => expect_exit::exit(matches.usage()),
             }
         }
