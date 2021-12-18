@@ -47,6 +47,7 @@ REPO_BUILT=	${REPO_TMPDIR}/add-storpool-repo.tar.gz
 
 TEMP_CURRENT_JSON?=	${CURDIR}/current-variant.json
 TEMP_ALL_JSON?=		${CURDIR}/all-variants.json
+TEMP_PACKAGE_LIST?=	${CURDIR}/package-list.txt
 
 all:		${RUST_BIN} ${SH_BIN}
 
@@ -55,13 +56,16 @@ test:		test-trivial test-tox-delay
 test-trivial:	all
 		${SP_PY3_INVOKE} show current > '${TEMP_CURRENT_JSON}'
 		${SP_PY3_INVOKE} show all > '${TEMP_ALL_JSON}'
+		${SP_PY3_INVOKE} command run package.list_all > '${TEMP_PACKAGE_LIST}'
 		${RUST_BIN} features
 		${RUST_BIN} detect
 		${RUST_BIN} command list
 		${RUST_BIN} show current | ${SP_PY3_NORMALIZE} | diff -u '${TEMP_CURRENT_JSON}' -
+		${RUST_BIN} command run package.list_all | diff -u '${TEMP_PACKAGE_LIST}' -
 		${CURDIR}/${SH_BIN} detect
 		${CURDIR}/${SH_BIN} show all | ${SP_PY3_NORMALIZE} | diff -u '${TEMP_ALL_JSON}' -
 		${CURDIR}/${SH_BIN} show current | ${SP_PY3_NORMALIZE} | diff -u '${TEMP_CURRENT_JSON}' -
+		${CURDIR}/${SH_BIN} command run package.list_all | diff -u '${TEMP_PACKAGE_LIST}' -
 		${SP_PY3_INVOKE} features
 		${SP_PY3_INVOKE} detect
 		${SP_PY3_INVOKE} command list
@@ -102,7 +106,7 @@ clean:		clean-py clean-repo clean-rust clean-sh
 clean-py:
 		find -- '${CURDIR}/python' -type d \( -name __pycache__ -or -name '*.egg-info' \) -exec rm -rf -- '{}' +
 		find -- '${CURDIR}/python' -type f -name '*.pyc' -exec rm -- '{}' +
-		rm -f -- '${TEMP_CURRENT_JSON}' '${TEMP_ALL_JSON}'
+		rm -f -- '${TEMP_CURRENT_JSON}' '${TEMP_ALL_JSON}' '${TEMP_PACKAGE_LIST}'
 
 clean-repo:
 		rm -rf -- '${REPO_TMPDIR}'
