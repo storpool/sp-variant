@@ -1,6 +1,21 @@
 # Change log for the sp-variant library
 
 ## 2.1.1 (not yet)
+- all:
+  - Add two-clause BSD licenses to all the source files.
+  - Make sure all the implementations output the same thing for
+    `command run package.list_all`.
+- python:
+  - Drop a "type: ignore" comment and bump the mypy version used for
+    the test suite to 0.920.
+- rust:
+  - Fix a command.run bug: do not output the command to run, the tools
+    that invoke storpool_variant may use its output!
+  - Code clean-up:
+    - drop an unused internal "url" field
+    - simplify a double match
+    - use `.find_map()` instead of reimplementing it
+    - streamline `yai::parse()`
 
 ## 2.1.0 (2021-11-15)
 
