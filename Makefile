@@ -54,6 +54,9 @@ all:		${RUST_BIN} ${SH_BIN}
 test:		test-trivial test-tox-delay
 
 test-trivial:	all
+		${SP_PY3_INVOKE} features
+		${SP_PY3_INVOKE} detect
+		${SP_PY3_INVOKE} command list
 		${SP_PY3_INVOKE} show current > '${TEMP_CURRENT_JSON}'
 		${SP_PY3_INVOKE} show all > '${TEMP_ALL_JSON}'
 		${SP_PY3_INVOKE} command run package.list_all > '${TEMP_PACKAGE_LIST}'
@@ -66,10 +69,6 @@ test-trivial:	all
 		${CURDIR}/${SH_BIN} show all | ${SP_PY3_NORMALIZE} | diff -u '${TEMP_ALL_JSON}' -
 		${CURDIR}/${SH_BIN} show current | ${SP_PY3_NORMALIZE} | diff -u '${TEMP_CURRENT_JSON}' -
 		${CURDIR}/${SH_BIN} command run package.list_all | diff -u '${TEMP_PACKAGE_LIST}' -
-		${SP_PY3_INVOKE} features
-		${SP_PY3_INVOKE} detect
-		${SP_PY3_INVOKE} command list
-		${SP_PY3_INVOKE} show all | diff -u '${TEMP_ALL_JSON}' -
 
 ${REPO_BUILT}:	all test-trivial
 		rm -rf -- '${REPO_TMPDIR}'
