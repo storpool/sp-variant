@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-# Copyright (c) 2021  StorPool <support@storpool.com>
+# Copyright (c) 2021, 2022  StorPool <support@storpool.com>
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -1889,7 +1889,7 @@ EOPROLOGUE
 
 	cat <<'EOEPILOGUE'
   },
-  "version": "2.1.1"
+  "version": "2.2.0"
 }
 EOEPILOGUE
 }
@@ -1913,7 +1913,7 @@ EOPROLOGUE
 
 	cat <<'EOEPILOGUE'
   ,
-  "version": "2.1.1"
+  "version": "2.2.0"
 }
 EOEPILOGUE
 }
@@ -3306,7 +3306,7 @@ cmd_command()
 
 cmd_features()
 {
-	echo 'Features: format=1.3 version=2.1.1'
+	echo 'Features: format=1.3 version=2.2.0'
 }
 
 case "$1" in
