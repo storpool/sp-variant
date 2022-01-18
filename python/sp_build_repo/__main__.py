@@ -65,9 +65,7 @@ class Singles:
         if abspath in cls._jinja2_env:
             return cls._jinja2_env[abspath]
 
-        env = jinja2.Environment(
-            autoescape=False, loader=cls.jinja2_loader(path)
-        )
+        env = jinja2.Environment(autoescape=False, loader=cls.jinja2_loader(path))
         cls._jinja2_env[abspath] = env
         return env
 
@@ -91,9 +89,7 @@ def ensure_none(cfg: Config, path: pathlib.Path) -> None:
     try:
         subprocess.check_call(["rm", "-rf", "--", path])
     except subprocess.CalledProcessError as err:
-        raise vmain.VariantFileError(
-            "Could not remove {path}: {err}".format(path=path, err=err)
-        )
+        raise vmain.VariantFileError("Could not remove {path}: {err}".format(path=path, err=err))
 
 
 def copy_file(
@@ -114,9 +110,7 @@ def copy_file(
         dst.chmod(0o755 if executable else 0o644)
     except (OSError, subprocess.CalledProcessError) as err:
         raise vmain.VariantFileError(
-            "Could not copy {src} to {dst}: {err}".format(
-                src=src, dst=dst, err=err
-            )
+            "Could not copy {src} to {dst}: {err}".format(src=src, dst=dst, err=err)
         )
 
 
@@ -152,17 +146,13 @@ def subst_debian_sources(
         )
     except jinja2.TemplateError as err:
         raise vmain.VariantFileError(
-            "Could not render the {src} template: {err}".format(
-                src=src, err=err
-            )
+            "Could not render the {src} template: {err}".format(src=src, err=err)
         )
 
     try:
         dst.write_text(result + "\n", encoding="UTF-8")
     except (IOError, OSError) as err:
-        raise vmain.VariantFileError(
-            "Could not write out {dst}: {err}".format(dst=dst, err=err)
-        )
+        raise vmain.VariantFileError("Could not write out {dst}: {err}".format(dst=dst, err=err))
 
 
 def subst_yum_repo(
@@ -193,17 +183,13 @@ def subst_yum_repo(
         )
     except jinja2.TemplateError as err:
         raise vmain.VariantFileError(
-            "Could not render the {src} template: {err}".format(
-                src=src, err=err
-            )
+            "Could not render the {src} template: {err}".format(src=src, err=err)
         )
 
     try:
         dst.write_text(result + "\n", encoding="UTF-8")
     except (IOError, OSError) as err:
-        raise vmain.VariantFileError(
-            "Could not write out {dst}: {err}".format(dst=dst, err=err)
-        )
+        raise vmain.VariantFileError("Could not write out {dst}: {err}".format(dst=dst, err=err))
 
 
 def build_repo(cfg: Config) -> pathlib.Path:
@@ -227,9 +213,7 @@ def build_repo(cfg: Config) -> pathlib.Path:
         )
     else:
         mainfile = pathlib.Path(__file__).absolute().with_name("__main__.py")
-        copy_file(
-            cfg, mainfile, distdir, dstname="storpool_variant", executable=True
-        )
+        copy_file(cfg, mainfile, distdir, dstname="storpool_variant", executable=True)
 
     copy_file(
         cfg,
@@ -251,9 +235,7 @@ def build_repo(cfg: Config) -> pathlib.Path:
 
         if isinstance(var.repo, vmain.DebRepo):
             for rtype in vmain.REPO_TYPES:
-                subst_debian_sources(
-                    cfg, var, cfg.datadir / var.repo.sources, vardir, rtype
-                )
+                subst_debian_sources(cfg, var, cfg.datadir / var.repo.sources, vardir, rtype)
             copy_file(
                 cfg,
                 cfg.datadir / var.repo.keyring,
@@ -261,9 +243,7 @@ def build_repo(cfg: Config) -> pathlib.Path:
             )
         elif isinstance(var.repo, vmain.YumRepo):
             for rtype in vmain.REPO_TYPES:
-                subst_yum_repo(
-                    cfg, var, cfg.datadir / var.repo.yumdef, vardir, rtype
-                )
+                subst_yum_repo(cfg, var, cfg.datadir / var.repo.yumdef, vardir, rtype)
             copy_file(
                 cfg,
                 cfg.datadir / var.repo.keyring,
@@ -306,9 +286,7 @@ def parse_arguments() -> Tuple[Config, Callable[[Config], None]]:
     """Parse the command-line arguments."""
     parser, subp = vmain.base_parser(prog="sp_build_repo")
 
-    p_build = subp.add_parser(
-        "build", help="Detect the build variant for a remote host"
-    )
+    p_build = subp.add_parser("build", help="Detect the build variant for a remote host")
     p_build.add_argument(
         "-d",
         "--datadir",

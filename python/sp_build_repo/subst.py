@@ -99,14 +99,10 @@ def regex_un_x(value: str) -> str:
     )
 
 
-def dictvsort(
-    data: Dict[str, variant.Variant]
-) -> List[Tuple[str, variant.Variant]]:
+def dictvsort(data: Dict[str, variant.Variant]) -> List[Tuple[str, variant.Variant]]:
     """Sort a dict of variants by name, preserving some numerical order."""
 
-    def compare(
-        left: Tuple[str, variant.Variant], right: Tuple[str, variant.Variant]
-    ) -> int:
+    def compare(left: Tuple[str, variant.Variant], right: Tuple[str, variant.Variant]) -> int:
         """Compare two variants by name."""
         res = trivver.compare(left[0], right[0])
         assert res != 0

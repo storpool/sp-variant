@@ -45,9 +45,7 @@ def TemporaryDirectory(  # pylint: disable=invalid-name
     """Create a temporary directory and eventually remove it."""
     temp = None
     try:
-        temp = tempfile.mkdtemp(
-            dir=Text(path) if isinstance(path, pathlib.Path) else path
-        )
+        temp = tempfile.mkdtemp(dir=Text(path) if isinstance(path, pathlib.Path) else path)
         yield pathlib.Path(temp)
     finally:
         if temp is not None:

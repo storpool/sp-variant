@@ -106,31 +106,18 @@ def extract_variants_data(
         sys.exit(f"Unexpected stuff found in {tempd}: {found!r}")
 
     cfg.diag(f"Extracting {cfg.repo_file} into {tempd}")
-    subprocess.check_call(
-        ["tar", "-xaf", cfg.repo_file, "-C", tempd], env=cfg.utf8_env
-    )
+    subprocess.check_call(["tar", "-xaf", cfg.repo_file, "-C", tempd], env=cfg.utf8_env)
     cfg.diag("Looking for a single directory")
     found = list(tempd.iterdir())
-    if (
-        len(found) != 1
-        or not found[0].is_dir()
-        or found[0].name != "add-storpool-repo"
-    ):
-        sys.exit(
-            (
-                f"Expected a single add-storpool-repo directory in "
-                f"{tempd}: {found!r}"
-            )
-        )
+    if len(found) != 1 or not found[0].is_dir() or found[0].name != "add-storpool-repo":
+        sys.exit((f"Expected a single add-storpool-repo directory in " f"{tempd}: {found!r}"))
     spdir = found[0]
 
     spvar = spdir / "storpool_variant"
     if not spvar.is_file() or (spvar.stat().st_mode & 0o555) != 0o555:
         sys.exit(f"Expected an executable {spvar} file")
 
-    output = subprocess.check_output(
-        [spvar, "show", "all"], encoding="UTF-8", env=cfg.utf8_env
-    )
+    output = subprocess.check_output([spvar, "show", "all"], encoding="UTF-8", env=cfg.utf8_env)
     try:
         data = json.loads(output)
     except ValueError as err:
@@ -159,9 +146,7 @@ def extract_variants_data(
     return spdir, res
 
 
-def filter_docker_images(
-    cfg: Config, var_data: Dict[str, SimpleVariant]
-) -> Dict[str, str]:
+def filter_docker_images(cfg: Config, var_data: Dict[str, SimpleVariant]) -> Dict[str, str]:
     """Find the Docker images present on this system."""
     cfg.diag("Querying Docker for the available images")
     images = set(
@@ -232,18 +217,14 @@ async def run_detect_for_image(
 
         if rest:
             assert first_line is not None
-            errors.append(
-                f"More than one line of output: {(first_line + rest)!r}"
-            )
+            errors.append(f"More than one line of output: {(first_line + rest)!r}")
     finally:
         res = await proc.wait()
         cfg.diag(f"{image}: exit code {res!r}")
         if res != 0:
             errors.append(f"Non-zero exit code {res}")
 
-    first_line_dec = (
-        None if first_line is None else first_line.decode("ISO-8859-15")
-    )
+    first_line_dec = None if first_line is None else first_line.decode("ISO-8859-15")
     cfg.diag(f"{image}: first_line_dec {first_line_dec!r} errors {errors!r}")
     if errors:
         return (first_line_dec, "\n".join(errors))
@@ -292,8 +273,7 @@ async def test_detect(
 
     if len(res) != len(ordered):
         errors.append(
-            f"Internal error: expected {len(ordered)} detect results, "
-            f"got {len(res)} ones"
+            f"Internal error: expected {len(ordered)} detect results, " f"got {len(res)} ones"
         )
 
     return errors
@@ -433,8 +413,7 @@ echo 'Done, it seems'
 
     if len(res) != len(ordered):
         errors.append(
-            f"Internal error: expected {len(ordered)} add-repo results, "
-            f"got {len(res)} ones"
+            f"Internal error: expected {len(ordered)} add-repo results, " f"got {len(res)} ones"
         )
 
     return errors
@@ -450,9 +429,7 @@ async def main() -> None:
         spdir, var_data = extract_variants_data(cfg, tempd)
 
         images = filter_docker_images(cfg, var_data)
-        cfg.diag(
-            f"About to test {len(images)} containers: {sorted(images.keys())}"
-        )
+        cfg.diag(f"About to test {len(images)} containers: {sorted(images.keys())}")
         ordered = sorted(images.items())
 
         errors = await test_detect(cfg, spdir, ordered)

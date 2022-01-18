@@ -171,9 +171,7 @@ try:
         ],
     )
 
-    RepoType = NamedTuple(
-        "RepoType", [("name", str), ("extension", str), ("url", str)]
-    )
+    RepoType = NamedTuple("RepoType", [("name", str), ("extension", str), ("url", str)])
 
     T = TypeVar("T")  # pylint: disable=invalid-name
 except ImportError:
@@ -274,9 +272,7 @@ except ImportError:
         "OSPackage", ["name", "version", "arch", "status"]
     )
 
-    RepoType = collections.namedtuple(  # type: ignore
-        "RepoType", ["name", "extension", "url"]
-    )
+    RepoType = collections.namedtuple("RepoType", ["name", "extension", "url"])  # type: ignore
 
 if sys.version_info[0] >= 3:
     TextType = str
@@ -291,9 +287,7 @@ FORMAT_VERSION = (1, 3)
 
 
 REPO_TYPES = [
-    RepoType(
-        name="contrib", extension="", url="https://repo.storpool.com/public/"
-    ),
+    RepoType(name="contrib", extension="", url="https://repo.storpool.com/public/"),
     RepoType(
         name="staging",
         extension="-staging",
@@ -397,8 +391,7 @@ _VARIANT_DEF = [
                     "dpkg-query",
                     "-W",
                     "-f",
-                    r"${Package}\t${Version}\t${Architecture}\t"
-                    r"${db:Status-Abbrev}\n",
+                    r"${Package}\t${Version}\t${Architecture}\t${db:Status-Abbrev}\n",
                     "--",
                 ],
                 purge=[
@@ -431,8 +424,7 @@ _VARIANT_DEF = [
                 dep_query=[
                     "sh",
                     "-c",
-                    "dpkg-deb -f -- \"$pkg\" 'Depends' | "
-                    "sed -e 's/ *, */,/g' | tr ',' \"\\n\"",
+                    "dpkg-deb -f -- \"$pkg\" 'Depends' | sed -e 's/ *, */,/g' | tr ',' \"\\n\"",
                 ],
                 install=[
                     "sh",
@@ -682,9 +674,7 @@ _VARIANT_DEF = [
         family="redhat",
         detect=Detect(
             filename="/etc/redhat-release",
-            regex=re.compile(
-                r"^ CentOS \s .* \s 8 \. (?: [3-9] | (?: [12][0-9] ) )", re.X
-            ),
+            regex=re.compile(r"^ CentOS \s .* \s 8 \. (?: [3-9] | (?: [12][0-9] ) )", re.X),
             os_id="centos",
             os_version_regex=re.compile(r"^8(?:$|\.[4-9]|\.[1-9][0-9])"),
         ),
@@ -792,9 +782,7 @@ fi
         parent="CENTOS8",
         detect=Detect(
             filename="/etc/redhat-release",
-            regex=re.compile(
-                r"^ (?: CentOS | Virtuozzo ) \s .* \s 7 \.", re.X
-            ),
+            regex=re.compile(r"^ (?: CentOS | Virtuozzo ) \s .* \s 7 \.", re.X),
             os_id="centos",
             os_version_regex=re.compile(r"^7(?:$|\.[0-9])"),
         ),
@@ -911,10 +899,7 @@ fi
                     "install": [
                         "dnf",
                         "--enablerepo=storpool-contrib",
-                        (
-                            "--enablerepo="
-                            "codeready-builder-for-rhel-8-x86_64-rpms"
-                        ),
+                        "--enablerepo=codeready-builder-for-rhel-8-x86_64-rpms",
                         "install",
                         "-q",
                         "-y",
@@ -980,9 +965,7 @@ fi
         parent="CENTOS8",
         detect=Detect(
             filename="/etc/redhat-release",
-            regex=re.compile(
-                r"^ AlmaLinux \s .* \s 8 \. (?: [4-9] | [1-9][0-9] )", re.X
-            ),
+            regex=re.compile(r"^ AlmaLinux \s .* \s 8 \. (?: [4-9] | [1-9][0-9] )", re.X),
             os_id="alma",
             os_version_regex=re.compile(r"^8(?:$|\.[4-9]|\.[1-9][0-9])"),
         ),
@@ -1060,19 +1043,16 @@ class _YAIParser(object):
                 line = line.decode("UTF-8")
             except UnicodeDecodeError as err:
                 raise VariantError(
-                    (
-                        "Invalid {fname} line, "
-                        "not a valid UTF-8 string: {line!r}: {err}"
-                    ).format(fname=self.filename, line=line, err=err)
+                    "Invalid {fname} line, not a valid UTF-8 string: {line!r}: {err}".format(
+                        fname=self.filename, line=line, err=err
+                    )
                 )
         assert isinstance(line, TextType)
 
         mline = _RE_YAIP_LINE.match(line)
         if not mline:
             raise VariantError(
-                "Unexpected {fname} line: {line!r}".format(
-                    fname=self.filename, line=line
-                )
+                "Unexpected {fname} line: {line!r}".format(fname=self.filename, line=line)
             )
         if mline.group("comment") is not None:
             return None
@@ -1095,10 +1075,9 @@ class _YAIParser(object):
                 )
             if cquot != oquot:
                 raise VariantError(
-                    (
-                        "Weird {fname} line, "
-                        "open/close quote mismatch: {line!r}"
-                    ).format(fname=self.filename, line=line)
+                    "Weird {fname} line, open/close quote mismatch: {line!r}".format(
+                        fname=self.filename, line=line
+                    )
                 )
 
             return (varname, quoted)
@@ -1107,10 +1086,9 @@ class _YAIParser(object):
             quoted = full
         elif cquot != oquot:
             raise VariantError(
-                (
-                    "Weird {fname} line, "
-                    "open/close quote mismatch: {line!r}"
-                ).format(fname=self.filename, line=line)
+                "Weird {fname} line, open/close quote mismatch: {line!r}".format(
+                    fname=self.filename, line=line
+                )
             )
 
         res = TextType("")
@@ -1124,8 +1102,7 @@ class _YAIParser(object):
             if idx == len(quoted) - 1:
                 raise VariantError(
                     (
-                        "Weird {fname} line, backslash at the end of "
-                        "the quoted string: {line!r}"
+                        "Weird {fname} line, backslash at the end of the quoted string: {line!r}"
                     ).format(fname=self.filename, line=line)
                 )
             res += quoted[:idx] + quoted[idx + 1]
@@ -1172,9 +1149,7 @@ def update_namedtuple(data, updates):
     for name, value in updates.items():
         if name not in newv:
             raise VariantConfigError(
-                "{prefix}: unexpected field {name}".format(
-                    prefix=prefix, name=name
-                )
+                "{prefix}: unexpected field {name}".format(prefix=prefix, name=name)
             )
         orig = newv[name]
 
@@ -1199,9 +1174,7 @@ def update_namedtuple(data, updates):
                 newv[name].update(value)
             else:
                 raise VariantConfigError(
-                    "{prefix}: {name} is not a tuple".format(
-                        prefix=prefix, name=name
-                    )
+                    "{prefix}: {name} is not a tuple".format(prefix=prefix, name=name)
                 )
         elif isinstance(
             value,
@@ -1235,11 +1208,7 @@ def update_namedtuple(data, updates):
 def merge_into_parent(cfg, parent, child):
     # type: (Config, Variant, VariantUpdate) -> Variant
     """Merge a child's definitions into the parent."""
-    cfg.diag(
-        "- merging {child} into {parent}".format(
-            child=child.name, parent=parent.name
-        )
-    )
+    cfg.diag("- merging {child} into {parent}".format(child=child.name, parent=parent.name))
     return update_namedtuple(
         Variant(
             name=child.name,
@@ -1283,11 +1252,7 @@ def build_variants(cfg):
 
     order.reverse()
     _DETECT_ORDER.extend([VARIANTS[name] for name in order])
-    cfg.diag(
-        "Detect order: {names}".format(
-            names=" ".join(var.name for var in _DETECT_ORDER)
-        )
-    )
+    cfg.diag("Detect order: {names}".format(names=" ".join(var.name for var in _DETECT_ORDER)))
 
 
 def get_variant(name, cfg=_DEFAULT_CONFIG):
@@ -1346,10 +1311,7 @@ def detect_variant(cfg=_DEFAULT_CONFIG):
         )
         for var in _DETECT_ORDER:
             cfg.diag("- trying {name}".format(name=var.name))
-            if (
-                var.detect.os_id == os_id
-                and var.detect.os_version_regex.match(os_version)
-            ):
+            if var.detect.os_id == os_id and var.detect.os_version_regex.match(os_version):
                 cfg.diag("  - found it!")
                 return var
 
@@ -1357,9 +1319,7 @@ def detect_variant(cfg=_DEFAULT_CONFIG):
     for var in _DETECT_ORDER:
         cfg.diag("- trying {name}".format(name=var.name))
         try:
-            with io.open(
-                var.detect.filename, mode="r", encoding=SAFEENC
-            ) as osf:
+            with io.open(var.detect.filename, mode="r", encoding=SAFEENC) as osf:
                 cfg.diag("  - {fname}".format(fname=var.detect.filename))
                 for line in (line.rstrip("\r\n") for line in osf.readlines()):
                     if var.detect.regex.match(line):
@@ -1374,9 +1334,7 @@ def detect_variant(cfg=_DEFAULT_CONFIG):
                 )
             cfg.diag("  - no {fname}".format(fname=var.detect.filename))
 
-    raise VariantDetectError(
-        "Could not detect the current host's build variant"
-    )
+    raise VariantDetectError("Could not detect the current host's build variant")
 
 
 def list_all_packages(var, patterns=None):
@@ -1387,9 +1345,7 @@ def list_all_packages(var, patterns=None):
         cmd.extend(patterns)
 
     res = []
-    for line in (
-        subprocess.check_output(cmd, shell=False).decode("UTF-8").splitlines()
-    ):
+    for line in subprocess.check_output(cmd, shell=False).decode("UTF-8").splitlines():
         fields = line.split("\t")
         if len(fields) != 4:
             raise VariantFileError(
@@ -1447,9 +1403,7 @@ def copy_file(cfg, src, dstdir):
         )
     except subprocess.CalledProcessError as err:
         raise VariantFileError(
-            "Could not copy {src} over to {dst}: {err}".format(
-                src=src, dst=dst, err=err
-            )
+            "Could not copy {src} over to {dst}: {err}".format(src=src, dst=dst, err=err)
         )
 
 
@@ -1459,10 +1413,7 @@ def repo_add_extension(cfg, name):
     parts = name.rsplit(".")
     if len(parts) != 2:
         raise VariantFileError(
-            (
-                "Unexpected repository file name without "
-                "an extension: {name}"
-            ).format(name=name)
+            "Unexpected repository file name without an extension: {name}".format(name=name)
         )
     return "{stem}{extension}.{ext}".format(
         stem=parts[0], extension=cfg.repotype.extension, ext=parts[1]
@@ -1475,9 +1426,7 @@ def repo_add_deb(cfg, var, vardir):
     assert isinstance(var.repo, DebRepo)
 
     try:
-        subprocess.check_call(
-            var.commands.package.install + var.repo.req_packages, shell=False
-        )
+        subprocess.check_call(var.commands.package.install + var.repo.req_packages, shell=False)
     except subprocess.CalledProcessError as err:
         raise VariantFileError(
             "Could not install the required packages {req}: {err}".format(
@@ -1487,9 +1436,7 @@ def repo_add_deb(cfg, var, vardir):
 
     copy_file(
         cfg,
-        os.path.join(
-            vardir, repo_add_extension(cfg, os.path.basename(var.repo.sources))
-        ),
+        os.path.join(vardir, repo_add_extension(cfg, os.path.basename(var.repo.sources))),
         "/etc/apt/sources.list.d",
     )
     copy_file(
@@ -1501,9 +1448,7 @@ def repo_add_deb(cfg, var, vardir):
     try:
         subprocess.check_call(["apt-get", "update"], shell=False)
     except subprocess.CalledProcessError as err:
-        raise VariantFileError(
-            "Could not update the APT database: {err}".format(err=err)
-        )
+        raise VariantFileError("Could not update the APT database: {err}".format(err=err))
 
 
 def repo_add_yum(cfg, var, vardir):
@@ -1525,17 +1470,12 @@ def repo_add_yum(cfg, var, vardir):
         )
     except subprocess.CalledProcessError as err:
         raise VariantFileError(
-            (
-                "Could not install the required "
-                "ca-certificates package: {err}"
-            ).format(err=err)
+            "Could not install the required ca-certificates package: {err}".format(err=err)
         )
 
     copy_file(
         cfg,
-        os.path.join(
-            vardir, repo_add_extension(cfg, os.path.basename(var.repo.yumdef))
-        ),
+        os.path.join(vardir, repo_add_extension(cfg, os.path.basename(var.repo.yumdef))),
         "/etc/yum.repos.d",
     )
     copy_file(
@@ -1550,16 +1490,12 @@ def repo_add_yum(cfg, var, vardir):
                 [
                     "rpmkeys",
                     "--import",
-                    os.path.join(
-                        "/etc/pki/rpm-gpg", os.path.basename(var.repo.keyring)
-                    ),
+                    os.path.join("/etc/pki/rpm-gpg", os.path.basename(var.repo.keyring)),
                 ],
                 shell=False,
             )
         except subprocess.CalledProcessError as err:
-            raise VariantFileError(
-                "Could not import the RPM PGP keys: {err}".format(err=err)
-            )
+            raise VariantFileError("Could not import the RPM PGP keys: {err}".format(err=err))
 
     try:
         subprocess.check_call(
@@ -1573,11 +1509,7 @@ def repo_add_yum(cfg, var, vardir):
             shell=False,
         )
     except subprocess.CalledProcessError as err:
-        raise VariantFileError(
-            "Could not clean the Yum repository metadata: {err}".format(
-                err=err
-            )
-        )
+        raise VariantFileError("Could not clean the Yum repository metadata: {err}".format(err=err))
 
 
 def repo_add(cfg):
@@ -1618,20 +1550,18 @@ def command_find(cfg, var):
         fields = getattr(current, "_fields")  # type: List[str]
         if comp not in fields:
             raise VariantConfigError(
-                (
-                    "Invalid command component '{comp}', "
-                    "should be one of {fields}"
-                ).format(comp=comp, fields=" ".join(fields))
+                "Invalid command component '{comp}', should be one of {fields}".format(
+                    comp=comp, fields=" ".join(fields)
+                )
             )
         current = getattr(current, comp)
 
     if not isinstance(current, list):
         fields = getattr(current, "_fields")
         raise VariantConfigError(
-            (
-                "Incomplete command specification, should "
-                "continue with one of {fields}"
-            ).format(fields=" ".join(fields))
+            "Incomplete command specification, should continue with one of {fields}".format(
+                fields=" ".join(fields)
+            )
         )
 
     return current
@@ -1652,9 +1582,7 @@ def command_run(cfg):
     try:
         subprocess.check_call(cmd, shell=False)
     except subprocess.CalledProcessError as err:
-        raise VariantFileError(
-            "Could not run `{cmd}`: {err}".format(cmd=" ".join(cmd), err=err)
-        )
+        raise VariantFileError("Could not run `{cmd}`: {err}".format(cmd=" ".join(cmd), err=err))
 
 
 def cmd_command_list(cfg):
@@ -1664,20 +1592,14 @@ def cmd_command_list(cfg):
 
     # We only have two levels, right?
     for cat_name, category in (
-        (name, getattr(var.commands, name))
-        for name in sorted(var.commands._fields)
+        (name, getattr(var.commands, name)) for name in sorted(var.commands._fields)
     ):
         for cmd_name, command in (
-            (name, getattr(category, name))
-            for name in sorted(category._fields)
+            (name, getattr(category, name)) for name in sorted(category._fields)
         ):
             if (cat_name, cmd_name) in CMD_LIST_BRIEF:
                 command = ["..."]
-            print(
-                "{cat}.{name}: {cmd}".format(
-                    cat=cat_name, name=cmd_name, cmd=" ".join(command)
-                )
-            )
+            print("{cat}.{name}: {cmd}".format(cat=cat_name, name=cmd_name, cmd=" ".join(command)))
 
 
 def cmd_command_run(cfg):
@@ -1707,9 +1629,7 @@ def jsonify(obj):
         return jsonify(obj.pattern)
 
     if hasattr(obj, "_asdict"):
-        return dict(
-            (name, jsonify(value)) for name, value in obj._asdict().items()
-        )
+        return dict((name, jsonify(value)) for name, value in obj._asdict().items())
     if isinstance(obj, dict):
         return dict((name, jsonify(value)) for name, value in obj.items())
 
@@ -1784,46 +1704,30 @@ def parse_arguments():
     p_cmd = subp.add_parser("command", help="Distribition-specific commands")
     subp_cmd = p_cmd.add_subparsers()
 
-    p_subcmd = subp_cmd.add_parser(
-        "list", help="List the distribution-specific commands"
-    )
+    p_subcmd = subp_cmd.add_parser("list", help="List the distribution-specific commands")
     p_subcmd.set_defaults(func=cmd_command_list)
 
-    p_subcmd = subp_cmd.add_parser(
-        "run", help="Run a distribution-specific command"
-    )
+    p_subcmd = subp_cmd.add_parser("run", help="Run a distribution-specific command")
     p_subcmd.add_argument(
         "-N",
         "--noop",
         action="store_true",
         help="display the command instead of executing it",
     )
-    p_subcmd.add_argument(
-        "command", type=str, help="The identifier of the command to run"
-    )
-    p_subcmd.add_argument(
-        "args", type=str, nargs="*", help="Arguments to pass to the command"
-    )
+    p_subcmd.add_argument("command", type=str, help="The identifier of the command to run")
+    p_subcmd.add_argument("args", type=str, nargs="*", help="Arguments to pass to the command")
     p_subcmd.set_defaults(func=cmd_command_run)
 
-    p_cmd = subp.add_parser(
-        "detect", help="Detect the build variant for the current host"
-    )
+    p_cmd = subp.add_parser("detect", help="Detect the build variant for the current host")
     p_cmd.set_defaults(func=cmd_detect)
 
-    p_cmd = subp.add_parser(
-        "features", help="Display the features supported by storpool_variant"
-    )
+    p_cmd = subp.add_parser("features", help="Display the features supported by storpool_variant")
     p_cmd.set_defaults(func=cmd_features)
 
-    p_cmd = subp.add_parser(
-        "repo", help="StorPool repository-related commands"
-    )
+    p_cmd = subp.add_parser("repo", help="StorPool repository-related commands")
     subp_cmd = p_cmd.add_subparsers()
 
-    p_subcmd = subp_cmd.add_parser(
-        "add", help="Install the StorPool repository configuration"
-    )
+    p_subcmd = subp_cmd.add_parser("add", help="Install the StorPool repository configuration")
     p_subcmd.add_argument(
         "-d",
         "--repodir",
@@ -1841,9 +1745,7 @@ def parse_arguments():
     )
     p_subcmd.set_defaults(func=cmd_repo_add)
 
-    p_cmd = subp.add_parser(
-        "show", help="Display information about a build variant"
-    )
+    p_cmd = subp.add_parser("show", help="Display information about a build variant")
     p_cmd.add_argument(
         "name",
         type=str,
@@ -1864,9 +1766,7 @@ def parse_arguments():
             command=getattr(args, "command", getattr(args, "name", None)),
             noop=bool(getattr(args, "noop", False)),
             repodir=getattr(args, "repodir", None),
-            repotype=next(
-                rtype for rtype in REPO_TYPES if rtype.name == args.repotype
-            )
+            repotype=next(rtype for rtype in REPO_TYPES if rtype.name == args.repotype)
             if hasattr(args, "repotype")
             else REPO_TYPES[0],
             verbose=args.verbose,

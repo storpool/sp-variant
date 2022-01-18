@@ -66,13 +66,9 @@ Variant: {{ var.name }} alias: {{ var.builder.alias }} family: {{ var.family }} 
         assert "- variant: ALMA8" in lines
         assert "- variant: ORACLE7" in lines
 
-        c7_lines = [
-            line for line in lines if line.startswith("Variant: CENTOS7 ")
-        ]
+        c7_lines = [line for line in lines if line.startswith("Variant: CENTOS7 ")]
         assert len(c7_lines) == 1
-        assert c7_lines[0].startswith(
-            "Variant: CENTOS7 alias: centos7 family: redhat update: "
-        )
+        assert c7_lines[0].startswith("Variant: CENTOS7 alias: centos7 family: redhat update: ")
 
 
 def test_subst_re():
