@@ -67,6 +67,8 @@ pub enum VariantKind {
     UBUNTU2004,
     /// Ubuntu 21.10 LTS (Impish Indri)
     UBUNTU2110,
+    /// Ubuntu 22.04 LTS (Jammy Jellyfish)
+    UBUNTU2204,
 }
 
 impl VariantKind {
@@ -85,6 +87,7 @@ impl VariantKind {
     const UBUNTU1804_NAME: &'static str = "UBUNTU1804";
     const UBUNTU2004_NAME: &'static str = "UBUNTU2004";
     const UBUNTU2110_NAME: &'static str = "UBUNTU2110";
+    const UBUNTU2204_NAME: &'static str = "UBUNTU2204";
 }
 
 impl AsRef<str> for VariantKind {
@@ -105,6 +108,7 @@ impl AsRef<str> for VariantKind {
             VariantKind::UBUNTU1804 => VariantKind::UBUNTU1804_NAME,
             VariantKind::UBUNTU2004 => VariantKind::UBUNTU2004_NAME,
             VariantKind::UBUNTU2110 => VariantKind::UBUNTU2110_NAME,
+            VariantKind::UBUNTU2204 => VariantKind::UBUNTU2204_NAME,
         }
     }
 }
@@ -129,6 +133,7 @@ impl FromStr for VariantKind {
             VariantKind::UBUNTU1804_NAME => Ok(VariantKind::UBUNTU1804),
             VariantKind::UBUNTU2004_NAME => Ok(VariantKind::UBUNTU2004),
             VariantKind::UBUNTU2110_NAME => Ok(VariantKind::UBUNTU2110),
+            VariantKind::UBUNTU2204_NAME => Ok(VariantKind::UBUNTU2204),
             other => Err(VariantError::BadVariant(other.to_string())),
         }
     }
@@ -156,6 +161,7 @@ pub fn get_variants() -> &'static super::VariantDefTop {
                     VariantKind::UBUNTU1804,
                     VariantKind::UBUNTU2004,
                     VariantKind::UBUNTU2110,
+                    VariantKind::UBUNTU2204,
                     VariantKind::DEBIAN9,
                     VariantKind::DEBIAN10,
                     VariantKind::DEBIAN11,
@@ -2290,7 +2296,7 @@ fi
                                 kind: VariantKind::UBUNTU2110,
                                 descr: "Ubuntu 21.10 LTS (Impish Indri)".to_string(),
                                 family: "debian".to_string(),
-                                parent: "DEBIAN12".to_string(),
+                                parent: "UBUNTU2204".to_string(),
                                 detect: super::Detect {
                                     filename: "/etc/os-release".to_string(),
                                     regex: r"^ PRETTY_NAME= .* (?: Ubuntu \s+ 21 \. 10 | Mint \s+ 21 ) ".to_string(),
@@ -2427,6 +2433,154 @@ fi
                                     alias: "ubuntu-21.10".to_string(),
                                     base_image: "ubuntu:impish".to_string(),
                                     branch: "ubuntu/impish".to_string(),
+                                    kernel_package: "linux-headers".to_string(),
+                                    utf8_locale: "C.UTF-8".to_string(),
+                                },
+                            },
+                    ),
+                    (
+                            VariantKind::UBUNTU2204,
+                            super::Variant {
+                                kind: VariantKind::UBUNTU2204,
+                                descr: "Ubuntu 22.04 LTS (Jammy Jellyfish)".to_string(),
+                                family: "debian".to_string(),
+                                parent: "DEBIAN12".to_string(),
+                                detect: super::Detect {
+                                    filename: "/etc/os-release".to_string(),
+                                    regex: r"^ PRETTY_NAME= .* (?: Ubuntu \s+ 22 \. 04 | Mint \s+ 22 ) ".to_string(),
+                                    os_id: "ubuntu".to_string(),
+                                    os_version_regex: r"^22\.04$".to_string(),
+                                },
+                                commands: HashMap::from(
+                                    [
+                                        (
+                                            "package".to_string(),
+                                            HashMap::from(
+                                                [
+                                                    (
+                                                        "install".to_string(),
+                                                        vec![
+                                                            "env".to_string(),
+                                                            "DEBIAN_FRONTEND=noninteractive".to_string(),
+                                                            "apt-get".to_string(),
+                                                            "-q".to_string(),
+                                                            "-y".to_string(),
+                                                            "--no-install-recommends".to_string(),
+                                                            "install".to_string(),
+                                                            "--".to_string(),
+                                                        ],
+                                                    ),
+                                                    (
+                                                        "list_all".to_string(),
+                                                        vec![
+                                                            "dpkg-query".to_string(),
+                                                            "-W".to_string(),
+                                                            "-f".to_string(),
+                                                            "${Package}\\t${Version}\\t${Architecture}\\t${db:Status-Abbrev}\\n".to_string(),
+                                                            "--".to_string(),
+                                                        ],
+                                                    ),
+                                                    (
+                                                        "purge".to_string(),
+                                                        vec![
+                                                            "env".to_string(),
+                                                            "DEBIAN_FRONTEND=noninteractive".to_string(),
+                                                            "apt-get".to_string(),
+                                                            "-q".to_string(),
+                                                            "-y".to_string(),
+                                                            "purge".to_string(),
+                                                            "--".to_string(),
+                                                        ],
+                                                    ),
+                                                    (
+                                                        "remove".to_string(),
+                                                        vec![
+                                                            "env".to_string(),
+                                                            "DEBIAN_FRONTEND=noninteractive".to_string(),
+                                                            "apt-get".to_string(),
+                                                            "-q".to_string(),
+                                                            "-y".to_string(),
+                                                            "remove".to_string(),
+                                                            "--".to_string(),
+                                                        ],
+                                                    ),
+                                                    (
+                                                        "remove_impl".to_string(),
+                                                        vec![
+                                                            "env".to_string(),
+                                                            "DEBIAN_FRONTEND=noninteractive".to_string(),
+                                                            "dpkg".to_string(),
+                                                            "-r".to_string(),
+                                                            "--".to_string(),
+                                                        ],
+                                                    ),
+                                                    (
+                                                        "update_db".to_string(),
+                                                        vec![
+                                                            "apt-get".to_string(),
+                                                            "-q".to_string(),
+                                                            "-y".to_string(),
+                                                            "update".to_string(),
+                                                        ],
+                                                    ),
+                                                ]
+                                            ),
+                                        ),
+                                        (
+                                            "pkgfile".to_string(),
+                                            HashMap::from(
+                                                [
+                                                    (
+                                                        "dep_query".to_string(),
+                                                        vec![
+                                                            "sh".to_string(),
+                                                            "-c".to_string(),
+                                                            "dpkg-deb -f -- \"$pkg\" 'Depends' | sed -e 's/ *, */,/g' | tr ',' \"\\n\"".to_string(),
+                                                        ],
+                                                    ),
+                                                    (
+                                                        "install".to_string(),
+                                                        vec![
+                                                            "sh".to_string(),
+                                                            "-c".to_string(),
+                                                            "env DEBIAN_FRONTEND=noninteractive apt-get install --no-install-recommends --reinstall -y -o DPkg::Options::=--force-confnew -- $packages".to_string(),
+                                                        ],
+                                                    ),
+                                                ]
+                                            ),
+                                        ),
+                                    ]
+                                ),
+                                min_sys_python: "3.9".to_string(),
+                                repo:
+                                    super::Repo::Deb(super::DebRepo {
+                                        codename: "jammy".to_string(),
+                                        vendor: "ubuntu".to_string(),
+                                        sources: "debian/repo/storpool.sources".to_string(),
+                                        keyring: "debian/repo/storpool-keyring.gpg".to_string(),
+                                        req_packages: vec![
+                                            "ca-certificates".to_string(),
+                                        ],
+                                    }),
+
+                                package: HashMap::from(
+                                    [
+                                        ("BINDINGS_PYTHON".to_string(), "python3".to_string()),
+                                        ("BINDINGS_PYTHON_CONFGET".to_string(), "python3-confget".to_string()),
+                                        ("BINDINGS_PYTHON_SIMPLEJSON".to_string(), "python3-simplejson".to_string()),
+                                        ("CGROUP".to_string(), "cgroup-tools".to_string()),
+                                        ("CPUPOWER".to_string(), "linux-tools-generic".to_string()),
+                                        ("LIBSSL".to_string(), "libssl1.1".to_string()),
+                                        ("MCELOG".to_string(), "bash".to_string()),
+                                    ]
+                                ),
+                                systemd_lib: "lib/systemd/system".to_string(),
+                                file_ext: "deb".to_string(),
+                                initramfs_flavor: "update-initramfs".to_string(),
+                                builder: super::Builder {
+                                    alias: "ubuntu-22.04".to_string(),
+                                    base_image: "ubuntu:jammy".to_string(),
+                                    branch: "ubuntu/jammy".to_string(),
                                     kernel_package: "linux-headers".to_string(),
                                     utf8_locale: "C.UTF-8".to_string(),
                                 },

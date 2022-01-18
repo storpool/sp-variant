@@ -126,6 +126,11 @@ detect_from_os_release()
 		return
 	fi
 	
+	if [ "$os_id" = 'ubuntu' ] && printf -- '%s\n' "$version_id" | grep -Eqe '^22\.04$'; then
+		printf -- '%s\n' 'UBUNTU2204'
+		return
+	fi
+	
 }
 
 cmd_detect()
@@ -196,6 +201,11 @@ cmd_detect()
 	
 	if [ -r '/etc/os-release' ] && grep -Eqe '^PRETTY_NAME=.*(Ubuntu[[:space:]]+21\.10|Mint[[:space:]]+21)' -- '/etc/os-release'; then
 		printf -- '%s\n' 'UBUNTU2110'
+		return
+	fi
+	
+	if [ -r '/etc/os-release' ] && grep -Eqe '^PRETTY_NAME=.*(Ubuntu[[:space:]]+22\.04|Mint[[:space:]]+22)' -- '/etc/os-release'; then
+		printf -- '%s\n' 'UBUNTU2204'
 		return
 	fi
 	
@@ -1789,9 +1799,120 @@ show_UBUNTU2110()
     "LIBSSL": "libssl1.1",
     "MCELOG": "bash"
   },
-  "parent": "DEBIAN12",
+  "parent": "UBUNTU2204",
   "repo": {
     "codename": "impish",
+    "keyring": "debian/repo/storpool-keyring.gpg",
+    "req_packages": [
+      "ca-certificates"
+    ],
+    "sources": "debian/repo/storpool.sources",
+    "vendor": "ubuntu"
+  },
+  "systemd_lib": "lib/systemd/system"
+}
+EOVARIANT_JSON
+}
+
+show_UBUNTU2204()
+{
+	cat <<'EOVARIANT_JSON'
+  {
+  "builder": {
+    "alias": "ubuntu-22.04",
+    "base_image": "ubuntu:jammy",
+    "branch": "ubuntu/jammy",
+    "kernel_package": "linux-headers",
+    "utf8_locale": "C.UTF-8"
+  },
+  "commands": {
+    "package": {
+      "install": [
+        "env",
+        "DEBIAN_FRONTEND=noninteractive",
+        "apt-get",
+        "-q",
+        "-y",
+        "--no-install-recommends",
+        "install",
+        "--"
+      ],
+      "list_all": [
+        "dpkg-query",
+        "-W",
+        "-f",
+        "${Package}\\t${Version}\\t${Architecture}\\t${db:Status-Abbrev}\\n",
+        "--"
+      ],
+      "purge": [
+        "env",
+        "DEBIAN_FRONTEND=noninteractive",
+        "apt-get",
+        "-q",
+        "-y",
+        "purge",
+        "--"
+      ],
+      "remove": [
+        "env",
+        "DEBIAN_FRONTEND=noninteractive",
+        "apt-get",
+        "-q",
+        "-y",
+        "remove",
+        "--"
+      ],
+      "remove_impl": [
+        "env",
+        "DEBIAN_FRONTEND=noninteractive",
+        "dpkg",
+        "-r",
+        "--"
+      ],
+      "update_db": [
+        "apt-get",
+        "-q",
+        "-y",
+        "update"
+      ]
+    },
+    "pkgfile": {
+      "dep_query": [
+        "sh",
+        "-c",
+        "dpkg-deb -f -- \"$pkg\" 'Depends' | sed -e 's/ *, */,/g' | tr ',' \"\\n\""
+      ],
+      "install": [
+        "sh",
+        "-c",
+        "env DEBIAN_FRONTEND=noninteractive apt-get install --no-install-recommends --reinstall -y -o DPkg::Options::=--force-confnew -- $packages"
+      ]
+    }
+  },
+  "descr": "Ubuntu 22.04 LTS (Jammy Jellyfish)",
+  "detect": {
+    "filename": "/etc/os-release",
+    "os_id": "ubuntu",
+    "os_version_regex": "^22\\.04$",
+    "regex": "^ PRETTY_NAME= .* (?: Ubuntu \\s+ 22 \\. 04 | Mint \\s+ 22 ) "
+  },
+  "family": "debian",
+  "file_ext": "deb",
+  "initramfs_flavor": "update-initramfs",
+  "min_sys_python": "3.9",
+  "name": "UBUNTU2204",
+  "package": {
+    "BINDINGS_PYTHON": "python3",
+    "BINDINGS_PYTHON_CONFGET": "python3-confget",
+    "BINDINGS_PYTHON_SIMPLEJSON": "python3-simplejson",
+    "CGROUP": "cgroup-tools",
+    "CPUPOWER": "linux-tools-generic",
+    "LIBSSL": "libssl1.1",
+    "MCELOG": "bash"
+  },
+  "parent": "DEBIAN12",
+  "repo": {
+    "codename": "jammy",
     "keyring": "debian/repo/storpool-keyring.gpg",
     "req_packages": [
       "ca-certificates"
@@ -1832,6 +1953,7 @@ cmd_show_all()
     "UBUNTU1804",
     "UBUNTU2004",
     "UBUNTU2110",
+    "UBUNTU2204",
     "DEBIAN9",
     "DEBIAN10",
     "DEBIAN11",
@@ -1885,6 +2007,9 @@ EOPROLOGUE
   echo ','
   printf -- '    "%s": ' 'UBUNTU2110'
   show_UBUNTU2110
+  echo ','
+  printf -- '    "%s": ' 'UBUNTU2204'
+  show_UBUNTU2204
   
 
 	cat <<'EOEPILOGUE'
@@ -3038,6 +3163,71 @@ fi
 			esac
 			;;
 		
+		UBUNTU2204)
+			case "$cmd_cat" in
+				
+				package)
+					case "$cmd_item" in
+						
+						install)
+							$noop 'env' 'DEBIAN_FRONTEND=noninteractive' 'apt-get' '-q' '-y' '--no-install-recommends' 'install' '--'  "$@"
+							;;
+						
+						list_all)
+							$noop 'dpkg-query' '-W' '-f' '${Package}\t${Version}\t${Architecture}\t${db:Status-Abbrev}\n' '--'  "$@"
+							;;
+						
+						purge)
+							$noop 'env' 'DEBIAN_FRONTEND=noninteractive' 'apt-get' '-q' '-y' 'purge' '--'  "$@"
+							;;
+						
+						remove)
+							$noop 'env' 'DEBIAN_FRONTEND=noninteractive' 'apt-get' '-q' '-y' 'remove' '--'  "$@"
+							;;
+						
+						remove_impl)
+							$noop 'env' 'DEBIAN_FRONTEND=noninteractive' 'dpkg' '-r' '--'  "$@"
+							;;
+						
+						update_db)
+							$noop 'apt-get' '-q' '-y' 'update'  "$@"
+							;;
+						
+
+						*)
+							echo "Invalid command '$cmd_item' in the '$cmd_cat' category" 1>&2
+							exit 1
+							;;
+					esac
+					;;
+				
+				pkgfile)
+					case "$cmd_item" in
+						
+						dep_query)
+							$noop 'sh' '-c' 'dpkg-deb -f -- "$pkg" 'Depends' | sed -e 's/ *, */,/g' | tr ',' "\n"'  "$@"
+							;;
+						
+						install)
+							$noop 'sh' '-c' 'env DEBIAN_FRONTEND=noninteractive apt-get install --no-install-recommends --reinstall -y -o DPkg::Options::=--force-confnew -- $packages'  "$@"
+							;;
+						
+
+						*)
+							echo "Invalid command '$cmd_item' in the '$cmd_cat' category" 1>&2
+							exit 1
+							;;
+					esac
+					;;
+				
+
+				*)
+					echo "Invalid command category '$cmd_cat'" 1>&2
+					exit 1
+					;;
+			esac
+			;;
+		
 
 		*)
 			echo "Internal error: invalid variant '$name'" 1>&2
@@ -3261,6 +3451,12 @@ cmd_repo_add()
 			
 			;;
 		
+		UBUNTU2204)
+			
+			repo_add_deb 'UBUNTU2204' "$vdir" "$repotype" 'debian/repo/storpool.sources' 'debian/repo/storpool-keyring.gpg' 'ca-certificates'
+			
+			;;
+		
 	esac
 
 	install -o root -g root -m 755 -- "$0" /usr/sbin/sp_variant
@@ -3412,6 +3608,10 @@ case "$1" in
 			
 			UBUNTU2110)
 				show_variant 'UBUNTU2110'
+				;;
+			
+			UBUNTU2204)
+				show_variant 'UBUNTU2204'
 				;;
 			
 
