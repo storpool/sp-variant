@@ -61,6 +61,7 @@ try:
         Type,
         TypeVar,
         Union,
+        TYPE_CHECKING,
     )
 
     Detect = NamedTuple(  # pylint: disable=invalid-name
@@ -174,6 +175,14 @@ try:
     RepoType = NamedTuple("RepoType", [("name", str), ("extension", str), ("url", str)])
 
     T = TypeVar("T")  # pylint: disable=invalid-name
+
+    if TYPE_CHECKING:
+        if sys.version_info[0] >= 3:
+            # pylint: disable-next=protected-access,unsubscriptable-object
+            SubPAction = argparse._SubParsersAction[argparse.ArgumentParser]
+        else:
+            # pylint: disable-next=protected-access
+            SubPAction = argparse._SubParsersAction
 except ImportError:
     import collections
 
@@ -1682,7 +1691,7 @@ def cmd_show(cfg):
 
 
 def base_parser(prog):
-    # type: (str) -> Tuple[argparse.ArgumentParser, argparse._SubParsersAction]
+    # type: (str) -> Tuple[argparse.ArgumentParser, SubPAction]
     """Build a parser with the options used by all the sp.variant tools."""
     parser = argparse.ArgumentParser(prog=prog)
     parser.add_argument(
