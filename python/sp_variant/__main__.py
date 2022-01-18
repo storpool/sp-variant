@@ -563,9 +563,38 @@ _VARIANT_DEF = [
         },
     ),
     VariantUpdate(
+        name="UBUNTU2204",
+        descr="Ubuntu 22.04 LTS (Jammy Jellyfish)",
+        parent="DEBIAN12",
+        detect=Detect(
+            filename="/etc/os-release",
+            regex=re.compile(
+                r"^ PRETTY_NAME= .* (?: Ubuntu \s+ 22 \. 04 | Mint \s+ 22 ) ",
+                re.X,
+            ),
+            os_id="ubuntu",
+            os_version_regex=re.compile(r"^22\.04$"),
+        ),
+        updates={
+            "repo": {
+                "vendor": "ubuntu",
+                "codename": "jammy",
+            },
+            "package": {
+                "CPUPOWER": "linux-tools-generic",
+                "MCELOG": "bash",
+            },
+            "builder": {
+                "alias": "ubuntu-22.04",
+                "base_image": "ubuntu:jammy",
+                "branch": "ubuntu/jammy",
+            },
+        },
+    ),
+    VariantUpdate(
         name="UBUNTU2110",
         descr="Ubuntu 21.10 LTS (Impish Indri)",
-        parent="DEBIAN12",
+        parent="UBUNTU2204",
         detect=Detect(
             filename="/etc/os-release",
             regex=re.compile(
@@ -579,10 +608,6 @@ _VARIANT_DEF = [
             "repo": {
                 "vendor": "ubuntu",
                 "codename": "impish",
-            },
-            "package": {
-                "CPUPOWER": "linux-tools-generic",
-                "MCELOG": "bash",
             },
             "builder": {
                 "alias": "ubuntu-21.10",
