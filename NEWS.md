@@ -1,5 +1,7 @@
 # Change log for the sp-variant library
 
+## 2.2.0 (not yet)
+
 ## 2.1.1 (2021-12-18)
 - all:
   - Add two-clause BSD licenses to all the source files.
