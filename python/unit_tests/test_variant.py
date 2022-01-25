@@ -1,4 +1,4 @@
-# Copyright (c) 2021  StorPool <support@storpool.com>
+# Copyright (c) 2021, 2022  StorPool <support@storpool.com>
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -71,3 +71,32 @@ def test_detect():
     var = spvar.detect_variant()
     assert var is not None
     assert os.path.isfile(var.detect.filename)
+
+
+def test_list_all():
+    # type: () -> None
+    """Make sure that the package.list_all command does not go amok."""
+    print("")
+
+    var = spvar.detect_variant()
+    assert var is not None
+    det_cmd = list(var.commands.package.list_all)
+    print("list_all command: {det_cmd!r}".format(det_cmd=det_cmd))
+
+    pkgs_a = spvar.list_all_packages(var, patterns=["a*"])
+    print("{count} packages with names starting with 'a'".format(count=len(pkgs_a)))
+    assert det_cmd == var.commands.package.list_all
+
+    pkgs_b = spvar.list_all_packages(var, patterns=["b*"])
+    print("{count} packages with names starting with 'b'".format(count=len(pkgs_b)))
+    assert det_cmd == var.commands.package.list_all
+
+    pkgs_a_again = spvar.list_all_packages(var, patterns=["a*"])
+    print("now {count} packages with names starting with 'a'".format(count=len(pkgs_a_again)))
+    assert det_cmd == var.commands.package.list_all
+    assert set(pkgs_a) == set(pkgs_a_again)
+
+    # There should be at least one package installed on the system... right?
+    pkgs_all = spvar.list_all_packages(var, patterns=["*"])
+    print("{count} total packages on the system".format(count=len(pkgs_all)))
+    assert pkgs_all

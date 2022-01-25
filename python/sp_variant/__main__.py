@@ -1374,7 +1374,7 @@ def detect_variant(cfg=_DEFAULT_CONFIG):
 def list_all_packages(var, patterns=None):
     # type: (Variant, Optional[Iterable[str]]) -> List[OSPackage]
     """Parse the output of the "list installed packages" command."""
-    cmd = var.commands.package.list_all
+    cmd = list(var.commands.package.list_all)
     if patterns is not None:
         cmd.extend(patterns)
 
@@ -1388,7 +1388,7 @@ def list_all_packages(var, patterns=None):
                 )
             )
         # This may need updating at some point, but it'll work for now
-        if fields[3] != "ii":
+        if not fields[3].startswith("ii"):
             continue
 
         res.append(
