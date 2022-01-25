@@ -1,6 +1,15 @@
 # Change log for the sp-variant library
 
 ## 2.2.0 (not yet)
+- all:
+  - recognize Ubuntu 22.04 (Jammy Jellyfish)
+- python:
+  - fix two bugs in the `list_all_packages()` convenience function:
+    - do not modify the variant structure's command list in place!
+    - correctly recognize installed packages on Debian/Ubuntu systems
+  - reformat with 100 characters per line
+  - make the ArgumentParser-related type annotations a bit more precise to
+    pass some checks in recent versions of Mypy
 
 ## 2.1.1 (2021-12-18)
 - all:
