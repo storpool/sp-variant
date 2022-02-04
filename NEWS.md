@@ -10,6 +10,9 @@
   - reformat with 100 characters per line
   - make the ArgumentParser-related type annotations a bit more precise to
     pass some checks in recent versions of Mypy
+- rust:
+  - change the dependency on nix to a >= relation, hoping they do not
+    break backwards compatibility
 
 ## 2.1.1 (2021-12-18)
 - all:
