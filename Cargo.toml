@@ -21,7 +21,7 @@ path = "rust/bin.rs"
 clap = "2"
 expect-exit = "0.4"
 lazy_static = "1"
-nix = "0.22"
+nix = ">= 0.22"
 regex = "1"
 quick-error = "2"
 serde = {version="1", features=["derive"]}
