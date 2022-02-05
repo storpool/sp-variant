@@ -1,6 +1,6 @@
 # Change log for the sp-variant library
 
-## 2.2.0 (not yet)
+## 2.2.0 (2022-02-05)
 - all:
   - recognize Ubuntu 22.04 (Jammy Jellyfish)
 - python:
