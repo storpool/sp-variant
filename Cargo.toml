@@ -1,6 +1,6 @@
 [package]
 name = "sp-variant"
-version = "2.2.0"
+version = "2.2.1"
 edition = "2021"
 authors = ["StorPool <support@storpool.com>"]
 description = " Detect the Linux distribution for the StorPool build system"

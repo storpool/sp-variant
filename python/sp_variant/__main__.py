@@ -291,7 +291,7 @@ else:
     BytesType = str
 
 
-VERSION = "2.2.0"
+VERSION = "2.2.1"
 FORMAT_VERSION = (1, 3)
 
 
