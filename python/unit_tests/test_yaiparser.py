@@ -1,4 +1,4 @@
-# Copyright (c) 2021  StorPool <support@storpool.com>
+# Copyright (c) 2021, 2022  StorPool <support@storpool.com>
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -31,7 +31,8 @@ from typing import Tuple
 import ddt  # type: ignore
 import pytest
 
-from sp_variant import __main__ as spvar
+from sp_variant import defs
+from sp_variant import yaiparser
 
 from . import util
 
@@ -91,12 +92,12 @@ _CFG_EXPECTED = [
 
 @ddt.ddt
 class TestParseLine(unittest.TestCase):
-    """Test various aspects of _YAIParser.parse_line()."""
+    """Test various aspects of YAIParser.parse_line()."""
 
     def setUp(self):
         # type: (TestParseLine) -> None
-        """Stash a _YAIParser object."""
-        self.yai = spvar._YAIParser("/dev/null")  # pylint: disable=W0212
+        """Stash a YAIParser object."""
+        self.yai = yaiparser.YAIParser("/dev/null")  # pylint: disable=W0212
 
     @ddt.data(*_LINES_COMMENTS)
     def test_parse_comments(self, line):
@@ -108,7 +109,7 @@ class TestParseLine(unittest.TestCase):
     def test_bad(self, line):
         # type: (TestParseLine, str) -> None
         """Make sure parse_line() raises exceptions on errors."""
-        with pytest.raises(spvar.VariantError):
+        with pytest.raises(defs.VariantError):
             raise Exception(repr(self.yai.parse_line(line)))
 
     @ddt.data(*_LINES_OK)
@@ -128,9 +129,9 @@ def test_parse():
     """Test the functionality of _YAIParser.parse() and .get()."""
     with util.TemporaryDirectory() as tempd:
         cfile = tempd / "os-release"
-        cfile.write_text(spvar.TextType(_CFG_TEXT), encoding="UTF-8")
+        cfile.write_text(defs.TextType(_CFG_TEXT), encoding="UTF-8")
 
-        yai = spvar._YAIParser(str(cfile))  # pylint: disable=W0212
+        yai = yaiparser.YAIParser(str(cfile))  # pylint: disable=W0212
         data = yai.parse()
 
         for name, value in _CFG_EXPECTED:

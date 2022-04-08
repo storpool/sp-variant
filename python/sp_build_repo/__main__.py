@@ -1,4 +1,4 @@
-# Copyright (c) 2021  StorPool <support@storpool.com>
+# Copyright (c) 2021, 2022  StorPool <support@storpool.com>
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -37,9 +37,12 @@ import cfg_diag
 import jinja2
 
 from sp_variant import __main__ as vmain
+from sp_variant import defs
+from sp_variant import variant
+from sp_variant import vbuild
 
 
-VERSION = "0.1.0"
+VERSION = "0.1.1"
 
 
 @dataclasses.dataclass(frozen=True)
@@ -89,7 +92,7 @@ def ensure_none(cfg: Config, path: pathlib.Path) -> None:
     try:
         subprocess.check_call(["rm", "-rf", "--", path])
     except subprocess.CalledProcessError as err:
-        raise vmain.VariantFileError("Could not remove {path}: {err}".format(path=path, err=err))
+        raise variant.VariantFileError("Could not remove {path}: {err}".format(path=path, err=err))
 
 
 def copy_file(
@@ -109,20 +112,20 @@ def copy_file(
         shutil.copy2(src, dst)
         dst.chmod(0o755 if executable else 0o644)
     except (OSError, subprocess.CalledProcessError) as err:
-        raise vmain.VariantFileError(
+        raise variant.VariantFileError(
             "Could not copy {src} to {dst}: {err}".format(src=src, dst=dst, err=err)
         )
 
 
 def subst_debian_sources(
     cfg: Config,
-    var: vmain.Variant,
+    var: variant.Variant,
     src: pathlib.Path,
     dstdir: pathlib.Path,
-    rtype: vmain.RepoType,
+    rtype: defs.RepoType,
 ) -> None:
     """Substitute the placeholder vars in a Debian sources list file."""
-    assert isinstance(var.repo, vmain.DebRepo)
+    assert isinstance(var.repo, defs.DebRepo)
     dst = dstdir / (src.stem + rtype.extension + src.suffix)
     cfg.diag(
         "{src} -> {dst} [vendor {vendor}, codename {codename}]".format(
@@ -145,25 +148,25 @@ def subst_debian_sources(
             )
         )
     except jinja2.TemplateError as err:
-        raise vmain.VariantFileError(
+        raise variant.VariantFileError(
             "Could not render the {src} template: {err}".format(src=src, err=err)
         )
 
     try:
         dst.write_text(result + "\n", encoding="UTF-8")
     except (IOError, OSError) as err:
-        raise vmain.VariantFileError("Could not write out {dst}: {err}".format(dst=dst, err=err))
+        raise variant.VariantFileError("Could not write out {dst}: {err}".format(dst=dst, err=err))
 
 
 def subst_yum_repo(
     cfg: Config,
-    var: vmain.Variant,
+    var: variant.Variant,
     src: pathlib.Path,
     dstdir: pathlib.Path,
-    rtype: vmain.RepoType,
+    rtype: defs.RepoType,
 ) -> None:
     """Substitute the placeholder vars in a Debian sources list file."""
-    assert isinstance(var.repo, vmain.YumRepo)
+    assert isinstance(var.repo, defs.YumRepo)
     dst = dstdir / (src.stem + rtype.extension + src.suffix)
     cfg.diag(
         "{src} -> {dst} []".format(
@@ -182,14 +185,14 @@ def subst_yum_repo(
             )
         )
     except jinja2.TemplateError as err:
-        raise vmain.VariantFileError(
+        raise variant.VariantFileError(
             "Could not render the {src} template: {err}".format(src=src, err=err)
         )
 
     try:
         dst.write_text(result + "\n", encoding="UTF-8")
     except (IOError, OSError) as err:
-        raise vmain.VariantFileError("Could not write out {dst}: {err}".format(dst=dst, err=err))
+        raise variant.VariantFileError("Could not write out {dst}: {err}".format(dst=dst, err=err))
 
 
 def build_repo(cfg: Config) -> pathlib.Path:
@@ -228,21 +231,21 @@ def build_repo(cfg: Config) -> pathlib.Path:
         executable=True,
     )
 
-    vmain.build_variants(vmain.Config(verbose=cfg.verbose))
-    for var in vmain.VARIANTS.values():
+    vbuild.build_variants(variant.Config(verbose=cfg.verbose))
+    for var in vbuild.VARIANTS.values():
         vardir = distdir / var.name
         vardir.mkdir()
 
-        if isinstance(var.repo, vmain.DebRepo):
-            for rtype in vmain.REPO_TYPES:
+        if isinstance(var.repo, defs.DebRepo):
+            for rtype in defs.REPO_TYPES:
                 subst_debian_sources(cfg, var, cfg.datadir / var.repo.sources, vardir, rtype)
             copy_file(
                 cfg,
                 cfg.datadir / var.repo.keyring,
                 vardir,
             )
-        elif isinstance(var.repo, vmain.YumRepo):
-            for rtype in vmain.REPO_TYPES:
+        elif isinstance(var.repo, defs.YumRepo):
+            for rtype in defs.REPO_TYPES:
                 subst_yum_repo(cfg, var, cfg.datadir / var.repo.yumdef, vardir, rtype)
             copy_file(
                 cfg,
@@ -265,7 +268,7 @@ def build_repo(cfg: Config) -> pathlib.Path:
             shell=False,
         )
     except subprocess.CalledProcessError as err:
-        raise vmain.VariantFileError(
+        raise variant.VariantFileError(
             "Could not package {distdir} up into {distfile}: {err}".format(
                 distdir=distdir, distfile=distfile, err=err
             )
@@ -277,7 +280,7 @@ def cmd_build(cfg: Config) -> None:
     """Build the StorPool repository archive and output its name."""
     try:
         print(build_repo(cfg=cfg))
-    except vmain.VariantError as err:
+    except variant.VariantError as err:
         print(str(err), file=sys.stderr)
         sys.exit(1)
 

@@ -40,7 +40,7 @@ SP_PY3_ENV?=	env PYTHONPATH='${CURDIR}/python' ${SP_PYTHON3} -B -u
 SP_PY3_INVOKE?=	${SP_PY3_ENV} -m sp_variant
 SP_PY3_NORMALIZE=	${SP_PY3_ENV} -c 'import json; import sys; print(json.dumps(json.loads(sys.stdin.read()), sort_keys=True, indent=2))'
 
-PYTHON_MAIN=	${CURDIR}/python/sp_variant/__main__.py
+PYTHON_VBUILD=	${CURDIR}/python/sp_variant/vbuild.py
 
 REPO_TMPDIR?=	${CURDIR}/repo-build
 REPO_BUILT=	${REPO_TMPDIR}/add-storpool-repo.tar.gz
@@ -79,7 +79,7 @@ ${REPO_BUILT}:	all test-trivial
 
 repo:		${REPO_BUILT}
 
-${RUST_DATA}:	${RUST_DATA}.j2 python/sp_build_repo/subst.py ${PYTHON_MAIN}
+${RUST_DATA}:	${RUST_DATA}.j2 python/sp_build_repo/subst.py ${PYTHON_VBUILD}
 		${SP_PY3_ENV} -m sp_build_repo.subst -m 644 -t '${RUST_DATA}.j2' -o '${RUST_DATA}' -v || { rm -f -- '${RUST_DATA}'; false; }
 		${SP_CARGO} fmt -- '${RUST_DATA}'
 
@@ -91,7 +91,7 @@ ${RUST_BIN}:	Cargo.toml .cargo/config.toml ${RUST_SRC}
 		${SP_CARGO} build --release --offline
 		${SP_CARGO} test --release --offline
 
-${SH_BIN}:	${SH_SRC} python/sp_build_repo/subst.py ${PYTHON_MAIN}
+${SH_BIN}:	${SH_SRC} python/sp_build_repo/subst.py ${PYTHON_VBUILD}
 		${SP_PY3_ENV} -m sp_build_repo.subst -m 755 -t '${SH_SRC}' -o '${SH_BIN}' -v || { rm -f -- '${SH_BIN}'; false; }
 
 test-docker:	repo

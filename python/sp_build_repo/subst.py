@@ -36,8 +36,8 @@ import cfg_diag
 import jinja2
 import trivver
 
-from sp_variant import __main__ as variant
 from sp_variant import defs
+from sp_variant import variant
 
 
 @dataclasses.dataclass(frozen=True)
@@ -119,7 +119,7 @@ def vsort(names: List[str]) -> List[str]:
 
 def build_json(var: variant.Variant) -> str:
     """Represent the variant data as a JSON string."""
-    return json.dumps(variant.jsonify(var), sort_keys=True, indent=2)
+    return json.dumps(defs.jsonify(var), sort_keys=True, indent=2)
 
 
 def substitute(cfg: Config) -> None:
@@ -137,9 +137,9 @@ def substitute(cfg: Config) -> None:
     jenv.filters["regexunx"] = regex_un_x
     jenv.filters["vsort"] = vsort
     jvars = {
-        "format_version": variant.FORMAT_VERSION,
+        "format_version": defs.FORMAT_VERSION,
         "order": [var.name for var in variants],
-        "repotypes": {repo.name: repo for repo in variant.REPO_TYPES},
+        "repotypes": {repo.name: repo for repo in defs.REPO_TYPES},
         "variants": {var.name: var for var in variants},
         "variants_json": {var.name: build_json(var) for var in variants},
         "version": defs.VERSION,
