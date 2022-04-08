@@ -46,6 +46,8 @@ import re
 import subprocess
 import sys
 
+from . import defs
+
 try:
     from typing import (
         Any,  # noqa: H301
@@ -291,7 +293,6 @@ else:
     BytesType = str
 
 
-VERSION = "2.2.1"
 FORMAT_VERSION = (1, 3)
 
 
@@ -1651,7 +1652,7 @@ def cmd_features(_cfg):
     """Display the features supported by storpool_variant."""
     print(
         "Features: repo=0.2 variant={ver} format={f_major}.{f_minor}".format(
-            ver=VERSION, f_major=FORMAT_VERSION[0], f_minor=FORMAT_VERSION[1]
+            ver=defs.VERSION, f_major=FORMAT_VERSION[0], f_minor=FORMAT_VERSION[1]
         )
     )
 
@@ -1687,7 +1688,7 @@ def cmd_show(cfg):
                         "minor": FORMAT_VERSION[1],
                     }
                 },
-                "version": VERSION,
+                "version": defs.VERSION,
                 "variants": VARIANTS,
                 "order": [var.name for var in _DETECT_ORDER],
             }
@@ -1708,7 +1709,7 @@ def cmd_show(cfg):
                         "minor": FORMAT_VERSION[1],
                     }
                 },
-                "version": VERSION,
+                "version": defs.VERSION,
                 "variant": var,
             }
         )

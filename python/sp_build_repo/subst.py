@@ -1,4 +1,4 @@
-# Copyright (c) 2021  StorPool <support@storpool.com>
+# Copyright (c) 2021, 2022  StorPool <support@storpool.com>
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -37,6 +37,7 @@ import jinja2
 import trivver
 
 from sp_variant import __main__ as variant
+from sp_variant import defs
 
 
 @dataclasses.dataclass(frozen=True)
@@ -141,7 +142,7 @@ def substitute(cfg: Config) -> None:
         "repotypes": {repo.name: repo for repo in variant.REPO_TYPES},
         "variants": {var.name: var for var in variants},
         "variants_json": {var.name: build_json(var) for var in variants},
-        "version": variant.VERSION,
+        "version": defs.VERSION,
     }
 
     cfg.diag("Rendering the template")
