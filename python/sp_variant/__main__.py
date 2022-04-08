@@ -46,244 +46,145 @@ import re
 import subprocess
 import sys
 
+from typing import (
+    Any,  # noqa: H301
+    Callable,
+    Dict,
+    Iterable,
+    List,
+    NamedTuple,
+    Optional,
+    Pattern,
+    Text,
+    Tuple,
+    Type,
+    TypeVar,
+    Union,
+    TYPE_CHECKING,
+)
+
 from . import defs
 
-try:
-    from typing import (
-        Any,  # noqa: H301
-        Callable,
-        Dict,
-        Iterable,
-        List,
-        NamedTuple,
-        Optional,
-        Pattern,
-        Text,
-        Tuple,
-        Type,
-        TypeVar,
-        Union,
-        TYPE_CHECKING,
-    )
 
-    Detect = NamedTuple(  # pylint: disable=invalid-name
-        "Detect",
-        [
-            ("filename", Text),
-            ("regex", Pattern[Text]),
-            ("os_id", Text),
-            ("os_version_regex", Pattern[Text]),
-        ],
-    )
+Detect = NamedTuple(  # pylint: disable=invalid-name
+    "Detect",
+    [
+        ("filename", Text),
+        ("regex", Pattern[Text]),
+        ("os_id", Text),
+        ("os_version_regex", Pattern[Text]),
+    ],
+)
 
-    CommandsPackage = NamedTuple(  # pylint: disable=invalid-name
-        "CommandsPackage",
-        [
-            ("update_db", List[Text]),
-            ("install", List[Text]),
-            ("list_all", List[Text]),
-            ("purge", List[Text]),
-            ("remove", List[Text]),
-            ("remove_impl", List[Text]),
-        ],
-    )
+CommandsPackage = NamedTuple(  # pylint: disable=invalid-name
+    "CommandsPackage",
+    [
+        ("update_db", List[Text]),
+        ("install", List[Text]),
+        ("list_all", List[Text]),
+        ("purge", List[Text]),
+        ("remove", List[Text]),
+        ("remove_impl", List[Text]),
+    ],
+)
 
-    CommandsPkgFile = NamedTuple(  # pylint: disable=invalid-name
-        "CommandsPkgFile",
-        [
-            ("dep_query", List[Text]),
-            ("install", List[Text]),
-        ],
-    )
+CommandsPkgFile = NamedTuple(  # pylint: disable=invalid-name
+    "CommandsPkgFile",
+    [
+        ("dep_query", List[Text]),
+        ("install", List[Text]),
+    ],
+)
 
-    Commands = NamedTuple(  # pylint: disable=invalid-name
-        "Commands",
-        [
-            ("package", CommandsPackage),
-            ("pkgfile", CommandsPkgFile),
-        ],
-    )
+Commands = NamedTuple(  # pylint: disable=invalid-name
+    "Commands",
+    [
+        ("package", CommandsPackage),
+        ("pkgfile", CommandsPkgFile),
+    ],
+)
 
-    DebRepo = NamedTuple(  # pylint: disable=invalid-name
-        "DebRepo",
-        [
-            ("codename", Text),
-            ("vendor", Text),
-            ("sources", Text),
-            ("keyring", Text),
-            ("req_packages", List[Text]),
-        ],
-    )
+DebRepo = NamedTuple(  # pylint: disable=invalid-name
+    "DebRepo",
+    [
+        ("codename", Text),
+        ("vendor", Text),
+        ("sources", Text),
+        ("keyring", Text),
+        ("req_packages", List[Text]),
+    ],
+)
 
-    YumRepo = NamedTuple(  # pylint: disable=invalid-name
-        "YumRepo",
-        [
-            ("yumdef", Text),
-            ("keyring", Text),
-        ],
-    )
+YumRepo = NamedTuple(  # pylint: disable=invalid-name
+    "YumRepo",
+    [
+        ("yumdef", Text),
+        ("keyring", Text),
+    ],
+)
 
-    Builder = NamedTuple(  # pylint: disable=invalid-name
-        "Builder",
-        [
-            ("alias", Text),
-            ("base_image", Text),
-            ("branch", Text),
-            ("kernel_package", Text),
-            ("utf8_locale", Text),
-        ],
-    )
+Builder = NamedTuple(  # pylint: disable=invalid-name
+    "Builder",
+    [
+        ("alias", Text),
+        ("base_image", Text),
+        ("branch", Text),
+        ("kernel_package", Text),
+        ("utf8_locale", Text),
+    ],
+)
 
-    Variant = NamedTuple(  # pylint: disable=invalid-name
-        "Variant",
-        [
-            ("name", Text),
-            ("descr", Text),
-            ("parent", Text),
-            ("family", Text),
-            ("detect", Detect),
-            ("commands", Commands),
-            ("min_sys_python", Text),
-            ("repo", Union[DebRepo, YumRepo]),
-            ("package", Dict[str, str]),
-            ("systemd_lib", Text),
-            ("file_ext", Text),
-            ("initramfs_flavor", Text),
-            ("builder", Builder),
-        ],
-    )
+Variant = NamedTuple(  # pylint: disable=invalid-name
+    "Variant",
+    [
+        ("name", Text),
+        ("descr", Text),
+        ("parent", Text),
+        ("family", Text),
+        ("detect", Detect),
+        ("commands", Commands),
+        ("min_sys_python", Text),
+        ("repo", Union[DebRepo, YumRepo]),
+        ("package", Dict[str, str]),
+        ("systemd_lib", Text),
+        ("file_ext", Text),
+        ("initramfs_flavor", Text),
+        ("builder", Builder),
+    ],
+)
 
-    VariantUpdate = NamedTuple(  # pylint: disable=invalid-name
-        "VariantUpdate",
-        [
-            ("name", Text),
-            ("descr", Text),
-            ("parent", Text),
-            ("detect", Detect),
-            ("updates", Dict[str, Any]),
-        ],
-    )
+VariantUpdate = NamedTuple(  # pylint: disable=invalid-name
+    "VariantUpdate",
+    [
+        ("name", Text),
+        ("descr", Text),
+        ("parent", Text),
+        ("detect", Detect),
+        ("updates", Dict[str, Any]),
+    ],
+)
 
-    OSPackage = NamedTuple(  # pylint: disable=invalid-name
-        "OSPackage",
-        [
-            ("name", Text),
-            ("version", Text),
-            ("arch", Text),
-            ("status", Text),
-        ],
-    )
+OSPackage = NamedTuple(  # pylint: disable=invalid-name
+    "OSPackage",
+    [
+        ("name", Text),
+        ("version", Text),
+        ("arch", Text),
+        ("status", Text),
+    ],
+)
 
-    RepoType = NamedTuple("RepoType", [("name", str), ("extension", str), ("url", str)])
+RepoType = NamedTuple("RepoType", [("name", str), ("extension", str), ("url", str)])
 
-    T = TypeVar("T")  # pylint: disable=invalid-name
+T = TypeVar("T")  # pylint: disable=invalid-name
 
-    if TYPE_CHECKING:
-        if sys.version_info[0] >= 3:
-            # pylint: disable-next=protected-access,unsubscriptable-object
-            SubPAction = argparse._SubParsersAction[argparse.ArgumentParser]
-        else:
-            # pylint: disable-next=protected-access
-            SubPAction = argparse._SubParsersAction
-except ImportError:
-    import collections
-
-    Detect = collections.namedtuple(  # type: ignore
-        "Detect",
-        [
-            "filename",
-            "regex",
-            "os_id",
-            "os_version_regex",
-        ],
-    )
-
-    CommandsPackage = collections.namedtuple(  # type: ignore
-        "CommandsPackage",
-        ["update_db", "install", "list_all", "purge", "remove", "remove_impl"],
-    )
-
-    CommandsPkgFile = collections.namedtuple(  # type: ignore
-        "CommandsPkgFile",
-        [
-            "dep_query",
-            "install",
-        ],
-    )
-
-    Commands = collections.namedtuple(  # type: ignore
-        "Commands",
-        [
-            "package",
-            "pkgfile",
-        ],
-    )
-
-    DebRepo = collections.namedtuple(  # type: ignore
-        "DebRepo",
-        [
-            "vendor",
-            "codename",
-            "sources",
-            "keyring",
-            "req_packages",
-        ],
-    )
-
-    YumRepo = collections.namedtuple(  # type: ignore
-        "YumRepo",
-        [
-            "yumdef",
-            "keyring",
-        ],
-    )
-
-    Builder = collections.namedtuple(  # type: ignore
-        "Builder",
-        [
-            "alias",
-            "base_image",
-            "branch",
-            "kernel_package",
-            "utf8_locale",
-        ],
-    )
-
-    Variant = collections.namedtuple(  # type: ignore
-        "Variant",
-        [
-            "name",
-            "descr",
-            "parent",
-            "family",
-            "detect",
-            "commands",
-            "min_sys_python",
-            "repo",
-            "package",
-            "systemd_lib",
-            "file_ext",
-            "initramfs_flavor",
-            "builder",
-        ],
-    )
-
-    VariantUpdate = collections.namedtuple(  # type: ignore
-        "VariantUpdate",
-        [
-            "name",
-            "descr",
-            "parent",
-            "detect",
-            "updates",
-        ],
-    )
-
-    OSPackage = collections.namedtuple(  # type: ignore
-        "OSPackage", ["name", "version", "arch", "status"]
-    )
-
-    RepoType = collections.namedtuple("RepoType", ["name", "extension", "url"])  # type: ignore
+if TYPE_CHECKING:
+    if sys.version_info[0] >= 3:
+        # pylint: disable-next=protected-access,unsubscriptable-object
+        SubPAction = argparse._SubParsersAction[argparse.ArgumentParser]
+    else:
+        # pylint: disable-next=protected-access
+        SubPAction = argparse._SubParsersAction
 
 if sys.version_info[0] >= 3:
     TextType = str
