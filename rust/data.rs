@@ -32,7 +32,10 @@ use std::str::FromStr;
 
 use serde::{Deserialize, Serialize};
 
-use crate::VariantError;
+use crate::{
+    Builder, DebRepo, Detect, Repo, Variant, VariantDefTop, VariantError, VariantFormat,
+    VariantFormatVersion, YumRepo,
+};
 
 /// The supported StorPool build variants (OS distribution, version, etc).
 #[derive(Debug, Clone, PartialEq, Hash, Eq, Serialize, Deserialize)]
@@ -140,11 +143,11 @@ impl FromStr for VariantKind {
 }
 
 /// Return the definition of the StorPool variants.
-pub fn get_variants() -> &'static super::VariantDefTop {
+pub fn get_variants() -> &'static VariantDefTop {
     lazy_static! {
-        static ref DEF_TOP: super::VariantDefTop = super::VariantDefTop {
-            format: super::VariantFormat {
-                version: super::VariantFormatVersion {
+        static ref DEF_TOP: VariantDefTop = VariantDefTop {
+            format: VariantFormat {
+                version: VariantFormatVersion {
                     major: 1,
                     minor: 3,
                 },
@@ -171,12 +174,12 @@ pub fn get_variants() -> &'static super::VariantDefTop {
                 [
                     (
                             VariantKind::ALMA8,
-                            super::Variant {
+                            Variant {
                                 kind: VariantKind::ALMA8,
                                 descr: "AlmaLinux 8.x".to_string(),
                                 family: "redhat".to_string(),
                                 parent: "CENTOS8".to_string(),
-                                detect: super::Detect {
+                                detect: Detect {
                                     filename: "/etc/redhat-release".to_string(),
                                     regex: r"^ AlmaLinux \s .* \s 8 \. (?: [4-9] | [1-9][0-9] )".to_string(),
                                     os_id: "alma".to_string(),
@@ -291,7 +294,7 @@ fi
                                 ),
                                 min_sys_python: "2.7".to_string(),
                                 repo:
-                                    super::Repo::Yum(super::YumRepo {
+                                    Repo::Yum(YumRepo {
                                         yumdef: "redhat/repo/storpool-centos.repo".to_string(),
                                         keyring: "redhat/repo/RPM-GPG-KEY-StorPool".to_string(),
                                     }),
@@ -314,7 +317,7 @@ fi
                                 systemd_lib: "usr/lib/systemd/system".to_string(),
                                 file_ext: "rpm".to_string(),
                                 initramfs_flavor: "mkinitrd".to_string(),
-                                builder: super::Builder {
+                                builder: Builder {
                                     alias: "alma8".to_string(),
                                     base_image: "almalinux/almalinux:8".to_string(),
                                     branch: "".to_string(),
@@ -325,12 +328,12 @@ fi
                     ),
                     (
                             VariantKind::CENTOS6,
-                            super::Variant {
+                            Variant {
                                 kind: VariantKind::CENTOS6,
                                 descr: "CentOS 6.x".to_string(),
                                 family: "redhat".to_string(),
                                 parent: "CENTOS7".to_string(),
-                                detect: super::Detect {
+                                detect: Detect {
                                     filename: "/etc/redhat-release".to_string(),
                                     regex: r"^ CentOS \s .* \s 6 \.".to_string(),
                                     os_id: "centos".to_string(),
@@ -441,7 +444,7 @@ fi
                                 ),
                                 min_sys_python: "2.6".to_string(),
                                 repo:
-                                    super::Repo::Yum(super::YumRepo {
+                                    Repo::Yum(YumRepo {
                                         yumdef: "redhat/repo/storpool-centos.repo".to_string(),
                                         keyring: "redhat/repo/RPM-GPG-KEY-StorPool".to_string(),
                                     }),
@@ -464,7 +467,7 @@ fi
                                 systemd_lib: "usr/lib/systemd/system".to_string(),
                                 file_ext: "rpm".to_string(),
                                 initramfs_flavor: "mkinitrd".to_string(),
-                                builder: super::Builder {
+                                builder: Builder {
                                     alias: "centos6".to_string(),
                                     base_image: "centos:6".to_string(),
                                     branch: "centos/6".to_string(),
@@ -475,12 +478,12 @@ fi
                     ),
                     (
                             VariantKind::CENTOS7,
-                            super::Variant {
+                            Variant {
                                 kind: VariantKind::CENTOS7,
                                 descr: "CentOS 7.x".to_string(),
                                 family: "redhat".to_string(),
                                 parent: "CENTOS8".to_string(),
-                                detect: super::Detect {
+                                detect: Detect {
                                     filename: "/etc/redhat-release".to_string(),
                                     regex: r"^ (?: CentOS | Virtuozzo ) \s .* \s 7 \.".to_string(),
                                     os_id: "centos".to_string(),
@@ -591,7 +594,7 @@ fi
                                 ),
                                 min_sys_python: "2.7".to_string(),
                                 repo:
-                                    super::Repo::Yum(super::YumRepo {
+                                    Repo::Yum(YumRepo {
                                         yumdef: "redhat/repo/storpool-centos.repo".to_string(),
                                         keyring: "redhat/repo/RPM-GPG-KEY-StorPool".to_string(),
                                     }),
@@ -614,7 +617,7 @@ fi
                                 systemd_lib: "usr/lib/systemd/system".to_string(),
                                 file_ext: "rpm".to_string(),
                                 initramfs_flavor: "mkinitrd".to_string(),
-                                builder: super::Builder {
+                                builder: Builder {
                                     alias: "centos7".to_string(),
                                     base_image: "centos:7".to_string(),
                                     branch: "centos/7".to_string(),
@@ -625,12 +628,12 @@ fi
                     ),
                     (
                             VariantKind::CENTOS8,
-                            super::Variant {
+                            Variant {
                                 kind: VariantKind::CENTOS8,
                                 descr: "CentOS 8.x".to_string(),
                                 family: "redhat".to_string(),
                                 parent: "".to_string(),
-                                detect: super::Detect {
+                                detect: Detect {
                                     filename: "/etc/redhat-release".to_string(),
                                     regex: r"^ CentOS \s .* \s 8 \. (?: [3-9] | (?: [12][0-9] ) )".to_string(),
                                     os_id: "centos".to_string(),
@@ -745,7 +748,7 @@ fi
                                 ),
                                 min_sys_python: "2.7".to_string(),
                                 repo:
-                                    super::Repo::Yum(super::YumRepo {
+                                    Repo::Yum(YumRepo {
                                         yumdef: "redhat/repo/storpool-centos.repo".to_string(),
                                         keyring: "redhat/repo/RPM-GPG-KEY-StorPool".to_string(),
                                     }),
@@ -768,7 +771,7 @@ fi
                                 systemd_lib: "usr/lib/systemd/system".to_string(),
                                 file_ext: "rpm".to_string(),
                                 initramfs_flavor: "mkinitrd".to_string(),
-                                builder: super::Builder {
+                                builder: Builder {
                                     alias: "centos8".to_string(),
                                     base_image: "centos:8".to_string(),
                                     branch: "centos/8".to_string(),
@@ -779,12 +782,12 @@ fi
                     ),
                     (
                             VariantKind::DEBIAN9,
-                            super::Variant {
+                            Variant {
                                 kind: VariantKind::DEBIAN9,
                                 descr: "Debian 9.x (stretch)".to_string(),
                                 family: "debian".to_string(),
                                 parent: "DEBIAN10".to_string(),
-                                detect: super::Detect {
+                                detect: Detect {
                                     filename: "/etc/os-release".to_string(),
                                     regex: r"^
                     PRETTY_NAME= .*
@@ -896,7 +899,7 @@ fi
                                 ),
                                 min_sys_python: "2.7".to_string(),
                                 repo:
-                                    super::Repo::Deb(super::DebRepo {
+                                    Repo::Deb(DebRepo {
                                         codename: "stretch".to_string(),
                                         vendor: "debian".to_string(),
                                         sources: "debian/repo/storpool.sources".to_string(),
@@ -921,7 +924,7 @@ fi
                                 systemd_lib: "lib/systemd/system".to_string(),
                                 file_ext: "deb".to_string(),
                                 initramfs_flavor: "update-initramfs".to_string(),
-                                builder: super::Builder {
+                                builder: Builder {
                                     alias: "debian9".to_string(),
                                     base_image: "debian:stretch".to_string(),
                                     branch: "debian/stretch".to_string(),
@@ -932,12 +935,12 @@ fi
                     ),
                     (
                             VariantKind::DEBIAN10,
-                            super::Variant {
+                            Variant {
                                 kind: VariantKind::DEBIAN10,
                                 descr: "Debian 10.x (buster)".to_string(),
                                 family: "debian".to_string(),
                                 parent: "DEBIAN11".to_string(),
-                                detect: super::Detect {
+                                detect: Detect {
                                     filename: "/etc/os-release".to_string(),
                                     regex: r"^
                     PRETTY_NAME= .*
@@ -1049,7 +1052,7 @@ fi
                                 ),
                                 min_sys_python: "2.7".to_string(),
                                 repo:
-                                    super::Repo::Deb(super::DebRepo {
+                                    Repo::Deb(DebRepo {
                                         codename: "buster".to_string(),
                                         vendor: "debian".to_string(),
                                         sources: "debian/repo/storpool.sources".to_string(),
@@ -1073,7 +1076,7 @@ fi
                                 systemd_lib: "lib/systemd/system".to_string(),
                                 file_ext: "deb".to_string(),
                                 initramfs_flavor: "update-initramfs".to_string(),
-                                builder: super::Builder {
+                                builder: Builder {
                                     alias: "debian10".to_string(),
                                     base_image: "debian:buster".to_string(),
                                     branch: "debian/buster".to_string(),
@@ -1084,12 +1087,12 @@ fi
                     ),
                     (
                             VariantKind::DEBIAN11,
-                            super::Variant {
+                            Variant {
                                 kind: VariantKind::DEBIAN11,
                                 descr: "Debian 11.x (bullseye)".to_string(),
                                 family: "debian".to_string(),
                                 parent: "DEBIAN12".to_string(),
-                                detect: super::Detect {
+                                detect: Detect {
                                     filename: "/etc/os-release".to_string(),
                                     regex: r"^
                     PRETTY_NAME= .*
@@ -1201,7 +1204,7 @@ fi
                                 ),
                                 min_sys_python: "3.9".to_string(),
                                 repo:
-                                    super::Repo::Deb(super::DebRepo {
+                                    Repo::Deb(DebRepo {
                                         codename: "bullseye".to_string(),
                                         vendor: "debian".to_string(),
                                         sources: "debian/repo/storpool.sources".to_string(),
@@ -1225,7 +1228,7 @@ fi
                                 systemd_lib: "lib/systemd/system".to_string(),
                                 file_ext: "deb".to_string(),
                                 initramfs_flavor: "update-initramfs".to_string(),
-                                builder: super::Builder {
+                                builder: Builder {
                                     alias: "debian11".to_string(),
                                     base_image: "debian:bullseye".to_string(),
                                     branch: "debian/bullseye".to_string(),
@@ -1236,12 +1239,12 @@ fi
                     ),
                     (
                             VariantKind::DEBIAN12,
-                            super::Variant {
+                            Variant {
                                 kind: VariantKind::DEBIAN12,
                                 descr: "Debian 12.x (bookworm/unstable)".to_string(),
                                 family: "debian".to_string(),
                                 parent: "".to_string(),
-                                detect: super::Detect {
+                                detect: Detect {
                                     filename: "/etc/os-release".to_string(),
                                     regex: r"^
                     PRETTY_NAME= .*
@@ -1353,7 +1356,7 @@ fi
                                 ),
                                 min_sys_python: "3.9".to_string(),
                                 repo:
-                                    super::Repo::Deb(super::DebRepo {
+                                    Repo::Deb(DebRepo {
                                         codename: "unstable".to_string(),
                                         vendor: "debian".to_string(),
                                         sources: "debian/repo/storpool.sources".to_string(),
@@ -1377,7 +1380,7 @@ fi
                                 systemd_lib: "lib/systemd/system".to_string(),
                                 file_ext: "deb".to_string(),
                                 initramfs_flavor: "update-initramfs".to_string(),
-                                builder: super::Builder {
+                                builder: Builder {
                                     alias: "debian12".to_string(),
                                     base_image: "debian:unstable".to_string(),
                                     branch: "debian/unstable".to_string(),
@@ -1388,12 +1391,12 @@ fi
                     ),
                     (
                             VariantKind::ORACLE7,
-                            super::Variant {
+                            Variant {
                                 kind: VariantKind::ORACLE7,
                                 descr: "Oracle Linux 7.x".to_string(),
                                 family: "redhat".to_string(),
                                 parent: "CENTOS7".to_string(),
-                                detect: super::Detect {
+                                detect: Detect {
                                     filename: "/etc/oracle-release".to_string(),
                                     regex: r"^ Oracle \s+ Linux \s .* \s 7 \.".to_string(),
                                     os_id: "ol".to_string(),
@@ -1504,7 +1507,7 @@ fi
                                 ),
                                 min_sys_python: "2.7".to_string(),
                                 repo:
-                                    super::Repo::Yum(super::YumRepo {
+                                    Repo::Yum(YumRepo {
                                         yumdef: "redhat/repo/storpool-centos.repo".to_string(),
                                         keyring: "redhat/repo/RPM-GPG-KEY-StorPool".to_string(),
                                     }),
@@ -1527,7 +1530,7 @@ fi
                                 systemd_lib: "usr/lib/systemd/system".to_string(),
                                 file_ext: "rpm".to_string(),
                                 initramfs_flavor: "mkinitrd".to_string(),
-                                builder: super::Builder {
+                                builder: Builder {
                                     alias: "oracle7".to_string(),
                                     base_image: "IGNORE".to_string(),
                                     branch: "".to_string(),
@@ -1538,12 +1541,12 @@ fi
                     ),
                     (
                             VariantKind::RHEL8,
-                            super::Variant {
+                            Variant {
                                 kind: VariantKind::RHEL8,
                                 descr: "RedHat Enterprise Linux 8.x".to_string(),
                                 family: "redhat".to_string(),
                                 parent: "CENTOS8".to_string(),
-                                detect: super::Detect {
+                                detect: Detect {
                                     filename: "/etc/redhat-release".to_string(),
                                     regex: r"^ Red \s+ Hat \s+ Enterprise \s+ Linux \s .* \s 8 \. (?: [4-9] | [1-9][0-9] )".to_string(),
                                     os_id: "rhel".to_string(),
@@ -1658,7 +1661,7 @@ fi
                                 ),
                                 min_sys_python: "2.7".to_string(),
                                 repo:
-                                    super::Repo::Yum(super::YumRepo {
+                                    Repo::Yum(YumRepo {
                                         yumdef: "redhat/repo/storpool-centos.repo".to_string(),
                                         keyring: "redhat/repo/RPM-GPG-KEY-StorPool".to_string(),
                                     }),
@@ -1681,7 +1684,7 @@ fi
                                 systemd_lib: "usr/lib/systemd/system".to_string(),
                                 file_ext: "rpm".to_string(),
                                 initramfs_flavor: "mkinitrd".to_string(),
-                                builder: super::Builder {
+                                builder: Builder {
                                     alias: "rhel8".to_string(),
                                     base_image: "redhat/ubi8:reg".to_string(),
                                     branch: "".to_string(),
@@ -1692,12 +1695,12 @@ fi
                     ),
                     (
                             VariantKind::ROCKY8,
-                            super::Variant {
+                            Variant {
                                 kind: VariantKind::ROCKY8,
                                 descr: "Rocky Linux 8.x".to_string(),
                                 family: "redhat".to_string(),
                                 parent: "CENTOS8".to_string(),
-                                detect: super::Detect {
+                                detect: Detect {
                                     filename: "/etc/redhat-release".to_string(),
                                     regex: r"^ Rocky \s+ Linux \s .* \s 8 \. (?: [4-9] | [1-9][0-9] )".to_string(),
                                     os_id: "rocky".to_string(),
@@ -1812,7 +1815,7 @@ fi
                                 ),
                                 min_sys_python: "2.7".to_string(),
                                 repo:
-                                    super::Repo::Yum(super::YumRepo {
+                                    Repo::Yum(YumRepo {
                                         yumdef: "redhat/repo/storpool-centos.repo".to_string(),
                                         keyring: "redhat/repo/RPM-GPG-KEY-StorPool".to_string(),
                                     }),
@@ -1835,7 +1838,7 @@ fi
                                 systemd_lib: "usr/lib/systemd/system".to_string(),
                                 file_ext: "rpm".to_string(),
                                 initramfs_flavor: "mkinitrd".to_string(),
-                                builder: super::Builder {
+                                builder: Builder {
                                     alias: "rocky8".to_string(),
                                     base_image: "rockylinux/rockylinux:8".to_string(),
                                     branch: "".to_string(),
@@ -1846,12 +1849,12 @@ fi
                     ),
                     (
                             VariantKind::UBUNTU1604,
-                            super::Variant {
+                            Variant {
                                 kind: VariantKind::UBUNTU1604,
                                 descr: "Ubuntu 16.04 LTS (Xenial Xerus)".to_string(),
                                 family: "debian".to_string(),
                                 parent: "UBUNTU1804".to_string(),
-                                detect: super::Detect {
+                                detect: Detect {
                                     filename: "/etc/os-release".to_string(),
                                     regex: r"^ PRETTY_NAME= .* Ubuntu \s+ 16 \. 04 ".to_string(),
                                     os_id: "ubuntu".to_string(),
@@ -1959,7 +1962,7 @@ fi
                                 ),
                                 min_sys_python: "2.7".to_string(),
                                 repo:
-                                    super::Repo::Deb(super::DebRepo {
+                                    Repo::Deb(DebRepo {
                                         codename: "xenial".to_string(),
                                         vendor: "ubuntu".to_string(),
                                         sources: "debian/repo/storpool.sources".to_string(),
@@ -1985,7 +1988,7 @@ fi
                                 systemd_lib: "lib/systemd/system".to_string(),
                                 file_ext: "deb".to_string(),
                                 initramfs_flavor: "update-initramfs".to_string(),
-                                builder: super::Builder {
+                                builder: Builder {
                                     alias: "ubuntu-16.04".to_string(),
                                     base_image: "ubuntu:xenial".to_string(),
                                     branch: "ubuntu/xenial".to_string(),
@@ -1996,12 +1999,12 @@ fi
                     ),
                     (
                             VariantKind::UBUNTU1804,
-                            super::Variant {
+                            Variant {
                                 kind: VariantKind::UBUNTU1804,
                                 descr: "Ubuntu 18.04 LTS (Bionic Beaver)".to_string(),
                                 family: "debian".to_string(),
                                 parent: "UBUNTU2004".to_string(),
-                                detect: super::Detect {
+                                detect: Detect {
                                     filename: "/etc/os-release".to_string(),
                                     regex: r"^ PRETTY_NAME= .* Ubuntu \s+ 18 \. 04 ".to_string(),
                                     os_id: "ubuntu".to_string(),
@@ -2109,7 +2112,7 @@ fi
                                 ),
                                 min_sys_python: "2.7".to_string(),
                                 repo:
-                                    super::Repo::Deb(super::DebRepo {
+                                    Repo::Deb(DebRepo {
                                         codename: "bionic".to_string(),
                                         vendor: "ubuntu".to_string(),
                                         sources: "debian/repo/storpool.sources".to_string(),
@@ -2133,7 +2136,7 @@ fi
                                 systemd_lib: "lib/systemd/system".to_string(),
                                 file_ext: "deb".to_string(),
                                 initramfs_flavor: "update-initramfs".to_string(),
-                                builder: super::Builder {
+                                builder: Builder {
                                     alias: "ubuntu-18.04".to_string(),
                                     base_image: "ubuntu:bionic".to_string(),
                                     branch: "ubuntu/bionic".to_string(),
@@ -2144,12 +2147,12 @@ fi
                     ),
                     (
                             VariantKind::UBUNTU2004,
-                            super::Variant {
+                            Variant {
                                 kind: VariantKind::UBUNTU2004,
                                 descr: "Ubuntu 20.04 LTS (Focal Fossa)".to_string(),
                                 family: "debian".to_string(),
                                 parent: "UBUNTU2110".to_string(),
-                                detect: super::Detect {
+                                detect: Detect {
                                     filename: "/etc/os-release".to_string(),
                                     regex: r"^ PRETTY_NAME= .* (?: Ubuntu \s+ 20 \. 04 | Mint \s+ 20 ) ".to_string(),
                                     os_id: "ubuntu".to_string(),
@@ -2257,7 +2260,7 @@ fi
                                 ),
                                 min_sys_python: "3.8".to_string(),
                                 repo:
-                                    super::Repo::Deb(super::DebRepo {
+                                    Repo::Deb(DebRepo {
                                         codename: "focal".to_string(),
                                         vendor: "ubuntu".to_string(),
                                         sources: "debian/repo/storpool.sources".to_string(),
@@ -2281,7 +2284,7 @@ fi
                                 systemd_lib: "lib/systemd/system".to_string(),
                                 file_ext: "deb".to_string(),
                                 initramfs_flavor: "update-initramfs".to_string(),
-                                builder: super::Builder {
+                                builder: Builder {
                                     alias: "ubuntu-20.04".to_string(),
                                     base_image: "ubuntu:focal".to_string(),
                                     branch: "ubuntu/focal".to_string(),
@@ -2292,12 +2295,12 @@ fi
                     ),
                     (
                             VariantKind::UBUNTU2110,
-                            super::Variant {
+                            Variant {
                                 kind: VariantKind::UBUNTU2110,
                                 descr: "Ubuntu 21.10 LTS (Impish Indri)".to_string(),
                                 family: "debian".to_string(),
                                 parent: "UBUNTU2204".to_string(),
-                                detect: super::Detect {
+                                detect: Detect {
                                     filename: "/etc/os-release".to_string(),
                                     regex: r"^ PRETTY_NAME= .* (?: Ubuntu \s+ 21 \. 10 | Mint \s+ 21 ) ".to_string(),
                                     os_id: "ubuntu".to_string(),
@@ -2405,7 +2408,7 @@ fi
                                 ),
                                 min_sys_python: "3.9".to_string(),
                                 repo:
-                                    super::Repo::Deb(super::DebRepo {
+                                    Repo::Deb(DebRepo {
                                         codename: "impish".to_string(),
                                         vendor: "ubuntu".to_string(),
                                         sources: "debian/repo/storpool.sources".to_string(),
@@ -2429,7 +2432,7 @@ fi
                                 systemd_lib: "lib/systemd/system".to_string(),
                                 file_ext: "deb".to_string(),
                                 initramfs_flavor: "update-initramfs".to_string(),
-                                builder: super::Builder {
+                                builder: Builder {
                                     alias: "ubuntu-21.10".to_string(),
                                     base_image: "ubuntu:impish".to_string(),
                                     branch: "ubuntu/impish".to_string(),
@@ -2440,12 +2443,12 @@ fi
                     ),
                     (
                             VariantKind::UBUNTU2204,
-                            super::Variant {
+                            Variant {
                                 kind: VariantKind::UBUNTU2204,
                                 descr: "Ubuntu 22.04 LTS (Jammy Jellyfish)".to_string(),
                                 family: "debian".to_string(),
                                 parent: "DEBIAN12".to_string(),
-                                detect: super::Detect {
+                                detect: Detect {
                                     filename: "/etc/os-release".to_string(),
                                     regex: r"^ PRETTY_NAME= .* (?: Ubuntu \s+ 22 \. 04 | Mint \s+ 22 ) ".to_string(),
                                     os_id: "ubuntu".to_string(),
@@ -2553,7 +2556,7 @@ fi
                                 ),
                                 min_sys_python: "3.9".to_string(),
                                 repo:
-                                    super::Repo::Deb(super::DebRepo {
+                                    Repo::Deb(DebRepo {
                                         codename: "jammy".to_string(),
                                         vendor: "ubuntu".to_string(),
                                         sources: "debian/repo/storpool.sources".to_string(),
@@ -2577,7 +2580,7 @@ fi
                                 systemd_lib: "lib/systemd/system".to_string(),
                                 file_ext: "deb".to_string(),
                                 initramfs_flavor: "update-initramfs".to_string(),
-                                builder: super::Builder {
+                                builder: Builder {
                                     alias: "ubuntu-22.04".to_string(),
                                     base_image: "ubuntu:jammy".to_string(),
                                     branch: "ubuntu/jammy".to_string(),
