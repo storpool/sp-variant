@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021  StorPool <support@storpool.com>
+ * Copyright (c) 2021, 2022  StorPool <support@storpool.com>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -29,9 +29,11 @@
 //! the os-release file as found in recent Linux distributions.
 
 use std::collections::HashMap;
-use std::error;
+use std::error::Error;
 use std::fs;
-use std::path;
+use std::path::Path;
+
+use regex::Regex;
 
 quick_error! {
     /// An error that occurred during parsing.
@@ -72,10 +74,7 @@ const RE_LINE: &str = "(?x)
     ) $
 ";
 
-fn parse_line(
-    re_line: &regex::Regex,
-    line: &str,
-) -> Result<Option<(String, String)>, Box<dyn error::Error>> {
+fn parse_line(re_line: &Regex, line: &str) -> Result<Option<(String, String)>, Box<dyn Error>> {
     match re_line.captures(line) {
         Some(caps) => {
             if caps.name("comment").is_some() {
@@ -131,10 +130,8 @@ fn parse_line(
 }
 
 /// Parse a file, return a name: value mapping.
-pub fn parse<P: AsRef<path::Path>>(
-    path: P,
-) -> Result<HashMap<String, String>, Box<dyn error::Error>> {
-    let re_line = regex::Regex::new(RE_LINE).unwrap();
+pub fn parse<P: AsRef<Path>>(path: P) -> Result<HashMap<String, String>, Box<dyn Error>> {
+    let re_line = Regex::new(RE_LINE).unwrap();
     fs::read_to_string(path)?
         .lines()
         .filter_map(|line| parse_line(&re_line, line).transpose())
@@ -143,8 +140,12 @@ pub fn parse<P: AsRef<path::Path>>(
 
 #[cfg(test)]
 mod tests {
-    use std::error;
+    use std::error::Error;
     use std::fs;
+
+    use regex::Regex;
+
+    use super::{YAIError, RE_LINE};
 
     const LINES_BAD: [&str; 5] = [
         "NAME='",
@@ -192,14 +193,14 @@ BUG_REPORT_URL=\"https://bugs.debian.org/\"";
 
     #[test]
     fn parse_bad() {
-        let re_line = regex::Regex::new(crate::yai::RE_LINE).unwrap();
+        let re_line = Regex::new(RE_LINE).unwrap();
         println!("\nMaking sure malformed lines are rejected");
         for line in &LINES_BAD {
             println!("- {:?}", line);
-            match crate::yai::parse_line(&re_line, line) {
+            match super::parse_line(&re_line, line) {
                 Ok(data) => panic!("The {:?} malformed line was misparsed as {:?}", line, data),
                 Err(err) => {
-                    if !err.downcast_ref::<crate::yai::YAIError>().is_some() {
+                    if !err.downcast_ref::<YAIError>().is_some() {
                         panic!("The {:?} malformed line raised an error: {}", line, err)
                     }
                 }
@@ -209,11 +210,11 @@ BUG_REPORT_URL=\"https://bugs.debian.org/\"";
 
     #[test]
     fn parse_comments() {
-        let re_line = regex::Regex::new(crate::yai::RE_LINE).unwrap();
+        let re_line = Regex::new(RE_LINE).unwrap();
         println!("\nMaking sure comments and empty lines are ignored");
         for line in &LINES_COMMENTS {
             println!("- {:?}", line);
-            let res = crate::yai::parse_line(&re_line, line).unwrap();
+            let res = super::parse_line(&re_line, line).unwrap();
             println!("  - {:?}", res);
             assert_eq!(res, None);
         }
@@ -221,11 +222,11 @@ BUG_REPORT_URL=\"https://bugs.debian.org/\"";
 
     #[test]
     fn parse_good() {
-        let re_line = regex::Regex::new(crate::yai::RE_LINE).unwrap();
+        let re_line = Regex::new(RE_LINE).unwrap();
         println!("\nMaking sure well-formed lines are parsed correctly");
         for (line, (varname, value)) in &LINES_OK {
             println!("- {:?}", line);
-            let (p_varname, p_value) = crate::yai::parse_line(&re_line, line).unwrap().unwrap();
+            let (p_varname, p_value) = super::parse_line(&re_line, line).unwrap().unwrap();
             println!("  - name {:?} value {:?}", p_varname, p_value);
             assert_eq!(varname, &p_varname);
             assert_eq!(value, &p_value);
@@ -233,12 +234,12 @@ BUG_REPORT_URL=\"https://bugs.debian.org/\"";
     }
 
     #[test]
-    fn parse() -> Result<(), Box<dyn error::Error>> {
+    fn parse() -> Result<(), Box<dyn Error>> {
         let dir = tempfile::tempdir()?;
         let path = dir.path().join("os-release");
         println!("\nWriting and parsing {}", path.to_string_lossy());
         fs::write(&path, CFG_TEXT.as_bytes())?;
-        let res = crate::yai::parse(&path)?;
+        let res = super::parse(&path)?;
         assert_eq!(res.len(), 9);
         for (name, value) in &CFG_EXPECTED {
             let pvalue = res.get(&name.to_string());

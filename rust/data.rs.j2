@@ -32,7 +32,10 @@ use std::str::FromStr;
 
 use serde::{Deserialize, Serialize};
 
-use crate::VariantError;
+use crate::{
+    Builder, DebRepo, Detect, Repo, Variant, VariantDefTop, VariantError, VariantFormat,
+    VariantFormatVersion, YumRepo,
+};
 
 /// The supported StorPool build variants (OS distribution, version, etc).
 #[derive(Debug, Clone, PartialEq, Hash, Eq, Serialize, Deserialize)]
@@ -73,11 +76,11 @@ impl FromStr for VariantKind {
 }
 
 /// Return the definition of the StorPool variants.
-pub fn get_variants() -> &'static super::VariantDefTop {
+pub fn get_variants() -> &'static VariantDefTop {
     lazy_static! {
-        static ref DEF_TOP: super::VariantDefTop = super::VariantDefTop {
-            format: super::VariantFormat {
-                version: super::VariantFormatVersion {
+        static ref DEF_TOP: VariantDefTop = VariantDefTop {
+            format: VariantFormat {
+                version: VariantFormatVersion {
                     major: {{ format_version[0] }},
                     minor: {{ format_version[1] }},
                 },
@@ -92,12 +95,12 @@ pub fn get_variants() -> &'static super::VariantDefTop {
                     {%- for name, var in variants|dictvsort %}
                     (
                             VariantKind::{{ name }},
-                            super::Variant {
+                            Variant {
                                 kind: VariantKind::{{ name }},
                                 descr: "{{ var.descr }}".to_string(),
                                 family: "{{ var.family }}".to_string(),
                                 parent: "{{ var.parent }}".to_string(),
-                                detect: super::Detect {
+                                detect: Detect {
                                     filename: "{{ var.detect.filename }}".to_string(),
                                     regex: r"{{ var.detect.regex.pattern }}".to_string(),
                                     os_id: "{{ var.detect.os_id }}".to_string(),
@@ -128,12 +131,12 @@ pub fn get_variants() -> &'static super::VariantDefTop {
                                 ),
                                 min_sys_python: "{{ var.min_sys_python }}".to_string(),
                                 repo: {% if var.family == "redhat" %}
-                                    super::Repo::Yum(super::YumRepo {
+                                    Repo::Yum(YumRepo {
                                         yumdef: "{{ var.repo.yumdef }}".to_string(),
                                         keyring: "{{ var.repo.keyring }}".to_string(),
                                     }),
                                     {% elif var.family == "debian" %}
-                                    super::Repo::Deb(super::DebRepo {
+                                    Repo::Deb(DebRepo {
                                         codename: "{{ var.repo.codename }}".to_string(),
                                         vendor: "{{ var.repo.vendor }}".to_string(),
                                         sources: "{{ var.repo.sources }}".to_string(),
@@ -157,7 +160,7 @@ pub fn get_variants() -> &'static super::VariantDefTop {
                                 systemd_lib: "{{ var.systemd_lib }}".to_string(),
                                 file_ext: "{{ var.file_ext }}".to_string(),
                                 initramfs_flavor: "{{ var.initramfs_flavor }}".to_string(),
-                                builder: super::Builder {
+                                builder: Builder {
                                     alias: "{{ var.builder.alias }}".to_string(),
                                     base_image: "{{ var.builder.base_image }}".to_string(),
                                     branch: "{{ var.builder.branch }}".to_string(),

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021  StorPool <support@storpool.com>
+ * Copyright (c) 2021, 2022  StorPool <support@storpool.com>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -24,17 +24,17 @@
  * SUCH DAMAGE.
  */
 use std::collections::HashSet;
-use std::error;
+use std::error::Error;
 
 #[test]
-fn test_detect() -> Result<(), Box<dyn error::Error>> {
+fn test_detect() -> Result<(), Box<dyn Error>> {
     let variant = crate::detect()?;
     println!("Detected {}", variant.kind.as_ref());
     Ok(())
 }
 
 #[test]
-fn test_roundtrip() -> Result<(), Box<dyn error::Error>> {
+fn test_roundtrip() -> Result<(), Box<dyn Error>> {
     println!("");
     let all = crate::build_variants();
     assert_eq!(all.order.len(), all.variants.len());

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021  StorPool <support@storpool.com>
+ * Copyright (c) 2021, 2022  StorPool <support@storpool.com>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -27,11 +27,12 @@
 //! Detect the OS distribution and version.
 
 use std::collections::HashMap;
-use std::error;
+use std::error::Error;
 use std::fs;
-use std::io;
+use std::io::{Error as IoError, ErrorKind};
 
 use expect_exit::ExpectedResult;
+use regex::RegexBuilder;
 use serde::{Deserialize, Serialize};
 
 #[macro_use]
@@ -58,11 +59,11 @@ quick_error! {
             display("Unknown variant '{}'", name)
         }
         /// A file to be examined could not be read.
-        FileRead(variant: String, filename: String, err: io::Error) {
+        FileRead(variant: String, filename: String, err: IoError) {
             display("Checking for {}: could not read {}: {}", variant, filename, err)
         }
         /// Unexpected error parsing the /etc/os-release file.
-        OsRelease(err: Box<dyn error::Error>) {
+        OsRelease(err: Box<dyn Error>) {
             display("Could not parse the /etc/os-release file: {}", err)
         }
         /// None of the variants matched.
@@ -202,12 +203,12 @@ pub fn build_variants() -> &'static VariantDefTop {
 }
 
 /// Detect the variant that this host is currently running.
-pub fn detect() -> Result<Variant, Box<dyn error::Error>> {
+pub fn detect() -> Result<Variant, Box<dyn Error>> {
     detect_from(build_variants()).map(|var| var.clone())
 }
 
 /// Detect the current host's variant from the supplied data.
-pub fn detect_from(variants: &VariantDefTop) -> Result<&Variant, Box<dyn error::Error>> {
+pub fn detect_from(variants: &VariantDefTop) -> Result<&Variant, Box<dyn Error>> {
     match yai::parse("/etc/os-release") {
         Ok(data) => {
             if let Some(os_id) = data.get("ID") {
@@ -217,7 +218,7 @@ pub fn detect_from(variants: &VariantDefTop) -> Result<&Variant, Box<dyn error::
                         if var.detect.os_id != *os_id {
                             continue;
                         }
-                        let re_ver = regex::RegexBuilder::new(&var.detect.os_version_regex)
+                        let re_ver = RegexBuilder::new(&var.detect.os_version_regex)
                             .ignore_whitespace(true)
                             .build()
                             .unwrap();
@@ -230,8 +231,8 @@ pub fn detect_from(variants: &VariantDefTop) -> Result<&Variant, Box<dyn error::
             // Fall through to the PRETTY_NAME processing.
         }
         Err(err) => {
-            let ignore = match err.downcast_ref::<io::Error>() {
-                Some(io_err) => io_err.kind() == io::ErrorKind::NotFound,
+            let ignore = match err.downcast_ref::<IoError>() {
+                Some(io_err) => io_err.kind() == ErrorKind::NotFound,
                 None => false,
             };
             if !ignore {
@@ -242,7 +243,7 @@ pub fn detect_from(variants: &VariantDefTop) -> Result<&Variant, Box<dyn error::
 
     for kind in &variants.order {
         let var = &variants.variants[kind];
-        let re_line = regex::RegexBuilder::new(&var.detect.regex)
+        let re_line = RegexBuilder::new(&var.detect.regex)
             .ignore_whitespace(true)
             .build()
             .unwrap();
@@ -257,7 +258,7 @@ pub fn detect_from(variants: &VariantDefTop) -> Result<&Variant, Box<dyn error::
                 }
             }
             Err(err) => {
-                if err.kind() != io::ErrorKind::NotFound {
+                if err.kind() != ErrorKind::NotFound {
                     return Err(Box::new(VariantError::FileRead(
                         var.kind.as_ref().to_string(),
                         var.detect.filename.clone(),
@@ -274,7 +275,7 @@ pub fn detect_from(variants: &VariantDefTop) -> Result<&Variant, Box<dyn error::
 pub fn get_from<'a>(
     variants: &'a VariantDefTop,
     name: &str,
-) -> Result<&'a Variant, Box<dyn error::Error>> {
+) -> Result<&'a Variant, Box<dyn Error>> {
     let kind: VariantKind = name.parse()?;
     variants
         .variants
@@ -286,7 +287,7 @@ pub fn get_from<'a>(
 pub fn get_by_alias_from<'a>(
     variants: &'a VariantDefTop,
     alias: &str,
-) -> Result<&'a Variant, Box<dyn error::Error>> {
+) -> Result<&'a Variant, Box<dyn Error>> {
     variants
         .variants
         .values()

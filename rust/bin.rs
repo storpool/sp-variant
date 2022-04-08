@@ -34,19 +34,22 @@
 #![warn(missing_docs)]
 
 use std::collections::HashMap;
-use std::fs;
+use std::fs::{self, File, OpenOptions};
 use std::io::{Read, Write};
 use std::os::unix::fs::PermissionsExt;
 use std::os::unix::io::AsRawFd;
 use std::os::unix::process::ExitStatusExt;
-use std::path;
-use std::process;
+use std::path::Path;
+use std::process::Command;
 
+use clap::{App, Arg, ArgMatches, SubCommand};
 use expect_exit::ExpectedWithError;
-use nix::unistd;
+use nix::unistd::{self, Gid, Uid};
 use serde::{Deserialize, Serialize};
 
-use sp_variant::{self, Variant, VariantDefTop};
+use sp_variant::{
+    self, DebRepo, Repo, Variant, VariantDefTop, VariantFormat, VariantFormatVersion, YumRepo,
+};
 
 #[derive(Debug)]
 struct RepoType<'a> {
@@ -76,7 +79,7 @@ struct ShowConfig {
 
 #[derive(Debug, Serialize, Deserialize)]
 struct SingleVariant {
-    format: sp_variant::VariantFormat,
+    format: VariantFormat,
     variant: Variant,
     version: String,
 }
@@ -131,7 +134,7 @@ fn run_command(cmdvec: &[String], action: &str, noop: bool) {
         return;
     }
 
-    let status = process::Command::new(&cmdvec[0])
+    let status = Command::new(&cmdvec[0])
         .args(&cmdvec[1..])
         .spawn()
         .or_exit_e(|| format!("{}: {}", action, cmdstr))
@@ -162,7 +165,7 @@ fn copy_file(fname: &str, srcdir: &str, dstdir: &str, noop: bool) {
 
     let read_source_file = || {
         let mut infile =
-            fs::File::open(&src).or_exit_e(|| format!("Could not open {} for reading", src));
+            File::open(&src).or_exit_e(|| format!("Could not open {} for reading", src));
         let mut contents = Vec::<u8>::new();
         infile
             .read_to_end(&mut contents)
@@ -171,7 +174,7 @@ fn copy_file(fname: &str, srcdir: &str, dstdir: &str, noop: bool) {
     };
 
     let write_destination_file = |contents: &Vec<u8>| {
-        let mut outfile = fs::OpenOptions::new()
+        let mut outfile = OpenOptions::new()
             .write(true)
             .create(true)
             .truncate(true)
@@ -187,8 +190,8 @@ fn copy_file(fname: &str, srcdir: &str, dstdir: &str, noop: bool) {
             .or_exit_e(|| format!("Could not change the mode on {}", dst));
         unistd::fchown(
             outfile.as_raw_fd(),
-            Some(unistd::Uid::from_raw(0)),
-            Some(unistd::Gid::from_raw(0)),
+            Some(Uid::from_raw(0)),
+            Some(Gid::from_raw(0)),
         )
         .or_exit_e(|| format!("Could not set the ownership of {}", dst));
         outfile
@@ -206,7 +209,7 @@ fn copy_file(fname: &str, srcdir: &str, dstdir: &str, noop: bool) {
     write_destination_file(&contents);
 }
 
-fn repo_add_deb(var: &Variant, config: RepoAddConfig, vdir: &str, repo: &sp_variant::DebRepo) {
+fn repo_add_deb(var: &Variant, config: RepoAddConfig, vdir: &str, repo: &DebRepo) {
     let install_req_packages = || {
         // First, install the ca-certificates package if required...
         let mut cmdvec: Vec<String> = var.commands["package"]["install"].to_vec();
@@ -250,7 +253,7 @@ fn repo_add_deb(var: &Variant, config: RepoAddConfig, vdir: &str, repo: &sp_vari
     run_apt_update();
 }
 
-fn repo_add_yum(config: RepoAddConfig, vdir: &str, repo: &sp_variant::YumRepo) {
+fn repo_add_yum(config: RepoAddConfig, vdir: &str, repo: &YumRepo) {
     let run_yum_install_certs = || {
         run_command(
             &[
@@ -282,7 +285,7 @@ fn repo_add_yum(config: RepoAddConfig, vdir: &str, repo: &sp_variant::YumRepo) {
     };
 
     let run_rpmkeys = || {
-        if path::Path::new("/usr/bin/rpmkeys").exists() {
+        if Path::new("/usr/bin/rpmkeys").exists() {
             run_command(
                 &[
                     "rpmkeys".to_string(),
@@ -329,8 +332,8 @@ fn cmd_repo_add(varfull: &VariantDefTop, config: RepoAddConfig) {
         expect_exit::die(&format!("Not a directory: {:?}", vdir));
     }
     match &var.repo {
-        sp_variant::Repo::Deb(deb) => repo_add_deb(var, config, &vdir, deb),
-        sp_variant::Repo::Yum(yum) => repo_add_yum(config, &vdir, yum),
+        Repo::Deb(deb) => repo_add_deb(var, config, &vdir, deb),
+        Repo::Yum(yum) => repo_add_yum(config, &vdir, yum),
     }
 }
 
@@ -381,8 +384,8 @@ fn cmd_show(varfull: &VariantDefTop, config: ShowConfig) {
             };
             let (major, minor) = sp_variant::get_format_version_from(varfull);
             let single = SingleVariant {
-                format: sp_variant::VariantFormat {
-                    version: sp_variant::VariantFormatVersion { major, minor },
+                format: VariantFormat {
+                    version: VariantFormatVersion { major, minor },
                 },
                 variant: var.clone(),
                 version: sp_variant::get_program_version().to_string(),
@@ -397,34 +400,34 @@ fn main() {
     let program_version = sp_variant::get_program_version_from(varfull);
     let app = {
         let valid_repo_types: Vec<&str> = REPO_TYPES.iter().map(|rtype| rtype.name).collect();
-        clap::App::new("storpool_variant")
+        App::new("storpool_variant")
             .version(program_version)
             .author("StorPool <support@storpool.com>")
             .about("storpool_variant: handle OS distribution- and version-specific tasks")
             .subcommand(
-                clap::SubCommand::with_name("command")
+                SubCommand::with_name("command")
                     .about("Distribition-specific commands")
                     .subcommand(
-                        clap::SubCommand::with_name("list")
+                        SubCommand::with_name("list")
                             .about("List the distribution-specific commands"),
                     )
                     .subcommand(
-                        clap::SubCommand::with_name("run")
+                        SubCommand::with_name("run")
                             .about("Run a distribution-specific command")
                             .arg(
-                                clap::Arg::with_name("noop")
+                                Arg::with_name("noop")
                                     .short("N")
                                     .long("noop")
                                     .help("No-operation mode; display what would be done"),
                             )
                             .arg(
-                                clap::Arg::with_name("command")
+                                Arg::with_name("command")
                                     .index(1)
                                     .required(true)
                                     .help("The identifier of the command to run"),
                             )
                             .arg(
-                                clap::Arg::with_name("args")
+                                Arg::with_name("args")
                                     .index(2)
                                     .multiple(true)
                                     .help("Arguments to pass to the command"),
@@ -432,27 +435,27 @@ fn main() {
                     ),
             )
             .subcommand(
-                clap::SubCommand::with_name("detect")
+                SubCommand::with_name("detect")
                     .about("Detect the build variant for the current host"),
             )
             .subcommand(
-                clap::SubCommand::with_name("features")
+                SubCommand::with_name("features")
                     .about("Display the features supported by storpool_variant"),
             )
             .subcommand(
-                clap::SubCommand::with_name("repo")
+                SubCommand::with_name("repo")
                     .about("StorPool repository-related commands")
                     .subcommand(
-                        clap::SubCommand::with_name("add")
+                        SubCommand::with_name("add")
                             .about("Install the StorPool repository configuration")
                             .arg(
-                                clap::Arg::with_name("noop")
+                                Arg::with_name("noop")
                                     .short("N")
                                     .long("noop")
                                     .help("No-operation mode; display what would be done"),
                             )
                             .arg(
-                                clap::Arg::with_name("repodir")
+                                Arg::with_name("repodir")
                                     .short("d")
                                     .required(true)
                                     .takes_value(true)
@@ -460,7 +463,7 @@ fn main() {
                                     .help("The path to the repo config directory"),
                             )
                             .arg(
-                                clap::Arg::with_name("repotype")
+                                Arg::with_name("repotype")
                                     .short("t")
                                     .takes_value(true)
                                     .value_name("REPOTYPE")
@@ -471,10 +474,10 @@ fn main() {
                     ),
             )
             .subcommand(
-                clap::SubCommand::with_name("show")
+                SubCommand::with_name("show")
                     .about("Display information about a build variant")
                     .arg(
-                        clap::Arg::with_name("name")
+                        Arg::with_name("name")
                             .index(1)
                             .required(true)
                             .help("the name of the build variant to query"),
@@ -483,7 +486,7 @@ fn main() {
     };
     let matches = app.get_matches();
 
-    fn get_subc_name<'a>(current: &'a clap::SubCommand) -> (String, &'a clap::ArgMatches<'a>) {
+    fn get_subc_name<'a>(current: &'a SubCommand) -> (String, &'a ArgMatches<'a>) {
         match &current.matches.subcommand {
             Some(next) => {
                 let (next_name, matches) = get_subc_name(next);
@@ -493,7 +496,7 @@ fn main() {
         }
     }
 
-    type Handler<'a> = &'a dyn Fn(&'a clap::ArgMatches) -> Mode<'a>;
+    type Handler<'a> = &'a dyn Fn(&'a ArgMatches) -> Mode<'a>;
     let cmds: Vec<(&str, Handler)> = vec![
         ("command/list", &|_matches| Mode::CommandList),
         ("command/run", &|matches| {
