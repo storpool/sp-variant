@@ -98,7 +98,7 @@ test-docker:	repo
 		${SP_PY3_ENV} -m test_docker -r '${REPO_BUILT}' -v ${TEST_DOCKER_ARGS}
 
 test-tox-delay:
-		tox_delay -p all -e unit-tests-2,unit-tests-3 -- -p all
+		tox-delay -p all -e unit-tests-2,unit-tests-3 -- -p all
 
 clean:		clean-py clean-repo clean-rust clean-sh
 
