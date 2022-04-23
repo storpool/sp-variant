@@ -28,6 +28,7 @@
 #![warn(missing_docs)]
 // Turn on most of the clippy::restriction lints...
 #![warn(clippy::pattern_type_mismatch)]
+#![warn(clippy::unwrap_used)]
 // ...except for these ones.
 #![allow(clippy::implicit_return)]
 
@@ -226,7 +227,13 @@ pub fn detect_from(variants: &VariantDefTop) -> Result<&Variant, Box<dyn Error>>
                         let re_ver = RegexBuilder::new(&var.detect.os_version_regex)
                             .ignore_whitespace(true)
                             .build()
-                            .unwrap();
+                            .expect_result(|| {
+                                format!(
+                                    "Internal error: {}: could not parse '{}'",
+                                    kind.as_ref(),
+                                    var.detect.regex
+                                )
+                            })?;
                         if re_ver.is_match(version_id) {
                             return Ok(var);
                         }
@@ -251,7 +258,13 @@ pub fn detect_from(variants: &VariantDefTop) -> Result<&Variant, Box<dyn Error>>
         let re_line = RegexBuilder::new(&var.detect.regex)
             .ignore_whitespace(true)
             .build()
-            .unwrap();
+            .expect_result(|| {
+                format!(
+                    "Internal error: {}: could not parse '{}'",
+                    kind.as_ref(),
+                    var.detect.regex
+                )
+            })?;
         match fs::read(&var.detect.filename) {
             Ok(file_bytes) => {
                 if let Ok(contents) = String::from_utf8(file_bytes) {

@@ -33,6 +33,7 @@ use std::error::Error;
 use std::fs;
 use std::path::Path;
 
+use expect_exit::ExpectedResult;
 use regex::Regex;
 
 quick_error! {
@@ -131,7 +132,8 @@ fn parse_line(re_line: &Regex, line: &str) -> Result<Option<(String, String)>, B
 
 /// Parse a file, return a name: value mapping.
 pub fn parse<P: AsRef<Path>>(path: P) -> Result<HashMap<String, String>, Box<dyn Error>> {
-    let re_line = Regex::new(RE_LINE).unwrap();
+    let re_line = Regex::new(RE_LINE)
+        .expect_result(|| format!("Internal error: could not parse '{}'", RE_LINE))?;
     fs::read_to_string(path)?
         .lines()
         .filter_map(|line| parse_line(&re_line, line).transpose())

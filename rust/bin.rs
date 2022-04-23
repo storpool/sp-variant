@@ -34,6 +34,7 @@
 #![warn(missing_docs)]
 // Turn on most of the clippy::restriction lints...
 #![warn(clippy::pattern_type_mismatch)]
+#![warn(clippy::unwrap_used)]
 // ...except for these ones.
 #![allow(clippy::implicit_return)]
 
@@ -47,7 +48,7 @@ use std::path::Path;
 use std::process::Command;
 
 use clap::{App, Arg, ArgMatches, SubCommand};
-use expect_exit::ExpectedWithError;
+use expect_exit::{ExpectedResult, ExpectedWithError};
 use nix::unistd::{self, Gid, Uid};
 use serde::{Deserialize, Serialize};
 
@@ -213,6 +214,25 @@ fn copy_file(fname: &str, srcdir: &str, dstdir: &str, noop: bool) {
     write_destination_file(&contents);
 }
 
+fn get_filename<'path>(path: &'path str, tag: &str) -> &'path str {
+    path.rsplit('/')
+        .next()
+        .expect_result(|| format!("Could not obtain a filename from '{}'", path))
+        .or_exit_e(|| format!("Internal error: could not parse a {}", tag))
+}
+
+fn get_filename_extension<'fname>(filename: &'fname str, tag: &str) -> (&'fname str, &'fname str) {
+    filename
+        .rsplit_once('.')
+        .expect_result(|| {
+            format!(
+                "Could not split '{}' into a filename and extension",
+                filename
+            )
+        })
+        .or_exit_e(|| format!("Internal error: could not parse a {}", tag))
+}
+
 fn repo_add_deb(var: &Variant, config: RepoAddConfig, vdir: &str, repo: &DebRepo) {
     let install_req_packages = || {
         // First, install the ca-certificates package if required...
@@ -226,8 +246,8 @@ fn repo_add_deb(var: &Variant, config: RepoAddConfig, vdir: &str, repo: &DebRepo
     };
 
     let copy_sources_file = || {
-        let sources_orig = repo.sources.rsplit('/').next().unwrap();
-        let (sources_base, sources_ext) = sources_orig.rsplit_once('.').unwrap();
+        let sources_orig = get_filename(&repo.sources, "Apt sources list");
+        let (sources_base, sources_ext) = get_filename_extension(sources_orig, "Apt sources list");
         let sources_fname = format!(
             "{}{}.{}",
             sources_base, config.repotype.extension, sources_ext
@@ -236,7 +256,7 @@ fn repo_add_deb(var: &Variant, config: RepoAddConfig, vdir: &str, repo: &DebRepo
     };
 
     let copy_keyring_file = || {
-        let keyring_fname = repo.keyring.rsplit('/').next().unwrap();
+        let keyring_fname = get_filename(&repo.keyring, "Apt keyring");
         copy_file(keyring_fname, vdir, "/usr/share/keyrings", config.noop);
     };
 
@@ -274,8 +294,9 @@ fn repo_add_yum(config: RepoAddConfig, vdir: &str, repo: &YumRepo) {
     };
 
     let copy_yumdef_file = || {
-        let yumdef_orig = repo.yumdef.rsplit('/').next().unwrap();
-        let (yumdef_base, yumdef_ext) = yumdef_orig.rsplit_once('.').unwrap();
+        let yumdef_orig = get_filename(&repo.yumdef, "Yum repository definition");
+        let (yumdef_base, yumdef_ext) =
+            get_filename_extension(yumdef_orig, "Yum repository definition");
         let yumdef_fname = format!(
             "{}{}.{}",
             yumdef_base, config.repotype.extension, yumdef_ext
@@ -283,8 +304,8 @@ fn repo_add_yum(config: RepoAddConfig, vdir: &str, repo: &YumRepo) {
         copy_file(&yumdef_fname, vdir, "/etc/yum.repos.d", config.noop);
     };
 
+    let keyring_fname = get_filename(&repo.keyring, "Yum keyring");
     let copy_keyring_file = || {
-        let keyring_fname = repo.keyring.rsplit('/').next().unwrap();
         copy_file(keyring_fname, vdir, "/etc/pki/rpm-gpg", config.noop);
     };
 
@@ -294,10 +315,7 @@ fn repo_add_yum(config: RepoAddConfig, vdir: &str, repo: &YumRepo) {
                 &[
                     "rpmkeys".to_string(),
                     "--import".to_string(),
-                    format!(
-                        "/etc/pki/rpm-gpg/{}",
-                        repo.keyring.rsplit('/').next().unwrap()
-                    ),
+                    format!("/etc/pki/rpm-gpg/{}", keyring_fname),
                 ],
                 "Could not import the StorPool RPM OpenPGP keys",
                 config.noop,
@@ -378,7 +396,11 @@ fn cmd_command_run(varfull: &VariantDefTop, config: CommandRunConfig) {
 
 fn cmd_show(varfull: &VariantDefTop, config: ShowConfig) {
     match config.name == "all" {
-        true => print!("{}", serde_json::to_string(varfull).unwrap()),
+        true => print!(
+            "{}",
+            serde_json::to_string(varfull)
+                .or_exit_e_("Internal error: could not serialize the variant data")
+        ),
         false => {
             let var = match &*config.name {
                 "current" => {
@@ -394,7 +416,11 @@ fn cmd_show(varfull: &VariantDefTop, config: ShowConfig) {
                 variant: var.clone(),
                 version: sp_variant::get_program_version().to_string(),
             };
-            println!("{}", serde_json::to_string_pretty(&single).unwrap());
+            println!(
+                "{}",
+                serde_json::to_string_pretty(&single)
+                    .or_exit_e_("Internal error: could not serialize the variant data")
+            );
         }
     };
 }
@@ -501,6 +527,7 @@ fn main() {
     }
 
     type Handler<'a> = &'a dyn Fn(&'a ArgMatches) -> Mode<'a>;
+    #[allow(clippy::unwrap_used)]
     let cmds: Vec<(&str, Handler)> = vec![
         ("command/list", &|_matches| Mode::CommandList),
         ("command/run", &|matches| {
