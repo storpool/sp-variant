@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021  StorPool <support@storpool.com>
+ * Copyright (c) 2021, 2022  StorPool <support@storpool.com>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -32,6 +32,9 @@
 //! - display the OS variant data as a JSON object
 
 #![warn(missing_docs)]
+// Turn on most of the clippy::restriction lints...
+// ...except for these ones.
+#![allow(clippy::implicit_return)]
 
 use std::collections::HashMap;
 use std::fs::{self, File, OpenOptions};

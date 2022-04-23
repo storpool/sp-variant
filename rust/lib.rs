@@ -23,8 +23,12 @@
  * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-#![warn(missing_docs)]
 //! Detect the OS distribution and version.
+
+#![warn(missing_docs)]
+// Turn on most of the clippy::restriction lints...
+// ...except for these ones.
+#![allow(clippy::implicit_return)]
 
 use std::collections::HashMap;
 use std::error::Error;
