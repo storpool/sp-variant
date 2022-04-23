@@ -33,6 +33,7 @@
 
 #![warn(missing_docs)]
 // Turn on most of the clippy::restriction lints...
+#![warn(clippy::pattern_type_mismatch)]
 // ...except for these ones.
 #![allow(clippy::implicit_return)]
 
@@ -334,9 +335,9 @@ fn cmd_repo_add(varfull: &VariantDefTop, config: RepoAddConfig) {
     {
         expect_exit::die(&format!("Not a directory: {:?}", vdir));
     }
-    match &var.repo {
-        Repo::Deb(deb) => repo_add_deb(var, config, &vdir, deb),
-        Repo::Yum(yum) => repo_add_yum(config, &vdir, yum),
+    match var.repo {
+        Repo::Deb(ref deb) => repo_add_deb(var, config, &vdir, deb),
+        Repo::Yum(ref yum) => repo_add_yum(config, &vdir, yum),
     }
 }
 
@@ -346,7 +347,7 @@ fn cmd_command_list(varfull: &VariantDefTop) {
         K: Ord,
     {
         let mut res: Vec<_> = map.iter().collect();
-        res.sort_by_key(|(key, _)| *key);
+        res.sort_by_key(|&(key, _)| key);
         res
     }
 
@@ -490,8 +491,8 @@ fn main() {
     let matches = app.get_matches();
 
     fn get_subc_name<'a>(current: &'a SubCommand) -> (String, &'a ArgMatches<'a>) {
-        match &current.matches.subcommand {
-            Some(next) => {
+        match current.matches.subcommand {
+            Some(ref next) => {
                 let (next_name, matches) = get_subc_name(next);
                 (format!("{}/{}", current.name, next_name), matches)
             }
@@ -535,12 +536,12 @@ fn main() {
             })
         }),
     ];
-    match &matches.subcommand {
-        Some(subcommand) => {
+    match matches.subcommand {
+        Some(ref subcommand) => {
             let (subc_name, subc_matches) = get_subc_name(subcommand);
             match cmds
                 .iter()
-                .find_map(|(name, handler)| (*name == subc_name).then(|| handler))
+                .find_map(|&(name, handler)| (*name == subc_name).then(|| handler))
             {
                 Some(handler) => match handler(subc_matches) {
                     Mode::Features => cmd_features(varfull),

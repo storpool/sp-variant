@@ -27,6 +27,7 @@
 
 #![warn(missing_docs)]
 // Turn on most of the clippy::restriction lints...
+#![warn(clippy::pattern_type_mismatch)]
 // ...except for these ones.
 #![allow(clippy::implicit_return)]
 

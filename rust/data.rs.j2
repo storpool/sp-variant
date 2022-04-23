@@ -54,7 +54,7 @@ impl VariantKind {
 
 impl AsRef<str> for VariantKind {
     fn as_ref(&self) -> &str {
-        match self {
+        match *self {
             {%- for name in variants|vsort -%}
             VariantKind::{{ name }} => VariantKind::{{ name }}_NAME,
             {%- endfor -%}
