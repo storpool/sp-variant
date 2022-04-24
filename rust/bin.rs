@@ -34,6 +34,8 @@
 #![warn(missing_docs)]
 // Turn on most of the clippy::restriction lints...
 #![warn(clippy::pattern_type_mismatch)]
+#![warn(clippy::str_to_string)]
+#![warn(clippy::string_to_string)]
 #![warn(clippy::unwrap_used)]
 // ...except for these ones.
 #![allow(clippy::implicit_return)]
@@ -262,7 +264,7 @@ fn repo_add_deb(var: &Variant, config: RepoAddConfig, vdir: &str, repo: &DebRepo
 
     let run_apt_update = || {
         run_command(
-            &["apt-get".to_string(), "update".to_string()],
+            &["apt-get".to_owned(), "update".to_owned()],
             "Could not update the package database",
             config.noop,
         );
@@ -281,12 +283,12 @@ fn repo_add_yum(config: RepoAddConfig, vdir: &str, repo: &YumRepo) {
     let run_yum_install_certs = || {
         run_command(
             &[
-                "yum".to_string(),
-                "--disablerepo=storpool-*".to_string(),
-                "install".to_string(),
-                "-q".to_string(),
-                "-y".to_string(),
-                "ca-certificates".to_string(),
+                "yum".to_owned(),
+                "--disablerepo=storpool-*".to_owned(),
+                "install".to_owned(),
+                "-q".to_owned(),
+                "-y".to_owned(),
+                "ca-certificates".to_owned(),
             ],
             "Could not update the package database",
             config.noop,
@@ -313,8 +315,8 @@ fn repo_add_yum(config: RepoAddConfig, vdir: &str, repo: &YumRepo) {
         if Path::new("/usr/bin/rpmkeys").exists() {
             run_command(
                 &[
-                    "rpmkeys".to_string(),
-                    "--import".to_string(),
+                    "rpmkeys".to_owned(),
+                    "--import".to_owned(),
                     format!("/etc/pki/rpm-gpg/{}", keyring_fname),
                 ],
                 "Could not import the StorPool RPM OpenPGP keys",
@@ -326,11 +328,11 @@ fn repo_add_yum(config: RepoAddConfig, vdir: &str, repo: &YumRepo) {
     let run_yum_clean_metadata = || {
         run_command(
             &[
-                "yum".to_string(),
-                "--disablerepo=*".to_string(),
+                "yum".to_owned(),
+                "--disablerepo=*".to_owned(),
                 format!("--enablerepo=storpool-{}", config.repotype.name),
-                "clean".to_string(),
-                "metadata".to_string(),
+                "clean".to_owned(),
+                "metadata".to_owned(),
             ],
             "Could not update the package database",
             config.noop,
@@ -414,7 +416,7 @@ fn cmd_show(varfull: &VariantDefTop, config: ShowConfig) {
                     version: VariantFormatVersion { major, minor },
                 },
                 variant: var.clone(),
-                version: sp_variant::get_program_version().to_string(),
+                version: sp_variant::get_program_version().to_owned(),
             };
             println!(
                 "{}",
@@ -522,7 +524,7 @@ fn main() {
                 let (next_name, matches) = get_subc_name(next);
                 (format!("{}/{}", current.name, next_name), matches)
             }
-            None => (current.name.to_string(), &current.matches),
+            None => (current.name.clone(), &current.matches),
         }
     }
 
@@ -534,10 +536,10 @@ fn main() {
             let parts: Vec<&str> = matches.value_of("command").unwrap().split('.').collect();
             match parts.len() {
                 2 => Mode::CommandRun(CommandRunConfig {
-                    category: parts[0].to_string(),
-                    name: parts[1].to_string(),
+                    category: parts[0].to_owned(),
+                    name: parts[1].to_owned(),
                     args: match matches.values_of("args") {
-                        Some(args) => args.map(|value| value.to_string()).collect(),
+                        Some(args) => args.map(|value| value.to_owned()).collect(),
                         None => vec![],
                     },
                     noop: matches.is_present("noop"),
@@ -550,7 +552,7 @@ fn main() {
         ("repo/add", &|matches| {
             Mode::RepoAdd(RepoAddConfig {
                 noop: matches.is_present("noop"),
-                repodir: matches.value_of("repodir").unwrap().to_string(),
+                repodir: matches.value_of("repodir").unwrap().to_owned(),
                 repotype: {
                     let name = matches.value_of("repotype").unwrap();
                     REPO_TYPES.iter().find(|rtype| rtype.name == name).unwrap()
@@ -559,7 +561,7 @@ fn main() {
         }),
         ("show", &|matches| {
             Mode::Show(ShowConfig {
-                name: matches.value_of("name").unwrap().to_string(),
+                name: matches.value_of("name").unwrap().to_owned(),
             })
         }),
     ];

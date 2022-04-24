@@ -70,7 +70,7 @@ impl FromStr for VariantKind {
             {%- for name in variants|vsort -%}
             VariantKind::{{ name }}_NAME => Ok(VariantKind::{{ name }}),
             {%- endfor -%}
-            other => Err(VariantError::BadVariant(other.to_string())),
+            other => Err(VariantError::BadVariant(other.to_owned())),
         }
     }
 }
@@ -97,28 +97,28 @@ pub fn get_variants() -> &'static VariantDefTop {
                             VariantKind::{{ name }},
                             Variant {
                                 kind: VariantKind::{{ name }},
-                                descr: "{{ var.descr }}".to_string(),
-                                family: "{{ var.family }}".to_string(),
-                                parent: "{{ var.parent }}".to_string(),
+                                descr: "{{ var.descr }}".to_owned(),
+                                family: "{{ var.family }}".to_owned(),
+                                parent: "{{ var.parent }}".to_owned(),
                                 detect: Detect {
-                                    filename: "{{ var.detect.filename }}".to_string(),
-                                    regex: r"{{ var.detect.regex.pattern }}".to_string(),
-                                    os_id: "{{ var.detect.os_id }}".to_string(),
-                                    os_version_regex: r"{{ var.detect.os_version_regex.pattern }}".to_string(),
+                                    filename: "{{ var.detect.filename }}".to_owned(),
+                                    regex: r"{{ var.detect.regex.pattern }}".to_owned(),
+                                    os_id: "{{ var.detect.os_id }}".to_owned(),
+                                    os_version_regex: r"{{ var.detect.os_version_regex.pattern }}".to_owned(),
                                 },
                                 commands: HashMap::from(
                                     [
                                         {%- for cat_name in var.commands._fields|sort %}
                                         (
-                                            "{{ cat_name }}".to_string(),
+                                            "{{ cat_name }}".to_owned(),
                                             HashMap::from(
                                                 [
                                                     {%- for cmd_name in var.commands|attr(cat_name)|attr("_fields")|sort %}
                                                     (
-                                                        "{{ cmd_name }}".to_string(),
+                                                        "{{ cmd_name }}".to_owned(),
                                                         vec![
                                                             {%- for word in var.commands|attr(cat_name)|attr(cmd_name) %}
-                                                            "{{ word|replace("\\", "\\\\")|replace('"', '\\"') }}".to_string(),
+                                                            "{{ word|replace("\\", "\\\\")|replace('"', '\\"') }}".to_owned(),
                                                             {%- endfor %}
                                                         ],
                                                     ),
@@ -129,21 +129,21 @@ pub fn get_variants() -> &'static VariantDefTop {
                                         {%- endfor %}
                                     ]
                                 ),
-                                min_sys_python: "{{ var.min_sys_python }}".to_string(),
+                                min_sys_python: "{{ var.min_sys_python }}".to_owned(),
                                 repo: {% if var.family == "redhat" %}
                                     Repo::Yum(YumRepo {
-                                        yumdef: "{{ var.repo.yumdef }}".to_string(),
-                                        keyring: "{{ var.repo.keyring }}".to_string(),
+                                        yumdef: "{{ var.repo.yumdef }}".to_owned(),
+                                        keyring: "{{ var.repo.keyring }}".to_owned(),
                                     }),
                                     {% elif var.family == "debian" %}
                                     Repo::Deb(DebRepo {
-                                        codename: "{{ var.repo.codename }}".to_string(),
-                                        vendor: "{{ var.repo.vendor }}".to_string(),
-                                        sources: "{{ var.repo.sources }}".to_string(),
-                                        keyring: "{{ var.repo.keyring }}".to_string(),
+                                        codename: "{{ var.repo.codename }}".to_owned(),
+                                        vendor: "{{ var.repo.vendor }}".to_owned(),
+                                        sources: "{{ var.repo.sources }}".to_owned(),
+                                        keyring: "{{ var.repo.keyring }}".to_owned(),
                                         req_packages: vec![
                                             {%- for pkg in var.repo.req_packages %}
-                                            "{{ pkg }}".to_string(),
+                                            "{{ pkg }}".to_owned(),
                                             {%- endfor %}
                                         ],
                                     }),
@@ -153,26 +153,26 @@ pub fn get_variants() -> &'static VariantDefTop {
                                 package: HashMap::from(
                                     [
                                         {%- for pkg_name, pkg in var.package|dictsort %}
-                                        ("{{ pkg_name }}".to_string(), "{{ pkg }}".to_string()),
+                                        ("{{ pkg_name }}".to_owned(), "{{ pkg }}".to_owned()),
                                         {%- endfor %}
                                     ]
                                 ),
-                                systemd_lib: "{{ var.systemd_lib }}".to_string(),
-                                file_ext: "{{ var.file_ext }}".to_string(),
-                                initramfs_flavor: "{{ var.initramfs_flavor }}".to_string(),
+                                systemd_lib: "{{ var.systemd_lib }}".to_owned(),
+                                file_ext: "{{ var.file_ext }}".to_owned(),
+                                initramfs_flavor: "{{ var.initramfs_flavor }}".to_owned(),
                                 builder: Builder {
-                                    alias: "{{ var.builder.alias }}".to_string(),
-                                    base_image: "{{ var.builder.base_image }}".to_string(),
-                                    branch: "{{ var.builder.branch }}".to_string(),
-                                    kernel_package: "{{ var.builder.kernel_package }}".to_string(),
-                                    utf8_locale: "{{ var.builder.utf8_locale }}".to_string(),
+                                    alias: "{{ var.builder.alias }}".to_owned(),
+                                    base_image: "{{ var.builder.base_image }}".to_owned(),
+                                    branch: "{{ var.builder.branch }}".to_owned(),
+                                    kernel_package: "{{ var.builder.kernel_package }}".to_owned(),
+                                    utf8_locale: "{{ var.builder.utf8_locale }}".to_owned(),
                                 },
                             },
                     ),
                     {%- endfor %}
                 ]
             ),
-            version: "{{ version }}".to_string(),
+            version: "{{ version }}".to_owned(),
         };
     }
     if DEF_TOP.format.version.major != 1 {

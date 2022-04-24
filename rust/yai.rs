@@ -88,25 +88,25 @@ fn parse_line(re_line: &Regex, line: &str) -> Result<Option<(String, String)>, B
 
             if let Some("'") = oquot {
                 if quoted.contains('\'') {
-                    return Err(Box::new(YAIError::QuoteInQuoted(line.to_string())));
+                    return Err(Box::new(YAIError::QuoteInQuoted(line.to_owned())));
                 }
                 if cquot != oquot {
-                    return Err(Box::new(YAIError::MismatchedQuotes(line.to_string())));
+                    return Err(Box::new(YAIError::MismatchedQuotes(line.to_owned())));
                 }
-                return Ok(Some((varname.to_string(), quoted.to_string())));
+                return Ok(Some((varname.to_owned(), quoted.to_owned())));
             }
 
             let mut quoted = match oquot {
                 Some("\"") => {
                     if cquot != oquot {
-                        return Err(Box::new(YAIError::MismatchedQuotes(line.to_string())));
+                        return Err(Box::new(YAIError::MismatchedQuotes(line.to_owned())));
                     }
                     quoted
                 }
                 Some(other) => panic!("YAI parse_line: {:?}: oquot {:?}", line, other),
                 None => &caps["full"],
             }
-            .to_string();
+            .to_owned();
             let mut res: String = String::new();
             while !quoted.is_empty() {
                 match quoted.find('\\') {
@@ -116,7 +116,7 @@ fn parse_line(re_line: &Regex, line: &str) -> Result<Option<(String, String)>, B
                             res.push_str(qchar);
                             quoted.replace_range(..idx + 2, "");
                         }
-                        None => return Err(Box::new(YAIError::BackslashAtEnd(line.to_string()))),
+                        None => return Err(Box::new(YAIError::BackslashAtEnd(line.to_owned()))),
                     },
                     None => {
                         res.push_str(&quoted);
@@ -124,9 +124,9 @@ fn parse_line(re_line: &Regex, line: &str) -> Result<Option<(String, String)>, B
                     }
                 }
             }
-            Ok(Some((varname.to_string(), res)))
+            Ok(Some((varname.to_owned(), res)))
         }
-        None => Err(Box::new(YAIError::BadLine(line.to_string()))),
+        None => Err(Box::new(YAIError::BadLine(line.to_owned()))),
     }
 }
 

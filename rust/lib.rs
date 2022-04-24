@@ -28,6 +28,8 @@
 #![warn(missing_docs)]
 // Turn on most of the clippy::restriction lints...
 #![warn(clippy::pattern_type_mismatch)]
+#![warn(clippy::str_to_string)]
+#![warn(clippy::string_to_string)]
 #![warn(clippy::unwrap_used)]
 // ...except for these ones.
 #![allow(clippy::implicit_return)]
@@ -278,7 +280,7 @@ pub fn detect_from(variants: &VariantDefTop) -> Result<&Variant, Box<dyn Error>>
             Err(err) => {
                 if err.kind() != ErrorKind::NotFound {
                     return Err(Box::new(VariantError::FileRead(
-                        var.kind.as_ref().to_string(),
+                        var.kind.as_ref().to_owned(),
                         var.detect.filename.clone(),
                         err,
                     )));
