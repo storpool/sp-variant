@@ -35,6 +35,7 @@
 // Turn on most of the clippy::restriction lints...
 #![warn(clippy::pattern_type_mismatch)]
 #![warn(clippy::shadow_unrelated)]
+#![warn(clippy::single_char_lifetime_names)]
 #![warn(clippy::str_to_string)]
 #![warn(clippy::string_to_string)]
 #![warn(clippy::unwrap_used)]
@@ -63,16 +64,16 @@ use sp_variant::{
 };
 
 #[derive(Debug)]
-struct RepoType<'a> {
-    name: &'a str,
-    extension: &'a str,
+struct RepoType<'data> {
+    name: &'data str,
+    extension: &'data str,
 }
 
 #[derive(Debug)]
-struct RepoAddConfig<'a> {
+struct RepoAddConfig<'data> {
     noop: bool,
     repodir: String,
-    repotype: &'a RepoType<'a>,
+    repotype: &'data RepoType<'data>,
 }
 
 #[derive(Debug)]
@@ -96,12 +97,12 @@ struct SingleVariant {
 }
 
 #[derive(Debug)]
-enum Mode<'a> {
+enum Mode<'data> {
     CommandList,
     CommandRun(CommandRunConfig),
     Detect,
     Features,
-    RepoAdd(RepoAddConfig<'a>),
+    RepoAdd(RepoAddConfig<'data>),
     Show(ShowConfig),
 }
 
@@ -514,7 +515,7 @@ fn main() {
     };
     let opt_matches = app.get_matches();
 
-    fn get_subc_name<'a>(current: &'a SubCommand) -> (String, &'a ArgMatches<'a>) {
+    fn get_subc_name<'cmds>(current: &'cmds SubCommand) -> (String, &'cmds ArgMatches<'cmds>) {
         match current.matches.subcommand {
             Some(ref next) => {
                 let (next_name, matches) = get_subc_name(next);
@@ -524,7 +525,7 @@ fn main() {
         }
     }
 
-    type Handler<'a> = &'a dyn Fn(&'a ArgMatches) -> Mode<'a>;
+    type Handler<'cmds> = &'cmds dyn Fn(&'cmds ArgMatches) -> Mode<'cmds>;
     #[allow(clippy::unwrap_used)]
     let cmds: Vec<(&str, Handler)> = vec![
         ("command/list", &|_matches| Mode::CommandList),

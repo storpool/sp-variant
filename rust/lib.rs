@@ -29,6 +29,7 @@
 // Turn on most of the clippy::restriction lints...
 #![warn(clippy::pattern_type_mismatch)]
 #![warn(clippy::shadow_unrelated)]
+#![warn(clippy::single_char_lifetime_names)]
 #![warn(clippy::str_to_string)]
 #![warn(clippy::string_to_string)]
 #![warn(clippy::unwrap_used)]
@@ -296,10 +297,10 @@ pub fn detect_from(variants: &VariantDefTop) -> Result<&Variant, Box<dyn Error>>
 }
 
 /// Get the variant with the specified name from the supplied data.
-pub fn get_from<'a>(
-    variants: &'a VariantDefTop,
+pub fn get_from<'defs>(
+    variants: &'defs VariantDefTop,
     name: &str,
-) -> Result<&'a Variant, Box<dyn Error>> {
+) -> Result<&'defs Variant, Box<dyn Error>> {
     let kind: VariantKind = name.parse()?;
     variants
         .variants
@@ -308,10 +309,10 @@ pub fn get_from<'a>(
 }
 
 /// Get the variant with the specified builder alias from the supplied data.
-pub fn get_by_alias_from<'a>(
-    variants: &'a VariantDefTop,
+pub fn get_by_alias_from<'defs>(
+    variants: &'defs VariantDefTop,
     alias: &str,
-) -> Result<&'a Variant, Box<dyn Error>> {
+) -> Result<&'defs Variant, Box<dyn Error>> {
     variants
         .variants
         .values()
