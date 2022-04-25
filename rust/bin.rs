@@ -34,6 +34,7 @@
 #![warn(missing_docs)]
 // Turn on most of the clippy::restriction lints...
 #![warn(clippy::pattern_type_mismatch)]
+#![warn(clippy::shadow_unrelated)]
 #![warn(clippy::str_to_string)]
 #![warn(clippy::string_to_string)]
 #![warn(clippy::unwrap_used)]
@@ -517,7 +518,7 @@ fn main() {
                     ),
             )
     };
-    let matches = app.get_matches();
+    let opt_matches = app.get_matches();
 
     fn get_subc_name<'a>(current: &'a SubCommand) -> (String, &'a ArgMatches<'a>) {
         match current.matches.subcommand {
@@ -566,7 +567,7 @@ fn main() {
             })
         }),
     ];
-    match matches.subcommand {
+    match opt_matches.subcommand {
         Some(ref subcommand) => {
             let (subc_name, subc_matches) = get_subc_name(subcommand);
             match cmds
@@ -581,9 +582,9 @@ fn main() {
                     Mode::RepoAdd(config) => cmd_repo_add(varfull, config),
                     Mode::Show(config) => cmd_show(varfull, config),
                 },
-                None => expect_exit::exit(matches.usage()),
+                None => expect_exit::exit(opt_matches.usage()),
             }
         }
-        None => expect_exit::exit(matches.usage()),
+        None => expect_exit::exit(opt_matches.usage()),
     }
 }

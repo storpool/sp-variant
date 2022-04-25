@@ -28,6 +28,7 @@
 #![warn(missing_docs)]
 // Turn on most of the clippy::restriction lints...
 #![warn(clippy::pattern_type_mismatch)]
+#![warn(clippy::shadow_unrelated)]
 #![warn(clippy::str_to_string)]
 #![warn(clippy::string_to_string)]
 #![warn(clippy::unwrap_used)]
