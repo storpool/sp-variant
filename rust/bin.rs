@@ -38,13 +38,14 @@
 #![warn(clippy::str_to_string)]
 #![warn(clippy::string_to_string)]
 #![warn(clippy::unwrap_used)]
+#![warn(clippy::verbose_file_reads)]
 // ...except for these ones.
 #![allow(clippy::implicit_return)]
 #![allow(clippy::indexing_slicing)]
 
 use std::collections::HashMap;
-use std::fs::{self, File, OpenOptions};
-use std::io::{Read, Write};
+use std::fs::{self, OpenOptions};
+use std::io::Write;
 use std::os::unix::fs::PermissionsExt;
 use std::os::unix::io::AsRawFd;
 use std::os::unix::process::ExitStatusExt;
@@ -172,15 +173,7 @@ fn copy_file(fname: &str, srcdir: &str, dstdir: &str, noop: bool) {
     let dst = format!("{}/{}", dstdir, fname);
     println!("Copying {:?} -> {:?}", src, dst);
 
-    let read_source_file = || {
-        let mut infile =
-            File::open(&src).or_exit_e(|| format!("Could not open {} for reading", src));
-        let mut contents = Vec::<u8>::new();
-        infile
-            .read_to_end(&mut contents)
-            .or_exit_e(|| format!("Could not read from {}", src));
-        contents
-    };
+    let read_source_file = || fs::read(&src).or_exit_e(|| format!("Could not read from {}", src));
 
     let write_destination_file = |contents: &Vec<u8>| {
         let mut outfile = OpenOptions::new()
