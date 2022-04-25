@@ -33,6 +33,7 @@
 #![warn(clippy::unwrap_used)]
 // ...except for these ones.
 #![allow(clippy::implicit_return)]
+#![allow(clippy::indexing_slicing)]
 
 use std::collections::HashMap;
 use std::error::Error;
