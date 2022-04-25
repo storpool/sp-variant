@@ -42,6 +42,7 @@
 // ...except for these ones.
 #![allow(clippy::implicit_return)]
 #![allow(clippy::indexing_slicing)]
+#![allow(clippy::missing_docs_in_private_items)]
 
 use std::collections::HashMap;
 use std::fs::{self, OpenOptions};
