@@ -71,9 +71,9 @@ const RE_LINE: &str = "(?x)
             (?P<varname> [A-Za-z0-9_]+ )
             =
             (?P<full>
-                (?P<oquot> [\"'] )?
+                (?P<q_open> [\"'] )?
                 (?P<quoted> .*? )
-                (?P<cquot> [\"'] )?
+                (?P<q_close> [\"'] )?
             )
         )
     ) $
@@ -90,31 +90,31 @@ fn parse_line(line: &str) -> Result<Option<(String, String)>, Box<dyn Error>> {
             if caps.name("comment").is_some() {
                 return Ok(None);
             }
-            let oquot = caps.name("oquot").map(|value| value.as_str());
-            let cquot = caps.name("cquot").map(|value| value.as_str());
+            let q_open = caps.name("q_open").map(|value| value.as_str());
+            let q_close = caps.name("q_close").map(|value| value.as_str());
             let varname = &caps["varname"];
             let quoted_top = &caps["quoted"];
 
-            if let Some("'") = oquot {
+            if let Some("'") = q_open {
                 if quoted_top.contains('\'') {
                     return Err(Box::new(YAIError::QuoteInQuoted(line.to_owned())));
                 }
-                if cquot != oquot {
+                if q_close != q_open {
                     return Err(Box::new(YAIError::MismatchedQuotes(line.to_owned())));
                 }
                 return Ok(Some((varname.to_owned(), quoted_top.to_owned())));
             }
 
-            let quoted = match oquot {
+            let quoted = match q_open {
                 Some("\"") => {
-                    if cquot != oquot {
+                    if q_close != q_open {
                         return Err(Box::new(YAIError::MismatchedQuotes(line.to_owned())));
                     }
                     quoted_top
                 }
                 Some(other) => {
                     return Err(Box::new(YAIError::InternalError(format!(
-                        "YAI parse_line: {:?}: oquot {:?}",
+                        "YAI parse_line: {:?}: q_open {:?}",
                         line, other
                     ))))
                 }

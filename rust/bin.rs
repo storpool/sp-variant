@@ -61,6 +61,7 @@
 #![warn(clippy::must_use_candidate)]
 #![warn(clippy::needless_pass_by_value)]
 #![warn(clippy::redundant_closure_for_method_calls)]
+#![warn(clippy::similar_names)]
 #![warn(clippy::too_many_lines)]
 
 use std::borrow::ToOwned;
