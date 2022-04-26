@@ -96,7 +96,7 @@ fn parse_line(line: &str) -> Result<Option<(String, String)>, Box<dyn Error>> {
             let varname = &caps["varname"];
             let quoted_top = &caps["quoted"];
 
-            if let Some("'") = q_open {
+            if q_open == Some("'") {
                 if quoted_top.contains('\'') {
                     return Err(Box::new(YAIError::QuoteInQuoted(line.to_owned())));
                 }
