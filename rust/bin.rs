@@ -39,6 +39,7 @@
 #![warn(clippy::str_to_string)]
 #![warn(clippy::string_to_string)]
 #![warn(clippy::unwrap_used)]
+#![warn(clippy::use_debug)]
 #![warn(clippy::verbose_file_reads)]
 // ...except for these ones.
 #![allow(clippy::implicit_return)]
@@ -174,7 +175,7 @@ fn run_command(cmdvec: &[String], action: &str, noop: bool) {
 fn copy_file(fname: &str, srcdir: &str, dstdir: &str, noop: bool) {
     let src = format!("{}/{}", srcdir, fname);
     let dst = format!("{}/{}", dstdir, fname);
-    println!("Copying {:?} -> {:?}", src, dst);
+    println!("Copying {} -> {}", src, dst);
 
     let read_source_file = || fs::read(&src).or_exit_e(|| format!("Could not read from {}", src));
 

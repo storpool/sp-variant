@@ -34,6 +34,7 @@
 #![warn(clippy::str_to_string)]
 #![warn(clippy::string_to_string)]
 #![warn(clippy::unwrap_used)]
+#![warn(clippy::use_debug)]
 #![warn(clippy::verbose_file_reads)]
 // ...except for these ones.
 #![allow(clippy::implicit_return)]
