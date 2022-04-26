@@ -2,6 +2,18 @@
 
 ## 2.3.0 (not yet)
 
+- python:
+  - now that there is a working POSIX shell implementation that is better
+    suited for bootstrapping, split the Python library into several modules
+  - always require the "typing" module to be installed
+- rust:
+  - possibly incompatible change: the structs and enums exported by
+    the sp_variant crate are now marked as non-exhaustive
+  - possibly incompatible change: some functions are now marked as
+    "must use"
+  - import struct names directory for a more idiomatic Rust style
+  - many small improvements, mostly suggested by Clippy lints
+
 ## 2.2.0 (2022-02-05)
 - all:
   - recognize Ubuntu 22.04 (Jammy Jellyfish)
