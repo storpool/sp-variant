@@ -147,6 +147,8 @@ impl FromStr for VariantKind {
 
 /// Return the definition of the StorPool variants.
 #[allow(clippy::panic)]
+#[allow(clippy::too_many_lines)]
+#[must_use]
 pub fn get_variants() -> &'static VariantDefTop {
     lazy_static! {
         static ref DEF_TOP: VariantDefTop = VariantDefTop {
@@ -2598,11 +2600,10 @@ fi
             version: "2.2.1".to_owned(),
         };
     }
-    if DEF_TOP.format.version.major != 1 {
-        panic!(
-            "Internal error: JSON variant definition: version {:?}",
-            DEF_TOP.format.version
-        );
-    }
+    assert!(
+        DEF_TOP.format.version.major == 1,
+        "Internal error: JSON variant definition: version {:?}",
+        DEF_TOP.format.version
+    );
     &DEF_TOP
 }
