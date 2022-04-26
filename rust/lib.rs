@@ -50,6 +50,7 @@
 // Also turn on some of the clippy::pedantic lints.
 #![warn(clippy::implicit_clone)]
 #![warn(clippy::match_bool)]
+#![warn(clippy::must_use_candidate)]
 #![warn(clippy::needless_pass_by_value)]
 #![warn(clippy::redundant_closure_for_method_calls)]
 #![warn(clippy::too_many_lines)]
@@ -237,6 +238,7 @@ pub struct VariantDefTop {
 
 /// Get the list of StorPool variants from the internal `data` module.
 #[inline]
+#[must_use]
 pub fn build_variants() -> &'static VariantDefTop {
     data::get_variants()
 }
@@ -352,24 +354,28 @@ pub fn get_by_alias_from<'defs>(
 
 /// Get the metadata format version of the variant data.
 #[inline]
+#[must_use]
 pub fn get_format_version() -> (u32, u32) {
     get_format_version_from(build_variants())
 }
 
 /// Get the metadata format version of the supplied variant data structure.
 #[inline]
+#[must_use]
 pub fn get_format_version_from(variants: &VariantDefTop) -> (u32, u32) {
     (variants.format.version.major, variants.format.version.minor)
 }
 
 /// Get the program version from the variant data.
 #[inline]
+#[must_use]
 pub fn get_program_version() -> &'static str {
     get_program_version_from(build_variants())
 }
 
 /// Get the program version from the supplied variant data structure.
 #[inline]
+#[must_use]
 pub fn get_program_version_from(variants: &VariantDefTop) -> &str {
     &variants.version
 }

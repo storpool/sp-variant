@@ -81,6 +81,7 @@ impl FromStr for VariantKind {
 /// Return the definition of the StorPool variants.
 #[allow(clippy::panic)]
 #[allow(clippy::too_many_lines)]
+#[must_use]
 pub fn get_variants() -> &'static VariantDefTop {
     lazy_static! {
         static ref DEF_TOP: VariantDefTop = VariantDefTop {
