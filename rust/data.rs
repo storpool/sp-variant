@@ -2597,7 +2597,7 @@ fi
                     ),
                 ]
             ),
-            version: "2.2.1".to_owned(),
+            version: "2.3.0".to_owned(),
         };
     }
     assert!(
