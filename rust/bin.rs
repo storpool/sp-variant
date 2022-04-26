@@ -55,6 +55,7 @@
 #![allow(clippy::print_stdout)]
 // Also turn on some of the clippy::pedantic lints.
 #![warn(clippy::match_bool)]
+#![warn(clippy::needless_pass_by_value)]
 #![warn(clippy::redundant_closure_for_method_calls)]
 #![warn(clippy::too_many_lines)]
 
@@ -237,7 +238,7 @@ fn get_filename_extension<'fname>(filename: &'fname str, tag: &str) -> (&'fname 
         .or_exit_e(|| format!("Internal error: could not parse a {}", tag))
 }
 
-fn repo_add_deb(var: &Variant, config: RepoAddConfig, vdir: &str, repo: &DebRepo) {
+fn repo_add_deb(var: &Variant, config: &RepoAddConfig, vdir: &str, repo: &DebRepo) {
     let install_req_packages = || {
         // First, install the ca-certificates package if required...
         let mut cmdvec: Vec<String> = var.commands["package"]["install"].to_vec();
@@ -281,7 +282,7 @@ fn repo_add_deb(var: &Variant, config: RepoAddConfig, vdir: &str, repo: &DebRepo
     run_apt_update();
 }
 
-fn repo_add_yum(config: RepoAddConfig, vdir: &str, repo: &YumRepo) {
+fn repo_add_yum(config: &RepoAddConfig, vdir: &str, repo: &YumRepo) {
     let run_yum_install_certs = || {
         run_command(
             &[
@@ -348,7 +349,7 @@ fn repo_add_yum(config: RepoAddConfig, vdir: &str, repo: &YumRepo) {
     run_yum_clean_metadata();
 }
 
-fn cmd_repo_add(varfull: &VariantDefTop, config: RepoAddConfig) {
+fn cmd_repo_add(varfull: &VariantDefTop, config: &RepoAddConfig) {
     let var = detect_variant(varfull);
     let vdir = format!("{}/{}", config.repodir, var.kind.as_ref());
     if !fs::metadata(&vdir)
@@ -399,7 +400,7 @@ fn cmd_command_run(varfull: &VariantDefTop, config: CommandRunConfig) {
     run_command(&cmd_vec, "Command failed", config.noop);
 }
 
-fn cmd_show(varfull: &VariantDefTop, config: ShowConfig) {
+fn cmd_show(varfull: &VariantDefTop, config: &ShowConfig) {
     if config.name == "all" {
         print!(
             "{}",
@@ -584,8 +585,8 @@ fn main() {
                     Mode::CommandList => cmd_command_list(varfull),
                     Mode::CommandRun(config) => cmd_command_run(varfull, config),
                     Mode::Detect => cmd_detect(varfull),
-                    Mode::RepoAdd(config) => cmd_repo_add(varfull, config),
-                    Mode::Show(config) => cmd_show(varfull, config),
+                    Mode::RepoAdd(config) => cmd_repo_add(varfull, &config),
+                    Mode::Show(config) => cmd_show(varfull, &config),
                 },
                 None => expect_exit::exit(opt_matches.usage()),
             }

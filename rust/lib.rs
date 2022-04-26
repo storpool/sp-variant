@@ -49,6 +49,7 @@
 #![allow(clippy::missing_docs_in_private_items)]
 // Also turn on some of the clippy::pedantic lints.
 #![warn(clippy::match_bool)]
+#![warn(clippy::needless_pass_by_value)]
 #![warn(clippy::redundant_closure_for_method_calls)]
 #![warn(clippy::too_many_lines)]
 
