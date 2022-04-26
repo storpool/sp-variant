@@ -54,6 +54,7 @@
 #![allow(clippy::missing_docs_in_private_items)]
 #![allow(clippy::print_stdout)]
 // Also turn on some of the clippy::pedantic lints.
+#![warn(clippy::implicit_clone)]
 #![warn(clippy::match_bool)]
 #![warn(clippy::needless_pass_by_value)]
 #![warn(clippy::redundant_closure_for_method_calls)]
@@ -241,7 +242,7 @@ fn get_filename_extension<'fname>(filename: &'fname str, tag: &str) -> (&'fname 
 fn repo_add_deb(var: &Variant, config: &RepoAddConfig, vdir: &str, repo: &DebRepo) {
     let install_req_packages = || {
         // First, install the ca-certificates package if required...
-        let mut cmdvec: Vec<String> = var.commands["package"]["install"].to_vec();
+        let mut cmdvec: Vec<String> = var.commands["package"]["install"].clone();
         cmdvec.extend(repo.req_packages.iter().cloned());
         run_command(
             &cmdvec,
@@ -391,7 +392,7 @@ fn cmd_command_run(varfull: &VariantDefTop, config: CommandRunConfig) {
     let var = detect_variant(varfull);
     let mut cmd_vec: Vec<String> = match var.commands.get(&config.category) {
         Some(cmap) => match cmap.get(&config.name) {
-            Some(cmd) => cmd.to_vec(),
+            Some(cmd) => cmd.clone(),
             None => expect_exit::exit("Unknown command identifier"),
         },
         None => expect_exit::exit("Unknown command identifier"),
