@@ -30,6 +30,7 @@
 #![warn(clippy::exhaustive_enums)]
 #![warn(clippy::exhaustive_structs)]
 #![warn(clippy::missing_inline_in_public_items)]
+#![warn(clippy::panic)]
 #![warn(clippy::pattern_type_mismatch)]
 #![warn(clippy::print_stdout)]
 #![warn(clippy::shadow_unrelated)]

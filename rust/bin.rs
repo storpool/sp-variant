@@ -36,6 +36,7 @@
 #![warn(clippy::exhaustive_enums)]
 #![warn(clippy::exhaustive_structs)]
 #![warn(clippy::missing_inline_in_public_items)]
+#![warn(clippy::panic)]
 #![warn(clippy::pattern_type_mismatch)]
 #![warn(clippy::shadow_unrelated)]
 #![warn(clippy::single_char_lifetime_names)]

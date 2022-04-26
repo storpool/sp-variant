@@ -56,6 +56,10 @@ quick_error! {
         MismatchedQuotes(line: String) {
             display("Mismatched open/close quotes in the {:?} os-release line", line)
         }
+        /// An internal error occurred
+        InternalError(message: String) {
+            display("YAI parser internal error: {}", message)
+        }
     }
 }
 
@@ -103,7 +107,12 @@ fn parse_line(re_line: &Regex, line: &str) -> Result<Option<(String, String)>, B
                     }
                     quoted
                 }
-                Some(other) => panic!("YAI parse_line: {:?}: oquot {:?}", line, other),
+                Some(other) => {
+                    return Err(Box::new(YAIError::InternalError(format!(
+                        "YAI parse_line: {:?}: oquot {:?}",
+                        line, other
+                    ))))
+                }
                 None => &caps["full"],
             }
             .to_owned();
