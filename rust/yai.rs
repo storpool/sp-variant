@@ -88,24 +88,24 @@ fn parse_line(re_line: &Regex, line: &str) -> Result<Option<(String, String)>, B
             let oquot = caps.name("oquot").map(|value| value.as_str());
             let cquot = caps.name("cquot").map(|value| value.as_str());
             let varname = &caps["varname"];
-            let quoted = &caps["quoted"];
+            let quoted_top = &caps["quoted"];
 
             if let Some("'") = oquot {
-                if quoted.contains('\'') {
+                if quoted_top.contains('\'') {
                     return Err(Box::new(YAIError::QuoteInQuoted(line.to_owned())));
                 }
                 if cquot != oquot {
                     return Err(Box::new(YAIError::MismatchedQuotes(line.to_owned())));
                 }
-                return Ok(Some((varname.to_owned(), quoted.to_owned())));
+                return Ok(Some((varname.to_owned(), quoted_top.to_owned())));
             }
 
-            let mut quoted = match oquot {
+            let quoted = match oquot {
                 Some("\"") => {
                     if cquot != oquot {
                         return Err(Box::new(YAIError::MismatchedQuotes(line.to_owned())));
                     }
-                    quoted
+                    quoted_top
                 }
                 Some(other) => {
                     return Err(Box::new(YAIError::InternalError(format!(
@@ -116,24 +116,19 @@ fn parse_line(re_line: &Regex, line: &str) -> Result<Option<(String, String)>, B
                 None => &caps["full"],
             }
             .to_owned();
-            let mut res: String = String::new();
-            while !quoted.is_empty() {
-                match quoted.find('\\') {
-                    Some(idx) => match quoted.get(idx + 1..idx + 2) {
-                        Some(qchar) => {
-                            res.push_str(&quoted[..idx]);
-                            res.push_str(qchar);
-                            quoted.replace_range(..idx + 2, "");
-                        }
-                        None => return Err(Box::new(YAIError::BackslashAtEnd(line.to_owned()))),
-                    },
-                    None => {
-                        res.push_str(&quoted);
-                        quoted.clear();
+            match quoted
+                .chars()
+                .fold((false, String::new()), |(escaped, mut acc), chr| {
+                    if escaped || chr != '\\' {
+                        acc.push(chr);
+                        (false, acc)
+                    } else {
+                        (true, acc)
                     }
-                }
+                }) {
+                (false, res) => Ok(Some((varname.to_owned(), res))),
+                (true, _) => Err(Box::new(YAIError::BackslashAtEnd(line.to_owned()))),
             }
-            Ok(Some((varname.to_owned(), res)))
         }
         None => Err(Box::new(YAIError::BadLine(line.to_owned()))),
     }
