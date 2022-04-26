@@ -56,6 +56,7 @@
 // Also turn on some of the clippy::pedantic lints.
 #![warn(clippy::doc_markdown)]
 #![warn(clippy::implicit_clone)]
+#![warn(clippy::manual_assert)]
 #![warn(clippy::match_bool)]
 #![warn(clippy::must_use_candidate)]
 #![warn(clippy::needless_pass_by_value)]

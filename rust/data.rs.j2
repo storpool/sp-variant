@@ -181,11 +181,10 @@ pub fn get_variants() -> &'static VariantDefTop {
             version: "{{ version }}".to_owned(),
         };
     }
-    if DEF_TOP.format.version.major != 1 {
-        panic!(
-            "Internal error: JSON variant definition: version {:?}",
-            DEF_TOP.format.version
-        );
-    }
+    assert!(
+        DEF_TOP.format.version.major == 1,
+        "Internal error: JSON variant definition: version {:?}",
+        DEF_TOP.format.version
+    );
     &DEF_TOP
 }
