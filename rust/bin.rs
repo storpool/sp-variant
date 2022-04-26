@@ -33,6 +33,8 @@
 
 #![warn(missing_docs)]
 // Turn on most of the clippy::restriction lints...
+#![warn(clippy::exhaustive_enums)]
+#![warn(clippy::exhaustive_structs)]
 #![warn(clippy::missing_inline_in_public_items)]
 #![warn(clippy::pattern_type_mismatch)]
 #![warn(clippy::shadow_unrelated)]
@@ -60,11 +62,9 @@ use std::process::Command;
 use clap::{App, Arg, ArgMatches, SubCommand};
 use expect_exit::{ExpectedResult, ExpectedWithError};
 use nix::unistd::{self, Gid, Uid};
-use serde::{Deserialize, Serialize};
+use serde_json::json;
 
-use sp_variant::{
-    self, DebRepo, Repo, Variant, VariantDefTop, VariantFormat, VariantFormatVersion, YumRepo,
-};
+use sp_variant::{self, DebRepo, Repo, Variant, VariantDefTop, YumRepo};
 
 #[derive(Debug)]
 struct RepoType<'data> {
@@ -90,13 +90,6 @@ struct CommandRunConfig {
 #[derive(Debug)]
 struct ShowConfig {
     name: String,
-}
-
-#[derive(Debug, Serialize, Deserialize)]
-struct SingleVariant {
-    format: VariantFormat,
-    variant: Variant,
-    version: String,
 }
 
 #[derive(Debug)]
@@ -358,6 +351,7 @@ fn cmd_repo_add(varfull: &VariantDefTop, config: RepoAddConfig) {
     match var.repo {
         Repo::Deb(ref deb) => repo_add_deb(var, config, &vdir, deb),
         Repo::Yum(ref yum) => repo_add_yum(config, &vdir, yum),
+        _ => expect_exit::exit("Internal error: unhandled repo type"),
     }
 }
 
@@ -411,13 +405,16 @@ fn cmd_show(varfull: &VariantDefTop, config: ShowConfig) {
                 other => sp_variant::get_from(varfull, other).or_exit_e_("Invalid variant name"),
             };
             let (major, minor) = sp_variant::get_format_version_from(varfull);
-            let single = SingleVariant {
-                format: VariantFormat {
-                    version: VariantFormatVersion { major, minor },
+            let single = json!({
+                "format": {
+                    "version": {
+                        "major": major,
+                        "minor": minor,
+                    },
                 },
-                variant: var.clone(),
-                version: sp_variant::get_program_version().to_owned(),
-            };
+                "variant": var.clone(),
+                "version": sp_variant::get_program_version().to_owned(),
+            });
             println!(
                 "{}",
                 serde_json::to_string_pretty(&single)

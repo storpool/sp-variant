@@ -27,6 +27,8 @@
 
 #![warn(missing_docs)]
 // Turn on most of the clippy::restriction lints...
+#![warn(clippy::exhaustive_enums)]
+#![warn(clippy::exhaustive_structs)]
 #![warn(clippy::missing_inline_in_public_items)]
 #![warn(clippy::pattern_type_mismatch)]
 #![warn(clippy::print_stdout)]
@@ -69,6 +71,7 @@ pub use data::VariantKind;
 quick_error! {
     /// An error that occurred while determining the Linux variant.
     #[derive(Debug)]
+    #[non_exhaustive]
     pub enum VariantError {
         /// An invalid variant name was specified.
         BadVariant(name: String) {
@@ -91,6 +94,7 @@ quick_error! {
 
 /// The version of the variant definition format data.
 #[derive(Debug, Clone, Serialize, Deserialize)]
+#[non_exhaustive]
 pub struct VariantFormatVersion {
     /// The version major number.
     pub major: u32,
@@ -100,6 +104,7 @@ pub struct VariantFormatVersion {
 
 /// The internal format of the variant definition format data.
 #[derive(Debug, Clone, Serialize, Deserialize)]
+#[non_exhaustive]
 pub struct VariantFormat {
     /// The version of the metadata format.
     pub version: VariantFormatVersion,
@@ -112,6 +117,7 @@ struct VariantFormatTop {
 
 /// Check whether this host is running this particular OS variant.
 #[derive(Debug, Clone, Serialize, Deserialize)]
+#[non_exhaustive]
 pub struct Detect {
     /// The name of the file to read.
     pub filename: String,
@@ -125,6 +131,7 @@ pub struct Detect {
 
 /// Debian package repository data.
 #[derive(Debug, Clone, Serialize, Deserialize)]
+#[non_exhaustive]
 pub struct DebRepo {
     /// The distribution codename (e.g. "buster").
     pub codename: String,
@@ -140,6 +147,7 @@ pub struct DebRepo {
 
 /// Yum/DNF package repository data.
 #[derive(Debug, Clone, Serialize, Deserialize)]
+#[non_exhaustive]
 pub struct YumRepo {
     /// The *.repo file to copy to /etc/yum.repos.d/.
     pub yumdef: String,
@@ -150,6 +158,7 @@ pub struct YumRepo {
 /// OS package repository data.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(untagged)]
+#[non_exhaustive]
 pub enum Repo {
     /// Debian/Ubuntu repository data.
     Deb(DebRepo),
@@ -159,6 +168,7 @@ pub enum Repo {
 
 /// StorPool builder data.
 #[derive(Debug, Clone, Serialize, Deserialize)]
+#[non_exhaustive]
 pub struct Builder {
     /// The builder name.
     pub alias: String,
@@ -174,6 +184,7 @@ pub struct Builder {
 
 /// A single StorPool build variant with all its options.
 #[derive(Debug, Clone, Serialize, Deserialize)]
+#[non_exhaustive]
 pub struct Variant {
     /// Which variant is that?
     #[serde(rename = "name")]
