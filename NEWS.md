@@ -1,6 +1,6 @@
 # Change log for the sp-variant library
 
-## 2.3.0 (not yet)
+## 2.3.0 (2022-04-26)
 
 - python:
   - now that there is a working POSIX shell implementation that is better
