@@ -56,6 +56,7 @@
 // Also turn on some of the clippy::pedantic lints.
 #![warn(clippy::doc_markdown)]
 #![warn(clippy::implicit_clone)]
+#![warn(clippy::items_after_statements)]
 #![warn(clippy::manual_assert)]
 #![warn(clippy::match_bool)]
 #![warn(clippy::missing_errors_doc)]
@@ -442,6 +443,18 @@ fn cmd_show(varfull: &VariantDefTop, config: &ShowConfig) {
 // This one could probably go away with a clap 3 refactoring... maybe.
 #[allow(clippy::too_many_lines)]
 fn main() {
+    type Handler<'cmds> = &'cmds dyn Fn(&'cmds ArgMatches) -> Mode<'cmds>;
+
+    fn get_subc_name<'cmds>(current: &'cmds SubCommand) -> (String, &'cmds ArgMatches<'cmds>) {
+        match current.matches.subcommand {
+            Some(ref next) => {
+                let (next_name, matches) = get_subc_name(next);
+                (format!("{}/{}", current.name, next_name), matches)
+            }
+            None => (current.name.clone(), &current.matches),
+        }
+    }
+
     let varfull = sp_variant::build_variants();
     let program_version = sp_variant::get_program_version_from(varfull);
     let app = {
@@ -532,17 +545,6 @@ fn main() {
     };
     let opt_matches = app.get_matches();
 
-    fn get_subc_name<'cmds>(current: &'cmds SubCommand) -> (String, &'cmds ArgMatches<'cmds>) {
-        match current.matches.subcommand {
-            Some(ref next) => {
-                let (next_name, matches) = get_subc_name(next);
-                (format!("{}/{}", current.name, next_name), matches)
-            }
-            None => (current.name.clone(), &current.matches),
-        }
-    }
-
-    type Handler<'cmds> = &'cmds dyn Fn(&'cmds ArgMatches) -> Mode<'cmds>;
     #[allow(clippy::unwrap_used)]
     let cmds: Vec<(&str, Handler)> = vec![
         ("command/list", &|_matches| Mode::CommandList),
