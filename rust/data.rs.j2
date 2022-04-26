@@ -58,7 +58,7 @@ impl AsRef<str> for VariantKind {
     fn as_ref(&self) -> &str {
         match *self {
             {%- for name in variants|vsort -%}
-            VariantKind::{{ name }} => VariantKind::{{ name }}_NAME,
+            Self::{{ name }} => Self::{{ name }}_NAME,
             {%- endfor -%}
         }
     }
@@ -71,7 +71,7 @@ impl FromStr for VariantKind {
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         match s {
             {%- for name in variants|vsort -%}
-            VariantKind::{{ name }}_NAME => Ok(VariantKind::{{ name }}),
+            Self::{{ name }}_NAME => Ok(Self::{{ name }}),
             {%- endfor -%}
             other => Err(VariantError::BadVariant(other.to_owned())),
         }
