@@ -152,6 +152,9 @@ pub fn parse<P: AsRef<Path>>(path: P) -> Result<HashMap<String, String>, Box<dyn
 
 #[cfg(test)]
 mod tests {
+    #![allow(clippy::print_stdout)]
+    #![allow(clippy::use_debug)]
+
     use std::error::Error;
     use std::fs;
 
