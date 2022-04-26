@@ -58,6 +58,7 @@
 #![warn(clippy::implicit_clone)]
 #![warn(clippy::manual_assert)]
 #![warn(clippy::match_bool)]
+#![warn(clippy::missing_errors_doc)]
 #![warn(clippy::must_use_candidate)]
 #![warn(clippy::needless_pass_by_value)]
 #![warn(clippy::redundant_closure_for_method_calls)]

@@ -39,7 +39,8 @@ use regex::Regex;
 quick_error! {
     /// An error that occurred during parsing.
     #[derive(Debug)]
-    enum YAIError {
+    #[non_exhaustive]
+    pub enum YAIError {
         /// A backslash at the end of the line.
         BackslashAtEnd(line: String) {
             display("Backslash at the end of the {:?} os-release line", line)
@@ -140,6 +141,10 @@ fn parse_line(line: &str) -> Result<Option<(String, String)>, Box<dyn Error>> {
 }
 
 /// Parse a file, return a name: value mapping.
+///
+/// # Errors
+/// - I/O or text decoding errors from reading the file
+/// - [`YAIError`] parse errors from examining the INI-file structure
 #[allow(clippy::missing_inline_in_public_items)]
 pub fn parse<P: AsRef<Path>>(path: P) -> Result<HashMap<String, String>, Box<dyn Error>> {
     fs::read_to_string(path)?

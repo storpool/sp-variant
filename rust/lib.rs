@@ -52,6 +52,7 @@
 #![warn(clippy::implicit_clone)]
 #![warn(clippy::manual_assert)]
 #![warn(clippy::match_bool)]
+#![warn(clippy::missing_errors_doc)]
 #![warn(clippy::must_use_candidate)]
 #![warn(clippy::needless_pass_by_value)]
 #![warn(clippy::redundant_closure_for_method_calls)]
@@ -247,12 +248,21 @@ pub fn build_variants() -> &'static VariantDefTop {
 }
 
 /// Detect the variant that this host is currently running.
+///
+/// # Errors
+/// Propagates any errors from [`detect_from()`].
 #[inline]
 pub fn detect() -> Result<Variant, Box<dyn Error>> {
     detect_from(build_variants()).map(Clone::clone)
 }
 
 /// Detect the current host's variant from the supplied data.
+///
+/// # Errors
+/// May return a [`VariantError`], either "unknown variant" or a wrapper around
+/// an underlying error condition:
+/// - any `os-release` parse errors from [`crate::yai::parse()`] other than "file not found"
+/// - I/O errors from reading the distribution-specific version files (e.g. `/etc/redhat-release`)
 #[allow(clippy::missing_inline_in_public_items)]
 pub fn detect_from(variants: &VariantDefTop) -> Result<&Variant, Box<dyn Error>> {
     match yai::parse("/etc/os-release") {
@@ -330,6 +340,10 @@ pub fn detect_from(variants: &VariantDefTop) -> Result<&Variant, Box<dyn Error>>
 }
 
 /// Get the variant with the specified name from the supplied data.
+///
+/// # Errors
+/// - [`VariantKind`] name parse errors, e.g. invalid name
+/// - an internal error if there is no data about a recognized variant name
 #[inline]
 pub fn get_from<'defs>(
     variants: &'defs VariantDefTop,
@@ -343,6 +357,9 @@ pub fn get_from<'defs>(
 }
 
 /// Get the variant with the specified builder alias from the supplied data.
+///
+/// # Errors
+/// May fail if the argument does not specify a recognized variant builder alias.
 #[inline]
 pub fn get_by_alias_from<'defs>(
     variants: &'defs VariantDefTop,
