@@ -33,6 +33,7 @@
 
 #![warn(missing_docs)]
 // Turn on most of the clippy::restriction lints...
+#![warn(clippy::missing_inline_in_public_items)]
 #![warn(clippy::pattern_type_mismatch)]
 #![warn(clippy::shadow_unrelated)]
 #![warn(clippy::single_char_lifetime_names)]

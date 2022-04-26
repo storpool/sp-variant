@@ -27,6 +27,7 @@
 
 #![warn(missing_docs)]
 // Turn on most of the clippy::restriction lints...
+#![warn(clippy::missing_inline_in_public_items)]
 #![warn(clippy::pattern_type_mismatch)]
 #![warn(clippy::print_stdout)]
 #![warn(clippy::shadow_unrelated)]
@@ -213,16 +214,19 @@ pub struct VariantDefTop {
 }
 
 /// Get the list of StorPool variants from the internal `data` module.
+#[inline]
 pub fn build_variants() -> &'static VariantDefTop {
     data::get_variants()
 }
 
 /// Detect the variant that this host is currently running.
+#[inline]
 pub fn detect() -> Result<Variant, Box<dyn Error>> {
     detect_from(build_variants()).map(|var| var.clone())
 }
 
 /// Detect the current host's variant from the supplied data.
+#[allow(clippy::missing_inline_in_public_items)]
 pub fn detect_from(variants: &VariantDefTop) -> Result<&Variant, Box<dyn Error>> {
     match yai::parse("/etc/os-release") {
         Ok(data) => {
@@ -299,6 +303,7 @@ pub fn detect_from(variants: &VariantDefTop) -> Result<&Variant, Box<dyn Error>>
 }
 
 /// Get the variant with the specified name from the supplied data.
+#[inline]
 pub fn get_from<'defs>(
     variants: &'defs VariantDefTop,
     name: &str,
@@ -311,6 +316,7 @@ pub fn get_from<'defs>(
 }
 
 /// Get the variant with the specified builder alias from the supplied data.
+#[inline]
 pub fn get_by_alias_from<'defs>(
     variants: &'defs VariantDefTop,
     alias: &str,
@@ -323,21 +329,25 @@ pub fn get_by_alias_from<'defs>(
 }
 
 /// Get the metadata format version of the variant data.
+#[inline]
 pub fn get_format_version() -> (u32, u32) {
     get_format_version_from(build_variants())
 }
 
 /// Get the metadata format version of the supplied variant data structure.
+#[inline]
 pub fn get_format_version_from(variants: &VariantDefTop) -> (u32, u32) {
     (variants.format.version.major, variants.format.version.minor)
 }
 
 /// Get the program version from the variant data.
+#[inline]
 pub fn get_program_version() -> &'static str {
     get_program_version_from(build_variants())
 }
 
 /// Get the program version from the supplied variant data structure.
+#[inline]
 pub fn get_program_version_from(variants: &VariantDefTop) -> &str {
     &variants.version
 }

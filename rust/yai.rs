@@ -131,6 +131,7 @@ fn parse_line(re_line: &Regex, line: &str) -> Result<Option<(String, String)>, B
 }
 
 /// Parse a file, return a name: value mapping.
+#[allow(clippy::missing_inline_in_public_items)]
 pub fn parse<P: AsRef<Path>>(path: P) -> Result<HashMap<String, String>, Box<dyn Error>> {
     let re_line = Regex::new(RE_LINE)
         .expect_result(|| format!("Internal error: could not parse '{}'", RE_LINE))?;

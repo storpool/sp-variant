@@ -53,6 +53,7 @@ impl VariantKind {
 }
 
 impl AsRef<str> for VariantKind {
+    #[inline]
     fn as_ref(&self) -> &str {
         match *self {
             {%- for name in variants|vsort -%}
@@ -65,6 +66,7 @@ impl AsRef<str> for VariantKind {
 impl FromStr for VariantKind {
     type Err = VariantError;
 
+    #[inline]
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         match s {
             {%- for name in variants|vsort -%}
