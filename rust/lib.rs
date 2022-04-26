@@ -383,7 +383,7 @@ pub fn get_format_version() -> (u32, u32) {
 /// Get the metadata format version of the supplied variant data structure.
 #[inline]
 #[must_use]
-pub fn get_format_version_from(variants: &VariantDefTop) -> (u32, u32) {
+pub const fn get_format_version_from(variants: &VariantDefTop) -> (u32, u32) {
     (variants.format.version.major, variants.format.version.minor)
 }
 
