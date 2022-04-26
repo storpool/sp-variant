@@ -47,7 +47,10 @@
 #![allow(clippy::implicit_return)]
 #![allow(clippy::indexing_slicing)]
 #![allow(clippy::missing_docs_in_private_items)]
+// Also turn on some of the clippy::pedantic lints.
+#![warn(clippy::redundant_closure_for_method_calls)]
 
+use std::clone::Clone;
 use std::collections::HashMap;
 use std::error::Error;
 use std::fs;
@@ -237,7 +240,7 @@ pub fn build_variants() -> &'static VariantDefTop {
 /// Detect the variant that this host is currently running.
 #[inline]
 pub fn detect() -> Result<Variant, Box<dyn Error>> {
-    detect_from(build_variants()).map(|var| var.clone())
+    detect_from(build_variants()).map(Clone::clone)
 }
 
 /// Detect the current host's variant from the supplied data.

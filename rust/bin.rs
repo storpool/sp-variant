@@ -53,7 +53,10 @@
 #![allow(clippy::indexing_slicing)]
 #![allow(clippy::missing_docs_in_private_items)]
 #![allow(clippy::print_stdout)]
+// Also turn on some of the clippy::pedantic lints.
+#![warn(clippy::redundant_closure_for_method_calls)]
 
+use std::borrow::ToOwned;
 use std::collections::HashMap;
 use std::fs::{self, OpenOptions};
 use std::io::Write;
@@ -540,7 +543,7 @@ fn main() {
                     category: parts[0].to_owned(),
                     name: parts[1].to_owned(),
                     args: match matches.values_of("args") {
-                        Some(args) => args.map(|value| value.to_owned()).collect(),
+                        Some(args) => args.map(ToOwned::to_owned).collect(),
                         None => vec![],
                     },
                     noop: matches.is_present("noop"),
