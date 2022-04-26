@@ -54,6 +54,7 @@
 #![allow(clippy::missing_docs_in_private_items)]
 #![allow(clippy::print_stdout)]
 // Also turn on some of the clippy::pedantic lints.
+#![warn(clippy::match_bool)]
 #![warn(clippy::redundant_closure_for_method_calls)]
 #![warn(clippy::too_many_lines)]
 
@@ -399,37 +400,36 @@ fn cmd_command_run(varfull: &VariantDefTop, config: CommandRunConfig) {
 }
 
 fn cmd_show(varfull: &VariantDefTop, config: ShowConfig) {
-    match config.name == "all" {
-        true => print!(
+    if config.name == "all" {
+        print!(
             "{}",
             serde_json::to_string(varfull)
                 .or_exit_e_("Internal error: could not serialize the variant data")
-        ),
-        false => {
-            let var = match &*config.name {
-                "current" => {
-                    sp_variant::detect_from(varfull).or_exit_e_("Cannot detect the current variant")
-                }
-                other => sp_variant::get_from(varfull, other).or_exit_e_("Invalid variant name"),
-            };
-            let (major, minor) = sp_variant::get_format_version_from(varfull);
-            let single = json!({
-                "format": {
-                    "version": {
-                        "major": major,
-                        "minor": minor,
-                    },
+        );
+    } else {
+        let var = match &*config.name {
+            "current" => {
+                sp_variant::detect_from(varfull).or_exit_e_("Cannot detect the current variant")
+            }
+            other => sp_variant::get_from(varfull, other).or_exit_e_("Invalid variant name"),
+        };
+        let (major, minor) = sp_variant::get_format_version_from(varfull);
+        let single = json!({
+            "format": {
+                "version": {
+                    "major": major,
+                    "minor": minor,
                 },
-                "variant": var.clone(),
-                "version": sp_variant::get_program_version().to_owned(),
-            });
-            println!(
-                "{}",
-                serde_json::to_string_pretty(&single)
-                    .or_exit_e_("Internal error: could not serialize the variant data")
-            );
-        }
-    };
+            },
+            "variant": var.clone(),
+            "version": sp_variant::get_program_version().to_owned(),
+        });
+        println!(
+            "{}",
+            serde_json::to_string_pretty(&single)
+                .or_exit_e_("Internal error: could not serialize the variant data")
+        );
+    }
 }
 
 // This one could probably go away with a clap 3 refactoring... maybe.
