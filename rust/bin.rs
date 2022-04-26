@@ -55,6 +55,7 @@
 #![allow(clippy::print_stdout)]
 // Also turn on some of the clippy::pedantic lints.
 #![warn(clippy::redundant_closure_for_method_calls)]
+#![warn(clippy::too_many_lines)]
 
 use std::borrow::ToOwned;
 use std::collections::HashMap;
@@ -431,6 +432,8 @@ fn cmd_show(varfull: &VariantDefTop, config: ShowConfig) {
     };
 }
 
+// This one could probably go away with a clap 3 refactoring... maybe.
+#[allow(clippy::too_many_lines)]
 fn main() {
     let varfull = sp_variant::build_variants();
     let program_version = sp_variant::get_program_version_from(varfull);
