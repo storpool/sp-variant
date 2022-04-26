@@ -33,7 +33,7 @@ use std::error::Error;
 use std::fs;
 use std::path::Path;
 
-use expect_exit::ExpectedResult;
+use expect_exit::{ExpectedResult, ExpectedWithError};
 use regex::Regex;
 
 quick_error! {
@@ -79,8 +79,13 @@ const RE_LINE: &str = "(?x)
     ) $
 ";
 
-fn parse_line(re_line: &Regex, line: &str) -> Result<Option<(String, String)>, Box<dyn Error>> {
-    match re_line.captures(line) {
+fn parse_line(line: &str) -> Result<Option<(String, String)>, Box<dyn Error>> {
+    lazy_static! {
+        static ref RE: Regex = Regex::new(RE_LINE)
+            .expect_result(|| format!("could not parse '{}'", RE_LINE))
+            .or_exit_e_("YAI internal error");
+    }
+    match RE.captures(line) {
         Some(caps) => {
             if caps.name("comment").is_some() {
                 return Ok(None);
@@ -137,11 +142,9 @@ fn parse_line(re_line: &Regex, line: &str) -> Result<Option<(String, String)>, B
 /// Parse a file, return a name: value mapping.
 #[allow(clippy::missing_inline_in_public_items)]
 pub fn parse<P: AsRef<Path>>(path: P) -> Result<HashMap<String, String>, Box<dyn Error>> {
-    let re_line = Regex::new(RE_LINE)
-        .expect_result(|| format!("Internal error: could not parse '{}'", RE_LINE))?;
     fs::read_to_string(path)?
         .lines()
-        .filter_map(|line| parse_line(&re_line, line).transpose())
+        .filter_map(|line| parse_line(line).transpose())
         .collect()
 }
 
@@ -153,9 +156,7 @@ mod tests {
     use std::error::Error;
     use std::fs;
 
-    use regex::Regex;
-
-    use super::{YAIError, RE_LINE};
+    use super::YAIError;
 
     const LINES_BAD: [&str; 5] = [
         "NAME='",
@@ -203,11 +204,10 @@ BUG_REPORT_URL=\"https://bugs.debian.org/\"";
 
     #[test]
     fn parse_bad() {
-        let re_line = Regex::new(RE_LINE).unwrap();
         println!("\nMaking sure malformed lines are rejected");
         for line in &LINES_BAD {
             println!("- {:?}", line);
-            match super::parse_line(&re_line, line) {
+            match super::parse_line(line) {
                 Ok(data) => panic!("The {:?} malformed line was misparsed as {:?}", line, data),
                 Err(err) => {
                     if !err.downcast_ref::<YAIError>().is_some() {
@@ -220,11 +220,10 @@ BUG_REPORT_URL=\"https://bugs.debian.org/\"";
 
     #[test]
     fn parse_comments() {
-        let re_line = Regex::new(RE_LINE).unwrap();
         println!("\nMaking sure comments and empty lines are ignored");
         for line in &LINES_COMMENTS {
             println!("- {:?}", line);
-            let res = super::parse_line(&re_line, line).unwrap();
+            let res = super::parse_line(line).unwrap();
             println!("  - {:?}", res);
             assert_eq!(res, None);
         }
@@ -232,11 +231,10 @@ BUG_REPORT_URL=\"https://bugs.debian.org/\"";
 
     #[test]
     fn parse_good() {
-        let re_line = Regex::new(RE_LINE).unwrap();
         println!("\nMaking sure well-formed lines are parsed correctly");
         for (line, (varname, value)) in &LINES_OK {
             println!("- {:?}", line);
-            let (p_varname, p_value) = super::parse_line(&re_line, line).unwrap().unwrap();
+            let (p_varname, p_value) = super::parse_line(line).unwrap().unwrap();
             println!("  - name {:?} value {:?}", p_varname, p_value);
             assert_eq!(varname, &p_varname);
             assert_eq!(value, &p_value);
