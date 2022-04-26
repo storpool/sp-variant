@@ -1,6 +1,6 @@
 # Change log for the sp-variant library
 
-## 2.2.1 (not yet)
+## 2.3.0 (not yet)
 
 ## 2.2.0 (2022-02-05)
 - all:
