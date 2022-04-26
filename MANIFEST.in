@@ -1,4 +1,6 @@
+include .editorconfig
 include Cargo.toml
+include clippy.toml
 include Makefile
 include MANIFEST-build-repo.in
 include NEWS.md
