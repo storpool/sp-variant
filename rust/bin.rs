@@ -54,6 +54,7 @@
 #![allow(clippy::missing_docs_in_private_items)]
 #![allow(clippy::print_stdout)]
 // Also turn on some of the clippy::pedantic lints.
+#![warn(clippy::doc_markdown)]
 #![warn(clippy::implicit_clone)]
 #![warn(clippy::match_bool)]
 #![warn(clippy::must_use_candidate)]
