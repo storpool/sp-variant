@@ -2,6 +2,10 @@
 
 ## 2.3.2 (not yet)
 
+- sh:
+  - fix exiting on errors in some situations; local variable declarations
+    and error-checked assignments do not mix
+
 ## 2.3.1 (2022-04-27)
 
 - sh:
