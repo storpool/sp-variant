@@ -45,7 +45,8 @@ detect_from_os_release()
 		return
 	fi
 
-	local output="$(unset ID VERSION_ID; . /etc/os-release; printf -- '%s::%s\n' "$ID" "$VERSION_ID")"
+	local output os_id
+	output="$(unset ID VERSION_ID; . /etc/os-release; printf -- '%s::%s\n' "$ID" "$VERSION_ID")"
 	local os_id="${output%%::*}" version_id="${output#*::}"
 	if [ -z "$os_id" ] || [ -z "$version_id" ]; then
 		return
@@ -2050,7 +2051,8 @@ cmd_show_current()
 		exit 1
 	fi
 
-	local variant="$(cmd_detect)"
+	local variant
+	variant="$(cmd_detect)"
 	[ -n "$variant" ]
 
 	show_variant "$variant"
@@ -3293,12 +3295,14 @@ repo_add_yum()
 
 	yum --disablerepo='storpool-*' install -q -y ca-certificates
 
-	local yumbase="$(basename -- "$yumdef")"
-	local repofile="$(repo_add_extension "$yumbase" "$repotype")"
+	local yumbase repofile
+	yumbase="$(basename -- "$yumdef")"
+	repofile="$(repo_add_extension "$yumbase" "$repotype")"
 	[ -n "$repofile" ]
 	copy_file "$vdir/$repofile" /etc/yum.repos.d
 
-	local keybase="$(basename -- "$keyring")"
+	local keybase
+	keybase="$(basename -- "$keyring")"
 	copy_file "$vdir/$keybase" /etc/pki/rpm-gpg
 
 	if [ -n "$(command -v rpmkeys)" ]; then
@@ -3315,12 +3319,14 @@ repo_add_deb()
 	# $packages is unquoted on purpose: there may be more than one.
 	run_command "$name" '' package.install $packages
 
-	local srcbase="$(basename -- "$srcdef")"
-	local repofile="$(repo_add_extension "$srcbase" "$repotype")"
+	local srcbase repofile
+	srcbase="$(basename -- "$srcdef")"
+	repofile="$(repo_add_extension "$srcbase" "$repotype")"
 	[ -n "$repofile" ]
 	copy_file "$vdir/$repofile" /etc/apt/sources.list.d
 
-	local keybase="$(basename -- "$keyring")"
+	local keybase
+	keybase="$(basename -- "$keyring")"
 	copy_file "$vdir/$keybase" /usr/share/keyrings
 
 	apt-get update
@@ -3328,7 +3334,8 @@ repo_add_deb()
 
 cmd_repo_add()
 {
-	local repodir="$(dirname -- "$0")" repotype='contrib'
+	local repodir repotype='contrib'
+	repodir="$(dirname -- "$0")"
 	local o
 	while getopts 'd:t:' o; do
 		case "$o" in
@@ -3352,7 +3359,8 @@ cmd_repo_add()
 		exit 1
 	fi
 
-	local variant="$(cmd_detect)"
+	local variant
+	variant="$(cmd_detect)"
 	local vdir="$repodir/$variant"
 	if [ ! -d "$vdir" ]; then
 		echo "No $vdir directory" 1>&2
@@ -3479,7 +3487,8 @@ cmd_command_run()
 	done
 	shift "$((OPTIND - 1))"
 
-	local variant="$(cmd_detect)"
+	local variant
+	variant="$(cmd_detect)"
 	[ -n "$variant" ]
 
 	run_command "$variant" "$noop" "$@"
