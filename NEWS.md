@@ -1,6 +1,6 @@
 # Change log for the sp-variant library
 
-## 2.3.2 (not yet)
+## 2.3.2 (2022-04-27)
 
 - sh:
   - fix exiting on errors in some situations; local variable declarations
