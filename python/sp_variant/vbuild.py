@@ -103,7 +103,7 @@ _VARIANT_DEF = [
                 dep_query=[
                     "sh",
                     "-c",
-                    "dpkg-deb -f -- \"$pkg\" 'Depends' | sed -e 's/ *, */,/g' | tr ',' \"\\n\"",
+                    'dpkg-deb -f -- "$pkg" "Depends" | sed -e "s/ *, */,/g" | tr "," "\\n"',
                 ],
                 install=[
                     "sh",
