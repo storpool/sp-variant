@@ -694,7 +694,7 @@ show_DEBIAN9()
       "dep_query": [
         "sh",
         "-c",
-        "dpkg-deb -f -- \"$pkg\" 'Depends' | sed -e 's/ *, */,/g' | tr ',' \"\\n\""
+        "dpkg-deb -f -- \"$pkg\" \"Depends\" | sed -e \"s/ *, */,/g\" | tr \",\" \"\\n\""
       ],
       "install": [
         "sh",
@@ -806,7 +806,7 @@ show_DEBIAN10()
       "dep_query": [
         "sh",
         "-c",
-        "dpkg-deb -f -- \"$pkg\" 'Depends' | sed -e 's/ *, */,/g' | tr ',' \"\\n\""
+        "dpkg-deb -f -- \"$pkg\" \"Depends\" | sed -e \"s/ *, */,/g\" | tr \",\" \"\\n\""
       ],
       "install": [
         "sh",
@@ -917,7 +917,7 @@ show_DEBIAN11()
       "dep_query": [
         "sh",
         "-c",
-        "dpkg-deb -f -- \"$pkg\" 'Depends' | sed -e 's/ *, */,/g' | tr ',' \"\\n\""
+        "dpkg-deb -f -- \"$pkg\" \"Depends\" | sed -e \"s/ *, */,/g\" | tr \",\" \"\\n\""
       ],
       "install": [
         "sh",
@@ -1028,7 +1028,7 @@ show_DEBIAN12()
       "dep_query": [
         "sh",
         "-c",
-        "dpkg-deb -f -- \"$pkg\" 'Depends' | sed -e 's/ *, */,/g' | tr ',' \"\\n\""
+        "dpkg-deb -f -- \"$pkg\" \"Depends\" | sed -e \"s/ *, */,/g\" | tr \",\" \"\\n\""
       ],
       "install": [
         "sh",
@@ -1435,7 +1435,7 @@ show_UBUNTU1604()
       "dep_query": [
         "sh",
         "-c",
-        "dpkg-deb -f -- \"$pkg\" 'Depends' | sed -e 's/ *, */,/g' | tr ',' \"\\n\""
+        "dpkg-deb -f -- \"$pkg\" \"Depends\" | sed -e \"s/ *, */,/g\" | tr \",\" \"\\n\""
       ],
       "install": [
         "sh",
@@ -1548,7 +1548,7 @@ show_UBUNTU1804()
       "dep_query": [
         "sh",
         "-c",
-        "dpkg-deb -f -- \"$pkg\" 'Depends' | sed -e 's/ *, */,/g' | tr ',' \"\\n\""
+        "dpkg-deb -f -- \"$pkg\" \"Depends\" | sed -e \"s/ *, */,/g\" | tr \",\" \"\\n\""
       ],
       "install": [
         "sh",
@@ -1659,7 +1659,7 @@ show_UBUNTU2004()
       "dep_query": [
         "sh",
         "-c",
-        "dpkg-deb -f -- \"$pkg\" 'Depends' | sed -e 's/ *, */,/g' | tr ',' \"\\n\""
+        "dpkg-deb -f -- \"$pkg\" \"Depends\" | sed -e \"s/ *, */,/g\" | tr \",\" \"\\n\""
       ],
       "install": [
         "sh",
@@ -1770,7 +1770,7 @@ show_UBUNTU2110()
       "dep_query": [
         "sh",
         "-c",
-        "dpkg-deb -f -- \"$pkg\" 'Depends' | sed -e 's/ *, */,/g' | tr ',' \"\\n\""
+        "dpkg-deb -f -- \"$pkg\" \"Depends\" | sed -e \"s/ *, */,/g\" | tr \",\" \"\\n\""
       ],
       "install": [
         "sh",
@@ -1881,7 +1881,7 @@ show_UBUNTU2204()
       "dep_query": [
         "sh",
         "-c",
-        "dpkg-deb -f -- \"$pkg\" 'Depends' | sed -e 's/ *, */,/g' | tr ',' \"\\n\""
+        "dpkg-deb -f -- \"$pkg\" \"Depends\" | sed -e \"s/ *, */,/g\" | tr \",\" \"\\n\""
       ],
       "install": [
         "sh",
@@ -2441,7 +2441,7 @@ fi
 					case "$cmd_item" in
 						
 						dep_query)
-							$noop 'sh' '-c' 'dpkg-deb -f -- "$pkg" 'Depends' | sed -e 's/ *, */,/g' | tr ',' "\n"'  "$@"
+							$noop 'sh' '-c' 'dpkg-deb -f -- "$pkg" "Depends" | sed -e "s/ *, */,/g" | tr "," "\n"'  "$@"
 							;;
 						
 						install)
@@ -2506,7 +2506,7 @@ fi
 					case "$cmd_item" in
 						
 						dep_query)
-							$noop 'sh' '-c' 'dpkg-deb -f -- "$pkg" 'Depends' | sed -e 's/ *, */,/g' | tr ',' "\n"'  "$@"
+							$noop 'sh' '-c' 'dpkg-deb -f -- "$pkg" "Depends" | sed -e "s/ *, */,/g" | tr "," "\n"'  "$@"
 							;;
 						
 						install)
@@ -2571,7 +2571,7 @@ fi
 					case "$cmd_item" in
 						
 						dep_query)
-							$noop 'sh' '-c' 'dpkg-deb -f -- "$pkg" 'Depends' | sed -e 's/ *, */,/g' | tr ',' "\n"'  "$@"
+							$noop 'sh' '-c' 'dpkg-deb -f -- "$pkg" "Depends" | sed -e "s/ *, */,/g" | tr "," "\n"'  "$@"
 							;;
 						
 						install)
@@ -2636,7 +2636,7 @@ fi
 					case "$cmd_item" in
 						
 						dep_query)
-							$noop 'sh' '-c' 'dpkg-deb -f -- "$pkg" 'Depends' | sed -e 's/ *, */,/g' | tr ',' "\n"'  "$@"
+							$noop 'sh' '-c' 'dpkg-deb -f -- "$pkg" "Depends" | sed -e "s/ *, */,/g" | tr "," "\n"'  "$@"
 							;;
 						
 						install)
@@ -2947,7 +2947,7 @@ fi
 					case "$cmd_item" in
 						
 						dep_query)
-							$noop 'sh' '-c' 'dpkg-deb -f -- "$pkg" 'Depends' | sed -e 's/ *, */,/g' | tr ',' "\n"'  "$@"
+							$noop 'sh' '-c' 'dpkg-deb -f -- "$pkg" "Depends" | sed -e "s/ *, */,/g" | tr "," "\n"'  "$@"
 							;;
 						
 						install)
@@ -3012,7 +3012,7 @@ fi
 					case "$cmd_item" in
 						
 						dep_query)
-							$noop 'sh' '-c' 'dpkg-deb -f -- "$pkg" 'Depends' | sed -e 's/ *, */,/g' | tr ',' "\n"'  "$@"
+							$noop 'sh' '-c' 'dpkg-deb -f -- "$pkg" "Depends" | sed -e "s/ *, */,/g" | tr "," "\n"'  "$@"
 							;;
 						
 						install)
@@ -3077,7 +3077,7 @@ fi
 					case "$cmd_item" in
 						
 						dep_query)
-							$noop 'sh' '-c' 'dpkg-deb -f -- "$pkg" 'Depends' | sed -e 's/ *, */,/g' | tr ',' "\n"'  "$@"
+							$noop 'sh' '-c' 'dpkg-deb -f -- "$pkg" "Depends" | sed -e "s/ *, */,/g" | tr "," "\n"'  "$@"
 							;;
 						
 						install)
@@ -3142,7 +3142,7 @@ fi
 					case "$cmd_item" in
 						
 						dep_query)
-							$noop 'sh' '-c' 'dpkg-deb -f -- "$pkg" 'Depends' | sed -e 's/ *, */,/g' | tr ',' "\n"'  "$@"
+							$noop 'sh' '-c' 'dpkg-deb -f -- "$pkg" "Depends" | sed -e "s/ *, */,/g" | tr "," "\n"'  "$@"
 							;;
 						
 						install)
@@ -3207,7 +3207,7 @@ fi
 					case "$cmd_item" in
 						
 						dep_query)
-							$noop 'sh' '-c' 'dpkg-deb -f -- "$pkg" 'Depends' | sed -e 's/ *, */,/g' | tr ',' "\n"'  "$@"
+							$noop 'sh' '-c' 'dpkg-deb -f -- "$pkg" "Depends" | sed -e "s/ *, */,/g" | tr "," "\n"'  "$@"
 							;;
 						
 						install)

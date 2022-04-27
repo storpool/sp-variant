@@ -887,7 +887,7 @@ fi
                                                         vec![
                                                             "sh".to_owned(),
                                                             "-c".to_owned(),
-                                                            "dpkg-deb -f -- \"$pkg\" 'Depends' | sed -e 's/ *, */,/g' | tr ',' \"\\n\"".to_owned(),
+                                                            "dpkg-deb -f -- \"$pkg\" \"Depends\" | sed -e \"s/ *, */,/g\" | tr \",\" \"\\n\"".to_owned(),
                                                         ],
                                                     ),
                                                     (
@@ -1040,7 +1040,7 @@ fi
                                                         vec![
                                                             "sh".to_owned(),
                                                             "-c".to_owned(),
-                                                            "dpkg-deb -f -- \"$pkg\" 'Depends' | sed -e 's/ *, */,/g' | tr ',' \"\\n\"".to_owned(),
+                                                            "dpkg-deb -f -- \"$pkg\" \"Depends\" | sed -e \"s/ *, */,/g\" | tr \",\" \"\\n\"".to_owned(),
                                                         ],
                                                     ),
                                                     (
@@ -1192,7 +1192,7 @@ fi
                                                         vec![
                                                             "sh".to_owned(),
                                                             "-c".to_owned(),
-                                                            "dpkg-deb -f -- \"$pkg\" 'Depends' | sed -e 's/ *, */,/g' | tr ',' \"\\n\"".to_owned(),
+                                                            "dpkg-deb -f -- \"$pkg\" \"Depends\" | sed -e \"s/ *, */,/g\" | tr \",\" \"\\n\"".to_owned(),
                                                         ],
                                                     ),
                                                     (
@@ -1344,7 +1344,7 @@ fi
                                                         vec![
                                                             "sh".to_owned(),
                                                             "-c".to_owned(),
-                                                            "dpkg-deb -f -- \"$pkg\" 'Depends' | sed -e 's/ *, */,/g' | tr ',' \"\\n\"".to_owned(),
+                                                            "dpkg-deb -f -- \"$pkg\" \"Depends\" | sed -e \"s/ *, */,/g\" | tr \",\" \"\\n\"".to_owned(),
                                                         ],
                                                     ),
                                                     (
@@ -1950,7 +1950,7 @@ fi
                                                         vec![
                                                             "sh".to_owned(),
                                                             "-c".to_owned(),
-                                                            "dpkg-deb -f -- \"$pkg\" 'Depends' | sed -e 's/ *, */,/g' | tr ',' \"\\n\"".to_owned(),
+                                                            "dpkg-deb -f -- \"$pkg\" \"Depends\" | sed -e \"s/ *, */,/g\" | tr \",\" \"\\n\"".to_owned(),
                                                         ],
                                                     ),
                                                     (
@@ -2100,7 +2100,7 @@ fi
                                                         vec![
                                                             "sh".to_owned(),
                                                             "-c".to_owned(),
-                                                            "dpkg-deb -f -- \"$pkg\" 'Depends' | sed -e 's/ *, */,/g' | tr ',' \"\\n\"".to_owned(),
+                                                            "dpkg-deb -f -- \"$pkg\" \"Depends\" | sed -e \"s/ *, */,/g\" | tr \",\" \"\\n\"".to_owned(),
                                                         ],
                                                     ),
                                                     (
@@ -2248,7 +2248,7 @@ fi
                                                         vec![
                                                             "sh".to_owned(),
                                                             "-c".to_owned(),
-                                                            "dpkg-deb -f -- \"$pkg\" 'Depends' | sed -e 's/ *, */,/g' | tr ',' \"\\n\"".to_owned(),
+                                                            "dpkg-deb -f -- \"$pkg\" \"Depends\" | sed -e \"s/ *, */,/g\" | tr \",\" \"\\n\"".to_owned(),
                                                         ],
                                                     ),
                                                     (
@@ -2396,7 +2396,7 @@ fi
                                                         vec![
                                                             "sh".to_owned(),
                                                             "-c".to_owned(),
-                                                            "dpkg-deb -f -- \"$pkg\" 'Depends' | sed -e 's/ *, */,/g' | tr ',' \"\\n\"".to_owned(),
+                                                            "dpkg-deb -f -- \"$pkg\" \"Depends\" | sed -e \"s/ *, */,/g\" | tr \",\" \"\\n\"".to_owned(),
                                                         ],
                                                     ),
                                                     (
@@ -2544,7 +2544,7 @@ fi
                                                         vec![
                                                             "sh".to_owned(),
                                                             "-c".to_owned(),
-                                                            "dpkg-deb -f -- \"$pkg\" 'Depends' | sed -e 's/ *, */,/g' | tr ',' \"\\n\"".to_owned(),
+                                                            "dpkg-deb -f -- \"$pkg\" \"Depends\" | sed -e \"s/ *, */,/g\" | tr \",\" \"\\n\"".to_owned(),
                                                         ],
                                                     ),
                                                     (
