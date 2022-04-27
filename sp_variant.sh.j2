@@ -190,6 +190,8 @@ run_command()
 					case "$cmd_item" in
 						{% for cmd_name in var.commands|attr(cat_name)|attr("_fields")|sort %}
 						{{ cmd_name }})
+							# The commands are quoted exactly as much as necessary.
+							# shellcheck disable=SC2016
 							$noop {% for word in var.commands|attr(cat_name)|attr(cmd_name) %}'{{ word }}' {% endfor %} "$@"
 							;;
 						{% endfor %}
