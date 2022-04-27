@@ -1,5 +1,7 @@
 # Change log for the sp-variant library
 
+## 2.3.1 (not yet)
+
 ## 2.3.0 (2022-04-26)
 
 - python:

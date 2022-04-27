@@ -158,7 +158,7 @@ else:
     BytesType = str
 
 
-VERSION = "2.3.0"
+VERSION = "2.3.1"
 FORMAT_VERSION = (1, 3)
 
 REPO_TYPES = [
