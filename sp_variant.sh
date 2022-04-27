@@ -51,22 +51,22 @@ detect_from_os_release()
 		return
 	fi
 	
-	if [ "$os_id" = 'alma' ] && printf -- '%s\n' "$version_id" | grep -Eqe '^8(?:$|\.[4-9]|\.[1-9][0-9])'; then
+	if [ "$os_id" = 'alma' ] && printf -- '%s\n' "$version_id" | grep -Eqe '^8($|\.[4-9]|\.[1-9][0-9])'; then
 		printf -- '%s\n' 'ALMA8'
 		return
 	fi
 	
-	if [ "$os_id" = 'centos' ] && printf -- '%s\n' "$version_id" | grep -Eqe '^6(?:$|\.[0-9])'; then
+	if [ "$os_id" = 'centos' ] && printf -- '%s\n' "$version_id" | grep -Eqe '^6($|\.[0-9])'; then
 		printf -- '%s\n' 'CENTOS6'
 		return
 	fi
 	
-	if [ "$os_id" = 'centos' ] && printf -- '%s\n' "$version_id" | grep -Eqe '^7(?:$|\.[0-9])'; then
+	if [ "$os_id" = 'centos' ] && printf -- '%s\n' "$version_id" | grep -Eqe '^7($|\.[0-9])'; then
 		printf -- '%s\n' 'CENTOS7'
 		return
 	fi
 	
-	if [ "$os_id" = 'centos' ] && printf -- '%s\n' "$version_id" | grep -Eqe '^8(?:$|\.[4-9]|\.[1-9][0-9])'; then
+	if [ "$os_id" = 'centos' ] && printf -- '%s\n' "$version_id" | grep -Eqe '^8($|\.[4-9]|\.[1-9][0-9])'; then
 		printf -- '%s\n' 'CENTOS8'
 		return
 	fi
@@ -91,17 +91,17 @@ detect_from_os_release()
 		return
 	fi
 	
-	if [ "$os_id" = 'ol' ] && printf -- '%s\n' "$version_id" | grep -Eqe '^7(?:$|\.[0-9])'; then
+	if [ "$os_id" = 'ol' ] && printf -- '%s\n' "$version_id" | grep -Eqe '^7($|\.[0-9])'; then
 		printf -- '%s\n' 'ORACLE7'
 		return
 	fi
 	
-	if [ "$os_id" = 'rhel' ] && printf -- '%s\n' "$version_id" | grep -Eqe '^8(?:$|\.[4-9]|\.[1-9][0-9])'; then
+	if [ "$os_id" = 'rhel' ] && printf -- '%s\n' "$version_id" | grep -Eqe '^8($|\.[4-9]|\.[1-9][0-9])'; then
 		printf -- '%s\n' 'RHEL8'
 		return
 	fi
 	
-	if [ "$os_id" = 'rocky' ] && printf -- '%s\n' "$version_id" | grep -Eqe '^8(?:$|\.[4-9]|\.[1-9][0-9])'; then
+	if [ "$os_id" = 'rocky' ] && printf -- '%s\n' "$version_id" | grep -Eqe '^8($|\.[4-9]|\.[1-9][0-9])'; then
 		printf -- '%s\n' 'ROCKY8'
 		return
 	fi
