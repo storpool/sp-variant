@@ -1,5 +1,7 @@
 # Change log for the sp-variant library
 
+## 2.3.2 (not yet)
+
 ## 2.3.1 (2022-04-27)
 
 - sh:
