@@ -46,6 +46,8 @@ detect_from_os_release()
 	fi
 
 	local output os_id
+	# Maybe we should provide a sample os-release file for testing?
+	# shellcheck disable=SC1091,SC2153,SC2154
 	output="$(unset ID VERSION_ID; . /etc/os-release; printf -- '%s::%s\n' "$ID" "$VERSION_ID")"
 	local os_id="${output%%::*}" version_id="${output#*::}"
 	if [ -z "$os_id" ] || [ -z "$version_id" ]; then
