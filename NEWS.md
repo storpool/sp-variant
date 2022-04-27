@@ -2,6 +2,11 @@
 
 ## 2.3.1 (not yet)
 
+- sh:
+  - fix matching the `VERSION_ID` variable in the `/etc/os-release` file:
+    use a POSIX extended regular expression with `grep -E`, not
+    a Perl-compatible one!
+
 ## 2.3.0 (2022-04-26)
 
 - python:
