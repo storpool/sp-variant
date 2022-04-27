@@ -51,7 +51,7 @@ detect_from_os_release()
 		return
 	fi
 	{% for name, var in variants|dictvsort %}
-	if [ "$os_id" = '{{ var.detect.os_id }}' ] && printf -- '%s\n' "$version_id" | grep -Eqe '{{ var.detect.os_version_regex.pattern }}'; then
+	if [ "$os_id" = '{{ var.detect.os_id }}' ] && printf -- '%s\n' "$version_id" | grep -Eqe '{{ var.detect.os_version_regex.pattern|regexunx}}'; then
 		printf -- '%s\n' '{{ name }}'
 		return
 	fi

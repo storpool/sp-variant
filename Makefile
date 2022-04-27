@@ -1,6 +1,6 @@
 #!/usr/bin/make -f
 #
-# Copyright (c) 2021  StorPool <support@storpool.com>
+# Copyright (c) 2021, 2022  StorPool <support@storpool.com>
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -65,6 +65,8 @@ test-trivial:	all
 		${RUST_BIN} command list
 		${RUST_BIN} show current | ${SP_PY3_NORMALIZE} | diff -u '${TEMP_CURRENT_JSON}' -
 		${RUST_BIN} command run package.list_all | diff -u '${TEMP_PACKAGE_LIST}' -
+		! grep -Eqe 'grep -E.*[(][?]:' -- '${SH_BIN}'
+		grep -Eqe 'grep -E.*[(][$$][|]' -- '${SH_BIN}'
 		${CURDIR}/${SH_BIN} detect
 		${CURDIR}/${SH_BIN} show all | ${SP_PY3_NORMALIZE} | diff -u '${TEMP_ALL_JSON}' -
 		${CURDIR}/${SH_BIN} show current | ${SP_PY3_NORMALIZE} | diff -u '${TEMP_CURRENT_JSON}' -
