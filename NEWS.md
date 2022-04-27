@@ -1,6 +1,6 @@
 # Change log for the sp-variant library
 
-## 2.3.1 (not yet)
+## 2.3.1 (2022-04-27)
 
 - sh:
   - fix matching the `VERSION_ID` variable in the `/etc/os-release` file:
