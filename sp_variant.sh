@@ -2015,7 +2015,7 @@ EOPROLOGUE
 
 	cat <<'EOEPILOGUE'
   },
-  "version": "2.3.2"
+  "version": "2.3.3"
 }
 EOEPILOGUE
 }
@@ -2039,7 +2039,7 @@ EOPROLOGUE
 
 	cat <<'EOEPILOGUE'
   ,
-  "version": "2.3.2"
+  "version": "2.3.3"
 }
 EOEPILOGUE
 }
@@ -3511,7 +3511,7 @@ cmd_command()
 
 cmd_features()
 {
-	echo 'Features: format=1.3 version=2.3.2'
+	echo 'Features: format=1.3 version=2.3.3'
 }
 
 case "$1" in
