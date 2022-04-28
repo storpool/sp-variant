@@ -51,7 +51,7 @@ TEMP_PACKAGE_LIST?=	${CURDIR}/package-list.txt
 
 all:		${RUST_BIN} ${SH_BIN}
 
-test:		test-trivial test-tox-delay
+test:		test-trivial test-shellcheck test-tox-delay
 
 test-trivial:	all
 		${SP_PY3_INVOKE} features
@@ -101,6 +101,9 @@ test-docker:	repo
 
 test-tox-delay:
 		tox-delay -p all -e unit-tests-2,unit-tests-3 -- -p all
+
+test-shellcheck:	${SH_BIN}
+		[ -n '${NO_SHELLCHECK}' ] || shellcheck -- '${SH_BIN}'
 
 clean:		clean-py clean-repo clean-rust clean-sh
 
