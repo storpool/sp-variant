@@ -45,7 +45,9 @@ detect_from_os_release()
 		return
 	fi
 
-	local output os_id
+	local output
+	# Maybe we should provide a sample os-release file for testing?
+	# shellcheck disable=SC1091,SC2153,SC2154
 	output="$(unset ID VERSION_ID; . /etc/os-release; printf -- '%s::%s\n' "$ID" "$VERSION_ID")"
 	local os_id="${output%%::*}" version_id="${output#*::}"
 	if [ -z "$os_id" ] || [ -z "$version_id" ]; then
@@ -2078,26 +2080,38 @@ run_command()
 					case "$cmd_item" in
 						
 						install)
+							# The commands are quoted exactly as much as necessary.
+							# shellcheck disable=SC2016
 							$noop 'dnf' '--enablerepo=storpool-contrib' '--enablerepo=powertools' 'install' '-q' '-y' '--'  "$@"
 							;;
 						
 						list_all)
+							# The commands are quoted exactly as much as necessary.
+							# shellcheck disable=SC2016
 							$noop 'rpm' '-qa' '--qf' '%{Name}\t%{EVR}\t%{Arch}\tii\n' '--'  "$@"
 							;;
 						
 						purge)
+							# The commands are quoted exactly as much as necessary.
+							# shellcheck disable=SC2016
 							$noop 'yum' 'remove' '-q' '-y' '--'  "$@"
 							;;
 						
 						remove)
+							# The commands are quoted exactly as much as necessary.
+							# shellcheck disable=SC2016
 							$noop 'yum' 'remove' '-q' '-y' '--'  "$@"
 							;;
 						
 						remove_impl)
+							# The commands are quoted exactly as much as necessary.
+							# shellcheck disable=SC2016
 							$noop 'rpm' '-e' '--'  "$@"
 							;;
 						
 						update_db)
+							# The commands are quoted exactly as much as necessary.
+							# shellcheck disable=SC2016
 							$noop 'true'  "$@"
 							;;
 						
@@ -2113,10 +2127,14 @@ run_command()
 					case "$cmd_item" in
 						
 						dep_query)
+							# The commands are quoted exactly as much as necessary.
+							# shellcheck disable=SC2016
 							$noop 'sh' '-c' 'rpm -qpR -- "$pkg"'  "$@"
 							;;
 						
 						install)
+							# The commands are quoted exactly as much as necessary.
+							# shellcheck disable=SC2016
 							$noop 'sh' '-c' '
 unset to_install to_reinstall
 for f in $packages; do
@@ -2160,26 +2178,38 @@ fi
 					case "$cmd_item" in
 						
 						install)
+							# The commands are quoted exactly as much as necessary.
+							# shellcheck disable=SC2016
 							$noop 'yum' '--enablerepo=storpool-contrib' 'install' '-q' '-y'  "$@"
 							;;
 						
 						list_all)
+							# The commands are quoted exactly as much as necessary.
+							# shellcheck disable=SC2016
 							$noop 'rpm' '-qa' '--qf' '%{Name}\t%{EVR}\t%{Arch}\tii\n' '--'  "$@"
 							;;
 						
 						purge)
+							# The commands are quoted exactly as much as necessary.
+							# shellcheck disable=SC2016
 							$noop 'yum' 'remove' '-q' '-y' '--'  "$@"
 							;;
 						
 						remove)
+							# The commands are quoted exactly as much as necessary.
+							# shellcheck disable=SC2016
 							$noop 'yum' 'remove' '-q' '-y' '--'  "$@"
 							;;
 						
 						remove_impl)
+							# The commands are quoted exactly as much as necessary.
+							# shellcheck disable=SC2016
 							$noop 'rpm' '-e' '--'  "$@"
 							;;
 						
 						update_db)
+							# The commands are quoted exactly as much as necessary.
+							# shellcheck disable=SC2016
 							$noop 'true'  "$@"
 							;;
 						
@@ -2195,10 +2225,14 @@ fi
 					case "$cmd_item" in
 						
 						dep_query)
+							# The commands are quoted exactly as much as necessary.
+							# shellcheck disable=SC2016
 							$noop 'sh' '-c' 'rpm -qpR -- "$pkg"'  "$@"
 							;;
 						
 						install)
+							# The commands are quoted exactly as much as necessary.
+							# shellcheck disable=SC2016
 							$noop '
 unset to_install to_reinstall
 for f in $packages; do
@@ -2242,26 +2276,38 @@ fi
 					case "$cmd_item" in
 						
 						install)
+							# The commands are quoted exactly as much as necessary.
+							# shellcheck disable=SC2016
 							$noop 'yum' '--enablerepo=storpool-contrib' 'install' '-q' '-y'  "$@"
 							;;
 						
 						list_all)
+							# The commands are quoted exactly as much as necessary.
+							# shellcheck disable=SC2016
 							$noop 'rpm' '-qa' '--qf' '%{Name}\t%{EVR}\t%{Arch}\tii\n' '--'  "$@"
 							;;
 						
 						purge)
+							# The commands are quoted exactly as much as necessary.
+							# shellcheck disable=SC2016
 							$noop 'yum' 'remove' '-q' '-y' '--'  "$@"
 							;;
 						
 						remove)
+							# The commands are quoted exactly as much as necessary.
+							# shellcheck disable=SC2016
 							$noop 'yum' 'remove' '-q' '-y' '--'  "$@"
 							;;
 						
 						remove_impl)
+							# The commands are quoted exactly as much as necessary.
+							# shellcheck disable=SC2016
 							$noop 'rpm' '-e' '--'  "$@"
 							;;
 						
 						update_db)
+							# The commands are quoted exactly as much as necessary.
+							# shellcheck disable=SC2016
 							$noop 'true'  "$@"
 							;;
 						
@@ -2277,10 +2323,14 @@ fi
 					case "$cmd_item" in
 						
 						dep_query)
+							# The commands are quoted exactly as much as necessary.
+							# shellcheck disable=SC2016
 							$noop 'sh' '-c' 'rpm -qpR -- "$pkg"'  "$@"
 							;;
 						
 						install)
+							# The commands are quoted exactly as much as necessary.
+							# shellcheck disable=SC2016
 							$noop '
 unset to_install to_reinstall
 for f in $packages; do
@@ -2324,26 +2374,38 @@ fi
 					case "$cmd_item" in
 						
 						install)
+							# The commands are quoted exactly as much as necessary.
+							# shellcheck disable=SC2016
 							$noop 'dnf' '--enablerepo=storpool-contrib' '--enablerepo=powertools' 'install' '-q' '-y' '--'  "$@"
 							;;
 						
 						list_all)
+							# The commands are quoted exactly as much as necessary.
+							# shellcheck disable=SC2016
 							$noop 'rpm' '-qa' '--qf' '%{Name}\t%{EVR}\t%{Arch}\tii\n' '--'  "$@"
 							;;
 						
 						purge)
+							# The commands are quoted exactly as much as necessary.
+							# shellcheck disable=SC2016
 							$noop 'yum' 'remove' '-q' '-y' '--'  "$@"
 							;;
 						
 						remove)
+							# The commands are quoted exactly as much as necessary.
+							# shellcheck disable=SC2016
 							$noop 'yum' 'remove' '-q' '-y' '--'  "$@"
 							;;
 						
 						remove_impl)
+							# The commands are quoted exactly as much as necessary.
+							# shellcheck disable=SC2016
 							$noop 'rpm' '-e' '--'  "$@"
 							;;
 						
 						update_db)
+							# The commands are quoted exactly as much as necessary.
+							# shellcheck disable=SC2016
 							$noop 'true'  "$@"
 							;;
 						
@@ -2359,10 +2421,14 @@ fi
 					case "$cmd_item" in
 						
 						dep_query)
+							# The commands are quoted exactly as much as necessary.
+							# shellcheck disable=SC2016
 							$noop 'sh' '-c' 'rpm -qpR -- "$pkg"'  "$@"
 							;;
 						
 						install)
+							# The commands are quoted exactly as much as necessary.
+							# shellcheck disable=SC2016
 							$noop 'sh' '-c' '
 unset to_install to_reinstall
 for f in $packages; do
@@ -2406,26 +2472,38 @@ fi
 					case "$cmd_item" in
 						
 						install)
+							# The commands are quoted exactly as much as necessary.
+							# shellcheck disable=SC2016
 							$noop 'env' 'DEBIAN_FRONTEND=noninteractive' 'apt-get' '-q' '-y' '--no-install-recommends' 'install' '--'  "$@"
 							;;
 						
 						list_all)
+							# The commands are quoted exactly as much as necessary.
+							# shellcheck disable=SC2016
 							$noop 'dpkg-query' '-W' '-f' '${Package}\t${Version}\t${Architecture}\t${db:Status-Abbrev}\n' '--'  "$@"
 							;;
 						
 						purge)
+							# The commands are quoted exactly as much as necessary.
+							# shellcheck disable=SC2016
 							$noop 'env' 'DEBIAN_FRONTEND=noninteractive' 'apt-get' '-q' '-y' 'purge' '--'  "$@"
 							;;
 						
 						remove)
+							# The commands are quoted exactly as much as necessary.
+							# shellcheck disable=SC2016
 							$noop 'env' 'DEBIAN_FRONTEND=noninteractive' 'apt-get' '-q' '-y' 'remove' '--'  "$@"
 							;;
 						
 						remove_impl)
+							# The commands are quoted exactly as much as necessary.
+							# shellcheck disable=SC2016
 							$noop 'env' 'DEBIAN_FRONTEND=noninteractive' 'dpkg' '-r' '--'  "$@"
 							;;
 						
 						update_db)
+							# The commands are quoted exactly as much as necessary.
+							# shellcheck disable=SC2016
 							$noop 'apt-get' '-q' '-y' 'update'  "$@"
 							;;
 						
@@ -2441,10 +2519,14 @@ fi
 					case "$cmd_item" in
 						
 						dep_query)
+							# The commands are quoted exactly as much as necessary.
+							# shellcheck disable=SC2016
 							$noop 'sh' '-c' 'dpkg-deb -f -- "$pkg" "Depends" | sed -e "s/ *, */,/g" | tr "," "\n"'  "$@"
 							;;
 						
 						install)
+							# The commands are quoted exactly as much as necessary.
+							# shellcheck disable=SC2016
 							$noop 'sh' '-c' 'env DEBIAN_FRONTEND=noninteractive apt-get install --no-install-recommends --reinstall -y -o DPkg::Options::=--force-confnew -- $packages'  "$@"
 							;;
 						
@@ -2471,26 +2553,38 @@ fi
 					case "$cmd_item" in
 						
 						install)
+							# The commands are quoted exactly as much as necessary.
+							# shellcheck disable=SC2016
 							$noop 'env' 'DEBIAN_FRONTEND=noninteractive' 'apt-get' '-q' '-y' '--no-install-recommends' 'install' '--'  "$@"
 							;;
 						
 						list_all)
+							# The commands are quoted exactly as much as necessary.
+							# shellcheck disable=SC2016
 							$noop 'dpkg-query' '-W' '-f' '${Package}\t${Version}\t${Architecture}\t${db:Status-Abbrev}\n' '--'  "$@"
 							;;
 						
 						purge)
+							# The commands are quoted exactly as much as necessary.
+							# shellcheck disable=SC2016
 							$noop 'env' 'DEBIAN_FRONTEND=noninteractive' 'apt-get' '-q' '-y' 'purge' '--'  "$@"
 							;;
 						
 						remove)
+							# The commands are quoted exactly as much as necessary.
+							# shellcheck disable=SC2016
 							$noop 'env' 'DEBIAN_FRONTEND=noninteractive' 'apt-get' '-q' '-y' 'remove' '--'  "$@"
 							;;
 						
 						remove_impl)
+							# The commands are quoted exactly as much as necessary.
+							# shellcheck disable=SC2016
 							$noop 'env' 'DEBIAN_FRONTEND=noninteractive' 'dpkg' '-r' '--'  "$@"
 							;;
 						
 						update_db)
+							# The commands are quoted exactly as much as necessary.
+							# shellcheck disable=SC2016
 							$noop 'apt-get' '-q' '-y' 'update'  "$@"
 							;;
 						
@@ -2506,10 +2600,14 @@ fi
 					case "$cmd_item" in
 						
 						dep_query)
+							# The commands are quoted exactly as much as necessary.
+							# shellcheck disable=SC2016
 							$noop 'sh' '-c' 'dpkg-deb -f -- "$pkg" "Depends" | sed -e "s/ *, */,/g" | tr "," "\n"'  "$@"
 							;;
 						
 						install)
+							# The commands are quoted exactly as much as necessary.
+							# shellcheck disable=SC2016
 							$noop 'sh' '-c' 'env DEBIAN_FRONTEND=noninteractive apt-get install --no-install-recommends --reinstall -y -o DPkg::Options::=--force-confnew -- $packages'  "$@"
 							;;
 						
@@ -2536,26 +2634,38 @@ fi
 					case "$cmd_item" in
 						
 						install)
+							# The commands are quoted exactly as much as necessary.
+							# shellcheck disable=SC2016
 							$noop 'env' 'DEBIAN_FRONTEND=noninteractive' 'apt-get' '-q' '-y' '--no-install-recommends' 'install' '--'  "$@"
 							;;
 						
 						list_all)
+							# The commands are quoted exactly as much as necessary.
+							# shellcheck disable=SC2016
 							$noop 'dpkg-query' '-W' '-f' '${Package}\t${Version}\t${Architecture}\t${db:Status-Abbrev}\n' '--'  "$@"
 							;;
 						
 						purge)
+							# The commands are quoted exactly as much as necessary.
+							# shellcheck disable=SC2016
 							$noop 'env' 'DEBIAN_FRONTEND=noninteractive' 'apt-get' '-q' '-y' 'purge' '--'  "$@"
 							;;
 						
 						remove)
+							# The commands are quoted exactly as much as necessary.
+							# shellcheck disable=SC2016
 							$noop 'env' 'DEBIAN_FRONTEND=noninteractive' 'apt-get' '-q' '-y' 'remove' '--'  "$@"
 							;;
 						
 						remove_impl)
+							# The commands are quoted exactly as much as necessary.
+							# shellcheck disable=SC2016
 							$noop 'env' 'DEBIAN_FRONTEND=noninteractive' 'dpkg' '-r' '--'  "$@"
 							;;
 						
 						update_db)
+							# The commands are quoted exactly as much as necessary.
+							# shellcheck disable=SC2016
 							$noop 'apt-get' '-q' '-y' 'update'  "$@"
 							;;
 						
@@ -2571,10 +2681,14 @@ fi
 					case "$cmd_item" in
 						
 						dep_query)
+							# The commands are quoted exactly as much as necessary.
+							# shellcheck disable=SC2016
 							$noop 'sh' '-c' 'dpkg-deb -f -- "$pkg" "Depends" | sed -e "s/ *, */,/g" | tr "," "\n"'  "$@"
 							;;
 						
 						install)
+							# The commands are quoted exactly as much as necessary.
+							# shellcheck disable=SC2016
 							$noop 'sh' '-c' 'env DEBIAN_FRONTEND=noninteractive apt-get install --no-install-recommends --reinstall -y -o DPkg::Options::=--force-confnew -- $packages'  "$@"
 							;;
 						
@@ -2601,26 +2715,38 @@ fi
 					case "$cmd_item" in
 						
 						install)
+							# The commands are quoted exactly as much as necessary.
+							# shellcheck disable=SC2016
 							$noop 'env' 'DEBIAN_FRONTEND=noninteractive' 'apt-get' '-q' '-y' '--no-install-recommends' 'install' '--'  "$@"
 							;;
 						
 						list_all)
+							# The commands are quoted exactly as much as necessary.
+							# shellcheck disable=SC2016
 							$noop 'dpkg-query' '-W' '-f' '${Package}\t${Version}\t${Architecture}\t${db:Status-Abbrev}\n' '--'  "$@"
 							;;
 						
 						purge)
+							# The commands are quoted exactly as much as necessary.
+							# shellcheck disable=SC2016
 							$noop 'env' 'DEBIAN_FRONTEND=noninteractive' 'apt-get' '-q' '-y' 'purge' '--'  "$@"
 							;;
 						
 						remove)
+							# The commands are quoted exactly as much as necessary.
+							# shellcheck disable=SC2016
 							$noop 'env' 'DEBIAN_FRONTEND=noninteractive' 'apt-get' '-q' '-y' 'remove' '--'  "$@"
 							;;
 						
 						remove_impl)
+							# The commands are quoted exactly as much as necessary.
+							# shellcheck disable=SC2016
 							$noop 'env' 'DEBIAN_FRONTEND=noninteractive' 'dpkg' '-r' '--'  "$@"
 							;;
 						
 						update_db)
+							# The commands are quoted exactly as much as necessary.
+							# shellcheck disable=SC2016
 							$noop 'apt-get' '-q' '-y' 'update'  "$@"
 							;;
 						
@@ -2636,10 +2762,14 @@ fi
 					case "$cmd_item" in
 						
 						dep_query)
+							# The commands are quoted exactly as much as necessary.
+							# shellcheck disable=SC2016
 							$noop 'sh' '-c' 'dpkg-deb -f -- "$pkg" "Depends" | sed -e "s/ *, */,/g" | tr "," "\n"'  "$@"
 							;;
 						
 						install)
+							# The commands are quoted exactly as much as necessary.
+							# shellcheck disable=SC2016
 							$noop 'sh' '-c' 'env DEBIAN_FRONTEND=noninteractive apt-get install --no-install-recommends --reinstall -y -o DPkg::Options::=--force-confnew -- $packages'  "$@"
 							;;
 						
@@ -2666,26 +2796,38 @@ fi
 					case "$cmd_item" in
 						
 						install)
+							# The commands are quoted exactly as much as necessary.
+							# shellcheck disable=SC2016
 							$noop 'yum' '--enablerepo=storpool-contrib' 'install' '-q' '-y'  "$@"
 							;;
 						
 						list_all)
+							# The commands are quoted exactly as much as necessary.
+							# shellcheck disable=SC2016
 							$noop 'rpm' '-qa' '--qf' '%{Name}\t%{EVR}\t%{Arch}\tii\n' '--'  "$@"
 							;;
 						
 						purge)
+							# The commands are quoted exactly as much as necessary.
+							# shellcheck disable=SC2016
 							$noop 'yum' 'remove' '-q' '-y' '--'  "$@"
 							;;
 						
 						remove)
+							# The commands are quoted exactly as much as necessary.
+							# shellcheck disable=SC2016
 							$noop 'yum' 'remove' '-q' '-y' '--'  "$@"
 							;;
 						
 						remove_impl)
+							# The commands are quoted exactly as much as necessary.
+							# shellcheck disable=SC2016
 							$noop 'rpm' '-e' '--'  "$@"
 							;;
 						
 						update_db)
+							# The commands are quoted exactly as much as necessary.
+							# shellcheck disable=SC2016
 							$noop 'true'  "$@"
 							;;
 						
@@ -2701,10 +2843,14 @@ fi
 					case "$cmd_item" in
 						
 						dep_query)
+							# The commands are quoted exactly as much as necessary.
+							# shellcheck disable=SC2016
 							$noop 'sh' '-c' 'rpm -qpR -- "$pkg"'  "$@"
 							;;
 						
 						install)
+							# The commands are quoted exactly as much as necessary.
+							# shellcheck disable=SC2016
 							$noop '
 unset to_install to_reinstall
 for f in $packages; do
@@ -2748,26 +2894,38 @@ fi
 					case "$cmd_item" in
 						
 						install)
+							# The commands are quoted exactly as much as necessary.
+							# shellcheck disable=SC2016
 							$noop 'dnf' '--enablerepo=storpool-contrib' '--enablerepo=codeready-builder-for-rhel-8-x86_64-rpms' 'install' '-q' '-y' '--'  "$@"
 							;;
 						
 						list_all)
+							# The commands are quoted exactly as much as necessary.
+							# shellcheck disable=SC2016
 							$noop 'rpm' '-qa' '--qf' '%{Name}\t%{EVR}\t%{Arch}\tii\n' '--'  "$@"
 							;;
 						
 						purge)
+							# The commands are quoted exactly as much as necessary.
+							# shellcheck disable=SC2016
 							$noop 'yum' 'remove' '-q' '-y' '--'  "$@"
 							;;
 						
 						remove)
+							# The commands are quoted exactly as much as necessary.
+							# shellcheck disable=SC2016
 							$noop 'yum' 'remove' '-q' '-y' '--'  "$@"
 							;;
 						
 						remove_impl)
+							# The commands are quoted exactly as much as necessary.
+							# shellcheck disable=SC2016
 							$noop 'rpm' '-e' '--'  "$@"
 							;;
 						
 						update_db)
+							# The commands are quoted exactly as much as necessary.
+							# shellcheck disable=SC2016
 							$noop 'true'  "$@"
 							;;
 						
@@ -2783,10 +2941,14 @@ fi
 					case "$cmd_item" in
 						
 						dep_query)
+							# The commands are quoted exactly as much as necessary.
+							# shellcheck disable=SC2016
 							$noop 'sh' '-c' 'rpm -qpR -- "$pkg"'  "$@"
 							;;
 						
 						install)
+							# The commands are quoted exactly as much as necessary.
+							# shellcheck disable=SC2016
 							$noop 'sh' '-c' '
 unset to_install to_reinstall
 for f in $packages; do
@@ -2830,26 +2992,38 @@ fi
 					case "$cmd_item" in
 						
 						install)
+							# The commands are quoted exactly as much as necessary.
+							# shellcheck disable=SC2016
 							$noop 'dnf' '--enablerepo=storpool-contrib' '--enablerepo=powertools' 'install' '-q' '-y' '--'  "$@"
 							;;
 						
 						list_all)
+							# The commands are quoted exactly as much as necessary.
+							# shellcheck disable=SC2016
 							$noop 'rpm' '-qa' '--qf' '%{Name}\t%{EVR}\t%{Arch}\tii\n' '--'  "$@"
 							;;
 						
 						purge)
+							# The commands are quoted exactly as much as necessary.
+							# shellcheck disable=SC2016
 							$noop 'yum' 'remove' '-q' '-y' '--'  "$@"
 							;;
 						
 						remove)
+							# The commands are quoted exactly as much as necessary.
+							# shellcheck disable=SC2016
 							$noop 'yum' 'remove' '-q' '-y' '--'  "$@"
 							;;
 						
 						remove_impl)
+							# The commands are quoted exactly as much as necessary.
+							# shellcheck disable=SC2016
 							$noop 'rpm' '-e' '--'  "$@"
 							;;
 						
 						update_db)
+							# The commands are quoted exactly as much as necessary.
+							# shellcheck disable=SC2016
 							$noop 'true'  "$@"
 							;;
 						
@@ -2865,10 +3039,14 @@ fi
 					case "$cmd_item" in
 						
 						dep_query)
+							# The commands are quoted exactly as much as necessary.
+							# shellcheck disable=SC2016
 							$noop 'sh' '-c' 'rpm -qpR -- "$pkg"'  "$@"
 							;;
 						
 						install)
+							# The commands are quoted exactly as much as necessary.
+							# shellcheck disable=SC2016
 							$noop 'sh' '-c' '
 unset to_install to_reinstall
 for f in $packages; do
@@ -2912,26 +3090,38 @@ fi
 					case "$cmd_item" in
 						
 						install)
+							# The commands are quoted exactly as much as necessary.
+							# shellcheck disable=SC2016
 							$noop 'env' 'DEBIAN_FRONTEND=noninteractive' 'apt-get' '-q' '-y' '--no-install-recommends' 'install' '--'  "$@"
 							;;
 						
 						list_all)
+							# The commands are quoted exactly as much as necessary.
+							# shellcheck disable=SC2016
 							$noop 'dpkg-query' '-W' '-f' '${Package}\t${Version}\t${Architecture}\t${db:Status-Abbrev}\n' '--'  "$@"
 							;;
 						
 						purge)
+							# The commands are quoted exactly as much as necessary.
+							# shellcheck disable=SC2016
 							$noop 'env' 'DEBIAN_FRONTEND=noninteractive' 'apt-get' '-q' '-y' 'purge' '--'  "$@"
 							;;
 						
 						remove)
+							# The commands are quoted exactly as much as necessary.
+							# shellcheck disable=SC2016
 							$noop 'env' 'DEBIAN_FRONTEND=noninteractive' 'apt-get' '-q' '-y' 'remove' '--'  "$@"
 							;;
 						
 						remove_impl)
+							# The commands are quoted exactly as much as necessary.
+							# shellcheck disable=SC2016
 							$noop 'env' 'DEBIAN_FRONTEND=noninteractive' 'dpkg' '-r' '--'  "$@"
 							;;
 						
 						update_db)
+							# The commands are quoted exactly as much as necessary.
+							# shellcheck disable=SC2016
 							$noop 'apt-get' '-q' '-y' 'update'  "$@"
 							;;
 						
@@ -2947,10 +3137,14 @@ fi
 					case "$cmd_item" in
 						
 						dep_query)
+							# The commands are quoted exactly as much as necessary.
+							# shellcheck disable=SC2016
 							$noop 'sh' '-c' 'dpkg-deb -f -- "$pkg" "Depends" | sed -e "s/ *, */,/g" | tr "," "\n"'  "$@"
 							;;
 						
 						install)
+							# The commands are quoted exactly as much as necessary.
+							# shellcheck disable=SC2016
 							$noop 'sh' '-c' 'env DEBIAN_FRONTEND=noninteractive apt-get install --no-install-recommends --reinstall -y -o DPkg::Options::=--force-confnew -- $packages'  "$@"
 							;;
 						
@@ -2977,26 +3171,38 @@ fi
 					case "$cmd_item" in
 						
 						install)
+							# The commands are quoted exactly as much as necessary.
+							# shellcheck disable=SC2016
 							$noop 'env' 'DEBIAN_FRONTEND=noninteractive' 'apt-get' '-q' '-y' '--no-install-recommends' 'install' '--'  "$@"
 							;;
 						
 						list_all)
+							# The commands are quoted exactly as much as necessary.
+							# shellcheck disable=SC2016
 							$noop 'dpkg-query' '-W' '-f' '${Package}\t${Version}\t${Architecture}\t${db:Status-Abbrev}\n' '--'  "$@"
 							;;
 						
 						purge)
+							# The commands are quoted exactly as much as necessary.
+							# shellcheck disable=SC2016
 							$noop 'env' 'DEBIAN_FRONTEND=noninteractive' 'apt-get' '-q' '-y' 'purge' '--'  "$@"
 							;;
 						
 						remove)
+							# The commands are quoted exactly as much as necessary.
+							# shellcheck disable=SC2016
 							$noop 'env' 'DEBIAN_FRONTEND=noninteractive' 'apt-get' '-q' '-y' 'remove' '--'  "$@"
 							;;
 						
 						remove_impl)
+							# The commands are quoted exactly as much as necessary.
+							# shellcheck disable=SC2016
 							$noop 'env' 'DEBIAN_FRONTEND=noninteractive' 'dpkg' '-r' '--'  "$@"
 							;;
 						
 						update_db)
+							# The commands are quoted exactly as much as necessary.
+							# shellcheck disable=SC2016
 							$noop 'apt-get' '-q' '-y' 'update'  "$@"
 							;;
 						
@@ -3012,10 +3218,14 @@ fi
 					case "$cmd_item" in
 						
 						dep_query)
+							# The commands are quoted exactly as much as necessary.
+							# shellcheck disable=SC2016
 							$noop 'sh' '-c' 'dpkg-deb -f -- "$pkg" "Depends" | sed -e "s/ *, */,/g" | tr "," "\n"'  "$@"
 							;;
 						
 						install)
+							# The commands are quoted exactly as much as necessary.
+							# shellcheck disable=SC2016
 							$noop 'sh' '-c' 'env DEBIAN_FRONTEND=noninteractive apt-get install --no-install-recommends --reinstall -y -o DPkg::Options::=--force-confnew -- $packages'  "$@"
 							;;
 						
@@ -3042,26 +3252,38 @@ fi
 					case "$cmd_item" in
 						
 						install)
+							# The commands are quoted exactly as much as necessary.
+							# shellcheck disable=SC2016
 							$noop 'env' 'DEBIAN_FRONTEND=noninteractive' 'apt-get' '-q' '-y' '--no-install-recommends' 'install' '--'  "$@"
 							;;
 						
 						list_all)
+							# The commands are quoted exactly as much as necessary.
+							# shellcheck disable=SC2016
 							$noop 'dpkg-query' '-W' '-f' '${Package}\t${Version}\t${Architecture}\t${db:Status-Abbrev}\n' '--'  "$@"
 							;;
 						
 						purge)
+							# The commands are quoted exactly as much as necessary.
+							# shellcheck disable=SC2016
 							$noop 'env' 'DEBIAN_FRONTEND=noninteractive' 'apt-get' '-q' '-y' 'purge' '--'  "$@"
 							;;
 						
 						remove)
+							# The commands are quoted exactly as much as necessary.
+							# shellcheck disable=SC2016
 							$noop 'env' 'DEBIAN_FRONTEND=noninteractive' 'apt-get' '-q' '-y' 'remove' '--'  "$@"
 							;;
 						
 						remove_impl)
+							# The commands are quoted exactly as much as necessary.
+							# shellcheck disable=SC2016
 							$noop 'env' 'DEBIAN_FRONTEND=noninteractive' 'dpkg' '-r' '--'  "$@"
 							;;
 						
 						update_db)
+							# The commands are quoted exactly as much as necessary.
+							# shellcheck disable=SC2016
 							$noop 'apt-get' '-q' '-y' 'update'  "$@"
 							;;
 						
@@ -3077,10 +3299,14 @@ fi
 					case "$cmd_item" in
 						
 						dep_query)
+							# The commands are quoted exactly as much as necessary.
+							# shellcheck disable=SC2016
 							$noop 'sh' '-c' 'dpkg-deb -f -- "$pkg" "Depends" | sed -e "s/ *, */,/g" | tr "," "\n"'  "$@"
 							;;
 						
 						install)
+							# The commands are quoted exactly as much as necessary.
+							# shellcheck disable=SC2016
 							$noop 'sh' '-c' 'env DEBIAN_FRONTEND=noninteractive apt-get install --no-install-recommends --reinstall -y -o DPkg::Options::=--force-confnew -- $packages'  "$@"
 							;;
 						
@@ -3107,26 +3333,38 @@ fi
 					case "$cmd_item" in
 						
 						install)
+							# The commands are quoted exactly as much as necessary.
+							# shellcheck disable=SC2016
 							$noop 'env' 'DEBIAN_FRONTEND=noninteractive' 'apt-get' '-q' '-y' '--no-install-recommends' 'install' '--'  "$@"
 							;;
 						
 						list_all)
+							# The commands are quoted exactly as much as necessary.
+							# shellcheck disable=SC2016
 							$noop 'dpkg-query' '-W' '-f' '${Package}\t${Version}\t${Architecture}\t${db:Status-Abbrev}\n' '--'  "$@"
 							;;
 						
 						purge)
+							# The commands are quoted exactly as much as necessary.
+							# shellcheck disable=SC2016
 							$noop 'env' 'DEBIAN_FRONTEND=noninteractive' 'apt-get' '-q' '-y' 'purge' '--'  "$@"
 							;;
 						
 						remove)
+							# The commands are quoted exactly as much as necessary.
+							# shellcheck disable=SC2016
 							$noop 'env' 'DEBIAN_FRONTEND=noninteractive' 'apt-get' '-q' '-y' 'remove' '--'  "$@"
 							;;
 						
 						remove_impl)
+							# The commands are quoted exactly as much as necessary.
+							# shellcheck disable=SC2016
 							$noop 'env' 'DEBIAN_FRONTEND=noninteractive' 'dpkg' '-r' '--'  "$@"
 							;;
 						
 						update_db)
+							# The commands are quoted exactly as much as necessary.
+							# shellcheck disable=SC2016
 							$noop 'apt-get' '-q' '-y' 'update'  "$@"
 							;;
 						
@@ -3142,10 +3380,14 @@ fi
 					case "$cmd_item" in
 						
 						dep_query)
+							# The commands are quoted exactly as much as necessary.
+							# shellcheck disable=SC2016
 							$noop 'sh' '-c' 'dpkg-deb -f -- "$pkg" "Depends" | sed -e "s/ *, */,/g" | tr "," "\n"'  "$@"
 							;;
 						
 						install)
+							# The commands are quoted exactly as much as necessary.
+							# shellcheck disable=SC2016
 							$noop 'sh' '-c' 'env DEBIAN_FRONTEND=noninteractive apt-get install --no-install-recommends --reinstall -y -o DPkg::Options::=--force-confnew -- $packages'  "$@"
 							;;
 						
@@ -3172,26 +3414,38 @@ fi
 					case "$cmd_item" in
 						
 						install)
+							# The commands are quoted exactly as much as necessary.
+							# shellcheck disable=SC2016
 							$noop 'env' 'DEBIAN_FRONTEND=noninteractive' 'apt-get' '-q' '-y' '--no-install-recommends' 'install' '--'  "$@"
 							;;
 						
 						list_all)
+							# The commands are quoted exactly as much as necessary.
+							# shellcheck disable=SC2016
 							$noop 'dpkg-query' '-W' '-f' '${Package}\t${Version}\t${Architecture}\t${db:Status-Abbrev}\n' '--'  "$@"
 							;;
 						
 						purge)
+							# The commands are quoted exactly as much as necessary.
+							# shellcheck disable=SC2016
 							$noop 'env' 'DEBIAN_FRONTEND=noninteractive' 'apt-get' '-q' '-y' 'purge' '--'  "$@"
 							;;
 						
 						remove)
+							# The commands are quoted exactly as much as necessary.
+							# shellcheck disable=SC2016
 							$noop 'env' 'DEBIAN_FRONTEND=noninteractive' 'apt-get' '-q' '-y' 'remove' '--'  "$@"
 							;;
 						
 						remove_impl)
+							# The commands are quoted exactly as much as necessary.
+							# shellcheck disable=SC2016
 							$noop 'env' 'DEBIAN_FRONTEND=noninteractive' 'dpkg' '-r' '--'  "$@"
 							;;
 						
 						update_db)
+							# The commands are quoted exactly as much as necessary.
+							# shellcheck disable=SC2016
 							$noop 'apt-get' '-q' '-y' 'update'  "$@"
 							;;
 						
@@ -3207,10 +3461,14 @@ fi
 					case "$cmd_item" in
 						
 						dep_query)
+							# The commands are quoted exactly as much as necessary.
+							# shellcheck disable=SC2016
 							$noop 'sh' '-c' 'dpkg-deb -f -- "$pkg" "Depends" | sed -e "s/ *, */,/g" | tr "," "\n"'  "$@"
 							;;
 						
 						install)
+							# The commands are quoted exactly as much as necessary.
+							# shellcheck disable=SC2016
 							$noop 'sh' '-c' 'env DEBIAN_FRONTEND=noninteractive apt-get install --no-install-recommends --reinstall -y -o DPkg::Options::=--force-confnew -- $packages'  "$@"
 							;;
 						
@@ -3254,7 +3512,8 @@ copy_file()
 		exit 1
 	fi
 
-	local dst="$dstdir/$(basename -- "$src")"
+	local dst
+	dst="$dstdir/$(basename -- "$src")"
 	install -o root -g root -m 644 -- "$src" "$dst"
 }
 
@@ -3305,7 +3564,7 @@ repo_add_yum()
 	keybase="$(basename -- "$keyring")"
 	copy_file "$vdir/$keybase" /etc/pki/rpm-gpg
 
-	if [ -n "$(command -v rpmkeys)" ]; then
+	if [ -n "$(command -v rpmkeys || true)" ]; then
 		rpmkeys --import "/etc/pki/rpm-gpg/$(basename -- "$keybase")"
 	fi
 
@@ -3316,7 +3575,8 @@ repo_add_deb()
 {
 	local name="$1" vdir="$2" repotype="$3" srcdef="$4" keyring="$5" packages="$6"
 
-	# $packages is unquoted on purpose: there may be more than one.
+	# $packages is not quoted on purpose: there may be more than one.
+	# shellcheck disable=SC2086
 	run_command "$name" '' package.install $packages
 
 	local srcbase repofile
@@ -3465,6 +3725,11 @@ cmd_repo_add()
 			
 			;;
 		
+
+		*)
+			echo "Internal error: '$variant' should be recognized at this point" 1>&2
+			exit 1
+			;;
 	esac
 
 	install -o root -g root -m 755 -- "$0" /usr/sbin/sp_variant
