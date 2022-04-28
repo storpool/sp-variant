@@ -290,7 +290,8 @@ repo_add_deb()
 {
 	local name="$1" vdir="$2" repotype="$3" srcdef="$4" keyring="$5" packages="$6"
 
-	# $packages is unquoted on purpose: there may be more than one.
+	# $packages is not quoted on purpose: there may be more than one.
+	# shellcheck disable=SC2086
 	run_command "$name" '' package.install $packages
 
 	local srcbase repofile
