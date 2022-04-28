@@ -2,6 +2,15 @@
 
 ## 2.3.3 (not yet)
 
+- all:
+  - make the quoting style in the Debian/Ubuntu `pkgfile.dep_query` command
+    consistent with that of the others
+- sh:
+  - fix the quoting for the Debian/Ubuntu `pkgfile.dep_query` command
+  - complete the exiting-on-errors fix: two missed invocations
+  - minor changes to implement some shellcheck suggestions
+  - add a shellcheck test unless `NO_SHELLCHECK` is specified
+
 ## 2.3.2 (2022-04-27)
 
 - sh:
