@@ -45,7 +45,7 @@ detect_from_os_release()
 		return
 	fi
 
-	local output os_id
+	local output
 	# Maybe we should provide a sample os-release file for testing?
 	# shellcheck disable=SC1091,SC2153,SC2154
 	output="$(unset ID VERSION_ID; . /etc/os-release; printf -- '%s::%s\n' "$ID" "$VERSION_ID")"
@@ -235,7 +235,8 @@ copy_file()
 		exit 1
 	fi
 
-	local dst="$dstdir/$(basename -- "$src")"
+	local dst
+	dst="$dstdir/$(basename -- "$src")"
 	install -o root -g root -m 644 -- "$src" "$dst"
 }
 
@@ -278,7 +279,7 @@ repo_add_yum()
 	keybase="$(basename -- "$keyring")"
 	copy_file "$vdir/$keybase" /etc/pki/rpm-gpg
 
-	if [ -n "$(command -v rpmkeys)" ]; then
+	if [ -n "$(command -v rpmkeys || true)" ]; then
 		rpmkeys --import "/etc/pki/rpm-gpg/$(basename -- "$keybase")"
 	fi
 
