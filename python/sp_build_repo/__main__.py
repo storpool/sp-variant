@@ -42,7 +42,7 @@ from sp_variant import variant
 from sp_variant import vbuild
 
 
-VERSION = "0.1.1"
+VERSION = "1.0.0"
 
 
 @dataclasses.dataclass(frozen=True)
@@ -52,7 +52,7 @@ class Config(cfg_diag.ConfigDiag):
     datadir: pathlib.Path
     destdir: pathlib.Path
     no_date: bool
-    rustbin: Optional[pathlib.Path]
+    runtime: pathlib.Path
 
 
 class Singles:
@@ -206,17 +206,13 @@ def build_repo(cfg: Config) -> pathlib.Path:
     ensure_none(cfg, distdir)
     distdir.mkdir()
 
-    if cfg.rustbin is not None:
-        copy_file(
-            cfg,
-            cfg.rustbin,
-            distdir,
-            dstname="storpool_variant",
-            executable=True,
-        )
-    else:
-        mainfile = pathlib.Path(__file__).absolute().with_name("__main__.py")
-        copy_file(cfg, mainfile, distdir, dstname="storpool_variant", executable=True)
+    copy_file(
+        cfg,
+        cfg.runtime,
+        distdir,
+        dstname="storpool_variant",
+        executable=True,
+    )
 
     copy_file(
         cfg,
@@ -306,10 +302,10 @@ def parse_arguments() -> Tuple[Config, Callable[[Config], None]]:
     )
     p_build.add_argument(
         "-r",
-        "--rust-bin",
+        "--runtime",
         type=pathlib.Path,
         required=True,
-        help="The Rust storpool_variant executable to use",
+        help="The storpool_variant executable to use",
     )
     p_build.add_argument(
         "--no-date",
@@ -325,7 +321,7 @@ def parse_arguments() -> Tuple[Config, Callable[[Config], None]]:
             datadir=args.datadir,
             destdir=args.destdir,
             no_date=args.no_date,
-            rustbin=args.rust_bin,
+            runtime=args.runtime,
             verbose=args.verbose,
         ),
         args.func,
