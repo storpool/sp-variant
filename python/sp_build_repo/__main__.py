@@ -35,6 +35,8 @@ from typing import Callable, Dict, Optional, Text, Tuple  # noqa: H301
 
 import cfg_diag
 import jinja2
+import tomli
+import trivval
 
 from sp_variant import __main__ as vmain
 from sp_variant import defs
@@ -45,6 +47,37 @@ from sp_variant import vbuild
 VERSION = "1.0.0"
 
 
+OVERRIDES_SCHEMAS = {
+    (0, 1): {
+        "?repo": {
+            "*": {
+                "?slug": str,
+                "?url": str,
+                "?vendor": str,
+                "?codename": str,
+            }
+        }
+    }
+}
+
+
+@dataclasses.dataclass(frozen=True)
+class OverrideRepo:
+    """Override a repository's URL, URL slug, or other attributes."""
+
+    url: Optional[str]
+    slug: Optional[str]
+    vendor: Optional[str]
+    codename: Optional[str]
+
+
+@dataclasses.dataclass(frozen=True)
+class Overrides:
+    """Overrides for some settings, e.g. repo URLs."""
+
+    repo: Dict[str, OverrideRepo]
+
+
 @dataclasses.dataclass(frozen=True)
 class Config(cfg_diag.ConfigDiag):
     """Configuration for the repository setup."""
@@ -52,6 +85,7 @@ class Config(cfg_diag.ConfigDiag):
     datadir: pathlib.Path
     destdir: pathlib.Path
     no_date: bool
+    overrides: Overrides
     runtime: pathlib.Path
 
 
@@ -136,15 +170,18 @@ def subst_debian_sources(
         )
     )
 
+    ovr = cfg.overrides.repo.get(
+        rtype.name, OverrideRepo(url=None, slug=None, vendor=None, codename=None)
+    )
     try:
         result = (
             Singles.jinja2_env(src.parent)
             .get_template(src.name)
             .render(
-                url=rtype.url,
-                name=rtype.name,
-                vendor=var.repo.vendor,
-                codename=var.repo.codename,
+                url=rtype.url if ovr.url is None else ovr.url,
+                name=rtype.name if ovr.slug is None else ovr.slug,
+                vendor=var.repo.vendor if ovr.vendor is None else ovr.vendor,
+                codename=var.repo.codename if ovr.codename is None else ovr.codename,
             )
         )
     except jinja2.TemplateError as err:
@@ -175,13 +212,16 @@ def subst_yum_repo(
         )
     )
 
+    ovr = cfg.overrides.repo.get(
+        rtype.name, OverrideRepo(url=None, slug=None, vendor=None, codename=None)
+    )
     try:
         result = (
             Singles.jinja2_env(src.parent)
             .get_template(src.name)
             .render(
-                url=rtype.url,
-                name=rtype.name,
+                url=rtype.url if ovr.url is None else ovr.url,
+                name=rtype.name if ovr.slug is None else ovr.slug,
             )
         )
     except jinja2.TemplateError as err:
@@ -281,6 +321,37 @@ def cmd_build(cfg: Config) -> None:
         sys.exit(1)
 
 
+def parse_overrides(path: pathlib.Path) -> Overrides:
+    """Parse the TOML overrides file."""
+    if path is None:
+        return Overrides(repo={})
+
+    try:
+        data = tomli.loads(path.read_text(encoding="UTF-8"))
+    except (OSError, ValueError) as err:
+        sys.exit(
+            "Could not read or parse the {path} overrides file as valid TOML: {err}".format(
+                path=path, err=err
+            )
+        )
+    try:
+        trivval.validate(data, OVERRIDES_SCHEMAS)
+    except trivval.ValidationError as err:
+        sys.exit("Invalid format for the {path} overrides file: {err}".format(path=path, err=err))
+
+    return Overrides(
+        repo={
+            name: OverrideRepo(
+                url=value.get("url"),
+                slug=value.get("slug"),
+                vendor=value.get("vendor"),
+                codename=value.get("codename"),
+            )
+            for name, value in data.get("repo", {}).items()
+        }
+    )
+
+
 def parse_arguments() -> Tuple[Config, Callable[[Config], None]]:
     """Parse the command-line arguments."""
     parser, subp = vmain.base_parser(prog="sp_build_repo")
@@ -301,6 +372,12 @@ def parse_arguments() -> Tuple[Config, Callable[[Config], None]]:
         help="The directory to place the repo file in",
     )
     p_build.add_argument(
+        "-o",
+        "--overrides",
+        type=pathlib.Path,
+        help="The path to a TOML configuration overrides file",
+    )
+    p_build.add_argument(
         "-r",
         "--runtime",
         type=pathlib.Path,
@@ -316,11 +393,13 @@ def parse_arguments() -> Tuple[Config, Callable[[Config], None]]:
     p_build.set_defaults(func=cmd_build)
 
     args = parser.parse_args()
+
     return (
         Config(
             datadir=args.datadir,
             destdir=args.destdir,
             no_date=args.no_date,
+            overrides=parse_overrides(args.overrides),
             runtime=args.runtime,
             verbose=args.verbose,
         ),

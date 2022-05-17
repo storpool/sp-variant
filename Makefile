@@ -76,7 +76,7 @@ ${REPO_BUILT}:	all test-trivial
 		rm -rf -- '${REPO_TMPDIR}'
 		[ ! -f '${REPO_BUILT}' ]
 		mkdir -- '${REPO_TMPDIR}'
-		${SP_PY3_ENV} -m sp_build_repo build -d '${CURDIR}/data' -D '${REPO_TMPDIR}' -r '${SH_BIN}' --no-date
+		${SP_PY3_ENV} -m sp_build_repo build -d '${CURDIR}/data' -D '${REPO_TMPDIR}' -r '${SH_BIN}' $${REPO_OVERRIDES:+-o "$$REPO_OVERRIDES"} --no-date
 		[ -f '${REPO_BUILT}' ]
 
 repo:		${REPO_BUILT}
