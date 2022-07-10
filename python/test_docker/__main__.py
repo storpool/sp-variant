@@ -371,7 +371,9 @@ set -x
 
 # Parsing JSON without jq? Yeah, sure, why not...
 echo 'Checking for a Debian-like variant'
+unset is_debian
 if /sp/storpool_variant show current | tr "\n" ' ' | grep -Eqe '"family"[[:space:]]*:[[:space:]]*"debian"'; then
+    is_debian=1
     echo 'Running apt-get update'
     apt-get update
 else
@@ -386,6 +388,16 @@ echo 'Installing some programs'
 
 echo 'Running add-storpool-repo -t staging'
 /sp/add-storpool-repo.sh -t staging
+
+echo 'Running the "update the repository metadata" command'
+/sp/storpool_variant.sh command run package.update_db
+
+echo 'Obtaining information about the sp-python3 package'
+if [ -n "$is_debian" ]; then
+    apt-cache policy sp-python3
+else
+    yum info sp-python3
+fi
 
 echo 'Done, it seems'
 """,  # noqa: E501  pylint: disable=line-too-long
