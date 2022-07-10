@@ -137,11 +137,11 @@ def ensure_none(cfg: Config, path: pathlib.Path) -> None:
     """Remove a file, directory, or other filesystem object altogether."""
     if not path.exists():
         return
-    cfg.diag("Removing the existing {path}".format(path=path))
+    cfg.diag(f"Removing the existing {path}")
     try:
         subprocess.check_call(["rm", "-rf", "--", path])
     except subprocess.CalledProcessError as err:
-        raise variant.VariantFileError("Could not remove {path}: {err}".format(path=path, err=err))
+        raise variant.VariantFileError(f"Could not remove {path}: {err}")
 
 
 def copy_file(
@@ -161,9 +161,7 @@ def copy_file(
         shutil.copy2(src, dst)
         dst.chmod(0o755 if executable else 0o644)
     except (OSError, subprocess.CalledProcessError) as err:
-        raise variant.VariantFileError(
-            "Could not copy {src} to {dst}: {err}".format(src=src, dst=dst, err=err)
-        )
+        raise variant.VariantFileError(f"Could not copy {src} to {dst}: {err}")
 
 
 def subst_debian_sources(
@@ -176,14 +174,7 @@ def subst_debian_sources(
     """Substitute the placeholder vars in a Debian sources list file."""
     assert isinstance(var.repo, defs.DebRepo)
     dst = dstdir / (src.stem + rtype.extension + src.suffix)
-    cfg.diag(
-        "{src} -> {dst} [vendor {vendor}, codename {codename}]".format(
-            src=src,
-            dst=dst,
-            vendor=var.repo.vendor,
-            codename=var.repo.codename,
-        )
-    )
+    cfg.diag(f"{src} -> {dst} [vendor {var.repo.vendor}, codename {var.repo.codename}]")
 
     ovr = cfg.overrides.repo.get(
         rtype.name, OverrideRepo(url=None, slug=None, vendor=None, codename=None)
@@ -200,14 +191,12 @@ def subst_debian_sources(
             )
         )
     except jinja2.TemplateError as err:
-        raise variant.VariantFileError(
-            "Could not render the {src} template: {err}".format(src=src, err=err)
-        )
+        raise variant.VariantFileError(f"Could not render the {src} template: {err}")
 
     try:
         dst.write_text(result + "\n", encoding="UTF-8")
     except (IOError, OSError) as err:
-        raise variant.VariantFileError("Could not write out {dst}: {err}".format(dst=dst, err=err))
+        raise variant.VariantFileError(f"Could not write out {dst}: {err}")
 
 
 def subst_yum_repo(
@@ -220,12 +209,7 @@ def subst_yum_repo(
     """Substitute the placeholder vars in a Debian sources list file."""
     assert isinstance(var.repo, defs.YumRepo)
     dst = dstdir / (src.stem + rtype.extension + src.suffix)
-    cfg.diag(
-        "{src} -> {dst} []".format(
-            src=src,
-            dst=dst,
-        )
-    )
+    cfg.diag(f"{src} -> {dst} []")
 
     ovr = cfg.overrides.repo.get(
         rtype.name, OverrideRepo(url=None, slug=None, vendor=None, codename=None)
@@ -240,23 +224,20 @@ def subst_yum_repo(
             )
         )
     except jinja2.TemplateError as err:
-        raise variant.VariantFileError(
-            "Could not render the {src} template: {err}".format(src=src, err=err)
-        )
+        raise variant.VariantFileError(f"Could not render the {src} template: {err}")
 
     try:
         dst.write_text(result + "\n", encoding="UTF-8")
     except (IOError, OSError) as err:
-        raise variant.VariantFileError("Could not write out {dst}: {err}".format(dst=dst, err=err))
+        raise variant.VariantFileError(f"Could not write out {dst}: {err}")
 
 
 def build_repo(cfg: Config) -> pathlib.Path:
     """Build the StorPool repository archive."""
     distname = "add-storpool-repo"
     if not cfg.no_date:
-        distname = "{name}-{date}".format(
-            name=distname, date=datetime.date.today().strftime("%Y%m%d")
-        )
+        distdate = datetime.date.today().strftime("%Y%m%d")
+        distname = f"{distname}-{distdate}"
     distdir = cfg.destdir / distname
     ensure_none(cfg, distdir)
     distdir.mkdir()
@@ -305,25 +286,19 @@ def build_repo(cfg: Config) -> pathlib.Path:
             )
         else:
             raise NotImplementedError(
-                "No idea how to handle {tname} for {var}".format(
-                    tname=type(var.repo).__name__, var=var.name
-                )
+                f"No idea how to handle {type(var.repo).__name__} for {var.name}"
             )
 
     distfile = (cfg.destdir / distname).with_suffix(".tar.gz")
     ensure_none(cfg, distfile)
-    cfg.diag("Creating {distfile}".format(distfile=distfile))
+    cfg.diag(f"Creating {distfile}")
     try:
         subprocess.check_call(
             ["tar", "-caf", distfile, "-C", cfg.destdir, distname],
             shell=False,
         )
     except subprocess.CalledProcessError as err:
-        raise variant.VariantFileError(
-            "Could not package {distdir} up into {distfile}: {err}".format(
-                distdir=distdir, distfile=distfile, err=err
-            )
-        )
+        raise variant.VariantFileError(f"Could not package {distdir} up into {distfile}: {err}")
     return distfile
 
 
