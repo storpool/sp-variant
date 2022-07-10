@@ -36,7 +36,7 @@ from typing import Callable, Dict, Optional, Text, Tuple  # noqa: H301
 import cfg_diag
 import jinja2
 import tomli
-import trivval
+import typedload
 
 from sp_variant import __main__ as vmain
 from sp_variant import defs
@@ -62,13 +62,28 @@ OVERRIDES_SCHEMAS = {
 
 
 @dataclasses.dataclass(frozen=True)
+class DataFormatVersion:
+    """The version of the data format specification."""
+
+    major: int
+    minor: int
+
+
+@dataclasses.dataclass(frozen=True)
+class DataFormat:
+    """The format metadata, currently only the version."""
+
+    version: DataFormatVersion
+
+
+@dataclasses.dataclass(frozen=True)
 class OverrideRepo:
     """Override a repository's URL, URL slug, or other attributes."""
 
-    url: Optional[str]
-    slug: Optional[str]
-    vendor: Optional[str]
-    codename: Optional[str]
+    url: Optional[str] = None
+    slug: Optional[str] = None
+    vendor: Optional[str] = None
+    codename: Optional[str] = None
 
 
 @dataclasses.dataclass(frozen=True)
@@ -327,29 +342,28 @@ def parse_overrides(path: pathlib.Path) -> Overrides:
         return Overrides(repo={})
 
     try:
-        data = tomli.loads(path.read_text(encoding="UTF-8"))
+        raw = tomli.loads(path.read_text(encoding="UTF-8"))
     except (OSError, ValueError) as err:
-        sys.exit(
-            "Could not read or parse the {path} overrides file as valid TOML: {err}".format(
-                path=path, err=err
-            )
-        )
-    try:
-        trivval.validate(data, OVERRIDES_SCHEMAS)
-    except trivval.ValidationError as err:
-        sys.exit("Invalid format for the {path} overrides file: {err}".format(path=path, err=err))
+        sys.exit(f"Could not read or parse the {path} overrides file as valid TOML: {err}")
 
-    return Overrides(
-        repo={
-            name: OverrideRepo(
-                url=value.get("url"),
-                slug=value.get("slug"),
-                vendor=value.get("vendor"),
-                codename=value.get("codename"),
-            )
-            for name, value in data.get("repo", {}).items()
-        }
-    )
+    try:
+        raw_format = raw.pop("format")
+    except (TypeError, AttributeError, KeyError):
+        sys.exit(f"No 'format' section in the {path} override file")
+    try:
+        data_format = typedload.load(raw_format, DataFormat)
+    except (TypeError, AttributeError, KeyError, ValueError) as err:
+        sys.exit(f"Could not read the 'format' section of the {path} overrides file: {err}")
+    if (data_format.version.major, data_format.version.minor) != (0, 1):
+        sys.exit(
+            f"Unsupported format version for the {path} override files, "
+            f"only 0.1 supported so far"
+        )
+
+    try:
+        return typedload.load(raw, Overrides, failonextra=True)
+    except (TypeError, AttributeError, KeyError, ValueError) as err:
+        sys.exit(f"Invalid format for the {path} overrides file: {err}")
 
 
 def parse_arguments() -> Tuple[Config, Callable[[Config], None]]:
