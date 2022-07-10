@@ -408,7 +408,8 @@ def parse_arguments() -> Tuple[Config, Callable[[Config], None]]:
 
 
 def main() -> None:
-    """Main routine: parse options, detect the variant."""
+    """Main routine: parse options, build the repository definitions."""
+    # pylint: disable=duplicate-code
     cfg, func = parse_arguments()
     func(cfg)
 
