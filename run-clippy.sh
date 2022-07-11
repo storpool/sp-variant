@@ -32,6 +32,14 @@ while getopts 'n' o; do
 done
 
 "$cargo" clippy -- \
+	-W warnings \
+	-W future-incompatible \
+	-W nonstandard-style \
+	-W rust-2018-compatibility \
+	-W rust-2018-idioms \
+		-A elided-lifetimes-in-paths \
+	-W rust-2021-compatibility \
+	-W unused \
 	-W clippy::restriction \
 		-A clippy::implicit_return \
 		-A clippy::indexing_slicing \
