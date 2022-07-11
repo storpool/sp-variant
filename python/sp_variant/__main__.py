@@ -51,12 +51,8 @@ from . import vbuild
 
 
 if TYPE_CHECKING:
-    if sys.version_info[0] >= 3:
-        # pylint: disable-next=protected-access,unsubscriptable-object
-        SubPAction = argparse._SubParsersAction[argparse.ArgumentParser]
-    else:
-        # pylint: disable-next=protected-access
-        SubPAction = argparse._SubParsersAction
+    # pylint: disable-next=protected-access
+    SubPAction = argparse._SubParsersAction[argparse.ArgumentParser]
 
 
 CMD_LIST_BRIEF = [

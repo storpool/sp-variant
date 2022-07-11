@@ -24,11 +24,8 @@
 #
 """Test the os-release parser class."""
 
-import unittest
-
 from typing import Tuple
 
-import ddt  # type: ignore
 import pytest
 
 from sp_variant import defs
@@ -90,38 +87,33 @@ _CFG_EXPECTED = [
 ]
 
 
-@ddt.ddt
-class TestParseLine(unittest.TestCase):
-    """Test various aspects of YAIParser.parse_line()."""
+@pytest.mark.parametrize("line", _LINES_COMMENTS)
+def test_parse_comments(line):
+    # type: (str) -> None
+    """Parse empty lines and comments."""
+    yai = yaiparser.YAIParser("/dev/null")
+    assert yai.parse_line(line) is None
 
-    def setUp(self):
-        # type: (TestParseLine) -> None
-        """Stash a YAIParser object."""
-        self.yai = yaiparser.YAIParser("/dev/null")  # pylint: disable=W0212
 
-    @ddt.data(*_LINES_COMMENTS)
-    def test_parse_comments(self, line):
-        # type: (TestParseLine, str) -> None
-        """Parse empty lines and comments."""
-        assert self.yai.parse_line(line) is None
+@pytest.mark.parametrize("line", _LINES_BAD)
+def test_bad(line):
+    # type: (str) -> None
+    """Make sure parse_line() raises exceptions on errors."""
+    yai = yaiparser.YAIParser("/dev/null")
+    with pytest.raises(defs.VariantError):
+        raise Exception(repr(yai.parse_line(line)))
 
-    @ddt.data(*_LINES_BAD)
-    def test_bad(self, line):
-        # type: (TestParseLine, str) -> None
-        """Make sure parse_line() raises exceptions on errors."""
-        with pytest.raises(defs.VariantError):
-            raise Exception(repr(self.yai.parse_line(line)))
 
-    @ddt.data(*_LINES_OK)
-    @ddt.unpack
-    def test_parse_line_ok(self, line, res):
-        # type: (TestParseLine, str, Tuple[str, str]) -> None
-        """Make sure parse_line() works on valid text.
+@pytest.mark.parametrize("line,res", _LINES_OK)
+def test_parse_line_ok(line, res):
+    # type: (str, Tuple[str, str]) -> None
+    """Make sure parse_line() works on valid text.
 
-        So we silently assume that `==` works between str and unicode on
-        Python 2.x... let's go with that for now.
-        """
-        assert self.yai.parse_line(line) == res
+    So we silently assume that `==` works between str and unicode on
+    Python 2.x... let's go with that for now.
+    """
+    yai = yaiparser.YAIParser("/dev/null")
+    assert yai.parse_line(line) == res
 
 
 def test_parse():
