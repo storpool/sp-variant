@@ -220,9 +220,9 @@ def jsonify(obj):
         return jsonify(obj.pattern)
 
     if hasattr(obj, "_asdict"):
-        return dict((name, jsonify(value)) for name, value in obj._asdict().items())
+        return {name: jsonify(value) for name, value in obj._asdict().items()}
     if isinstance(obj, dict):
-        return dict((name, jsonify(value)) for name, value in obj.items())
+        return {name: jsonify(value) for name, value in obj.items()}
 
     if isinstance(obj, list):
         return [jsonify(item) for item in obj]

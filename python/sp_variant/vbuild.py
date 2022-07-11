@@ -695,7 +695,7 @@ def update_namedtuple(data, updates):
         return data
     fields = getattr(data, "_fields")  # type: List[str]
 
-    newv = dict((name, getattr(data, name)) for name in fields)
+    newv = {name: getattr(data, name) for name in fields}
     prefix = "Internal error: could not update {newv} with {updates}".format(
         newv=newv, updates=updates
     )
