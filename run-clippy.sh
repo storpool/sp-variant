@@ -37,7 +37,6 @@ done
 	-W nonstandard-style \
 	-W rust-2018-compatibility \
 	-W rust-2018-idioms \
-		-A elided-lifetimes-in-paths \
 	-W rust-2021-compatibility \
 	-W unused \
 	-W clippy::restriction \

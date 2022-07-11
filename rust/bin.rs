@@ -86,7 +86,7 @@ enum Mode<'data> {
     Show(ShowConfig),
 }
 
-const REPO_TYPES: &[RepoType; 3] = &[
+const REPO_TYPES: &[RepoType<'_>; 3] = &[
     RepoType {
         name: "contrib",
         extension: "",
@@ -212,7 +212,7 @@ fn get_filename_extension<'fname>(filename: &'fname str, tag: &str) -> (&'fname 
         .or_exit_e(|| format!("Internal error: could not parse a {}", tag))
 }
 
-fn repo_add_deb(var: &Variant, config: &RepoAddConfig, vdir: &str, repo: &DebRepo) {
+fn repo_add_deb(var: &Variant, config: &RepoAddConfig<'_>, vdir: &str, repo: &DebRepo) {
     let install_req_packages = || {
         // First, install the ca-certificates package if required...
         let mut cmdvec: Vec<String> = var.commands["package"]["install"].clone();
@@ -256,7 +256,7 @@ fn repo_add_deb(var: &Variant, config: &RepoAddConfig, vdir: &str, repo: &DebRep
     run_apt_update();
 }
 
-fn repo_add_yum(config: &RepoAddConfig, vdir: &str, repo: &YumRepo) {
+fn repo_add_yum(config: &RepoAddConfig<'_>, vdir: &str, repo: &YumRepo) {
     let run_yum_install_certs = || {
         run_command(
             &[
@@ -323,7 +323,7 @@ fn repo_add_yum(config: &RepoAddConfig, vdir: &str, repo: &YumRepo) {
     run_yum_clean_metadata();
 }
 
-fn cmd_repo_add(varfull: &VariantDefTop, config: &RepoAddConfig) {
+fn cmd_repo_add(varfull: &VariantDefTop, config: &RepoAddConfig<'_>) {
     let var = detect_variant(varfull);
     let vdir = format!("{}/{}", config.repodir, var.kind.as_ref());
     if !fs::metadata(&vdir)
@@ -410,9 +410,9 @@ fn cmd_show(varfull: &VariantDefTop, config: &ShowConfig) {
 // This one could probably go away with a clap 3 refactoring... maybe.
 #[allow(clippy::too_many_lines)]
 fn main() {
-    type Handler<'cmds> = &'cmds dyn Fn(&'cmds ArgMatches) -> Mode<'cmds>;
+    type Handler<'cmds> = &'cmds dyn Fn(&'cmds ArgMatches<'_>) -> Mode<'cmds>;
 
-    fn get_subc_name<'cmds>(current: &'cmds SubCommand) -> (String, &'cmds ArgMatches<'cmds>) {
+    fn get_subc_name<'cmds>(current: &'cmds SubCommand<'_>) -> (String, &'cmds ArgMatches<'cmds>) {
         match current.matches.subcommand {
             Some(ref next) => {
                 let (next_name, matches) = get_subc_name(next);
@@ -513,7 +513,7 @@ fn main() {
     let opt_matches = app.get_matches();
 
     #[allow(clippy::unwrap_used)]
-    let cmds: Vec<(&str, Handler)> = vec![
+    let cmds: Vec<(&str, Handler<'_>)> = vec![
         ("command/list", &|_matches| Mode::CommandList),
         ("command/run", &|matches| {
             let parts: Vec<&str> = matches.value_of("command").unwrap().split('.').collect();
