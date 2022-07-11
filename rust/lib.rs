@@ -26,39 +26,6 @@
 //! Detect the OS distribution and version.
 
 #![warn(missing_docs)]
-// Turn on most of the clippy::restriction lints...
-#![warn(clippy::exhaustive_enums)]
-#![warn(clippy::exhaustive_structs)]
-#![warn(clippy::integer_arithmetic)]
-#![warn(clippy::missing_inline_in_public_items)]
-#![warn(clippy::panic)]
-#![warn(clippy::pattern_type_mismatch)]
-#![warn(clippy::print_stdout)]
-#![warn(clippy::shadow_reuse)]
-#![warn(clippy::shadow_unrelated)]
-#![warn(clippy::single_char_lifetime_names)]
-#![warn(clippy::str_to_string)]
-#![warn(clippy::string_slice)]
-#![warn(clippy::string_to_string)]
-#![warn(clippy::unwrap_used)]
-#![warn(clippy::use_debug)]
-#![warn(clippy::verbose_file_reads)]
-// ...except for these ones.
-#![allow(clippy::implicit_return)]
-#![allow(clippy::indexing_slicing)]
-#![allow(clippy::missing_docs_in_private_items)]
-// Also turn on some of the clippy::pedantic lints.
-#![warn(clippy::doc_markdown)]
-#![warn(clippy::implicit_clone)]
-#![warn(clippy::items_after_statements)]
-#![warn(clippy::manual_assert)]
-#![warn(clippy::match_bool)]
-#![warn(clippy::missing_errors_doc)]
-#![warn(clippy::must_use_candidate)]
-#![warn(clippy::needless_pass_by_value)]
-#![warn(clippy::redundant_closure_for_method_calls)]
-#![warn(clippy::similar_names)]
-#![warn(clippy::too_many_lines)]
 
 use std::clone::Clone;
 use std::collections::HashMap;
