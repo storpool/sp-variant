@@ -431,7 +431,25 @@ echo 'Done, it seems'
     return errors
 
 
-async def main() -> None:
+async def run_tests(
+    cfg: Config,
+    spdir: pathlib.Path,
+    ordered: List[Tuple[str, str]],
+    var_data: Dict[str, SimpleVariant],
+) -> None:
+    """Run the tests themselves."""
+    errors = await test_detect(cfg, spdir, ordered)
+    if errors:
+        sys.exit("`storpool_variant detect` errors: " + "\n".join(errors))
+
+    errors = await test_add_repo(cfg, spdir, ordered, var_data)
+    if errors:
+        sys.exit("`add-storpool-repo.sh` errors: " + "\n".join(errors))
+
+    cfg.diag("Everything seems fine!")
+
+
+def main() -> None:
     """Parse command-line options, run tests."""
     cfg = parse_args()
 
@@ -444,16 +462,8 @@ async def main() -> None:
         cfg.diag(f"About to test {len(images)} containers: {sorted(images.keys())}")
         ordered = sorted(images.items())
 
-        errors = await test_detect(cfg, spdir, ordered)
-        if errors:
-            sys.exit("`storpool_variant detect` errors: " + "\n".join(errors))
-
-        errors = await test_add_repo(cfg, spdir, ordered, var_data)
-        if errors:
-            sys.exit("`add-storpool-repo.sh` errors: " + "\n".join(errors))
-
-        cfg.diag("Everything seems fine!")
+        asyncio.run(run_tests(cfg, spdir, ordered, var_data))
 
 
 if __name__ == "__main__":
-    asyncio.run(main())
+    main()
