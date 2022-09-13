@@ -14,7 +14,7 @@ EOUSAGE
 unset run_nursery
 cargo='sp-cargo'
 
-while getopts 'n' o; do
+while getopts 'c:n' o; do
 	case "$o" in
 		c)
 			cargo="$OPTARG"
