@@ -57,6 +57,7 @@ fn detect_variant(varfull: &VariantDefTop) -> &Variant {
     sp_variant::detect_from(varfull).or_exit_e_("Could not detect the current build variant")
 }
 
+#[allow(clippy::print_stdout)]
 fn cmd_features(varfull: &VariantDefTop) {
     let (major, minor) = sp_variant::get_format_version_from(varfull);
     let program_version = sp_variant::get_program_version_from(varfull);
@@ -66,11 +67,13 @@ fn cmd_features(varfull: &VariantDefTop) {
     );
 }
 
+#[allow(clippy::print_stdout)]
 fn cmd_detect(varfull: &VariantDefTop) {
     let var = detect_variant(varfull);
     println!("{}", var.kind.as_ref());
 }
 
+#[allow(clippy::print_stdout)]
 fn run_command(cmdvec: &[String], action: &str, noop: bool) {
     let cmdstr = cmdvec.join(" ");
     if noop {
@@ -105,6 +108,7 @@ fn run_command(cmdvec: &[String], action: &str, noop: bool) {
     }
 }
 
+#[allow(clippy::print_stdout)]
 fn copy_file(fname: &str, srcdir: &str, dstdir: &str, noop: bool) {
     let src = format!("{}/{}", srcdir, fname);
     let dst = format!("{}/{}", dstdir, fname);
@@ -312,6 +316,7 @@ fn cmd_repo_add(varfull: &VariantDefTop, config: &RepoAddConfig) {
     }
 }
 
+#[allow(clippy::print_stdout)]
 fn cmd_command_list(varfull: &VariantDefTop) {
     fn sorted_by_key<K, T>(map: &HashMap<K, T>) -> Vec<(&K, &T)>
     where
@@ -348,6 +353,7 @@ fn cmd_command_run(varfull: &VariantDefTop, config: CommandRunConfig) {
     run_command(&cmd_vec, "Command failed", config.noop);
 }
 
+#[allow(clippy::print_stdout)]
 fn cmd_show(varfull: &VariantDefTop, config: &ShowConfig) {
     if config.name == "all" {
         print!(

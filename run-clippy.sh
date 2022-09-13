@@ -41,7 +41,6 @@ done
 	-W unused \
 	-W clippy::restriction \
 		-A clippy::implicit_return \
-		-A clippy::print_stdout \
 		-A clippy::missing_docs_in_private_items \
 	-W clippy::pedantic \
 	${run_nursery+-W clippy::nursery}
