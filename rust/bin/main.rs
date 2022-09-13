@@ -43,63 +43,15 @@ use std::os::unix::process::ExitStatusExt;
 use std::path::Path;
 use std::process::Command;
 
-use clap::{App, Arg, ArgMatches, SubCommand};
 use expect_exit::{Expected, ExpectedResult, ExpectedWithError};
 use nix::unistd::{self, Gid, Uid};
 use serde_json::json;
 
 use sp_variant::{self, DebRepo, Repo, Variant, VariantDefTop, YumRepo};
 
-#[derive(Debug)]
-struct RepoType<'data> {
-    name: &'data str,
-    extension: &'data str,
-}
+mod cli;
 
-#[derive(Debug)]
-struct RepoAddConfig<'data> {
-    noop: bool,
-    repodir: String,
-    repotype: &'data RepoType<'data>,
-}
-
-#[derive(Debug)]
-struct CommandRunConfig {
-    category: String,
-    name: String,
-    noop: bool,
-    args: Vec<String>,
-}
-
-#[derive(Debug)]
-struct ShowConfig {
-    name: String,
-}
-
-#[derive(Debug)]
-enum Mode<'data> {
-    CommandList,
-    CommandRun(CommandRunConfig),
-    Detect,
-    Features,
-    RepoAdd(RepoAddConfig<'data>),
-    Show(ShowConfig),
-}
-
-const REPO_TYPES: &[RepoType<'_>; 3] = &[
-    RepoType {
-        name: "contrib",
-        extension: "",
-    },
-    RepoType {
-        name: "staging",
-        extension: "-staging",
-    },
-    RepoType {
-        name: "infra",
-        extension: "-infra",
-    },
-];
+use cli::{CommandRunConfig, Mode, RepoAddConfig, ShowConfig};
 
 fn detect_variant(varfull: &VariantDefTop) -> &Variant {
     sp_variant::detect_from(varfull).or_exit_e_("Could not detect the current build variant")
@@ -212,7 +164,7 @@ fn get_filename_extension<'fname>(filename: &'fname str, tag: &str) -> (&'fname 
         .or_exit_e(|| format!("Internal error: could not parse a {}", tag))
 }
 
-fn repo_add_deb(var: &Variant, config: &RepoAddConfig<'_>, vdir: &str, repo: &DebRepo) {
+fn repo_add_deb(var: &Variant, config: &RepoAddConfig, vdir: &str, repo: &DebRepo) {
     let install_req_packages = || {
         // First, install the ca-certificates package if required...
         let mut cmdvec: Vec<String> = var.commands["package"]["install"].clone();
@@ -229,7 +181,9 @@ fn repo_add_deb(var: &Variant, config: &RepoAddConfig<'_>, vdir: &str, repo: &De
         let (sources_base, sources_ext) = get_filename_extension(sources_orig, "Apt sources list");
         let sources_fname = format!(
             "{}{}.{}",
-            sources_base, config.repotype.extension, sources_ext
+            sources_base,
+            config.repotype.extension(),
+            sources_ext
         );
         copy_file(&sources_fname, vdir, "/etc/apt/sources.list.d", config.noop);
     };
@@ -256,7 +210,7 @@ fn repo_add_deb(var: &Variant, config: &RepoAddConfig<'_>, vdir: &str, repo: &De
     run_apt_update();
 }
 
-fn repo_add_yum(config: &RepoAddConfig<'_>, vdir: &str, repo: &YumRepo) {
+fn repo_add_yum(config: &RepoAddConfig, vdir: &str, repo: &YumRepo) {
     let run_yum_install_certs = || {
         run_command(
             &[
@@ -278,7 +232,9 @@ fn repo_add_yum(config: &RepoAddConfig<'_>, vdir: &str, repo: &YumRepo) {
             get_filename_extension(yumdef_orig, "Yum repository definition");
         let yumdef_fname = format!(
             "{}{}.{}",
-            yumdef_base, config.repotype.extension, yumdef_ext
+            yumdef_base,
+            config.repotype.extension(),
+            yumdef_ext
         );
         copy_file(&yumdef_fname, vdir, "/etc/yum.repos.d", config.noop);
     };
@@ -307,7 +263,7 @@ fn repo_add_yum(config: &RepoAddConfig<'_>, vdir: &str, repo: &YumRepo) {
             &[
                 "yum".to_owned(),
                 "--disablerepo=*".to_owned(),
-                format!("--enablerepo=storpool-{}", config.repotype.name),
+                format!("--enablerepo=storpool-{}", config.repotype.as_ref()),
                 "clean".to_owned(),
                 "metadata".to_owned(),
             ],
@@ -323,7 +279,7 @@ fn repo_add_yum(config: &RepoAddConfig<'_>, vdir: &str, repo: &YumRepo) {
     run_yum_clean_metadata();
 }
 
-fn cmd_repo_add(varfull: &VariantDefTop, config: &RepoAddConfig<'_>) {
+fn cmd_repo_add(varfull: &VariantDefTop, config: &RepoAddConfig) {
     let var = detect_variant(varfull);
     let vdir = format!("{}/{}", config.repodir, var.kind.as_ref());
     fs::metadata(&vdir)
@@ -406,158 +362,9 @@ fn cmd_show(varfull: &VariantDefTop, config: &ShowConfig) {
     }
 }
 
-// This one could probably go away with a clap 3 refactoring... maybe.
-#[allow(clippy::too_many_lines)]
 fn main() {
-    type Handler<'cmds> = &'cmds dyn Fn(&'cmds ArgMatches<'_>) -> Mode<'cmds>;
-
-    fn get_subc_name<'cmds>(current: &'cmds SubCommand<'_>) -> (String, &'cmds ArgMatches<'cmds>) {
-        match current.matches.subcommand {
-            Some(ref next) => {
-                let (next_name, matches) = get_subc_name(next);
-                (format!("{}/{}", current.name, next_name), matches)
-            }
-            None => (current.name.clone(), &current.matches),
-        }
-    }
-
     let varfull = sp_variant::build_variants();
-    let program_version = sp_variant::get_program_version_from(varfull);
-    let app = {
-        let valid_repo_types: Vec<&str> = REPO_TYPES.iter().map(|rtype| rtype.name).collect();
-        App::new("storpool_variant")
-            .version(program_version)
-            .author("StorPool <support@storpool.com>")
-            .about("storpool_variant: handle OS distribution- and version-specific tasks")
-            .subcommand(
-                SubCommand::with_name("command")
-                    .about("Distribition-specific commands")
-                    .subcommand(
-                        SubCommand::with_name("list")
-                            .about("List the distribution-specific commands"),
-                    )
-                    .subcommand(
-                        SubCommand::with_name("run")
-                            .about("Run a distribution-specific command")
-                            .arg(
-                                Arg::with_name("noop")
-                                    .short("N")
-                                    .long("noop")
-                                    .help("No-operation mode; display what would be done"),
-                            )
-                            .arg(
-                                Arg::with_name("command")
-                                    .index(1)
-                                    .required(true)
-                                    .help("The identifier of the command to run"),
-                            )
-                            .arg(
-                                Arg::with_name("args")
-                                    .index(2)
-                                    .multiple(true)
-                                    .help("Arguments to pass to the command"),
-                            ),
-                    ),
-            )
-            .subcommand(
-                SubCommand::with_name("detect")
-                    .about("Detect the build variant for the current host"),
-            )
-            .subcommand(
-                SubCommand::with_name("features")
-                    .about("Display the features supported by storpool_variant"),
-            )
-            .subcommand(
-                SubCommand::with_name("repo")
-                    .about("StorPool repository-related commands")
-                    .subcommand(
-                        SubCommand::with_name("add")
-                            .about("Install the StorPool repository configuration")
-                            .arg(
-                                Arg::with_name("noop")
-                                    .short("N")
-                                    .long("noop")
-                                    .help("No-operation mode; display what would be done"),
-                            )
-                            .arg(
-                                Arg::with_name("repodir")
-                                    .short("d")
-                                    .required(true)
-                                    .takes_value(true)
-                                    .value_name("REPODIR")
-                                    .help("The path to the repo config directory"),
-                            )
-                            .arg(
-                                Arg::with_name("repotype")
-                                    .short("t")
-                                    .takes_value(true)
-                                    .value_name("REPOTYPE")
-                                    .default_value("contrib")
-                                    .possible_values(&valid_repo_types)
-                                    .help("The type of the repository to add (default: contrib)"),
-                            ),
-                    ),
-            )
-            .subcommand(
-                SubCommand::with_name("show")
-                    .about("Display information about a build variant")
-                    .arg(
-                        Arg::with_name("name")
-                            .index(1)
-                            .required(true)
-                            .help("the name of the build variant to query"),
-                    ),
-            )
-    };
-    let opt_matches = app.get_matches();
-
-    #[allow(clippy::unwrap_used)]
-    let cmds: Vec<(&str, Handler<'_>)> = vec![
-        ("command/list", &|_matches| Mode::CommandList),
-        ("command/run", &|matches| {
-            let parts: Vec<&str> = matches.value_of("command").unwrap().split('.').collect();
-            if parts.len() == 2 {
-                Mode::CommandRun(CommandRunConfig {
-                    category: parts[0].to_owned(),
-                    name: parts[1].to_owned(),
-                    args: match matches.values_of("args") {
-                        Some(args) => args.map(ToOwned::to_owned).collect(),
-                        None => vec![],
-                    },
-                    noop: matches.is_present("noop"),
-                })
-            } else {
-                expect_exit::exit("Invalid command identifier, must be category.name")
-            }
-        }),
-        ("detect", &|_matches| Mode::Detect),
-        ("features", &|_matches| Mode::Features),
-        ("repo/add", &|matches| {
-            Mode::RepoAdd(RepoAddConfig {
-                noop: matches.is_present("noop"),
-                repodir: matches.value_of("repodir").unwrap().to_owned(),
-                repotype: {
-                    let name = matches.value_of("repotype").unwrap();
-                    REPO_TYPES.iter().find(|rtype| rtype.name == name).unwrap()
-                },
-            })
-        }),
-        ("show", &|matches| {
-            Mode::Show(ShowConfig {
-                name: matches.value_of("name").unwrap().to_owned(),
-            })
-        }),
-    ];
-    let subcommand = opt_matches
-        .subcommand
-        .as_ref()
-        .or_exit_(opt_matches.usage());
-    let (subc_name, subc_matches) = get_subc_name(subcommand);
-    let handler = cmds
-        .iter()
-        .find_map(|&(name, handler)| (*name == subc_name).then(|| handler))
-        .or_exit_(opt_matches.usage());
-    match handler(subc_matches) {
+    match cli::parse() {
         Mode::Features => cmd_features(varfull),
         Mode::CommandList => cmd_command_list(varfull),
         Mode::CommandRun(config) => cmd_command_run(varfull, config),

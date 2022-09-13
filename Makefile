@@ -26,7 +26,12 @@
 
 
 RUST_DATA=	rust/data.rs
-RUST_SRC=	rust/bin.rs rust/lib.rs rust/tests.rs rust/yai.rs ${RUST_DATA}
+RUST_SRC=	\
+		rust/bin/cli.rs rust/bin/main.rs \
+		rust/lib.rs \
+		rust/tests.rs \
+		rust/yai.rs \
+		${RUST_DATA}
 RUST_RELEASE=	${CURDIR}/target/x86_64-unknown-linux-musl/release
 RUST_BIN=	${RUST_RELEASE}/storpool_variant
 

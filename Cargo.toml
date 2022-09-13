@@ -15,10 +15,10 @@ path = "rust/lib.rs"
 
 [[bin]]
 name = "storpool_variant"
-path = "rust/bin.rs"
+path = "rust/bin/main.rs"
 
 [dependencies]
-clap = "2"
+clap = { version = "3", features = ["derive"] }
 expect-exit = "0.5.1"
 lazy_static = "1"
 nix = ">= 0.22"
