@@ -10,5 +10,5 @@ include sp_variant.sh.j2
 include tox.ini
 recursive-include .cargo *.toml
 recursive-include data *
-recursive-include python *.py *.pyi *.typed
+recursive-include python *.py *.typed
 recursive-include rust *.rs *.rs.j2
