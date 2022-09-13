@@ -43,7 +43,7 @@ import os
 import subprocess
 import sys
 
-from typing import Callable, List, Optional, Text, Tuple, TYPE_CHECKING  # noqa: H301
+from typing import Callable, List, Optional, Text, Tuple, TYPE_CHECKING
 
 from . import defs
 from . import variant

@@ -30,7 +30,7 @@ import functools
 import json
 import pathlib
 
-from typing import Dict, List, Tuple  # noqa: H301
+from typing import Dict, List, Tuple
 
 import cfg_diag
 import jinja2

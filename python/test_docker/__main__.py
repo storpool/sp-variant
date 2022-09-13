@@ -34,7 +34,7 @@ import subprocess
 import sys
 import tempfile
 
-from typing import Dict, List, NamedTuple, Optional, Tuple, Union  # noqa: H301
+from typing import Dict, List, NamedTuple, Optional, Tuple, Union
 
 import cfg_diag
 import utf8_locale

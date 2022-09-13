@@ -28,16 +28,7 @@ from __future__ import print_function
 
 import sys
 
-from typing import (
-    Any,  # noqa: H301
-    Dict,
-    List,
-    NamedTuple,
-    Optional,
-    Pattern,
-    Text,
-    Union,
-)
+from typing import Any, Dict, List, NamedTuple, Optional, Pattern, Text, Union
 
 
 Detect = NamedTuple(  # pylint: disable=invalid-name

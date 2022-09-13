@@ -28,14 +28,14 @@ import errno
 import io
 import subprocess
 
-from typing import Dict, Iterable, List, Optional, Text  # noqa: H301
+from typing import Dict, Iterable, List, Optional, Text
 
 from . import defs
 from . import vbuild
 from . import yaiparser
 
 from .defs import (
-    Config,  # noqa: H301
+    Config,
     Variant,
     VariantError,
     VERSION,

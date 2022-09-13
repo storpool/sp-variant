@@ -31,7 +31,7 @@ import shutil
 import subprocess
 import sys
 
-from typing import Callable, Dict, Optional, Text, Tuple  # noqa: H301
+from typing import Callable, Dict, Optional, Text, Tuple
 
 import cfg_diag
 import jinja2

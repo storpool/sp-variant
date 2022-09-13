@@ -27,7 +27,7 @@
 import io
 import re
 
-from typing import Dict, Optional, Text, Tuple, Union  # noqa: H301
+from typing import Dict, Optional, Text, Tuple, Union
 
 from . import defs
 

@@ -26,7 +26,7 @@
 
 import re
 
-from typing import Any, Dict, List, Text, Type, TypeVar, Tuple, Union  # noqa: H301
+from typing import Any, Dict, List, Text, Type, TypeVar, Tuple, Union
 
 from . import defs
 

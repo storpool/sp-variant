@@ -29,7 +29,7 @@ import subprocess
 import sys
 import tempfile
 
-from typing import Iterator, Optional, Text, Union  # noqa: H301
+from typing import Iterator, Optional, Text, Union
 
 
 if sys.version_info[0] < 3:
