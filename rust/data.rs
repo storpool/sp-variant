@@ -2308,7 +2308,7 @@ fi
                                 parent: "UBUNTU2204".to_owned(),
                                 detect: Detect {
                                     filename: "/etc/os-release".to_owned(),
-                                    regex: r"^ PRETTY_NAME= .* (?: Ubuntu \s+ 21 \. 10 | Mint \s+ 21 ) ".to_owned(),
+                                    regex: r"^ PRETTY_NAME= .* (?: Ubuntu \s+ 21 \. 10 ) ".to_owned(),
                                     os_id: "ubuntu".to_owned(),
                                     os_version_regex: r"^21\.10$".to_owned(),
                                 },
@@ -2456,7 +2456,7 @@ fi
                                 parent: "DEBIAN12".to_owned(),
                                 detect: Detect {
                                     filename: "/etc/os-release".to_owned(),
-                                    regex: r"^ PRETTY_NAME= .* (?: Ubuntu \s+ 22 \. 04 | Mint \s+ 22 ) ".to_owned(),
+                                    regex: r"^ PRETTY_NAME= .* (?: Ubuntu \s+ 22 \. 04 | Mint \s+ 21 ) ".to_owned(),
                                     os_id: "ubuntu".to_owned(),
                                     os_version_regex: r"^22\.04$".to_owned(),
                                 },

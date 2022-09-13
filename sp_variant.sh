@@ -202,12 +202,12 @@ cmd_detect()
 		return
 	fi
 	
-	if [ -r '/etc/os-release' ] && grep -Eqe '^PRETTY_NAME=.*(Ubuntu[[:space:]]+21\.10|Mint[[:space:]]+21)' -- '/etc/os-release'; then
+	if [ -r '/etc/os-release' ] && grep -Eqe '^PRETTY_NAME=.*(Ubuntu[[:space:]]+21\.10)' -- '/etc/os-release'; then
 		printf -- '%s\n' 'UBUNTU2110'
 		return
 	fi
 	
-	if [ -r '/etc/os-release' ] && grep -Eqe '^PRETTY_NAME=.*(Ubuntu[[:space:]]+22\.04|Mint[[:space:]]+22)' -- '/etc/os-release'; then
+	if [ -r '/etc/os-release' ] && grep -Eqe '^PRETTY_NAME=.*(Ubuntu[[:space:]]+22\.04|Mint[[:space:]]+21)' -- '/etc/os-release'; then
 		printf -- '%s\n' 'UBUNTU2204'
 		return
 	fi
@@ -1786,7 +1786,7 @@ show_UBUNTU2110()
     "filename": "/etc/os-release",
     "os_id": "ubuntu",
     "os_version_regex": "^21\\.10$",
-    "regex": "^ PRETTY_NAME= .* (?: Ubuntu \\s+ 21 \\. 10 | Mint \\s+ 21 ) "
+    "regex": "^ PRETTY_NAME= .* (?: Ubuntu \\s+ 21 \\. 10 ) "
   },
   "family": "debian",
   "file_ext": "deb",
@@ -1897,7 +1897,7 @@ show_UBUNTU2204()
     "filename": "/etc/os-release",
     "os_id": "ubuntu",
     "os_version_regex": "^22\\.04$",
-    "regex": "^ PRETTY_NAME= .* (?: Ubuntu \\s+ 22 \\. 04 | Mint \\s+ 22 ) "
+    "regex": "^ PRETTY_NAME= .* (?: Ubuntu \\s+ 22 \\. 04 | Mint \\s+ 21 ) "
   },
   "family": "debian",
   "file_ext": "deb",
