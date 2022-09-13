@@ -88,13 +88,20 @@ fn parse_line(line: &str) -> Result<Option<(String, String)>, Box<dyn Error>> {
     }
     match RE.captures(line) {
         Some(caps) => {
+            let cap = |name: &str| -> Result<&str, Box<dyn Error>> {
+                Ok(caps
+                    .name(name)
+                    .expect_result(|| format!("Internal error: no '{}' in {:?}", name, caps))?
+                    .as_str())
+            };
+
             if caps.name("comment").is_some() {
                 return Ok(None);
             }
             let q_open = caps.name("q_open").map(|value| value.as_str());
             let q_close = caps.name("q_close").map(|value| value.as_str());
-            let varname = &caps["varname"];
-            let quoted_top = &caps["quoted"];
+            let varname = cap("varname")?;
+            let quoted_top = cap("quoted")?;
 
             if q_open == Some("'") {
                 if quoted_top.contains('\'') {
@@ -119,7 +126,7 @@ fn parse_line(line: &str) -> Result<Option<(String, String)>, Box<dyn Error>> {
                         line, other
                     ))))
                 }
-                None => &caps["full"],
+                None => cap("full")?,
             }
             .to_owned();
             match quoted

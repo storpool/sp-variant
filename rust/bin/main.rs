@@ -78,8 +78,11 @@ fn run_command(cmdvec: &[String], action: &str, noop: bool) {
         return;
     }
 
-    let status = Command::new(&cmdvec[0])
-        .args(&cmdvec[1..])
+    let (name, args) = cmdvec
+        .split_first()
+        .or_exit(|| format!("Internal error: empty '{}' command", action));
+    let status = Command::new(&name)
+        .args(args)
         .spawn()
         .or_exit_e(|| format!("{}: {}", action, cmdstr))
         .wait()
@@ -167,7 +170,23 @@ fn get_filename_extension<'fname>(filename: &'fname str, tag: &str) -> (&'fname 
 fn repo_add_deb(var: &Variant, config: &RepoAddConfig, vdir: &str, repo: &DebRepo) {
     let install_req_packages = || {
         // First, install the ca-certificates package if required...
-        let mut cmdvec: Vec<String> = var.commands["package"]["install"].clone();
+        let mut cmdvec: Vec<String> = var
+            .commands
+            .get("package")
+            .or_exit(|| {
+                format!(
+                    "Internal error: no 'package' command category for {}",
+                    var.kind.as_ref()
+                )
+            })
+            .get("install")
+            .or_exit(|| {
+                format!(
+                    "Internal error: no 'package.install' command for {}",
+                    var.kind.as_ref()
+                )
+            })
+            .clone();
         cmdvec.extend(repo.req_packages.iter().cloned());
         run_command(
             &cmdvec,

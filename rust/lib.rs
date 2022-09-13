@@ -240,7 +240,12 @@ pub fn detect_from(variants: &VariantDefTop) -> Result<&Variant, Box<dyn Error>>
             if let Some(os_id) = data.get("ID") {
                 if let Some(version_id) = data.get("VERSION_ID") {
                     for kind in &variants.order {
-                        let var = &variants.variants[kind];
+                        let var = &variants.variants.get(kind).expect_result(|| {
+                            format!(
+                                "Internal error: unknown variant {} in the order",
+                                kind.as_ref()
+                            )
+                        })?;
                         if var.detect.os_id != *os_id {
                             continue;
                         }
@@ -274,7 +279,12 @@ pub fn detect_from(variants: &VariantDefTop) -> Result<&Variant, Box<dyn Error>>
     }
 
     for kind in &variants.order {
-        let var = &variants.variants[kind];
+        let var = &variants.variants.get(kind).expect_result(|| {
+            format!(
+                "Internal error: unknown variant {} in the order",
+                kind.as_ref()
+            )
+        })?;
         let re_line = RegexBuilder::new(&var.detect.regex)
             .ignore_whitespace(true)
             .build()
