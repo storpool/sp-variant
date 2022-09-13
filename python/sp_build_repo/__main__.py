@@ -31,17 +31,24 @@ import shutil
 import subprocess
 import sys
 
-from typing import Callable, Dict, Optional, Text, Tuple
+from typing import Dict, Optional, Text
 
 import cfg_diag
+import click
 import jinja2
 import tomli
 import typedload
 
-from sp_variant import __main__ as vmain
 from sp_variant import defs
 from sp_variant import variant
 from sp_variant import vbuild
+
+
+@dataclasses.dataclass
+class ConfigHolder:
+    """Pass the context to the command-line subcommand handler."""
+
+    verbose: bool = False
 
 
 VERSION = "1.0.0"
@@ -302,15 +309,6 @@ def build_repo(cfg: Config) -> pathlib.Path:
     return distfile
 
 
-def cmd_build(cfg: Config) -> None:
-    """Build the StorPool repository archive and output its name."""
-    try:
-        print(build_repo(cfg=cfg))
-    except variant.VariantError as err:
-        print(str(err), file=sys.stderr)
-        sys.exit(1)
-
-
 def parse_overrides(path: pathlib.Path) -> Overrides:
     """Parse the TOML overrides file."""
     if path is None:
@@ -341,67 +339,79 @@ def parse_overrides(path: pathlib.Path) -> Overrides:
         sys.exit(f"Invalid format for the {path} overrides file: {err}")
 
 
-def parse_arguments() -> Tuple[Config, Callable[[Config], None]]:
-    """Parse the command-line arguments."""
-    parser, subp = vmain.base_parser(prog="sp_build_repo")
+@click.command(name="build")
+@click.option(
+    "-d",
+    "--datadir",
+    type=pathlib.Path,
+    required=True,
+    help="The directory to place the repo file in",
+)
+@click.option(
+    "-D",
+    "--destdir",
+    type=pathlib.Path,
+    required=True,
+    help="The directory to place the repo file in",
+)
+@click.option(
+    "-o",
+    "--overrides",
+    type=pathlib.Path,
+    help="The path to a TOML configuration overrides file",
+)
+@click.option(
+    "-r",
+    "--runtime",
+    type=pathlib.Path,
+    required=True,
+    help="The storpool_variant executable to use",
+)
+@click.option(
+    "--no-date",
+    is_flag=True,
+    help="Do not include the current date in the directory name",
+)
+@click.pass_context
+def cmd_build(
+    ctx: click.Context,
+    datadir: pathlib.Path,
+    destdir: pathlib.Path,
+    overrides: pathlib.Path,
+    runtime: pathlib.Path,
+    no_date: bool,
+) -> None:
+    """Build the StorPool repository archive and output its name."""
+    # pylint: disable=too-many-arguments
+    cfg_hold = ctx.find_object(ConfigHolder)
+    assert isinstance(cfg_hold, ConfigHolder)
+    cfg = Config(
+        datadir=datadir,
+        destdir=destdir,
+        no_date=no_date,
+        overrides=parse_overrides(overrides),
+        runtime=runtime,
+        verbose=cfg_hold.verbose,
+    )
 
-    p_build = subp.add_parser("build", help="Detect the build variant for a remote host")
-    p_build.add_argument(
-        "-d",
-        "--datadir",
-        type=pathlib.Path,
-        required=True,
-        help="The directory to place the repo file in",
-    )
-    p_build.add_argument(
-        "-D",
-        "--destdir",
-        type=pathlib.Path,
-        required=True,
-        help="The directory to place the repo file in",
-    )
-    p_build.add_argument(
-        "-o",
-        "--overrides",
-        type=pathlib.Path,
-        help="The path to a TOML configuration overrides file",
-    )
-    p_build.add_argument(
-        "-r",
-        "--runtime",
-        type=pathlib.Path,
-        required=True,
-        help="The storpool_variant executable to use",
-    )
-    p_build.add_argument(
-        "--no-date",
-        action="store_true",
-        default=False,
-        help="Do not include the current date in the directory name",
-    )
-    p_build.set_defaults(func=cmd_build)
-
-    args = parser.parse_args()
-
-    return (
-        Config(
-            datadir=args.datadir,
-            destdir=args.destdir,
-            no_date=args.no_date,
-            overrides=parse_overrides(args.overrides),
-            runtime=args.runtime,
-            verbose=args.verbose,
-        ),
-        args.func,
-    )
+    try:
+        print(build_repo(cfg=cfg))
+    except variant.VariantError as err:
+        print(str(err), file=sys.stderr)
+        sys.exit(1)
 
 
-def main() -> None:
+@click.group()
+@click.option("-v", "--verbose", is_flag=True, help="verbose operation; display diagnostic output")
+@click.pass_context
+def main(ctx: click.Context, verbose: bool) -> None:
     """Main routine: parse options, build the repository definitions."""
-    # pylint: disable=duplicate-code
-    cfg, func = parse_arguments()
-    func(cfg)
+    ctx.ensure_object(ConfigHolder)
+    ctx.obj.verbose = verbose
+
+
+main.add_command(cmd_build)
 
 
 if __name__ == "__main__":
-    main()
+    main()  # pylint: disable=no-value-for-parameter
