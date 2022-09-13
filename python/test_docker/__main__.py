@@ -1,4 +1,4 @@
-# Copyright (c) 2021  StorPool <support@storpool.com>
+# Copyright (c) 2021, 2022  StorPool <support@storpool.com>
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -24,7 +24,6 @@
 #
 """Run some sp_variant tests using Docker containers."""
 
-import argparse
 import asyncio
 import asyncio.subprocess as aprocess
 import dataclasses
@@ -37,6 +36,7 @@ import tempfile
 from typing import Dict, List, NamedTuple, Optional, Tuple, Union
 
 import cfg_diag
+import click
 import utf8_locale
 
 
@@ -62,38 +62,6 @@ class SimpleVariant(NamedTuple):
 
     name: str
     builder: SimpleBuilder
-
-
-def parse_args() -> Config:
-    """Parse the command-line arguments."""
-    parser = argparse.ArgumentParser(prog="test_docker")
-    parser.add_argument(
-        "-i",
-        "--images-filter",
-        type=str,
-        help="Only process images with names containing this string",
-    )
-    parser.add_argument(
-        "-r",
-        "--repo-file",
-        type=pathlib.Path,
-        required=True,
-        help="The add-storpool-repo archive to test",
-    )
-    parser.add_argument(
-        "-v",
-        "--verbose",
-        action="store_true",
-        help="Verbose operation; display diagnostic output",
-    )
-
-    args = parser.parse_args()
-    return Config(
-        images_filter=args.images_filter,
-        repo_file=args.repo_file,
-        utf8_env=utf8_locale.get_utf8_env(),
-        verbose=args.verbose,
-    )
 
 
 def extract_variants_data(
@@ -449,10 +417,31 @@ async def run_tests(
     cfg.diag("Everything seems fine!")
 
 
-def main() -> None:
+@click.command()
+@click.option(
+    "-i", "--images-filter", type=str, help="Only process images with names containing this string"
+)
+@click.option(
+    "-r",
+    "--repo-file",
+    type=pathlib.Path,
+    required=True,
+    help="The add-storpool-repo archive to test",
+)
+@click.option(
+    "-v",
+    "--verbose",
+    is_flag=True,
+    help="Verbose operation; display diagnostic output",
+)
+def main(images_filter: Optional[str], repo_file: pathlib.Path, verbose: bool) -> None:
     """Parse command-line options, run tests."""
-    cfg = parse_args()
-
+    cfg = Config(
+        images_filter=images_filter,
+        repo_file=repo_file,
+        utf8_env=utf8_locale.get_utf8_env(),
+        verbose=verbose,
+    )
     with tempfile.TemporaryDirectory() as tempd_path:
         tempd = pathlib.Path(tempd_path)
         cfg.diag(f"Using {tempd} as a temporary directory")
@@ -466,4 +455,4 @@ def main() -> None:
 
 
 if __name__ == "__main__":
-    main()
+    main()  # pylint: disable=no-value-for-parameter
