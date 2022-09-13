@@ -31,7 +31,7 @@ import shutil
 import subprocess
 import sys
 
-from typing import Dict, Optional, Text
+from typing import Dict, Optional
 
 import cfg_diag
 import click
@@ -114,13 +114,13 @@ class Config(cfg_diag.ConfigDiag):
 class Singles:
     """Keep some singleton objects in a controlled way."""
 
-    _jinja2_env: Dict[Text, jinja2.Environment] = {}
-    _jinja2_loaders: Dict[Text, jinja2.BaseLoader] = {}
+    _jinja2_env: Dict[str, jinja2.Environment] = {}
+    _jinja2_loaders: Dict[str, jinja2.BaseLoader] = {}
 
     @classmethod
     def jinja2_env(cls, path: pathlib.Path) -> jinja2.Environment:
         """Instantiate a Jinja2 environment if necessary."""
-        abspath = Text(path.absolute())
+        abspath = str(path.absolute())
         if abspath in cls._jinja2_env:
             return cls._jinja2_env[abspath]
 
@@ -131,7 +131,7 @@ class Singles:
     @classmethod
     def jinja2_loader(cls, path: pathlib.Path) -> jinja2.BaseLoader:
         """Instantiate a Jinja2 environment if necessary."""
-        abspath = Text(path.absolute())
+        abspath = str(path.absolute())
         if abspath in cls._jinja2_loaders:
             return cls._jinja2_loaders[abspath]
 
@@ -155,7 +155,7 @@ def copy_file(
     cfg: Config,
     src: pathlib.Path,
     dstdir: pathlib.Path,
-    dstname: Optional[Text] = None,
+    dstname: Optional[str] = None,
     executable: bool = False,
 ) -> None:
     """Copy a file with the appropriate access permissions."""
