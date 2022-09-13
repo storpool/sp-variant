@@ -44,7 +44,7 @@ use std::path::Path;
 use std::process::Command;
 
 use clap::{App, Arg, ArgMatches, SubCommand};
-use expect_exit::{ExpectedResult, ExpectedWithError};
+use expect_exit::{Expected, ExpectedResult, ExpectedWithError};
 use nix::unistd::{self, Gid, Uid};
 use serde_json::json;
 
@@ -326,12 +326,10 @@ fn repo_add_yum(config: &RepoAddConfig<'_>, vdir: &str, repo: &YumRepo) {
 fn cmd_repo_add(varfull: &VariantDefTop, config: &RepoAddConfig<'_>) {
     let var = detect_variant(varfull);
     let vdir = format!("{}/{}", config.repodir, var.kind.as_ref());
-    if !fs::metadata(&vdir)
+    fs::metadata(&vdir)
         .or_exit_e(|| format!("Could not examine {:?}", vdir))
         .is_dir()
-    {
-        expect_exit::die(&format!("Not a directory: {:?}", vdir));
-    }
+        .or_exit(|| format!("Not a directory: {:?}", vdir));
     match var.repo {
         Repo::Deb(ref deb) => repo_add_deb(var, config, &vdir, deb),
         Repo::Yum(ref yum) => repo_add_yum(config, &vdir, yum),
@@ -363,13 +361,14 @@ fn cmd_command_list(varfull: &VariantDefTop) {
 
 fn cmd_command_run(varfull: &VariantDefTop, config: CommandRunConfig) {
     let var = detect_variant(varfull);
-    let mut cmd_vec: Vec<String> = match var.commands.get(&config.category) {
-        Some(cmap) => match cmap.get(&config.name) {
-            Some(cmd) => cmd.clone(),
-            None => expect_exit::exit("Unknown command identifier"),
-        },
-        None => expect_exit::exit("Unknown command identifier"),
-    };
+    let cmap = var
+        .commands
+        .get(&config.category)
+        .or_exit_("Unknown command category identifier");
+    let mut cmd_vec: Vec<String> = cmap
+        .get(&config.name)
+        .or_exit_("Unknown command identifier")
+        .clone();
     cmd_vec.extend(config.args);
     run_command(&cmd_vec, "Command failed", config.noop);
 }
@@ -517,8 +516,8 @@ fn main() {
         ("command/list", &|_matches| Mode::CommandList),
         ("command/run", &|matches| {
             let parts: Vec<&str> = matches.value_of("command").unwrap().split('.').collect();
-            match parts.len() {
-                2 => Mode::CommandRun(CommandRunConfig {
+            if parts.len() == 2 {
+                Mode::CommandRun(CommandRunConfig {
                     category: parts[0].to_owned(),
                     name: parts[1].to_owned(),
                     args: match matches.values_of("args") {
@@ -526,8 +525,9 @@ fn main() {
                         None => vec![],
                     },
                     noop: matches.is_present("noop"),
-                }),
-                _ => expect_exit::exit("Invalid command identifier, must be category.name"),
+                })
+            } else {
+                expect_exit::exit("Invalid command identifier, must be category.name")
             }
         }),
         ("detect", &|_matches| Mode::Detect),
@@ -548,24 +548,21 @@ fn main() {
             })
         }),
     ];
-    match opt_matches.subcommand {
-        Some(ref subcommand) => {
-            let (subc_name, subc_matches) = get_subc_name(subcommand);
-            match cmds
-                .iter()
-                .find_map(|&(name, handler)| (*name == subc_name).then(|| handler))
-            {
-                Some(handler) => match handler(subc_matches) {
-                    Mode::Features => cmd_features(varfull),
-                    Mode::CommandList => cmd_command_list(varfull),
-                    Mode::CommandRun(config) => cmd_command_run(varfull, config),
-                    Mode::Detect => cmd_detect(varfull),
-                    Mode::RepoAdd(config) => cmd_repo_add(varfull, &config),
-                    Mode::Show(config) => cmd_show(varfull, &config),
-                },
-                None => expect_exit::exit(opt_matches.usage()),
-            }
-        }
-        None => expect_exit::exit(opt_matches.usage()),
+    let subcommand = opt_matches
+        .subcommand
+        .as_ref()
+        .or_exit_(opt_matches.usage());
+    let (subc_name, subc_matches) = get_subc_name(subcommand);
+    let handler = cmds
+        .iter()
+        .find_map(|&(name, handler)| (*name == subc_name).then(|| handler))
+        .or_exit_(opt_matches.usage());
+    match handler(subc_matches) {
+        Mode::Features => cmd_features(varfull),
+        Mode::CommandList => cmd_command_list(varfull),
+        Mode::CommandRun(config) => cmd_command_run(varfull, config),
+        Mode::Detect => cmd_detect(varfull),
+        Mode::RepoAdd(config) => cmd_repo_add(varfull, &config),
+        Mode::Show(config) => cmd_show(varfull, &config),
     }
 }
