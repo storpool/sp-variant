@@ -239,7 +239,7 @@ _VARIANT_DEF = [
         detect=defs.Detect(
             filename="/etc/os-release",
             regex=re.compile(
-                r"^ PRETTY_NAME= .* (?: Ubuntu \s+ 22 \. 04 | Mint \s+ 22 ) ",
+                r"^ PRETTY_NAME= .* (?: Ubuntu \s+ 22 \. 04 | Mint \s+ 21 ) ",
                 re.X,
             ),
             os_id="ubuntu",
@@ -268,7 +268,7 @@ _VARIANT_DEF = [
         detect=defs.Detect(
             filename="/etc/os-release",
             regex=re.compile(
-                r"^ PRETTY_NAME= .* (?: Ubuntu \s+ 21 \. 10 | Mint \s+ 21 ) ",
+                r"^ PRETTY_NAME= .* (?: Ubuntu \s+ 21 \. 10 ) ",
                 re.X,
             ),
             os_id="ubuntu",
