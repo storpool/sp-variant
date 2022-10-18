@@ -253,8 +253,11 @@ show_ALMA8()
     "package": {
       "install": [
         "dnf",
-        "--enablerepo=storpool-contrib",
+        "--disablerepo=*",
+        "--enablerepo=base",
+        "--enablerepo=updates",
         "--enablerepo=powertools",
+        "--enablerepo=storpool-contrib",
         "install",
         "-q",
         "-y",
@@ -299,7 +302,7 @@ show_ALMA8()
       "install": [
         "sh",
         "-c",
-        "\nunset to_install to_reinstall\nfor f in $packages; do\n    package=\"$(rpm -qp \"$f\")\"\n    if rpm -q -- \"$package\"; then\n        to_reinstall=\"$to_reinstall ./$f\"\n    else\n        to_install=\"$to_install ./$f\"\n    fi\ndone\n\nif [ -n \"$to_install\" ]; then\n    dnf install -y --enablerepo=storpool-contrib,powertools --setopt=localpkg_gpgcheck=0 -- $to_install\nfi\nif [ -n \"$to_reinstall\" ]; then\n    dnf reinstall -y --enablerepo=storpool-contrib,powertools --setopt=localpkg_gpgcheck=0 -- $to_reinstall\nfi\n"
+        "\nunset to_install to_reinstall\nfor f in $packages; do\n    package=\"$(rpm -qp \"$f\")\"\n    if rpm -q -- \"$package\"; then\n        to_reinstall=\"$to_reinstall ./$f\"\n    else\n        to_install=\"$to_install ./$f\"\n    fi\ndone\n\nif [ -n \"$to_install\" ]; then\n    dnf install -y --disablerepo='*' --enablerepo=base,updates,storpool-contrib,powertools --setopt=localpkg_gpgcheck=0 -- $to_install\nfi\nif [ -n \"$to_reinstall\" ]; then\n    dnf reinstall -y --disablerepo='*' --enablerepo=base,updates,storpool-contrib,powertools --setopt=localpkg_gpgcheck=0 -- $to_reinstall\nfi\n"
       ]
     }
   },
@@ -353,6 +356,9 @@ show_CENTOS6()
     "package": {
       "install": [
         "yum",
+        "--disablerepo=*",
+        "--enablerepo=base",
+        "--enablerepo=updates",
         "--enablerepo=storpool-contrib",
         "install",
         "-q",
@@ -395,7 +401,7 @@ show_CENTOS6()
         "rpm -qpR -- \"$pkg\""
       ],
       "install": [
-        "\nunset to_install to_reinstall\nfor f in $packages; do\n    package=\"$(rpm -qp \"$f\")\"\n    if rpm -q -- \"$package\"; then\n        to_reinstall=\"$to_reinstall ./$f\"\n    else\n        to_install=\"$to_install ./$f\"\n    fi\ndone\n\nif [ -n \"$to_install\" ]; then\n    yum install -y --enablerepo=storpool-contrib --setopt=localpkg_gpgcheck=0 -- $to_install\nfi\nif [ -n \"$to_reinstall\" ]; then\n    yum reinstall -y --enablerepo=storpool-contrib --setopt=localpkg_gpgcheck=0 -- $to_reinstall\nfi\n"
+        "\nunset to_install to_reinstall\nfor f in $packages; do\n    package=\"$(rpm -qp \"$f\")\"\n    if rpm -q -- \"$package\"; then\n        to_reinstall=\"$to_reinstall ./$f\"\n    else\n        to_install=\"$to_install ./$f\"\n    fi\ndone\n\nif [ -n \"$to_install\" ]; then\n    yum install -y --disablerepo='*' --enablerepo=base,updates,storpool-contrib --setopt=localpkg_gpgcheck=0 -- $to_install\nfi\nif [ -n \"$to_reinstall\" ]; then\n    yum reinstall -y --disablerepo='*' --enablerepo=base,updates,storpool-contrib --setopt=localpkg_gpgcheck=0 -- $to_reinstall\nfi\n"
       ]
     }
   },
@@ -449,6 +455,9 @@ show_CENTOS7()
     "package": {
       "install": [
         "yum",
+        "--disablerepo=*",
+        "--enablerepo=base",
+        "--enablerepo=updates",
         "--enablerepo=storpool-contrib",
         "install",
         "-q",
@@ -491,7 +500,7 @@ show_CENTOS7()
         "rpm -qpR -- \"$pkg\""
       ],
       "install": [
-        "\nunset to_install to_reinstall\nfor f in $packages; do\n    package=\"$(rpm -qp \"$f\")\"\n    if rpm -q -- \"$package\"; then\n        to_reinstall=\"$to_reinstall ./$f\"\n    else\n        to_install=\"$to_install ./$f\"\n    fi\ndone\n\nif [ -n \"$to_install\" ]; then\n    yum install -y --enablerepo=storpool-contrib --setopt=localpkg_gpgcheck=0 -- $to_install\nfi\nif [ -n \"$to_reinstall\" ]; then\n    yum reinstall -y --enablerepo=storpool-contrib --setopt=localpkg_gpgcheck=0 -- $to_reinstall\nfi\n"
+        "\nunset to_install to_reinstall\nfor f in $packages; do\n    package=\"$(rpm -qp \"$f\")\"\n    if rpm -q -- \"$package\"; then\n        to_reinstall=\"$to_reinstall ./$f\"\n    else\n        to_install=\"$to_install ./$f\"\n    fi\ndone\n\nif [ -n \"$to_install\" ]; then\n    yum install -y --disablerepo='*' --enablerepo=base,updates,storpool-contrib --setopt=localpkg_gpgcheck=0 -- $to_install\nfi\nif [ -n \"$to_reinstall\" ]; then\n    yum reinstall -y --disablerepo='*' --enablerepo=base,updates,storpool-contrib --setopt=localpkg_gpgcheck=0 -- $to_reinstall\nfi\n"
       ]
     }
   },
@@ -545,8 +554,11 @@ show_CENTOS8()
     "package": {
       "install": [
         "dnf",
-        "--enablerepo=storpool-contrib",
+        "--disablerepo=*",
+        "--enablerepo=base",
+        "--enablerepo=updates",
         "--enablerepo=powertools",
+        "--enablerepo=storpool-contrib",
         "install",
         "-q",
         "-y",
@@ -591,7 +603,7 @@ show_CENTOS8()
       "install": [
         "sh",
         "-c",
-        "\nunset to_install to_reinstall\nfor f in $packages; do\n    package=\"$(rpm -qp \"$f\")\"\n    if rpm -q -- \"$package\"; then\n        to_reinstall=\"$to_reinstall ./$f\"\n    else\n        to_install=\"$to_install ./$f\"\n    fi\ndone\n\nif [ -n \"$to_install\" ]; then\n    dnf install -y --enablerepo=storpool-contrib,powertools --setopt=localpkg_gpgcheck=0 -- $to_install\nfi\nif [ -n \"$to_reinstall\" ]; then\n    dnf reinstall -y --enablerepo=storpool-contrib,powertools --setopt=localpkg_gpgcheck=0 -- $to_reinstall\nfi\n"
+        "\nunset to_install to_reinstall\nfor f in $packages; do\n    package=\"$(rpm -qp \"$f\")\"\n    if rpm -q -- \"$package\"; then\n        to_reinstall=\"$to_reinstall ./$f\"\n    else\n        to_install=\"$to_install ./$f\"\n    fi\ndone\n\nif [ -n \"$to_install\" ]; then\n    dnf install -y --disablerepo='*' --enablerepo=base,updates,storpool-contrib,powertools --setopt=localpkg_gpgcheck=0 -- $to_install\nfi\nif [ -n \"$to_reinstall\" ]; then\n    dnf reinstall -y --disablerepo='*' --enablerepo=base,updates,storpool-contrib,powertools --setopt=localpkg_gpgcheck=0 -- $to_reinstall\nfi\n"
       ]
     }
   },
@@ -1090,6 +1102,9 @@ show_ORACLE7()
     "package": {
       "install": [
         "yum",
+        "--disablerepo=*",
+        "--enablerepo=base",
+        "--enablerepo=updates",
         "--enablerepo=storpool-contrib",
         "install",
         "-q",
@@ -1132,7 +1147,7 @@ show_ORACLE7()
         "rpm -qpR -- \"$pkg\""
       ],
       "install": [
-        "\nunset to_install to_reinstall\nfor f in $packages; do\n    package=\"$(rpm -qp \"$f\")\"\n    if rpm -q -- \"$package\"; then\n        to_reinstall=\"$to_reinstall ./$f\"\n    else\n        to_install=\"$to_install ./$f\"\n    fi\ndone\n\nif [ -n \"$to_install\" ]; then\n    yum install -y --enablerepo=storpool-contrib --setopt=localpkg_gpgcheck=0 -- $to_install\nfi\nif [ -n \"$to_reinstall\" ]; then\n    yum reinstall -y --enablerepo=storpool-contrib --setopt=localpkg_gpgcheck=0 -- $to_reinstall\nfi\n"
+        "\nunset to_install to_reinstall\nfor f in $packages; do\n    package=\"$(rpm -qp \"$f\")\"\n    if rpm -q -- \"$package\"; then\n        to_reinstall=\"$to_reinstall ./$f\"\n    else\n        to_install=\"$to_install ./$f\"\n    fi\ndone\n\nif [ -n \"$to_install\" ]; then\n    yum install -y --disablerepo='*' --enablerepo=base,updates,storpool-contrib --setopt=localpkg_gpgcheck=0 -- $to_install\nfi\nif [ -n \"$to_reinstall\" ]; then\n    yum reinstall -y --disablerepo='*' --enablerepo=base,updates,storpool-contrib --setopt=localpkg_gpgcheck=0 -- $to_reinstall\nfi\n"
       ]
     }
   },
@@ -1186,6 +1201,9 @@ show_RHEL8()
     "package": {
       "install": [
         "dnf",
+        "--disablerepo=*",
+        "--enablerepo=base",
+        "--enablerepo=updates",
         "--enablerepo=storpool-contrib",
         "--enablerepo=codeready-builder-for-rhel-8-x86_64-rpms",
         "install",
@@ -1232,7 +1250,7 @@ show_RHEL8()
       "install": [
         "sh",
         "-c",
-        "\nunset to_install to_reinstall\nfor f in $packages; do\n    package=\"$(rpm -qp \"$f\")\"\n    if rpm -q -- \"$package\"; then\n        to_reinstall=\"$to_reinstall ./$f\"\n    else\n        to_install=\"$to_install ./$f\"\n    fi\ndone\n\nif [ -n \"$to_install\" ]; then\n    dnf install -y --enablerepo=storpool-contrib,codeready-builder-for-rhel-8-x86_64-rpms --setopt=localpkg_gpgcheck=0 -- $to_install\nfi\nif [ -n \"$to_reinstall\" ]; then\n    dnf reinstall -y --enablerepo=storpool-contrib,codeready-builder-for-rhel-8-x86_64-rpms --setopt=localpkg_gpgcheck=0 -- $to_reinstall\nfi\n"
+        "\nunset to_install to_reinstall\nfor f in $packages; do\n    package=\"$(rpm -qp \"$f\")\"\n    if rpm -q -- \"$package\"; then\n        to_reinstall=\"$to_reinstall ./$f\"\n    else\n        to_install=\"$to_install ./$f\"\n    fi\ndone\n\nif [ -n \"$to_install\" ]; then\n    dnf install -y --disablerepo='*' --enablerepo=base,updates,storpool-contrib,codeready-builder-for-rhel-8-x86_64-rpms --setopt=localpkg_gpgcheck=0 -- $to_install\nfi\nif [ -n \"$to_reinstall\" ]; then\n    dnf reinstall -y --disablerepo='*' --enablerepo=base,updates,storpool-contrib,codeready-builder-for-rhel-8-x86_64-rpms --setopt=localpkg_gpgcheck=0 -- $to_reinstall\nfi\n"
       ]
     }
   },
@@ -1286,8 +1304,11 @@ show_ROCKY8()
     "package": {
       "install": [
         "dnf",
-        "--enablerepo=storpool-contrib",
+        "--disablerepo=*",
+        "--enablerepo=base",
+        "--enablerepo=updates",
         "--enablerepo=powertools",
+        "--enablerepo=storpool-contrib",
         "install",
         "-q",
         "-y",
@@ -1332,7 +1353,7 @@ show_ROCKY8()
       "install": [
         "sh",
         "-c",
-        "\nunset to_install to_reinstall\nfor f in $packages; do\n    package=\"$(rpm -qp \"$f\")\"\n    if rpm -q -- \"$package\"; then\n        to_reinstall=\"$to_reinstall ./$f\"\n    else\n        to_install=\"$to_install ./$f\"\n    fi\ndone\n\nif [ -n \"$to_install\" ]; then\n    dnf install -y --enablerepo=storpool-contrib,powertools --setopt=localpkg_gpgcheck=0 -- $to_install\nfi\nif [ -n \"$to_reinstall\" ]; then\n    dnf reinstall -y --enablerepo=storpool-contrib,powertools --setopt=localpkg_gpgcheck=0 -- $to_reinstall\nfi\n"
+        "\nunset to_install to_reinstall\nfor f in $packages; do\n    package=\"$(rpm -qp \"$f\")\"\n    if rpm -q -- \"$package\"; then\n        to_reinstall=\"$to_reinstall ./$f\"\n    else\n        to_install=\"$to_install ./$f\"\n    fi\ndone\n\nif [ -n \"$to_install\" ]; then\n    dnf install -y --disablerepo='*' --enablerepo=base,updates,storpool-contrib,powertools --setopt=localpkg_gpgcheck=0 -- $to_install\nfi\nif [ -n \"$to_reinstall\" ]; then\n    dnf reinstall -y --disablerepo='*' --enablerepo=base,updates,storpool-contrib,powertools --setopt=localpkg_gpgcheck=0 -- $to_reinstall\nfi\n"
       ]
     }
   },
@@ -2082,7 +2103,7 @@ run_command()
 						install)
 							# The commands are quoted exactly as much as necessary.
 							# shellcheck disable=SC2016
-							$noop 'dnf' '--enablerepo=storpool-contrib' '--enablerepo=powertools' 'install' '-q' '-y' '--'  "$@"
+							$noop 'dnf' '--disablerepo=*' '--enablerepo=base' '--enablerepo=updates' '--enablerepo=powertools' '--enablerepo=storpool-contrib' 'install' '-q' '-y' '--'  "$@"
 							;;
 						
 						list_all)
@@ -2147,10 +2168,10 @@ for f in $packages; do
 done
 
 if [ -n "$to_install" ]; then
-    dnf install -y --enablerepo=storpool-contrib,powertools --setopt=localpkg_gpgcheck=0 -- $to_install
+    dnf install -y --disablerepo='*' --enablerepo=base,updates,storpool-contrib,powertools --setopt=localpkg_gpgcheck=0 -- $to_install
 fi
 if [ -n "$to_reinstall" ]; then
-    dnf reinstall -y --enablerepo=storpool-contrib,powertools --setopt=localpkg_gpgcheck=0 -- $to_reinstall
+    dnf reinstall -y --disablerepo='*' --enablerepo=base,updates,storpool-contrib,powertools --setopt=localpkg_gpgcheck=0 -- $to_reinstall
 fi
 '  "$@"
 							;;
@@ -2180,7 +2201,7 @@ fi
 						install)
 							# The commands are quoted exactly as much as necessary.
 							# shellcheck disable=SC2016
-							$noop 'yum' '--enablerepo=storpool-contrib' 'install' '-q' '-y'  "$@"
+							$noop 'yum' '--disablerepo=*' '--enablerepo=base' '--enablerepo=updates' '--enablerepo=storpool-contrib' 'install' '-q' '-y'  "$@"
 							;;
 						
 						list_all)
@@ -2245,10 +2266,10 @@ for f in $packages; do
 done
 
 if [ -n "$to_install" ]; then
-    yum install -y --enablerepo=storpool-contrib --setopt=localpkg_gpgcheck=0 -- $to_install
+    yum install -y --disablerepo='*' --enablerepo=base,updates,storpool-contrib --setopt=localpkg_gpgcheck=0 -- $to_install
 fi
 if [ -n "$to_reinstall" ]; then
-    yum reinstall -y --enablerepo=storpool-contrib --setopt=localpkg_gpgcheck=0 -- $to_reinstall
+    yum reinstall -y --disablerepo='*' --enablerepo=base,updates,storpool-contrib --setopt=localpkg_gpgcheck=0 -- $to_reinstall
 fi
 '  "$@"
 							;;
@@ -2278,7 +2299,7 @@ fi
 						install)
 							# The commands are quoted exactly as much as necessary.
 							# shellcheck disable=SC2016
-							$noop 'yum' '--enablerepo=storpool-contrib' 'install' '-q' '-y'  "$@"
+							$noop 'yum' '--disablerepo=*' '--enablerepo=base' '--enablerepo=updates' '--enablerepo=storpool-contrib' 'install' '-q' '-y'  "$@"
 							;;
 						
 						list_all)
@@ -2343,10 +2364,10 @@ for f in $packages; do
 done
 
 if [ -n "$to_install" ]; then
-    yum install -y --enablerepo=storpool-contrib --setopt=localpkg_gpgcheck=0 -- $to_install
+    yum install -y --disablerepo='*' --enablerepo=base,updates,storpool-contrib --setopt=localpkg_gpgcheck=0 -- $to_install
 fi
 if [ -n "$to_reinstall" ]; then
-    yum reinstall -y --enablerepo=storpool-contrib --setopt=localpkg_gpgcheck=0 -- $to_reinstall
+    yum reinstall -y --disablerepo='*' --enablerepo=base,updates,storpool-contrib --setopt=localpkg_gpgcheck=0 -- $to_reinstall
 fi
 '  "$@"
 							;;
@@ -2376,7 +2397,7 @@ fi
 						install)
 							# The commands are quoted exactly as much as necessary.
 							# shellcheck disable=SC2016
-							$noop 'dnf' '--enablerepo=storpool-contrib' '--enablerepo=powertools' 'install' '-q' '-y' '--'  "$@"
+							$noop 'dnf' '--disablerepo=*' '--enablerepo=base' '--enablerepo=updates' '--enablerepo=powertools' '--enablerepo=storpool-contrib' 'install' '-q' '-y' '--'  "$@"
 							;;
 						
 						list_all)
@@ -2441,10 +2462,10 @@ for f in $packages; do
 done
 
 if [ -n "$to_install" ]; then
-    dnf install -y --enablerepo=storpool-contrib,powertools --setopt=localpkg_gpgcheck=0 -- $to_install
+    dnf install -y --disablerepo='*' --enablerepo=base,updates,storpool-contrib,powertools --setopt=localpkg_gpgcheck=0 -- $to_install
 fi
 if [ -n "$to_reinstall" ]; then
-    dnf reinstall -y --enablerepo=storpool-contrib,powertools --setopt=localpkg_gpgcheck=0 -- $to_reinstall
+    dnf reinstall -y --disablerepo='*' --enablerepo=base,updates,storpool-contrib,powertools --setopt=localpkg_gpgcheck=0 -- $to_reinstall
 fi
 '  "$@"
 							;;
@@ -2798,7 +2819,7 @@ fi
 						install)
 							# The commands are quoted exactly as much as necessary.
 							# shellcheck disable=SC2016
-							$noop 'yum' '--enablerepo=storpool-contrib' 'install' '-q' '-y'  "$@"
+							$noop 'yum' '--disablerepo=*' '--enablerepo=base' '--enablerepo=updates' '--enablerepo=storpool-contrib' 'install' '-q' '-y'  "$@"
 							;;
 						
 						list_all)
@@ -2863,10 +2884,10 @@ for f in $packages; do
 done
 
 if [ -n "$to_install" ]; then
-    yum install -y --enablerepo=storpool-contrib --setopt=localpkg_gpgcheck=0 -- $to_install
+    yum install -y --disablerepo='*' --enablerepo=base,updates,storpool-contrib --setopt=localpkg_gpgcheck=0 -- $to_install
 fi
 if [ -n "$to_reinstall" ]; then
-    yum reinstall -y --enablerepo=storpool-contrib --setopt=localpkg_gpgcheck=0 -- $to_reinstall
+    yum reinstall -y --disablerepo='*' --enablerepo=base,updates,storpool-contrib --setopt=localpkg_gpgcheck=0 -- $to_reinstall
 fi
 '  "$@"
 							;;
@@ -2896,7 +2917,7 @@ fi
 						install)
 							# The commands are quoted exactly as much as necessary.
 							# shellcheck disable=SC2016
-							$noop 'dnf' '--enablerepo=storpool-contrib' '--enablerepo=codeready-builder-for-rhel-8-x86_64-rpms' 'install' '-q' '-y' '--'  "$@"
+							$noop 'dnf' '--disablerepo=*' '--enablerepo=base' '--enablerepo=updates' '--enablerepo=storpool-contrib' '--enablerepo=codeready-builder-for-rhel-8-x86_64-rpms' 'install' '-q' '-y' '--'  "$@"
 							;;
 						
 						list_all)
@@ -2961,10 +2982,10 @@ for f in $packages; do
 done
 
 if [ -n "$to_install" ]; then
-    dnf install -y --enablerepo=storpool-contrib,codeready-builder-for-rhel-8-x86_64-rpms --setopt=localpkg_gpgcheck=0 -- $to_install
+    dnf install -y --disablerepo='*' --enablerepo=base,updates,storpool-contrib,codeready-builder-for-rhel-8-x86_64-rpms --setopt=localpkg_gpgcheck=0 -- $to_install
 fi
 if [ -n "$to_reinstall" ]; then
-    dnf reinstall -y --enablerepo=storpool-contrib,codeready-builder-for-rhel-8-x86_64-rpms --setopt=localpkg_gpgcheck=0 -- $to_reinstall
+    dnf reinstall -y --disablerepo='*' --enablerepo=base,updates,storpool-contrib,codeready-builder-for-rhel-8-x86_64-rpms --setopt=localpkg_gpgcheck=0 -- $to_reinstall
 fi
 '  "$@"
 							;;
@@ -2994,7 +3015,7 @@ fi
 						install)
 							# The commands are quoted exactly as much as necessary.
 							# shellcheck disable=SC2016
-							$noop 'dnf' '--enablerepo=storpool-contrib' '--enablerepo=powertools' 'install' '-q' '-y' '--'  "$@"
+							$noop 'dnf' '--disablerepo=*' '--enablerepo=base' '--enablerepo=updates' '--enablerepo=powertools' '--enablerepo=storpool-contrib' 'install' '-q' '-y' '--'  "$@"
 							;;
 						
 						list_all)
@@ -3059,10 +3080,10 @@ for f in $packages; do
 done
 
 if [ -n "$to_install" ]; then
-    dnf install -y --enablerepo=storpool-contrib,powertools --setopt=localpkg_gpgcheck=0 -- $to_install
+    dnf install -y --disablerepo='*' --enablerepo=base,updates,storpool-contrib,powertools --setopt=localpkg_gpgcheck=0 -- $to_install
 fi
 if [ -n "$to_reinstall" ]; then
-    dnf reinstall -y --enablerepo=storpool-contrib,powertools --setopt=localpkg_gpgcheck=0 -- $to_reinstall
+    dnf reinstall -y --disablerepo='*' --enablerepo=base,updates,storpool-contrib,powertools --setopt=localpkg_gpgcheck=0 -- $to_reinstall
 fi
 '  "$@"
 							;;
