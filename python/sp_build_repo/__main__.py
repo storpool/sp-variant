@@ -197,7 +197,8 @@ def subst_debian_sources(
             .get_template(src.name)
             .render(
                 url=rtype.url if ovr.url is None else ovr.url,
-                name=rtype.name if ovr.slug is None else ovr.slug,
+                name=rtype.name,
+                slug=rtype.name if ovr.slug is None else ovr.slug,
                 vendor=var.repo.vendor if ovr.vendor is None else ovr.vendor,
                 codename=var.repo.codename if ovr.codename is None else ovr.codename,
             )
@@ -232,7 +233,8 @@ def subst_yum_repo(
             .get_template(src.name)
             .render(
                 url=rtype.url if ovr.url is None else ovr.url,
-                name=rtype.name if ovr.slug is None else ovr.slug,
+                name=rtype.name,
+                slug=rtype.name if ovr.slug is None else ovr.slug,
             )
         )
     except jinja2.TemplateError as err:

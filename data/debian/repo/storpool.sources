@@ -1,5 +1,5 @@
 Types: deb deb-src
-URIs: {{ url }}{{ name }}/{{ vendor }}/
+URIs: {{ url }}{{ slug }}/{{ vendor }}/
 Suites: {{ codename }}
 Components: main
 Architectures: amd64
