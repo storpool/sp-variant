@@ -42,5 +42,7 @@ done
 	-W clippy::restriction \
 		-A clippy::implicit_return \
 		-A clippy::missing_docs_in_private_items \
+		-A clippy::std_instead_of_alloc \
+		-A clippy::std_instead_of_core \
 	-W clippy::pedantic \
 	${run_nursery+-W clippy::nursery}
