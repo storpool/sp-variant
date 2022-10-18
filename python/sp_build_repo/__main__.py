@@ -144,7 +144,7 @@ def ensure_none(cfg: Config, path: pathlib.Path) -> None:
     """Remove a file, directory, or other filesystem object altogether."""
     if not path.exists():
         return
-    cfg.diag(f"Removing the existing {path}")
+    cfg.diag(lambda: f"Removing the existing {path}")
     try:
         subprocess.check_call(["rm", "-rf", "--", path])
     except subprocess.CalledProcessError as err:
@@ -181,7 +181,12 @@ def subst_debian_sources(
     """Substitute the placeholder vars in a Debian sources list file."""
     assert isinstance(var.repo, defs.DebRepo)
     dst = dstdir / (src.stem + rtype.extension + src.suffix)
-    cfg.diag(f"{src} -> {dst} [vendor {var.repo.vendor}, codename {var.repo.codename}]")
+    cfg.diag(
+        lambda: (
+            f"{src} -> {dst} [vendor "
+            f"{var.repo.vendor}, codename {var.repo.codename}]"  # type: ignore[union-attr]
+        )
+    )
 
     ovr = cfg.overrides.repo.get(
         rtype.name, OverrideRepo(url=None, slug=None, vendor=None, codename=None)
@@ -216,7 +221,7 @@ def subst_yum_repo(
     """Substitute the placeholder vars in a Debian sources list file."""
     assert isinstance(var.repo, defs.YumRepo)
     dst = dstdir / (src.stem + rtype.extension + src.suffix)
-    cfg.diag(f"{src} -> {dst} []")
+    cfg.diag(lambda: f"{src} -> {dst} []")
 
     ovr = cfg.overrides.repo.get(
         rtype.name, OverrideRepo(url=None, slug=None, vendor=None, codename=None)
@@ -298,7 +303,7 @@ def build_repo(cfg: Config) -> pathlib.Path:
 
     distfile = (cfg.destdir / distname).with_suffix(".tar.gz")
     ensure_none(cfg, distfile)
-    cfg.diag(f"Creating {distfile}")
+    cfg.diag(lambda: f"Creating {distfile}")
     try:
         subprocess.check_call(
             ["tar", "-caf", distfile, "-C", cfg.destdir, distname],

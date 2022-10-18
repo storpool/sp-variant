@@ -124,10 +124,10 @@ def build_json(var: variant.Variant) -> str:
 
 def substitute(cfg: Config) -> None:
     """Perform the substitutions."""
-    cfg.diag("Building the variants data")
+    cfg.diag_("Building the variants data")
     variants = variant.get_all_variants_in_order()
 
-    cfg.diag("Preparing the Jinja substitution environment")
+    cfg.diag_("Preparing the Jinja substitution environment")
     jenv = jinja2.Environment(
         autoescape=False,
         loader=jinja2.FileSystemLoader(cfg.template.parent),
@@ -145,15 +145,15 @@ def substitute(cfg: Config) -> None:
         "version": defs.VERSION,
     }
 
-    cfg.diag("Rendering the template")
+    cfg.diag_("Rendering the template")
     result = jenv.get_template(cfg.template.name).render(**jvars)
-    cfg.diag(f"Got {len(result)} characters")
+    cfg.diag(lambda: f"Got {len(result)} characters")
 
-    cfg.diag(f"Generating the {cfg.output} output file")
+    cfg.diag(lambda: f"Generating the {cfg.output} output file")
     cfg.output.write_text(result, encoding="UTF-8")
     cfg.output.chmod(cfg.output_mode)
 
-    cfg.diag(f"Rendered {cfg.template} into {cfg.output}")
+    cfg.diag(lambda: f"Rendered {cfg.template} into {cfg.output}")
 
 
 def main() -> None:
