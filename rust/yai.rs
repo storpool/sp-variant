@@ -34,37 +34,35 @@ use std::io::Error as IoError;
 use std::path::Path;
 
 use regex::Regex;
+use thiserror::Error;
 
-quick_error! {
-    /// An error that occurred during parsing.
-    #[derive(Debug)]
-    #[non_exhaustive]
-    pub enum YAIError {
-        /// A backslash at the end of the line.
-        BackslashAtEnd(line: String) {
-            display("Backslash at the end of the {:?} os-release line", line)
-        }
-        /// An invalid line in the /etc/os-release file.
-        BadLine(line: String) {
-            display("Unexpected os-release line {:?}", line)
-        }
-        /// A quoted value contains the quote character.
-        QuoteInQuoted(line: String) {
-            display("The value in the {:?} os-release line contains the quote character", line)
-        }
-        /// Mismatched open/close quotes.
-        MismatchedQuotes(line: String) {
-            display("Mismatched open/close quotes in the {:?} os-release line", line)
-        }
-        /// Could not read the /etc/os-release file.
-        FileRead(err: IoError) {
-            display("Could not read the /etc/os-release file: {}", err)
-        }
-        /// An internal error occurred
-        InternalError(message: String) {
-            display("YAI parser internal error: {}", message)
-        }
-    }
+/// An error that occurred during parsing.
+#[derive(Debug, Error)]
+#[non_exhaustive]
+pub enum YAIError {
+    /// A backslash at the end of the line.
+    #[error("Backslash at the end of the {0:?} os-release line")]
+    BackslashAtEnd(String),
+
+    /// An invalid line in the /etc/os-release file.
+    #[error("Unexpected os-release line {0:?}")]
+    BadLine(String),
+
+    /// A quoted value contains the quote character.
+    #[error("The value in the {0:?} os-release line contains the quote character")]
+    QuoteInQuoted(String),
+
+    /// Mismatched open/close quotes.
+    #[error("Mismatched open/close quotes in the {0:?} os-release line")]
+    MismatchedQuotes(String),
+
+    /// Could not read the /etc/os-release file.
+    #[error("Could not read the /etc/os-release file")]
+    FileRead(#[source] IoError),
+
+    /// An internal error occurred
+    #[error("YAI parser internal error: {0}")]
+    InternalError(String),
 }
 
 const RE_LINE: &str = "(?x)

@@ -36,11 +36,9 @@ use std::io::{Error as IoError, ErrorKind};
 
 use regex::RegexBuilder;
 use serde::{Deserialize, Serialize};
+use thiserror::Error;
 
 use yai::YAIError;
-
-#[macro_use]
-extern crate quick_error;
 
 #[macro_use]
 extern crate lazy_static;
@@ -54,32 +52,29 @@ pub mod tests;
 
 pub use data::VariantKind;
 
-quick_error! {
-    /// An error that occurred while determining the Linux variant.
-    #[derive(Debug)]
-    #[non_exhaustive]
-    pub enum VariantError {
-        /// An invalid variant name was specified.
-        BadVariant(name: String) {
-            display("Unknown variant '{}'", name)
-        }
-        /// A file to be examined could not be read.
-        FileRead(variant: String, filename: String, err: IoError) {
-            display("Checking for {}: could not read {}: {}", variant, filename, err)
-        }
-        /// Unexpected error parsing the /etc/os-release file.
-        OsRelease(err: YAIError) {
-            display("Could not parse the /etc/os-release file: {}", err)
-        }
-        /// None of the variants matched.
-        UnknownVariant {
-            display("Could not detect the current host's build variant")
-        }
-        /// Something went really, really wrong.
-        Internal(msg: String) {
-            display("Internal sp-variant error: {}", msg)
-        }
-    }
+/// An error that occurred while determining the Linux variant.
+#[derive(Debug, Error)]
+#[non_exhaustive]
+pub enum VariantError {
+    /// An invalid variant name was specified.
+    #[error("Unknown variant '{0}'")]
+    BadVariant(String),
+
+    /// A file to be examined could not be read.
+    #[error("Checking for {0}: could not read {1}")]
+    FileRead(String, String, #[source] IoError),
+
+    /// Unexpected error parsing the /etc/os-release file.
+    #[error("Could not parse the /etc/os-release file")]
+    OsRelease(#[source] YAIError),
+
+    /// None of the variants matched.
+    #[error("Could not detect the current host's build variant")]
+    UnknownVariant,
+
+    /// Something went really, really wrong.
+    #[error("Internal sp-variant error: {0}")]
+    Internal(String),
 }
 
 /// The version of the variant definition format data.

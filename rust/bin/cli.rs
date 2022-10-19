@@ -27,23 +27,20 @@
 use std::str::FromStr;
 
 use clap::{Parser, Subcommand};
-use quick_error::quick_error;
+use thiserror::Error;
 
-quick_error! {
-    #[derive(Debug)]
-    pub enum ParseError {
-        CommandIdNeedsTwo {
-            display("The command identifier must consist of exactly two parts separated by a dot")
-        }
-        RepoTypeUnknown {
-            display(
-                "Unrecognized repository type, must be one of {}, {}, or {}",
-                RepoType::CONTRIB,
-                RepoType::STAGING,
-                RepoType::INFRA,
-            )
-        }
-    }
+#[derive(Debug, Error)]
+pub enum ParseError {
+    #[error("The command identifier must consist of exactly two parts separated by a dot")]
+    CommandIdNeedsTwo,
+
+    #[error(
+        "Unrecognized repository type, must be one of {}, {}, or {}",
+        RepoType::CONTRIB,
+        RepoType::STAGING,
+        RepoType::INFRA
+    )]
+    RepoTypeUnknown,
 }
 
 #[derive(Debug)]
