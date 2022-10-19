@@ -29,11 +29,10 @@
 //! the os-release file as found in recent Linux distributions.
 
 use std::collections::HashMap;
-use std::error::Error;
 use std::fs;
+use std::io::Error as IoError;
 use std::path::Path;
 
-use expect_exit::{ExpectedResult, ExpectedWithError};
 use regex::Regex;
 
 quick_error! {
@@ -56,6 +55,10 @@ quick_error! {
         /// Mismatched open/close quotes.
         MismatchedQuotes(line: String) {
             display("Mismatched open/close quotes in the {:?} os-release line", line)
+        }
+        /// Could not read the /etc/os-release file.
+        FileRead(err: IoError) {
+            display("Could not read the /etc/os-release file: {}", err)
         }
         /// An internal error occurred
         InternalError(message: String) {
@@ -80,18 +83,26 @@ const RE_LINE: &str = "(?x)
     ) $
 ";
 
-fn parse_line(line: &str) -> Result<Option<(String, String)>, Box<dyn Error>> {
+fn parse_line(line: &str) -> Result<Option<(String, String)>, YAIError> {
     lazy_static! {
-        static ref RE: Regex = Regex::new(RE_LINE)
-            .expect_result(|| format!("could not parse '{}'", RE_LINE))
-            .or_exit_e_("YAI internal error");
+        static ref RE: Result<Regex, YAIError> =
+            Regex::new(RE_LINE).map_err(|err| YAIError::InternalError(format!(
+                "Could not parse '{}': {}",
+                RE_LINE, err
+            )));
     }
-    match RE.captures(line) {
+    match RE
+        .as_ref()
+        .map_err(|err| {
+            YAIError::InternalError(format!("Could not initialize the parser: {}", err))
+        })?
+        .captures(line)
+    {
         Some(caps) => {
-            let cap = |name: &str| -> Result<&str, Box<dyn Error>> {
+            let cap = |name: &str| -> Result<&str, YAIError> {
                 Ok(caps
                     .name(name)
-                    .expect_result(|| format!("Internal error: no '{}' in {:?}", name, caps))?
+                    .ok_or_else(|| YAIError::InternalError(format!("No '{}' in {:?}", name, caps)))?
                     .as_str())
             };
 
@@ -105,10 +116,10 @@ fn parse_line(line: &str) -> Result<Option<(String, String)>, Box<dyn Error>> {
 
             if q_open == Some("'") {
                 if quoted_top.contains('\'') {
-                    return Err(Box::new(YAIError::QuoteInQuoted(line.to_owned())));
+                    return Err(YAIError::QuoteInQuoted(line.to_owned()));
                 }
                 if q_close != q_open {
-                    return Err(Box::new(YAIError::MismatchedQuotes(line.to_owned())));
+                    return Err(YAIError::MismatchedQuotes(line.to_owned()));
                 }
                 return Ok(Some((varname.to_owned(), quoted_top.to_owned())));
             }
@@ -116,15 +127,15 @@ fn parse_line(line: &str) -> Result<Option<(String, String)>, Box<dyn Error>> {
             let quoted = match q_open {
                 Some("\"") => {
                     if q_close != q_open {
-                        return Err(Box::new(YAIError::MismatchedQuotes(line.to_owned())));
+                        return Err(YAIError::MismatchedQuotes(line.to_owned()));
                     }
                     quoted_top
                 }
                 Some(other) => {
-                    return Err(Box::new(YAIError::InternalError(format!(
+                    return Err(YAIError::InternalError(format!(
                         "YAI parse_line: {:?}: q_open {:?}",
                         line, other
-                    ))))
+                    )))
                 }
                 None => cap("full")?,
             }
@@ -140,10 +151,10 @@ fn parse_line(line: &str) -> Result<Option<(String, String)>, Box<dyn Error>> {
                     }
                 }) {
                 (false, res) => Ok(Some((varname.to_owned(), res))),
-                (true, _) => Err(Box::new(YAIError::BackslashAtEnd(line.to_owned()))),
+                (true, _) => Err(YAIError::BackslashAtEnd(line.to_owned())),
             }
         }
-        None => Err(Box::new(YAIError::BadLine(line.to_owned()))),
+        None => Err(YAIError::BadLine(line.to_owned())),
     }
 }
 
@@ -153,8 +164,9 @@ fn parse_line(line: &str) -> Result<Option<(String, String)>, Box<dyn Error>> {
 /// - I/O or text decoding errors from reading the file
 /// - [`YAIError`] parse errors from examining the INI-file structure
 #[allow(clippy::missing_inline_in_public_items)]
-pub fn parse<P: AsRef<Path>>(path: P) -> Result<HashMap<String, String>, Box<dyn Error>> {
-    fs::read_to_string(path)?
+pub fn parse<P: AsRef<Path>>(path: P) -> Result<HashMap<String, String>, YAIError> {
+    fs::read_to_string(path)
+        .map_err(YAIError::FileRead)?
         .lines()
         .filter_map(|line| parse_line(line).transpose())
         .collect()
@@ -167,8 +179,6 @@ mod tests {
 
     use std::error::Error;
     use std::fs;
-
-    use super::YAIError;
 
     const LINES_BAD: [&str; 5] = [
         "NAME='",
@@ -219,14 +229,7 @@ BUG_REPORT_URL=\"https://bugs.debian.org/\"";
         println!("\nMaking sure malformed lines are rejected");
         for line in &LINES_BAD {
             println!("- {:?}", line);
-            match super::parse_line(line) {
-                Ok(data) => panic!("The {:?} malformed line was misparsed as {:?}", line, data),
-                Err(err) => {
-                    if !err.downcast_ref::<YAIError>().is_some() {
-                        panic!("The {:?} malformed line raised an error: {}", line, err)
-                    }
-                }
-            }
+            super::parse_line(line).unwrap_err();
         }
     }
 

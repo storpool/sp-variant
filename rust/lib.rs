@@ -31,13 +31,13 @@
 
 use std::clone::Clone;
 use std::collections::HashMap;
-use std::error::Error;
 use std::fs;
 use std::io::{Error as IoError, ErrorKind};
 
-use expect_exit::ExpectedResult;
 use regex::RegexBuilder;
 use serde::{Deserialize, Serialize};
+
+use yai::YAIError;
 
 #[macro_use]
 extern crate quick_error;
@@ -68,12 +68,16 @@ quick_error! {
             display("Checking for {}: could not read {}: {}", variant, filename, err)
         }
         /// Unexpected error parsing the /etc/os-release file.
-        OsRelease(err: Box<dyn Error>) {
+        OsRelease(err: YAIError) {
             display("Could not parse the /etc/os-release file: {}", err)
         }
         /// None of the variants matched.
         UnknownVariant {
             display("Could not detect the current host's build variant")
+        }
+        /// Something went really, really wrong.
+        Internal(msg: String) {
+            display("Internal sp-variant error: {}", msg)
         }
     }
 }
@@ -222,7 +226,7 @@ pub fn build_variants() -> &'static VariantDefTop {
 /// # Errors
 /// Propagates any errors from [`detect_from()`].
 #[inline]
-pub fn detect() -> Result<Variant, Box<dyn Error>> {
+pub fn detect() -> Result<Variant, VariantError> {
     detect_from(build_variants()).map(Clone::clone)
 }
 
@@ -234,17 +238,17 @@ pub fn detect() -> Result<Variant, Box<dyn Error>> {
 /// - any `os-release` parse errors from [`crate::yai::parse()`] other than "file not found"
 /// - I/O errors from reading the distribution-specific version files (e.g. `/etc/redhat-release`)
 #[allow(clippy::missing_inline_in_public_items)]
-pub fn detect_from(variants: &VariantDefTop) -> Result<&Variant, Box<dyn Error>> {
+pub fn detect_from(variants: &VariantDefTop) -> Result<&Variant, VariantError> {
     match yai::parse("/etc/os-release") {
         Ok(data) => {
             if let Some(os_id) = data.get("ID") {
                 if let Some(version_id) = data.get("VERSION_ID") {
                     for kind in &variants.order {
-                        let var = &variants.variants.get(kind).expect_result(|| {
-                            format!(
+                        let var = &variants.variants.get(kind).ok_or_else(|| {
+                            VariantError::Internal(format!(
                                 "Internal error: unknown variant {} in the order",
                                 kind.as_ref()
-                            )
+                            ))
                         })?;
                         if var.detect.os_id != *os_id {
                             continue;
@@ -252,12 +256,13 @@ pub fn detect_from(variants: &VariantDefTop) -> Result<&Variant, Box<dyn Error>>
                         let re_ver = RegexBuilder::new(&var.detect.os_version_regex)
                             .ignore_whitespace(true)
                             .build()
-                            .expect_result(|| {
-                                format!(
-                                    "Internal error: {}: could not parse '{}'",
+                            .map_err(|err| {
+                                VariantError::Internal(format!(
+                                    "Internal error: {}: could not parse '{}': {}",
                                     kind.as_ref(),
-                                    var.detect.regex
-                                )
+                                    var.detect.regex,
+                                    err
+                                ))
                             })?;
                         if re_ver.is_match(version_id) {
                             return Ok(var);
@@ -267,33 +272,27 @@ pub fn detect_from(variants: &VariantDefTop) -> Result<&Variant, Box<dyn Error>>
             }
             // Fall through to the PRETTY_NAME processing.
         }
-        Err(err) => {
-            let ignore = match err.downcast_ref::<IoError>() {
-                Some(io_err) => io_err.kind() == ErrorKind::NotFound,
-                None => false,
-            };
-            if !ignore {
-                return Err(Box::new(VariantError::OsRelease(err)));
-            }
-        }
+        Err(YAIError::FileRead(io_err)) if io_err.kind() == ErrorKind::NotFound => (),
+        Err(err) => return Err(VariantError::OsRelease(err)),
     }
 
     for kind in &variants.order {
-        let var = &variants.variants.get(kind).expect_result(|| {
-            format!(
+        let var = &variants.variants.get(kind).ok_or_else(|| {
+            VariantError::Internal(format!(
                 "Internal error: unknown variant {} in the order",
                 kind.as_ref()
-            )
+            ))
         })?;
         let re_line = RegexBuilder::new(&var.detect.regex)
             .ignore_whitespace(true)
             .build()
-            .expect_result(|| {
-                format!(
-                    "Internal error: {}: could not parse '{}'",
+            .map_err(|err| {
+                VariantError::Internal(format!(
+                    "Internal error: {}: could not parse '{}': {}",
                     kind.as_ref(),
-                    var.detect.regex
-                )
+                    var.detect.regex,
+                    err
+                ))
             })?;
         match fs::read(&var.detect.filename) {
             Ok(file_bytes) => {
@@ -307,16 +306,16 @@ pub fn detect_from(variants: &VariantDefTop) -> Result<&Variant, Box<dyn Error>>
             }
             Err(err) => {
                 if err.kind() != ErrorKind::NotFound {
-                    return Err(Box::new(VariantError::FileRead(
+                    return Err(VariantError::FileRead(
                         var.kind.as_ref().to_owned(),
                         var.detect.filename.clone(),
                         err,
-                    )));
+                    ));
                 }
             }
         };
     }
-    Err(Box::new(VariantError::UnknownVariant))
+    Err(VariantError::UnknownVariant)
 }
 
 /// Get the variant with the specified name from the supplied data.
@@ -328,12 +327,12 @@ pub fn detect_from(variants: &VariantDefTop) -> Result<&Variant, Box<dyn Error>>
 pub fn get_from<'defs>(
     variants: &'defs VariantDefTop,
     name: &str,
-) -> Result<&'defs Variant, Box<dyn Error>> {
+) -> Result<&'defs Variant, VariantError> {
     let kind: VariantKind = name.parse()?;
     variants
         .variants
         .get(&kind)
-        .expect_result(|| format!("No data for the {} variant", name))
+        .ok_or_else(|| VariantError::Internal(format!("No data for the {} variant", name)))
 }
 
 /// Get the variant with the specified builder alias from the supplied data.
@@ -344,12 +343,12 @@ pub fn get_from<'defs>(
 pub fn get_by_alias_from<'defs>(
     variants: &'defs VariantDefTop,
     alias: &str,
-) -> Result<&'defs Variant, Box<dyn Error>> {
+) -> Result<&'defs Variant, VariantError> {
     variants
         .variants
         .values()
         .find(|var| var.builder.alias == alias)
-        .expect_result(|| format!("No variant with the {} alias", alias))
+        .ok_or_else(|| VariantError::Internal(format!("No variant with the {} alias", alias)))
 }
 
 /// Get the metadata format version of the variant data.

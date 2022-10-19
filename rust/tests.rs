@@ -24,17 +24,16 @@
  * SUCH DAMAGE.
  */
 use std::collections::HashSet;
-use std::error::Error;
 
 #[test]
-fn test_detect() -> Result<(), Box<dyn Error>> {
+fn test_detect() -> Result<(), super::VariantError> {
     let variant = crate::detect()?;
     println!("Detected {}", variant.kind.as_ref());
     Ok(())
 }
 
 #[test]
-fn test_roundtrip() -> Result<(), Box<dyn Error>> {
+fn test_roundtrip() {
     println!("");
     let all = crate::build_variants();
     assert_eq!(all.order.len(), all.variants.len());
@@ -64,6 +63,4 @@ fn test_roundtrip() -> Result<(), Box<dyn Error>> {
     }
     println!("");
     assert_eq!(seen_vec.len(), all.order.len());
-
-    Ok(())
 }
