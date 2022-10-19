@@ -49,6 +49,7 @@ PYTHON_VBUILD=	${CURDIR}/python/sp_variant/vbuild.py
 
 REPO_TMPDIR?=	${CURDIR}/repo-build
 REPO_BUILT=	${REPO_TMPDIR}/add-storpool-repo.tar.gz
+REPO_BIN?=	${SH_BIN}
 
 TEMP_CURRENT_JSON?=	${CURDIR}/current-variant.json
 TEMP_ALL_JSON?=		${CURDIR}/all-variants.json
@@ -77,11 +78,11 @@ test-trivial:	all
 		${CURDIR}/${SH_BIN} show current | ${SP_PY3_NORMALIZE} | diff -u '${TEMP_CURRENT_JSON}' -
 		${CURDIR}/${SH_BIN} command run package.list_all | diff -u '${TEMP_PACKAGE_LIST}' -
 
-${REPO_BUILT}:	all test-trivial
+${REPO_BUILT}:	all test-trivial ${REPO_BIN}
 		rm -rf -- '${REPO_TMPDIR}'
 		[ ! -f '${REPO_BUILT}' ]
 		mkdir -- '${REPO_TMPDIR}'
-		${SP_PY3_ENV} -m sp_build_repo build -d '${CURDIR}/data' -D '${REPO_TMPDIR}' -r '${SH_BIN}' $${REPO_OVERRIDES:+-o "$$REPO_OVERRIDES"} --no-date
+		${SP_PY3_ENV} -m sp_build_repo build -d '${CURDIR}/data' -D '${REPO_TMPDIR}' -r '${REPO_BIN}' $${REPO_OVERRIDES:+-o "$$REPO_OVERRIDES"} --no-date
 		[ -f '${REPO_BUILT}' ]
 
 repo:		${REPO_BUILT}
