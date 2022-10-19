@@ -62,7 +62,7 @@ pub enum YAIError {
 
     /// An internal error occurred
     #[error("YAI parser internal error: {0}")]
-    InternalError(String),
+    Internal(String),
 }
 
 const RE_LINE: &str = "(?x)
@@ -83,24 +83,19 @@ const RE_LINE: &str = "(?x)
 
 fn parse_line(line: &str) -> Result<Option<(String, String)>, YAIError> {
     lazy_static! {
-        static ref RE: Result<Regex, YAIError> =
-            Regex::new(RE_LINE).map_err(|err| YAIError::InternalError(format!(
-                "Could not parse '{}': {}",
-                RE_LINE, err
-            )));
+        static ref RE: Result<Regex, YAIError> = Regex::new(RE_LINE)
+            .map_err(|err| YAIError::Internal(format!("Could not parse '{}': {}", RE_LINE, err)));
     }
     match RE
         .as_ref()
-        .map_err(|err| {
-            YAIError::InternalError(format!("Could not initialize the parser: {}", err))
-        })?
+        .map_err(|err| YAIError::Internal(format!("Could not initialize the parser: {}", err)))?
         .captures(line)
     {
         Some(caps) => {
             let cap = |name: &str| -> Result<&str, YAIError> {
                 Ok(caps
                     .name(name)
-                    .ok_or_else(|| YAIError::InternalError(format!("No '{}' in {:?}", name, caps)))?
+                    .ok_or_else(|| YAIError::Internal(format!("No '{}' in {:?}", name, caps)))?
                     .as_str())
             };
 
@@ -130,7 +125,7 @@ fn parse_line(line: &str) -> Result<Option<(String, String)>, YAIError> {
                     quoted_top
                 }
                 Some(other) => {
-                    return Err(YAIError::InternalError(format!(
+                    return Err(YAIError::Internal(format!(
                         "YAI parse_line: {:?}: q_open {:?}",
                         line, other
                     )))
