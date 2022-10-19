@@ -18,8 +18,8 @@ name = "storpool_variant"
 path = "rust/bin/main.rs"
 
 [dependencies]
+anyhow = "1.0.65"
 clap = { version = "3", features = ["derive"] }
-expect-exit = "0.5.1"
 lazy_static = "1"
 nix = ">= 0.22"
 regex = "1"
