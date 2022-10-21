@@ -180,13 +180,10 @@ def subst_debian_sources(
 ) -> None:
     """Substitute the placeholder vars in a Debian sources list file."""
     assert isinstance(var.repo, defs.DebRepo)
+    vendor = var.repo.vendor
+    codename = var.repo.codename
     dst = dstdir / (src.stem + rtype.extension + src.suffix)
-    cfg.diag(
-        lambda: (
-            f"{src} -> {dst} [vendor "
-            f"{var.repo.vendor}, codename {var.repo.codename}]"  # type: ignore[union-attr]
-        )
-    )
+    cfg.diag(lambda: f"{src} -> {dst} [vendor {vendor}, codename {codename}]")
 
     ovr = cfg.overrides.repo.get(
         rtype.name, OverrideRepo(url=None, slug=None, vendor=None, codename=None)
@@ -199,8 +196,8 @@ def subst_debian_sources(
                 url=rtype.url if ovr.url is None else ovr.url,
                 name=rtype.name,
                 slug=rtype.name if ovr.slug is None else ovr.slug,
-                vendor=var.repo.vendor if ovr.vendor is None else ovr.vendor,
-                codename=var.repo.codename if ovr.codename is None else ovr.codename,
+                vendor=vendor if ovr.vendor is None else ovr.vendor,
+                codename=codename if ovr.codename is None else ovr.codename,
             )
         )
     except jinja2.TemplateError as err:
