@@ -136,7 +136,7 @@ pub fn get_variants() -> &'static VariantDefTop {
                                     ]
                                 ),
                                 min_sys_python: "{{ var.min_sys_python }}".to_owned(),
-                                repo: {% if var.family == "redhat" %}
+                                repo: {%- if var.family == "redhat" %}
                                     Repo::Yum(YumRepo {
                                         yumdef: "{{ var.repo.yumdef }}".to_owned(),
                                         keyring: "{{ var.repo.keyring }}".to_owned(),
@@ -155,7 +155,7 @@ pub fn get_variants() -> &'static VariantDefTop {
                                     }),
                                     {% else %}
                                     INVALID!,
-                                    {% endif %}
+                                    {% endif -%}
                                 package: HashMap::from(
                                     [
                                         {%- for pkg_name, pkg in var.package|dictsort %}
