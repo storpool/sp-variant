@@ -33,7 +33,8 @@ use std::fs;
 use std::io::Error as IoError;
 use std::path::Path;
 
-use regex::Regex;
+use once_cell::sync::Lazy;
+use regex::{Error as RegexError, Regex};
 use thiserror::Error;
 
 /// An error that occurred during parsing.
@@ -82,13 +83,10 @@ const RE_LINE: &str = "(?x)
 ";
 
 fn parse_line(line: &str) -> Result<Option<(String, String)>, YAIError> {
-    lazy_static! {
-        static ref RE: Result<Regex, YAIError> = Regex::new(RE_LINE)
-            .map_err(|err| YAIError::Internal(format!("Could not parse '{}': {}", RE_LINE, err)));
-    }
+    static RE: Lazy<Result<Regex, RegexError>> = Lazy::new(|| Regex::new(RE_LINE));
     match RE
         .as_ref()
-        .map_err(|err| YAIError::Internal(format!("Could not initialize the parser: {}", err)))?
+        .map_err(|err| YAIError::Internal(format!("Could not parse '{}': {}", RE_LINE, err)))?
         .captures(line)
     {
         Some(caps) => {

@@ -30,6 +30,7 @@
 use std::collections::HashMap;
 use std::str::FromStr;
 
+use once_cell::sync::Lazy;
 use serde::{Deserialize, Serialize};
 
 use crate::{
@@ -83,8 +84,8 @@ impl FromStr for VariantKind {
 #[allow(clippy::too_many_lines)]
 #[must_use]
 pub fn get_variants() -> &'static VariantDefTop {
-    lazy_static! {
-        static ref DEF_TOP: VariantDefTop = VariantDefTop {
+    static DEF_TOP: Lazy<VariantDefTop> = Lazy::new(|| {
+        VariantDefTop {
             format: VariantFormat {
                 version: VariantFormatVersion {
                     major: {{ format_version[0] }},
@@ -179,8 +180,8 @@ pub fn get_variants() -> &'static VariantDefTop {
                 ]
             ),
             version: "{{ version }}".to_owned(),
-        };
-    }
+        }
+    });
     assert!(
         DEF_TOP.format.version.major == 1,
         "Internal error: JSON variant definition: version {:?}",

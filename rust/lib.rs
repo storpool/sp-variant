@@ -40,9 +40,6 @@ use thiserror::Error;
 
 use yai::YAIError;
 
-#[macro_use]
-extern crate lazy_static;
-
 mod data;
 
 pub mod yai;
