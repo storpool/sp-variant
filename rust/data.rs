@@ -30,6 +30,7 @@
 use std::collections::HashMap;
 use std::str::FromStr;
 
+use once_cell::sync::Lazy;
 use serde::{Deserialize, Serialize};
 
 use crate::{
@@ -150,8 +151,8 @@ impl FromStr for VariantKind {
 #[allow(clippy::too_many_lines)]
 #[must_use]
 pub fn get_variants() -> &'static VariantDefTop {
-    lazy_static! {
-        static ref DEF_TOP: VariantDefTop = VariantDefTop {
+    static DEF_TOP: Lazy<VariantDefTop> = Lazy::new(|| {
+        VariantDefTop {
             format: VariantFormat {
                 version: VariantFormatVersion {
                     major: 1,
@@ -307,8 +308,7 @@ fi
                                         yumdef: "redhat/repo/storpool-centos.repo".to_owned(),
                                         keyring: "redhat/repo/RPM-GPG-KEY-StorPool".to_owned(),
                                     }),
-
-                                package: HashMap::from(
+                                    package: HashMap::from(
                                     [
                                         ("KMOD".to_owned(), "kmod".to_owned()),
                                         ("LIBCGROUP".to_owned(), "libcgroup-tools".to_owned()),
@@ -460,8 +460,7 @@ fi
                                         yumdef: "redhat/repo/storpool-centos.repo".to_owned(),
                                         keyring: "redhat/repo/RPM-GPG-KEY-StorPool".to_owned(),
                                     }),
-
-                                package: HashMap::from(
+                                    package: HashMap::from(
                                     [
                                         ("KMOD".to_owned(), "module-init-tools".to_owned()),
                                         ("LIBCGROUP".to_owned(), "libcgroup".to_owned()),
@@ -613,8 +612,7 @@ fi
                                         yumdef: "redhat/repo/storpool-centos.repo".to_owned(),
                                         keyring: "redhat/repo/RPM-GPG-KEY-StorPool".to_owned(),
                                     }),
-
-                                package: HashMap::from(
+                                    package: HashMap::from(
                                     [
                                         ("KMOD".to_owned(), "kmod".to_owned()),
                                         ("LIBCGROUP".to_owned(), "libcgroup-tools".to_owned()),
@@ -770,8 +768,7 @@ fi
                                         yumdef: "redhat/repo/storpool-centos.repo".to_owned(),
                                         keyring: "redhat/repo/RPM-GPG-KEY-StorPool".to_owned(),
                                     }),
-
-                                package: HashMap::from(
+                                    package: HashMap::from(
                                     [
                                         ("KMOD".to_owned(), "kmod".to_owned()),
                                         ("LIBCGROUP".to_owned(), "libcgroup-tools".to_owned()),
@@ -927,8 +924,7 @@ fi
                                             "ca-certificates".to_owned(),
                                         ],
                                     }),
-
-                                package: HashMap::from(
+                                    package: HashMap::from(
                                     [
                                         ("BINDINGS_PYTHON".to_owned(), "python".to_owned()),
                                         ("BINDINGS_PYTHON_CONFGET".to_owned(), "python-confget".to_owned()),
@@ -1079,8 +1075,7 @@ fi
                                             "ca-certificates".to_owned(),
                                         ],
                                     }),
-
-                                package: HashMap::from(
+                                    package: HashMap::from(
                                     [
                                         ("BINDINGS_PYTHON".to_owned(), "python".to_owned()),
                                         ("BINDINGS_PYTHON_CONFGET".to_owned(), "python-confget".to_owned()),
@@ -1231,8 +1226,7 @@ fi
                                             "ca-certificates".to_owned(),
                                         ],
                                     }),
-
-                                package: HashMap::from(
+                                    package: HashMap::from(
                                     [
                                         ("BINDINGS_PYTHON".to_owned(), "python3".to_owned()),
                                         ("BINDINGS_PYTHON_CONFGET".to_owned(), "python3-confget".to_owned()),
@@ -1383,8 +1377,7 @@ fi
                                             "ca-certificates".to_owned(),
                                         ],
                                     }),
-
-                                package: HashMap::from(
+                                    package: HashMap::from(
                                     [
                                         ("BINDINGS_PYTHON".to_owned(), "python3".to_owned()),
                                         ("BINDINGS_PYTHON_CONFGET".to_owned(), "python3-confget".to_owned()),
@@ -1532,8 +1525,7 @@ fi
                                         yumdef: "redhat/repo/storpool-centos.repo".to_owned(),
                                         keyring: "redhat/repo/RPM-GPG-KEY-StorPool".to_owned(),
                                     }),
-
-                                package: HashMap::from(
+                                    package: HashMap::from(
                                     [
                                         ("KMOD".to_owned(), "kmod".to_owned()),
                                         ("LIBCGROUP".to_owned(), "libcgroup-tools".to_owned()),
@@ -1689,8 +1681,7 @@ fi
                                         yumdef: "redhat/repo/storpool-centos.repo".to_owned(),
                                         keyring: "redhat/repo/RPM-GPG-KEY-StorPool".to_owned(),
                                     }),
-
-                                package: HashMap::from(
+                                    package: HashMap::from(
                                     [
                                         ("KMOD".to_owned(), "kmod".to_owned()),
                                         ("LIBCGROUP".to_owned(), "libcgroup-tools".to_owned()),
@@ -1846,8 +1837,7 @@ fi
                                         yumdef: "redhat/repo/storpool-centos.repo".to_owned(),
                                         keyring: "redhat/repo/RPM-GPG-KEY-StorPool".to_owned(),
                                     }),
-
-                                package: HashMap::from(
+                                    package: HashMap::from(
                                     [
                                         ("KMOD".to_owned(), "kmod".to_owned()),
                                         ("LIBCGROUP".to_owned(), "libcgroup-tools".to_owned()),
@@ -1999,8 +1989,7 @@ fi
                                             "ca-certificates".to_owned(),
                                         ],
                                     }),
-
-                                package: HashMap::from(
+                                    package: HashMap::from(
                                     [
                                         ("BINDINGS_PYTHON".to_owned(), "python".to_owned()),
                                         ("BINDINGS_PYTHON_CONFGET".to_owned(), "python-confget".to_owned()),
@@ -2148,8 +2137,7 @@ fi
                                             "ca-certificates".to_owned(),
                                         ],
                                     }),
-
-                                package: HashMap::from(
+                                    package: HashMap::from(
                                     [
                                         ("BINDINGS_PYTHON".to_owned(), "python".to_owned()),
                                         ("BINDINGS_PYTHON_CONFGET".to_owned(), "python-confget".to_owned()),
@@ -2296,8 +2284,7 @@ fi
                                             "ca-certificates".to_owned(),
                                         ],
                                     }),
-
-                                package: HashMap::from(
+                                    package: HashMap::from(
                                     [
                                         ("BINDINGS_PYTHON".to_owned(), "python3".to_owned()),
                                         ("BINDINGS_PYTHON_CONFGET".to_owned(), "python3-confget".to_owned()),
@@ -2444,8 +2431,7 @@ fi
                                             "ca-certificates".to_owned(),
                                         ],
                                     }),
-
-                                package: HashMap::from(
+                                    package: HashMap::from(
                                     [
                                         ("BINDINGS_PYTHON".to_owned(), "python3".to_owned()),
                                         ("BINDINGS_PYTHON_CONFGET".to_owned(), "python3-confget".to_owned()),
@@ -2592,8 +2578,7 @@ fi
                                             "ca-certificates".to_owned(),
                                         ],
                                     }),
-
-                                package: HashMap::from(
+                                    package: HashMap::from(
                                     [
                                         ("BINDINGS_PYTHON".to_owned(), "python3".to_owned()),
                                         ("BINDINGS_PYTHON_CONFGET".to_owned(), "python3-confget".to_owned()),
@@ -2619,8 +2604,8 @@ fi
                 ]
             ),
             version: "2.4.0".to_owned(),
-        };
-    }
+        }
+    });
     assert!(
         DEF_TOP.format.version.major == 1,
         "Internal error: JSON variant definition: version {:?}",
