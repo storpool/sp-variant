@@ -147,6 +147,7 @@ impl FromStr for VariantKind {
 }
 
 /// Return the definition of the StorPool variants.
+#[allow(clippy::manual_string_new)]
 #[allow(clippy::panic)]
 #[allow(clippy::too_many_lines)]
 #[must_use]
