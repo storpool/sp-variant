@@ -85,7 +85,7 @@ fn run_command(cmdvec: &[String], action: &str, noop: bool) -> Result<()> {
     let (name, args) = cmdvec
         .split_first()
         .with_context(|| format!("Internal error: empty '{}' command", action))?;
-    let status = Command::new(&name)
+    let status = Command::new(name)
         .args(args)
         .spawn()
         .with_context(|| format!("{}: {}", action, cmdstr))?
