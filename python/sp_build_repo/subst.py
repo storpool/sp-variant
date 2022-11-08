@@ -41,7 +41,7 @@ from sp_variant import variant
 
 
 @dataclasses.dataclass(frozen=True)
-class Config(cfg_diag.ConfigDiag):
+class Config(cfg_diag.Config):
     """Runtime configuration for the variant substitution tool."""
 
     output: pathlib.Path

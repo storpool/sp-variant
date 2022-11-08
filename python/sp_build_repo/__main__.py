@@ -101,7 +101,7 @@ class Overrides:
 
 
 @dataclasses.dataclass(frozen=True)
-class Config(cfg_diag.ConfigDiag):
+class Config(cfg_diag.Config):
     """Configuration for the repository setup."""
 
     datadir: pathlib.Path
