@@ -244,7 +244,7 @@ show_ALMA8()
   {
   "builder": {
     "alias": "alma8",
-    "base_image": "almalinux/almalinux:8",
+    "base_image": "almalinux:8",
     "branch": "",
     "kernel_package": "kernel-core",
     "utf8_locale": "C.utf8"
@@ -1295,7 +1295,7 @@ show_ROCKY8()
   {
   "builder": {
     "alias": "rocky8",
-    "base_image": "rockylinux/rockylinux:8",
+    "base_image": "rockylinux:8",
     "branch": "",
     "kernel_package": "kernel-core",
     "utf8_locale": "C.utf8"

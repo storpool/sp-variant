@@ -329,7 +329,7 @@ fi
                                 initramfs_flavor: "mkinitrd".to_owned(),
                                 builder: Builder {
                                     alias: "alma8".to_owned(),
-                                    base_image: "almalinux/almalinux:8".to_owned(),
+                                    base_image: "almalinux:8".to_owned(),
                                     branch: "".to_owned(),
                                     kernel_package: "kernel-core".to_owned(),
                                     utf8_locale: "C.utf8".to_owned(),
@@ -1858,7 +1858,7 @@ fi
                                 initramfs_flavor: "mkinitrd".to_owned(),
                                 builder: Builder {
                                     alias: "rocky8".to_owned(),
-                                    base_image: "rockylinux/rockylinux:8".to_owned(),
+                                    base_image: "rockylinux:8".to_owned(),
                                     branch: "".to_owned(),
                                     kernel_package: "kernel-core".to_owned(),
                                     utf8_locale: "C.utf8".to_owned(),
