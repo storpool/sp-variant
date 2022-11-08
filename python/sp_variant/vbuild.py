@@ -372,15 +372,15 @@ _VARIANT_DEF = [
         },
     ),
     defs.Variant(
-        name="ALMA8",
-        descr="AlmaLinux 8.x",
+        name="ALMA9",
+        descr="AlmaLinux 9.x",
         parent="",
         family="redhat",
         detect=defs.Detect(
             filename="/etc/redhat-release",
-            regex=re.compile(r"^ AlmaLinux \s .* \s 8 \. (?: [4-9] | [1-9][0-9] )", re.X),
+            regex=re.compile(r"^ AlmaLinux \s .* \s 9 \. [0-9]", re.X),
             os_id="alma",
-            os_version_regex=re.compile(r"^8(?:$|\.[4-9]|\.[1-9][0-9])"),
+            os_version_regex=re.compile(r"^9(?:$|\.[0-9])"),
         ),
         commands=defs.Commands(
             package=defs.CommandsPackage(
@@ -389,7 +389,6 @@ _VARIANT_DEF = [
                     "dnf",
                     "--disablerepo=*",
                     "--enablerepo=baseos",
-                    "--enablerepo=powertools",
                     "--enablerepo=storpool-contrib",
                     "install",
                     "-q",
@@ -444,10 +443,10 @@ for f in $packages; do
 done
 
 if [ -n "$to_install" ]; then
-    dnf install -y --disablerepo='*' --enablerepo=baseos,storpool-contrib,powertools --setopt=localpkg_gpgcheck=0 -- $to_install
+    dnf install -y --disablerepo='*' --enablerepo=baseos,storpool-contrib --setopt=localpkg_gpgcheck=0 -- $to_install
 fi
 if [ -n "$to_reinstall" ]; then
-    dnf reinstall -y --disablerepo='*' --enablerepo=baseos,storpool-contrib,powertools --setopt=localpkg_gpgcheck=0 -- $to_reinstall
+    dnf reinstall -y --disablerepo='*' --enablerepo=baseos,storpool-contrib --setopt=localpkg_gpgcheck=0 -- $to_reinstall
 fi
 """,  # noqa: E501  pylint: disable=line-too-long
                 ],
@@ -475,12 +474,69 @@ fi
         file_ext="rpm",
         initramfs_flavor="mkinitrd",
         builder=defs.Builder(
-            alias="alma8",
-            base_image="almalinux:8",
-            branch="",
+            alias="alma9",
+            base_image="almalinux:9",
+            branch="centos/9",
             kernel_package="kernel-core",
             utf8_locale="C.utf8",
         ),
+    ),
+    defs.VariantUpdate(
+        name="ALMA8",
+        descr="AlmaLinux 8.x",
+        parent="ALMA9",
+        detect=defs.Detect(
+            filename="/etc/redhat-release",
+            regex=re.compile(r"^ AlmaLinux \s .* \s 8 \. (?: [4-9] | [1-9][0-9] )", re.X),
+            os_id="alma",
+            os_version_regex=re.compile(r"^8(?:$|\.[4-9]|\.[1-9][0-9])"),
+        ),
+        updates={
+            "commands": {
+                "package": {
+                    "install": [
+                        "dnf",
+                        "--disablerepo=*",
+                        "--enablerepo=baseos",
+                        "--enablerepo=powertools",
+                        "--enablerepo=storpool-contrib",
+                        "install",
+                        "-q",
+                        "-y",
+                        "--",
+                    ],
+                },
+                "pkgfile": {
+                    "install": [
+                        "sh",
+                        "-c",
+                        """
+unset to_install to_reinstall
+for f in $packages; do
+    package="$(rpm -qp "$f")"
+    if rpm -q -- "$package"; then
+        to_reinstall="$to_reinstall ./$f"
+    else
+        to_install="$to_install ./$f"
+    fi
+done
+
+if [ -n "$to_install" ]; then
+    dnf install -y --disablerepo='*' --enablerepo=baseos,storpool-contrib,powertools --setopt=localpkg_gpgcheck=0 -- $to_install
+fi
+if [ -n "$to_reinstall" ]; then
+    dnf reinstall -y --disablerepo='*' --enablerepo=baseos,storpool-contrib,powertools --setopt=localpkg_gpgcheck=0 -- $to_reinstall
+fi
+""",  # noqa: E501  pylint: disable=line-too-long
+                    ],
+                },
+            },
+            "builder": {
+                "alias": "alma8",
+                "base_image": "almalinux:8",
+                "branch": "",
+            },
+        },
     ),
     defs.VariantUpdate(
         name="CENTOS8",
@@ -663,6 +719,27 @@ fi
             "builder": {
                 "alias": "rhel8",
                 "base_image": "redhat/ubi8:reg",
+                "branch": "",
+            },
+        },
+    ),
+    defs.VariantUpdate(
+        name="ROCKY9",
+        descr="Rocky Linux 9.x",
+        parent="ALMA9",
+        detect=defs.Detect(
+            filename="/etc/redhat-release",
+            regex=re.compile(
+                r"^ Rocky \s+ Linux \s .* \s 9 \. [0-9]",
+                re.X,
+            ),
+            os_id="rocky",
+            os_version_regex=re.compile(r"^8(?:$|\.[0-9])"),
+        ),
+        updates={
+            "builder": {
+                "alias": "rocky9",
+                "base_image": "rockylinux:9",
                 "branch": "",
             },
         },
