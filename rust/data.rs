@@ -204,8 +204,7 @@ pub fn get_variants() -> &'static VariantDefTop {
                                                         vec![
                                                             "dnf".to_owned(),
                                                             "--disablerepo=*".to_owned(),
-                                                            "--enablerepo=base".to_owned(),
-                                                            "--enablerepo=updates".to_owned(),
+                                                            "--enablerepo=baseos".to_owned(),
                                                             "--enablerepo=powertools".to_owned(),
                                                             "--enablerepo=storpool-contrib".to_owned(),
                                                             "install".to_owned(),
@@ -290,10 +289,10 @@ for f in $packages; do
 done
 
 if [ -n \"$to_install\" ]; then
-    dnf install -y --disablerepo='*' --enablerepo=base,updates,storpool-contrib,powertools --setopt=localpkg_gpgcheck=0 -- $to_install
+    dnf install -y --disablerepo='*' --enablerepo=baseos,storpool-contrib,powertools --setopt=localpkg_gpgcheck=0 -- $to_install
 fi
 if [ -n \"$to_reinstall\" ]; then
-    dnf reinstall -y --disablerepo='*' --enablerepo=base,updates,storpool-contrib,powertools --setopt=localpkg_gpgcheck=0 -- $to_reinstall
+    dnf reinstall -y --disablerepo='*' --enablerepo=baseos,storpool-contrib,powertools --setopt=localpkg_gpgcheck=0 -- $to_reinstall
 fi
 ".to_owned(),
                                                         ],
@@ -664,8 +663,7 @@ fi
                                                         vec![
                                                             "dnf".to_owned(),
                                                             "--disablerepo=*".to_owned(),
-                                                            "--enablerepo=base".to_owned(),
-                                                            "--enablerepo=updates".to_owned(),
+                                                            "--enablerepo=baseos".to_owned(),
                                                             "--enablerepo=powertools".to_owned(),
                                                             "--enablerepo=storpool-contrib".to_owned(),
                                                             "install".to_owned(),
@@ -750,10 +748,10 @@ for f in $packages; do
 done
 
 if [ -n \"$to_install\" ]; then
-    dnf install -y --disablerepo='*' --enablerepo=base,updates,storpool-contrib,powertools --setopt=localpkg_gpgcheck=0 -- $to_install
+    dnf install -y --disablerepo='*' --enablerepo=baseos,storpool-contrib,powertools --setopt=localpkg_gpgcheck=0 -- $to_install
 fi
 if [ -n \"$to_reinstall\" ]; then
-    dnf reinstall -y --disablerepo='*' --enablerepo=base,updates,storpool-contrib,powertools --setopt=localpkg_gpgcheck=0 -- $to_reinstall
+    dnf reinstall -y --disablerepo='*' --enablerepo=baseos,storpool-contrib,powertools --setopt=localpkg_gpgcheck=0 -- $to_reinstall
 fi
 ".to_owned(),
                                                         ],
@@ -1577,8 +1575,7 @@ fi
                                                         vec![
                                                             "dnf".to_owned(),
                                                             "--disablerepo=*".to_owned(),
-                                                            "--enablerepo=base".to_owned(),
-                                                            "--enablerepo=updates".to_owned(),
+                                                            "--enablerepo=baseos".to_owned(),
                                                             "--enablerepo=storpool-contrib".to_owned(),
                                                             "--enablerepo=codeready-builder-for-rhel-8-x86_64-rpms".to_owned(),
                                                             "install".to_owned(),
@@ -1663,10 +1660,10 @@ for f in $packages; do
 done
 
 if [ -n \"$to_install\" ]; then
-    dnf install -y --disablerepo='*' --enablerepo=base,updates,storpool-contrib,codeready-builder-for-rhel-8-x86_64-rpms --setopt=localpkg_gpgcheck=0 -- $to_install
+    dnf install -y --disablerepo='*' --enablerepo=baseos,storpool-contrib,codeready-builder-for-rhel-8-x86_64-rpms --setopt=localpkg_gpgcheck=0 -- $to_install
 fi
 if [ -n \"$to_reinstall\" ]; then
-    dnf reinstall -y --disablerepo='*' --enablerepo=base,updates,storpool-contrib,codeready-builder-for-rhel-8-x86_64-rpms --setopt=localpkg_gpgcheck=0 -- $to_reinstall
+    dnf reinstall -y --disablerepo='*' --enablerepo=baseos,storpool-contrib,codeready-builder-for-rhel-8-x86_64-rpms --setopt=localpkg_gpgcheck=0 -- $to_reinstall
 fi
 ".to_owned(),
                                                         ],
@@ -1733,8 +1730,7 @@ fi
                                                         vec![
                                                             "dnf".to_owned(),
                                                             "--disablerepo=*".to_owned(),
-                                                            "--enablerepo=base".to_owned(),
-                                                            "--enablerepo=updates".to_owned(),
+                                                            "--enablerepo=baseos".to_owned(),
                                                             "--enablerepo=powertools".to_owned(),
                                                             "--enablerepo=storpool-contrib".to_owned(),
                                                             "install".to_owned(),
@@ -1819,10 +1815,10 @@ for f in $packages; do
 done
 
 if [ -n \"$to_install\" ]; then
-    dnf install -y --disablerepo='*' --enablerepo=base,updates,storpool-contrib,powertools --setopt=localpkg_gpgcheck=0 -- $to_install
+    dnf install -y --disablerepo='*' --enablerepo=baseos,storpool-contrib,powertools --setopt=localpkg_gpgcheck=0 -- $to_install
 fi
 if [ -n \"$to_reinstall\" ]; then
-    dnf reinstall -y --disablerepo='*' --enablerepo=base,updates,storpool-contrib,powertools --setopt=localpkg_gpgcheck=0 -- $to_reinstall
+    dnf reinstall -y --disablerepo='*' --enablerepo=baseos,storpool-contrib,powertools --setopt=localpkg_gpgcheck=0 -- $to_reinstall
 fi
 ".to_owned(),
                                                         ],
