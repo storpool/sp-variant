@@ -344,8 +344,11 @@ if /sp/storpool_variant show current | tr "\n" ' ' | grep -Eqe '"family"[[:space
     is_debian=1
     echo 'Running apt-get update'
     apt-get update
+elif [ "$(/sp/storpool_variant detect)" = 'CENTOS8' ]; then
+    echo 'Running dnf swap centos-linux-repos centos-stream-repos'
+    dnf --disablerepo '*' --enablerepo extras -y swap centos-linux-repos centos-stream-repos
 else
-    echo 'No apt-get update necessary'
+    echo 'No apt-get update or dnf swap necessary'
 fi
 
 echo 'Running add-storpool-repo'
