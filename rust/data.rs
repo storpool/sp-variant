@@ -2920,7 +2920,7 @@ fi
                     ),
                 ]
             ),
-            version: "2.4.0".to_owned(),
+            version: "3.0.0".to_owned(),
         }
     });
     assert!(
