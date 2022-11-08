@@ -44,6 +44,8 @@ use crate::{
 pub enum VariantKind {
     /// AlmaLinux 8.x
     ALMA8,
+    /// AlmaLinux 9.x
+    ALMA9,
     /// CentOS 6.x
     CENTOS6,
     /// CentOS 7.x
@@ -64,6 +66,8 @@ pub enum VariantKind {
     RHEL8,
     /// Rocky Linux 8.x
     ROCKY8,
+    /// Rocky Linux 9.x
+    ROCKY9,
     /// Ubuntu 16.04 LTS (Xenial Xerus)
     UBUNTU1604,
     /// Ubuntu 18.04 LTS (Bionic Beaver)
@@ -78,6 +82,7 @@ pub enum VariantKind {
 
 impl VariantKind {
     const ALMA8_NAME: &'static str = "ALMA8";
+    const ALMA9_NAME: &'static str = "ALMA9";
     const CENTOS6_NAME: &'static str = "CENTOS6";
     const CENTOS7_NAME: &'static str = "CENTOS7";
     const CENTOS8_NAME: &'static str = "CENTOS8";
@@ -88,6 +93,7 @@ impl VariantKind {
     const ORACLE7_NAME: &'static str = "ORACLE7";
     const RHEL8_NAME: &'static str = "RHEL8";
     const ROCKY8_NAME: &'static str = "ROCKY8";
+    const ROCKY9_NAME: &'static str = "ROCKY9";
     const UBUNTU1604_NAME: &'static str = "UBUNTU1604";
     const UBUNTU1804_NAME: &'static str = "UBUNTU1804";
     const UBUNTU2004_NAME: &'static str = "UBUNTU2004";
@@ -100,6 +106,7 @@ impl AsRef<str> for VariantKind {
     fn as_ref(&self) -> &str {
         match *self {
             Self::ALMA8 => Self::ALMA8_NAME,
+            Self::ALMA9 => Self::ALMA9_NAME,
             Self::CENTOS6 => Self::CENTOS6_NAME,
             Self::CENTOS7 => Self::CENTOS7_NAME,
             Self::CENTOS8 => Self::CENTOS8_NAME,
@@ -110,6 +117,7 @@ impl AsRef<str> for VariantKind {
             Self::ORACLE7 => Self::ORACLE7_NAME,
             Self::RHEL8 => Self::RHEL8_NAME,
             Self::ROCKY8 => Self::ROCKY8_NAME,
+            Self::ROCKY9 => Self::ROCKY9_NAME,
             Self::UBUNTU1604 => Self::UBUNTU1604_NAME,
             Self::UBUNTU1804 => Self::UBUNTU1804_NAME,
             Self::UBUNTU2004 => Self::UBUNTU2004_NAME,
@@ -126,6 +134,7 @@ impl FromStr for VariantKind {
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         match s {
             Self::ALMA8_NAME => Ok(Self::ALMA8),
+            Self::ALMA9_NAME => Ok(Self::ALMA9),
             Self::CENTOS6_NAME => Ok(Self::CENTOS6),
             Self::CENTOS7_NAME => Ok(Self::CENTOS7),
             Self::CENTOS8_NAME => Ok(Self::CENTOS8),
@@ -136,6 +145,7 @@ impl FromStr for VariantKind {
             Self::ORACLE7_NAME => Ok(Self::ORACLE7),
             Self::RHEL8_NAME => Ok(Self::RHEL8),
             Self::ROCKY8_NAME => Ok(Self::ROCKY8),
+            Self::ROCKY9_NAME => Ok(Self::ROCKY9),
             Self::UBUNTU1604_NAME => Ok(Self::UBUNTU1604),
             Self::UBUNTU1804_NAME => Ok(Self::UBUNTU1804),
             Self::UBUNTU2004_NAME => Ok(Self::UBUNTU2004),
@@ -162,12 +172,14 @@ pub fn get_variants() -> &'static VariantDefTop {
             },
             order: vec![
                     VariantKind::ROCKY8,
+                    VariantKind::ROCKY9,
                     VariantKind::RHEL8,
                     VariantKind::ORACLE7,
                     VariantKind::CENTOS6,
                     VariantKind::CENTOS7,
                     VariantKind::CENTOS8,
                     VariantKind::ALMA8,
+                    VariantKind::ALMA9,
                     VariantKind::UBUNTU1604,
                     VariantKind::UBUNTU1804,
                     VariantKind::UBUNTU2004,
@@ -186,7 +198,7 @@ pub fn get_variants() -> &'static VariantDefTop {
                                 kind: VariantKind::ALMA8,
                                 descr: "AlmaLinux 8.x".to_owned(),
                                 family: "redhat".to_owned(),
-                                parent: "".to_owned(),
+                                parent: "ALMA9".to_owned(),
                                 detect: Detect {
                                     filename: "/etc/redhat-release".to_owned(),
                                     regex: r"^ AlmaLinux \s .* \s 8 \. (?: [4-9] | [1-9][0-9] )".to_owned(),
@@ -330,6 +342,160 @@ fi
                                     alias: "alma8".to_owned(),
                                     base_image: "almalinux:8".to_owned(),
                                     branch: "".to_owned(),
+                                    kernel_package: "kernel-core".to_owned(),
+                                    utf8_locale: "C.utf8".to_owned(),
+                                },
+                            },
+                    ),
+                    (
+                            VariantKind::ALMA9,
+                            Variant {
+                                kind: VariantKind::ALMA9,
+                                descr: "AlmaLinux 9.x".to_owned(),
+                                family: "redhat".to_owned(),
+                                parent: "".to_owned(),
+                                detect: Detect {
+                                    filename: "/etc/redhat-release".to_owned(),
+                                    regex: r"^ AlmaLinux \s .* \s 9 \. [0-9]".to_owned(),
+                                    os_id: "alma".to_owned(),
+                                    os_version_regex: r"^9(?:$|\.[0-9])".to_owned(),
+                                },
+                                commands: HashMap::from(
+                                    [
+                                        (
+                                            "package".to_owned(),
+                                            HashMap::from(
+                                                [
+                                                    (
+                                                        "install".to_owned(),
+                                                        vec![
+                                                            "dnf".to_owned(),
+                                                            "--disablerepo=*".to_owned(),
+                                                            "--enablerepo=baseos".to_owned(),
+                                                            "--enablerepo=storpool-contrib".to_owned(),
+                                                            "install".to_owned(),
+                                                            "-q".to_owned(),
+                                                            "-y".to_owned(),
+                                                            "--".to_owned(),
+                                                        ],
+                                                    ),
+                                                    (
+                                                        "list_all".to_owned(),
+                                                        vec![
+                                                            "rpm".to_owned(),
+                                                            "-qa".to_owned(),
+                                                            "--qf".to_owned(),
+                                                            "%{Name}\\t%{EVR}\\t%{Arch}\\tii\\n".to_owned(),
+                                                            "--".to_owned(),
+                                                        ],
+                                                    ),
+                                                    (
+                                                        "purge".to_owned(),
+                                                        vec![
+                                                            "yum".to_owned(),
+                                                            "remove".to_owned(),
+                                                            "-q".to_owned(),
+                                                            "-y".to_owned(),
+                                                            "--".to_owned(),
+                                                        ],
+                                                    ),
+                                                    (
+                                                        "remove".to_owned(),
+                                                        vec![
+                                                            "yum".to_owned(),
+                                                            "remove".to_owned(),
+                                                            "-q".to_owned(),
+                                                            "-y".to_owned(),
+                                                            "--".to_owned(),
+                                                        ],
+                                                    ),
+                                                    (
+                                                        "remove_impl".to_owned(),
+                                                        vec![
+                                                            "rpm".to_owned(),
+                                                            "-e".to_owned(),
+                                                            "--".to_owned(),
+                                                        ],
+                                                    ),
+                                                    (
+                                                        "update_db".to_owned(),
+                                                        vec![
+                                                            "true".to_owned(),
+                                                        ],
+                                                    ),
+                                                ]
+                                            ),
+                                        ),
+                                        (
+                                            "pkgfile".to_owned(),
+                                            HashMap::from(
+                                                [
+                                                    (
+                                                        "dep_query".to_owned(),
+                                                        vec![
+                                                            "sh".to_owned(),
+                                                            "-c".to_owned(),
+                                                            "rpm -qpR -- \"$pkg\"".to_owned(),
+                                                        ],
+                                                    ),
+                                                    (
+                                                        "install".to_owned(),
+                                                        vec![
+                                                            "sh".to_owned(),
+                                                            "-c".to_owned(),
+                                                            "
+unset to_install to_reinstall
+for f in $packages; do
+    package=\"$(rpm -qp \"$f\")\"
+    if rpm -q -- \"$package\"; then
+        to_reinstall=\"$to_reinstall ./$f\"
+    else
+        to_install=\"$to_install ./$f\"
+    fi
+done
+
+if [ -n \"$to_install\" ]; then
+    dnf install -y --disablerepo='*' --enablerepo=baseos,storpool-contrib --setopt=localpkg_gpgcheck=0 -- $to_install
+fi
+if [ -n \"$to_reinstall\" ]; then
+    dnf reinstall -y --disablerepo='*' --enablerepo=baseos,storpool-contrib --setopt=localpkg_gpgcheck=0 -- $to_reinstall
+fi
+".to_owned(),
+                                                        ],
+                                                    ),
+                                                ]
+                                            ),
+                                        ),
+                                    ]
+                                ),
+                                min_sys_python: "2.7".to_owned(),
+                                repo:
+                                    Repo::Yum(YumRepo {
+                                        yumdef: "redhat/repo/storpool-centos.repo".to_owned(),
+                                        keyring: "redhat/repo/RPM-GPG-KEY-StorPool".to_owned(),
+                                    }),
+                                    package: HashMap::from(
+                                    [
+                                        ("KMOD".to_owned(), "kmod".to_owned()),
+                                        ("LIBCGROUP".to_owned(), "libcgroup-tools".to_owned()),
+                                        ("LIBUDEV".to_owned(), "systemd-libs".to_owned()),
+                                        ("OPENSSL".to_owned(), "openssl-libs".to_owned()),
+                                        ("PERL_AUTODIE".to_owned(), "perl-autodie".to_owned()),
+                                        ("PERL_FILE_PATH".to_owned(), "perl-File-Path".to_owned()),
+                                        ("PERL_LWP_PROTO_HTTPS".to_owned(), "perl-LWP-Protocol-https".to_owned()),
+                                        ("PERL_SYS_SYSLOG".to_owned(), "perl-Sys-Syslog".to_owned()),
+                                        ("PROCPS".to_owned(), "procps-ng".to_owned()),
+                                        ("PYTHON_SIMPLEJSON".to_owned(), "python2-simplejson".to_owned()),
+                                        ("UDEV".to_owned(), "systemd".to_owned()),
+                                    ]
+                                ),
+                                systemd_lib: "usr/lib/systemd/system".to_owned(),
+                                file_ext: "rpm".to_owned(),
+                                initramfs_flavor: "mkinitrd".to_owned(),
+                                builder: Builder {
+                                    alias: "alma9".to_owned(),
+                                    base_image: "almalinux:9".to_owned(),
+                                    branch: "centos/9".to_owned(),
                                     kernel_package: "kernel-core".to_owned(),
                                     utf8_locale: "C.utf8".to_owned(),
                                 },
@@ -1855,6 +2021,160 @@ fi
                                 builder: Builder {
                                     alias: "rocky8".to_owned(),
                                     base_image: "rockylinux:8".to_owned(),
+                                    branch: "".to_owned(),
+                                    kernel_package: "kernel-core".to_owned(),
+                                    utf8_locale: "C.utf8".to_owned(),
+                                },
+                            },
+                    ),
+                    (
+                            VariantKind::ROCKY9,
+                            Variant {
+                                kind: VariantKind::ROCKY9,
+                                descr: "Rocky Linux 9.x".to_owned(),
+                                family: "redhat".to_owned(),
+                                parent: "ALMA9".to_owned(),
+                                detect: Detect {
+                                    filename: "/etc/redhat-release".to_owned(),
+                                    regex: r"^ Rocky \s+ Linux \s .* \s 9 \. [0-9]".to_owned(),
+                                    os_id: "rocky".to_owned(),
+                                    os_version_regex: r"^8(?:$|\.[0-9])".to_owned(),
+                                },
+                                commands: HashMap::from(
+                                    [
+                                        (
+                                            "package".to_owned(),
+                                            HashMap::from(
+                                                [
+                                                    (
+                                                        "install".to_owned(),
+                                                        vec![
+                                                            "dnf".to_owned(),
+                                                            "--disablerepo=*".to_owned(),
+                                                            "--enablerepo=baseos".to_owned(),
+                                                            "--enablerepo=storpool-contrib".to_owned(),
+                                                            "install".to_owned(),
+                                                            "-q".to_owned(),
+                                                            "-y".to_owned(),
+                                                            "--".to_owned(),
+                                                        ],
+                                                    ),
+                                                    (
+                                                        "list_all".to_owned(),
+                                                        vec![
+                                                            "rpm".to_owned(),
+                                                            "-qa".to_owned(),
+                                                            "--qf".to_owned(),
+                                                            "%{Name}\\t%{EVR}\\t%{Arch}\\tii\\n".to_owned(),
+                                                            "--".to_owned(),
+                                                        ],
+                                                    ),
+                                                    (
+                                                        "purge".to_owned(),
+                                                        vec![
+                                                            "yum".to_owned(),
+                                                            "remove".to_owned(),
+                                                            "-q".to_owned(),
+                                                            "-y".to_owned(),
+                                                            "--".to_owned(),
+                                                        ],
+                                                    ),
+                                                    (
+                                                        "remove".to_owned(),
+                                                        vec![
+                                                            "yum".to_owned(),
+                                                            "remove".to_owned(),
+                                                            "-q".to_owned(),
+                                                            "-y".to_owned(),
+                                                            "--".to_owned(),
+                                                        ],
+                                                    ),
+                                                    (
+                                                        "remove_impl".to_owned(),
+                                                        vec![
+                                                            "rpm".to_owned(),
+                                                            "-e".to_owned(),
+                                                            "--".to_owned(),
+                                                        ],
+                                                    ),
+                                                    (
+                                                        "update_db".to_owned(),
+                                                        vec![
+                                                            "true".to_owned(),
+                                                        ],
+                                                    ),
+                                                ]
+                                            ),
+                                        ),
+                                        (
+                                            "pkgfile".to_owned(),
+                                            HashMap::from(
+                                                [
+                                                    (
+                                                        "dep_query".to_owned(),
+                                                        vec![
+                                                            "sh".to_owned(),
+                                                            "-c".to_owned(),
+                                                            "rpm -qpR -- \"$pkg\"".to_owned(),
+                                                        ],
+                                                    ),
+                                                    (
+                                                        "install".to_owned(),
+                                                        vec![
+                                                            "sh".to_owned(),
+                                                            "-c".to_owned(),
+                                                            "
+unset to_install to_reinstall
+for f in $packages; do
+    package=\"$(rpm -qp \"$f\")\"
+    if rpm -q -- \"$package\"; then
+        to_reinstall=\"$to_reinstall ./$f\"
+    else
+        to_install=\"$to_install ./$f\"
+    fi
+done
+
+if [ -n \"$to_install\" ]; then
+    dnf install -y --disablerepo='*' --enablerepo=baseos,storpool-contrib --setopt=localpkg_gpgcheck=0 -- $to_install
+fi
+if [ -n \"$to_reinstall\" ]; then
+    dnf reinstall -y --disablerepo='*' --enablerepo=baseos,storpool-contrib --setopt=localpkg_gpgcheck=0 -- $to_reinstall
+fi
+".to_owned(),
+                                                        ],
+                                                    ),
+                                                ]
+                                            ),
+                                        ),
+                                    ]
+                                ),
+                                min_sys_python: "2.7".to_owned(),
+                                repo:
+                                    Repo::Yum(YumRepo {
+                                        yumdef: "redhat/repo/storpool-centos.repo".to_owned(),
+                                        keyring: "redhat/repo/RPM-GPG-KEY-StorPool".to_owned(),
+                                    }),
+                                    package: HashMap::from(
+                                    [
+                                        ("KMOD".to_owned(), "kmod".to_owned()),
+                                        ("LIBCGROUP".to_owned(), "libcgroup-tools".to_owned()),
+                                        ("LIBUDEV".to_owned(), "systemd-libs".to_owned()),
+                                        ("OPENSSL".to_owned(), "openssl-libs".to_owned()),
+                                        ("PERL_AUTODIE".to_owned(), "perl-autodie".to_owned()),
+                                        ("PERL_FILE_PATH".to_owned(), "perl-File-Path".to_owned()),
+                                        ("PERL_LWP_PROTO_HTTPS".to_owned(), "perl-LWP-Protocol-https".to_owned()),
+                                        ("PERL_SYS_SYSLOG".to_owned(), "perl-Sys-Syslog".to_owned()),
+                                        ("PROCPS".to_owned(), "procps-ng".to_owned()),
+                                        ("PYTHON_SIMPLEJSON".to_owned(), "python2-simplejson".to_owned()),
+                                        ("UDEV".to_owned(), "systemd".to_owned()),
+                                    ]
+                                ),
+                                systemd_lib: "usr/lib/systemd/system".to_owned(),
+                                file_ext: "rpm".to_owned(),
+                                initramfs_flavor: "mkinitrd".to_owned(),
+                                builder: Builder {
+                                    alias: "rocky9".to_owned(),
+                                    base_image: "rockylinux:9".to_owned(),
                                     branch: "".to_owned(),
                                     kernel_package: "kernel-core".to_owned(),
                                     utf8_locale: "C.utf8".to_owned(),

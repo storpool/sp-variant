@@ -59,6 +59,11 @@ detect_from_os_release()
 		return
 	fi
 	
+	if [ "$os_id" = 'alma' ] && printf -- '%s\n' "$version_id" | grep -Eqe '^9($|\.[0-9])'; then
+		printf -- '%s\n' 'ALMA9'
+		return
+	fi
+	
 	if [ "$os_id" = 'centos' ] && printf -- '%s\n' "$version_id" | grep -Eqe '^6($|\.[0-9])'; then
 		printf -- '%s\n' 'CENTOS6'
 		return
@@ -106,6 +111,11 @@ detect_from_os_release()
 	
 	if [ "$os_id" = 'rocky' ] && printf -- '%s\n' "$version_id" | grep -Eqe '^8($|\.[4-9]|\.[1-9][0-9])'; then
 		printf -- '%s\n' 'ROCKY8'
+		return
+	fi
+	
+	if [ "$os_id" = 'rocky' ] && printf -- '%s\n' "$version_id" | grep -Eqe '^8($|\.[0-9])'; then
+		printf -- '%s\n' 'ROCKY9'
 		return
 	fi
 	
@@ -157,6 +167,11 @@ cmd_detect()
 		return
 	fi
 	
+	if [ -r '/etc/redhat-release' ] && grep -Eqe '^Rocky[[:space:]]+Linux[[:space:]].*[[:space:]]9\.[0-9]' -- '/etc/redhat-release'; then
+		printf -- '%s\n' 'ROCKY9'
+		return
+	fi
+	
 	if [ -r '/etc/redhat-release' ] && grep -Eqe '^Red[[:space:]]+Hat[[:space:]]+Enterprise[[:space:]]+Linux[[:space:]].*[[:space:]]8\.([4-9]|[1-9][0-9])' -- '/etc/redhat-release'; then
 		printf -- '%s\n' 'RHEL8'
 		return
@@ -184,6 +199,11 @@ cmd_detect()
 	
 	if [ -r '/etc/redhat-release' ] && grep -Eqe '^AlmaLinux[[:space:]].*[[:space:]]8\.([4-9]|[1-9][0-9])' -- '/etc/redhat-release'; then
 		printf -- '%s\n' 'ALMA8'
+		return
+	fi
+	
+	if [ -r '/etc/redhat-release' ] && grep -Eqe '^AlmaLinux[[:space:]].*[[:space:]]9\.[0-9]' -- '/etc/redhat-release'; then
+		printf -- '%s\n' 'ALMA9'
 		return
 	fi
 	
@@ -317,6 +337,107 @@ show_ALMA8()
   "initramfs_flavor": "mkinitrd",
   "min_sys_python": "2.7",
   "name": "ALMA8",
+  "package": {
+    "KMOD": "kmod",
+    "LIBCGROUP": "libcgroup-tools",
+    "LIBUDEV": "systemd-libs",
+    "OPENSSL": "openssl-libs",
+    "PERL_AUTODIE": "perl-autodie",
+    "PERL_FILE_PATH": "perl-File-Path",
+    "PERL_LWP_PROTO_HTTPS": "perl-LWP-Protocol-https",
+    "PERL_SYS_SYSLOG": "perl-Sys-Syslog",
+    "PROCPS": "procps-ng",
+    "PYTHON_SIMPLEJSON": "python2-simplejson",
+    "UDEV": "systemd"
+  },
+  "parent": "ALMA9",
+  "repo": {
+    "keyring": "redhat/repo/RPM-GPG-KEY-StorPool",
+    "yumdef": "redhat/repo/storpool-centos.repo"
+  },
+  "systemd_lib": "usr/lib/systemd/system"
+}
+EOVARIANT_JSON
+}
+
+show_ALMA9()
+{
+	cat <<'EOVARIANT_JSON'
+  {
+  "builder": {
+    "alias": "alma9",
+    "base_image": "almalinux:9",
+    "branch": "centos/9",
+    "kernel_package": "kernel-core",
+    "utf8_locale": "C.utf8"
+  },
+  "commands": {
+    "package": {
+      "install": [
+        "dnf",
+        "--disablerepo=*",
+        "--enablerepo=baseos",
+        "--enablerepo=storpool-contrib",
+        "install",
+        "-q",
+        "-y",
+        "--"
+      ],
+      "list_all": [
+        "rpm",
+        "-qa",
+        "--qf",
+        "%{Name}\\t%{EVR}\\t%{Arch}\\tii\\n",
+        "--"
+      ],
+      "purge": [
+        "yum",
+        "remove",
+        "-q",
+        "-y",
+        "--"
+      ],
+      "remove": [
+        "yum",
+        "remove",
+        "-q",
+        "-y",
+        "--"
+      ],
+      "remove_impl": [
+        "rpm",
+        "-e",
+        "--"
+      ],
+      "update_db": [
+        "true"
+      ]
+    },
+    "pkgfile": {
+      "dep_query": [
+        "sh",
+        "-c",
+        "rpm -qpR -- \"$pkg\""
+      ],
+      "install": [
+        "sh",
+        "-c",
+        "\nunset to_install to_reinstall\nfor f in $packages; do\n    package=\"$(rpm -qp \"$f\")\"\n    if rpm -q -- \"$package\"; then\n        to_reinstall=\"$to_reinstall ./$f\"\n    else\n        to_install=\"$to_install ./$f\"\n    fi\ndone\n\nif [ -n \"$to_install\" ]; then\n    dnf install -y --disablerepo='*' --enablerepo=baseos,storpool-contrib --setopt=localpkg_gpgcheck=0 -- $to_install\nfi\nif [ -n \"$to_reinstall\" ]; then\n    dnf reinstall -y --disablerepo='*' --enablerepo=baseos,storpool-contrib --setopt=localpkg_gpgcheck=0 -- $to_reinstall\nfi\n"
+      ]
+    }
+  },
+  "descr": "AlmaLinux 9.x",
+  "detect": {
+    "filename": "/etc/redhat-release",
+    "os_id": "alma",
+    "os_version_regex": "^9(?:$|\\.[0-9])",
+    "regex": "^ AlmaLinux \\s .* \\s 9 \\. [0-9]"
+  },
+  "family": "redhat",
+  "file_ext": "rpm",
+  "initramfs_flavor": "mkinitrd",
+  "min_sys_python": "2.7",
+  "name": "ALMA9",
   "package": {
     "KMOD": "kmod",
     "LIBCGROUP": "libcgroup-tools",
@@ -1388,6 +1509,107 @@ show_ROCKY8()
 EOVARIANT_JSON
 }
 
+show_ROCKY9()
+{
+	cat <<'EOVARIANT_JSON'
+  {
+  "builder": {
+    "alias": "rocky9",
+    "base_image": "rockylinux:9",
+    "branch": "",
+    "kernel_package": "kernel-core",
+    "utf8_locale": "C.utf8"
+  },
+  "commands": {
+    "package": {
+      "install": [
+        "dnf",
+        "--disablerepo=*",
+        "--enablerepo=baseos",
+        "--enablerepo=storpool-contrib",
+        "install",
+        "-q",
+        "-y",
+        "--"
+      ],
+      "list_all": [
+        "rpm",
+        "-qa",
+        "--qf",
+        "%{Name}\\t%{EVR}\\t%{Arch}\\tii\\n",
+        "--"
+      ],
+      "purge": [
+        "yum",
+        "remove",
+        "-q",
+        "-y",
+        "--"
+      ],
+      "remove": [
+        "yum",
+        "remove",
+        "-q",
+        "-y",
+        "--"
+      ],
+      "remove_impl": [
+        "rpm",
+        "-e",
+        "--"
+      ],
+      "update_db": [
+        "true"
+      ]
+    },
+    "pkgfile": {
+      "dep_query": [
+        "sh",
+        "-c",
+        "rpm -qpR -- \"$pkg\""
+      ],
+      "install": [
+        "sh",
+        "-c",
+        "\nunset to_install to_reinstall\nfor f in $packages; do\n    package=\"$(rpm -qp \"$f\")\"\n    if rpm -q -- \"$package\"; then\n        to_reinstall=\"$to_reinstall ./$f\"\n    else\n        to_install=\"$to_install ./$f\"\n    fi\ndone\n\nif [ -n \"$to_install\" ]; then\n    dnf install -y --disablerepo='*' --enablerepo=baseos,storpool-contrib --setopt=localpkg_gpgcheck=0 -- $to_install\nfi\nif [ -n \"$to_reinstall\" ]; then\n    dnf reinstall -y --disablerepo='*' --enablerepo=baseos,storpool-contrib --setopt=localpkg_gpgcheck=0 -- $to_reinstall\nfi\n"
+      ]
+    }
+  },
+  "descr": "Rocky Linux 9.x",
+  "detect": {
+    "filename": "/etc/redhat-release",
+    "os_id": "rocky",
+    "os_version_regex": "^8(?:$|\\.[0-9])",
+    "regex": "^ Rocky \\s+ Linux \\s .* \\s 9 \\. [0-9]"
+  },
+  "family": "redhat",
+  "file_ext": "rpm",
+  "initramfs_flavor": "mkinitrd",
+  "min_sys_python": "2.7",
+  "name": "ROCKY9",
+  "package": {
+    "KMOD": "kmod",
+    "LIBCGROUP": "libcgroup-tools",
+    "LIBUDEV": "systemd-libs",
+    "OPENSSL": "openssl-libs",
+    "PERL_AUTODIE": "perl-autodie",
+    "PERL_FILE_PATH": "perl-File-Path",
+    "PERL_LWP_PROTO_HTTPS": "perl-LWP-Protocol-https",
+    "PERL_SYS_SYSLOG": "perl-Sys-Syslog",
+    "PROCPS": "procps-ng",
+    "PYTHON_SIMPLEJSON": "python2-simplejson",
+    "UDEV": "systemd"
+  },
+  "parent": "ALMA9",
+  "repo": {
+    "keyring": "redhat/repo/RPM-GPG-KEY-StorPool",
+    "yumdef": "redhat/repo/storpool-centos.repo"
+  },
+  "systemd_lib": "usr/lib/systemd/system"
+}
+EOVARIANT_JSON
+}
+
 show_UBUNTU1604()
 {
 	cat <<'EOVARIANT_JSON'
@@ -1963,12 +2185,14 @@ cmd_show_all()
   },
   "order": [
     "ROCKY8",
+    "ROCKY9",
     "RHEL8",
     "ORACLE7",
     "CENTOS6",
     "CENTOS7",
     "CENTOS8",
     "ALMA8",
+    "ALMA9",
     "UBUNTU1604",
     "UBUNTU1804",
     "UBUNTU2004",
@@ -1985,6 +2209,9 @@ EOPROLOGUE
   
   printf -- '    "%s": ' 'ALMA8'
   show_ALMA8
+  echo ','
+  printf -- '    "%s": ' 'ALMA9'
+  show_ALMA9
   echo ','
   printf -- '    "%s": ' 'CENTOS6'
   show_CENTOS6
@@ -2015,6 +2242,9 @@ EOPROLOGUE
   echo ','
   printf -- '    "%s": ' 'ROCKY8'
   show_ROCKY8
+  echo ','
+  printf -- '    "%s": ' 'ROCKY9'
+  show_ROCKY9
   echo ','
   printf -- '    "%s": ' 'UBUNTU1604'
   show_UBUNTU1604
@@ -2168,6 +2398,104 @@ if [ -n "$to_install" ]; then
 fi
 if [ -n "$to_reinstall" ]; then
     dnf reinstall -y --disablerepo='*' --enablerepo=baseos,storpool-contrib,powertools --setopt=localpkg_gpgcheck=0 -- $to_reinstall
+fi
+'  "$@"
+							;;
+						
+
+						*)
+							echo "Invalid command '$cmd_item' in the '$cmd_cat' category" 1>&2
+							exit 1
+							;;
+					esac
+					;;
+				
+
+				*)
+					echo "Invalid command category '$cmd_cat'" 1>&2
+					exit 1
+					;;
+			esac
+			;;
+		
+		ALMA9)
+			case "$cmd_cat" in
+				
+				package)
+					case "$cmd_item" in
+						
+						install)
+							# The commands are quoted exactly as much as necessary.
+							# shellcheck disable=SC2016
+							$noop 'dnf' '--disablerepo=*' '--enablerepo=baseos' '--enablerepo=storpool-contrib' 'install' '-q' '-y' '--'  "$@"
+							;;
+						
+						list_all)
+							# The commands are quoted exactly as much as necessary.
+							# shellcheck disable=SC2016
+							$noop 'rpm' '-qa' '--qf' '%{Name}\t%{EVR}\t%{Arch}\tii\n' '--'  "$@"
+							;;
+						
+						purge)
+							# The commands are quoted exactly as much as necessary.
+							# shellcheck disable=SC2016
+							$noop 'yum' 'remove' '-q' '-y' '--'  "$@"
+							;;
+						
+						remove)
+							# The commands are quoted exactly as much as necessary.
+							# shellcheck disable=SC2016
+							$noop 'yum' 'remove' '-q' '-y' '--'  "$@"
+							;;
+						
+						remove_impl)
+							# The commands are quoted exactly as much as necessary.
+							# shellcheck disable=SC2016
+							$noop 'rpm' '-e' '--'  "$@"
+							;;
+						
+						update_db)
+							# The commands are quoted exactly as much as necessary.
+							# shellcheck disable=SC2016
+							$noop 'true'  "$@"
+							;;
+						
+
+						*)
+							echo "Invalid command '$cmd_item' in the '$cmd_cat' category" 1>&2
+							exit 1
+							;;
+					esac
+					;;
+				
+				pkgfile)
+					case "$cmd_item" in
+						
+						dep_query)
+							# The commands are quoted exactly as much as necessary.
+							# shellcheck disable=SC2016
+							$noop 'sh' '-c' 'rpm -qpR -- "$pkg"'  "$@"
+							;;
+						
+						install)
+							# The commands are quoted exactly as much as necessary.
+							# shellcheck disable=SC2016
+							$noop 'sh' '-c' '
+unset to_install to_reinstall
+for f in $packages; do
+    package="$(rpm -qp "$f")"
+    if rpm -q -- "$package"; then
+        to_reinstall="$to_reinstall ./$f"
+    else
+        to_install="$to_install ./$f"
+    fi
+done
+
+if [ -n "$to_install" ]; then
+    dnf install -y --disablerepo='*' --enablerepo=baseos,storpool-contrib --setopt=localpkg_gpgcheck=0 -- $to_install
+fi
+if [ -n "$to_reinstall" ]; then
+    dnf reinstall -y --disablerepo='*' --enablerepo=baseos,storpool-contrib --setopt=localpkg_gpgcheck=0 -- $to_reinstall
 fi
 '  "$@"
 							;;
@@ -3100,6 +3428,104 @@ fi
 			esac
 			;;
 		
+		ROCKY9)
+			case "$cmd_cat" in
+				
+				package)
+					case "$cmd_item" in
+						
+						install)
+							# The commands are quoted exactly as much as necessary.
+							# shellcheck disable=SC2016
+							$noop 'dnf' '--disablerepo=*' '--enablerepo=baseos' '--enablerepo=storpool-contrib' 'install' '-q' '-y' '--'  "$@"
+							;;
+						
+						list_all)
+							# The commands are quoted exactly as much as necessary.
+							# shellcheck disable=SC2016
+							$noop 'rpm' '-qa' '--qf' '%{Name}\t%{EVR}\t%{Arch}\tii\n' '--'  "$@"
+							;;
+						
+						purge)
+							# The commands are quoted exactly as much as necessary.
+							# shellcheck disable=SC2016
+							$noop 'yum' 'remove' '-q' '-y' '--'  "$@"
+							;;
+						
+						remove)
+							# The commands are quoted exactly as much as necessary.
+							# shellcheck disable=SC2016
+							$noop 'yum' 'remove' '-q' '-y' '--'  "$@"
+							;;
+						
+						remove_impl)
+							# The commands are quoted exactly as much as necessary.
+							# shellcheck disable=SC2016
+							$noop 'rpm' '-e' '--'  "$@"
+							;;
+						
+						update_db)
+							# The commands are quoted exactly as much as necessary.
+							# shellcheck disable=SC2016
+							$noop 'true'  "$@"
+							;;
+						
+
+						*)
+							echo "Invalid command '$cmd_item' in the '$cmd_cat' category" 1>&2
+							exit 1
+							;;
+					esac
+					;;
+				
+				pkgfile)
+					case "$cmd_item" in
+						
+						dep_query)
+							# The commands are quoted exactly as much as necessary.
+							# shellcheck disable=SC2016
+							$noop 'sh' '-c' 'rpm -qpR -- "$pkg"'  "$@"
+							;;
+						
+						install)
+							# The commands are quoted exactly as much as necessary.
+							# shellcheck disable=SC2016
+							$noop 'sh' '-c' '
+unset to_install to_reinstall
+for f in $packages; do
+    package="$(rpm -qp "$f")"
+    if rpm -q -- "$package"; then
+        to_reinstall="$to_reinstall ./$f"
+    else
+        to_install="$to_install ./$f"
+    fi
+done
+
+if [ -n "$to_install" ]; then
+    dnf install -y --disablerepo='*' --enablerepo=baseos,storpool-contrib --setopt=localpkg_gpgcheck=0 -- $to_install
+fi
+if [ -n "$to_reinstall" ]; then
+    dnf reinstall -y --disablerepo='*' --enablerepo=baseos,storpool-contrib --setopt=localpkg_gpgcheck=0 -- $to_reinstall
+fi
+'  "$@"
+							;;
+						
+
+						*)
+							echo "Invalid command '$cmd_item' in the '$cmd_cat' category" 1>&2
+							exit 1
+							;;
+					esac
+					;;
+				
+
+				*)
+					echo "Invalid command category '$cmd_cat'" 1>&2
+					exit 1
+					;;
+			esac
+			;;
+		
 		UBUNTU1604)
 			case "$cmd_cat" in
 				
@@ -3652,6 +4078,12 @@ cmd_repo_add()
 			
 			;;
 		
+		ALMA9)
+			
+			repo_add_yum 'ALMA9' "$vdir" "$repotype" 'redhat/repo/storpool-centos.repo' 'redhat/repo/RPM-GPG-KEY-StorPool'
+			
+			;;
+		
 		CENTOS6)
 			
 			repo_add_yum 'CENTOS6' "$vdir" "$repotype" 'redhat/repo/storpool-centos.repo' 'redhat/repo/RPM-GPG-KEY-StorPool'
@@ -3709,6 +4141,12 @@ cmd_repo_add()
 		ROCKY8)
 			
 			repo_add_yum 'ROCKY8' "$vdir" "$repotype" 'redhat/repo/storpool-centos.repo' 'redhat/repo/RPM-GPG-KEY-StorPool'
+			
+			;;
+		
+		ROCKY9)
+			
+			repo_add_yum 'ROCKY9' "$vdir" "$repotype" 'redhat/repo/storpool-centos.repo' 'redhat/repo/RPM-GPG-KEY-StorPool'
 			
 			;;
 		
@@ -3845,6 +4283,10 @@ case "$1" in
 				show_variant 'ALMA8'
 				;;
 			
+			ALMA9)
+				show_variant 'ALMA9'
+				;;
+			
 			CENTOS6)
 				show_variant 'CENTOS6'
 				;;
@@ -3883,6 +4325,10 @@ case "$1" in
 			
 			ROCKY8)
 				show_variant 'ROCKY8'
+				;;
+			
+			ROCKY9)
+				show_variant 'ROCKY9'
 				;;
 			
 			UBUNTU1604)
