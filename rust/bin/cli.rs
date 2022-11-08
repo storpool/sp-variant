@@ -43,7 +43,7 @@ pub enum ParseError {
     RepoTypeUnknown,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub enum RepoType {
     Contrib,
     Staging,
@@ -121,7 +121,7 @@ pub enum Mode {
     Show(ShowConfig),
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 struct CommandId {
     category: String,
     name: String,
