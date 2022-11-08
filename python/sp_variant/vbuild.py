@@ -372,14 +372,14 @@ _VARIANT_DEF = [
         },
     ),
     defs.Variant(
-        name="CENTOS8",
-        descr="CentOS 8.x",
+        name="ALMA8",
+        descr="AlmaLinux 8.x",
         parent="",
         family="redhat",
         detect=defs.Detect(
             filename="/etc/redhat-release",
-            regex=re.compile(r"^ CentOS \s .* \s 8 \. (?: [3-9] | (?: [12][0-9] ) )", re.X),
-            os_id="centos",
+            regex=re.compile(r"^ AlmaLinux \s .* \s 8 \. (?: [4-9] | [1-9][0-9] )", re.X),
+            os_id="alma",
             os_version_regex=re.compile(r"^8(?:$|\.[4-9]|\.[1-9][0-9])"),
         ),
         commands=defs.Commands(
@@ -475,12 +475,30 @@ fi
         file_ext="rpm",
         initramfs_flavor="mkinitrd",
         builder=defs.Builder(
-            alias="centos8",
-            base_image="centos:8",
-            branch="centos/8",
+            alias="alma8",
+            base_image="almalinux:8",
+            branch="",
             kernel_package="kernel-core",
             utf8_locale="C.utf8",
         ),
+    ),
+    defs.VariantUpdate(
+        name="CENTOS8",
+        descr="CentOS 8.x",
+        parent="ALMA8",
+        detect=defs.Detect(
+            filename="/etc/redhat-release",
+            regex=re.compile(r"^ CentOS \s .* \s 8 \. (?: [3-9] | (?: [12][0-9] ) )", re.X),
+            os_id="centos",
+            os_version_regex=re.compile(r"^8(?:$|\.[4-9]|\.[1-9][0-9])"),
+        ),
+        updates={
+            "builder": {
+                "alias": "centos8",
+                "base_image": "centos:8",
+                "branch": "centos/8",
+            },
+        },
     ),
     defs.VariantUpdate(
         name="CENTOS7",
@@ -666,24 +684,6 @@ fi
             "builder": {
                 "alias": "rocky8",
                 "base_image": "rockylinux:8",
-                "branch": "",
-            },
-        },
-    ),
-    defs.VariantUpdate(
-        name="ALMA8",
-        descr="AlmaLinux 8.x",
-        parent="CENTOS8",
-        detect=defs.Detect(
-            filename="/etc/redhat-release",
-            regex=re.compile(r"^ AlmaLinux \s .* \s 8 \. (?: [4-9] | [1-9][0-9] )", re.X),
-            os_id="alma",
-            os_version_regex=re.compile(r"^8(?:$|\.[4-9]|\.[1-9][0-9])"),
-        ),
-        updates={
-            "builder": {
-                "alias": "alma8",
-                "base_image": "almalinux:8",
                 "branch": "",
             },
         },
