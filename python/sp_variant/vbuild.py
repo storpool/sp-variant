@@ -388,8 +388,7 @@ _VARIANT_DEF = [
                 install=[
                     "dnf",
                     "--disablerepo=*",
-                    "--enablerepo=base",
-                    "--enablerepo=updates",
+                    "--enablerepo=baseos",
                     "--enablerepo=powertools",
                     "--enablerepo=storpool-contrib",
                     "install",
@@ -445,10 +444,10 @@ for f in $packages; do
 done
 
 if [ -n "$to_install" ]; then
-    dnf install -y --disablerepo='*' --enablerepo=base,updates,storpool-contrib,powertools --setopt=localpkg_gpgcheck=0 -- $to_install
+    dnf install -y --disablerepo='*' --enablerepo=baseos,storpool-contrib,powertools --setopt=localpkg_gpgcheck=0 -- $to_install
 fi
 if [ -n "$to_reinstall" ]; then
-    dnf reinstall -y --disablerepo='*' --enablerepo=base,updates,storpool-contrib,powertools --setopt=localpkg_gpgcheck=0 -- $to_reinstall
+    dnf reinstall -y --disablerepo='*' --enablerepo=baseos,storpool-contrib,powertools --setopt=localpkg_gpgcheck=0 -- $to_reinstall
 fi
 """,  # noqa: E501  pylint: disable=line-too-long
                 ],
@@ -609,8 +608,7 @@ fi
                     "install": [
                         "dnf",
                         "--disablerepo=*",
-                        "--enablerepo=base",
-                        "--enablerepo=updates",
+                        "--enablerepo=baseos",
                         "--enablerepo=storpool-contrib",
                         "--enablerepo=codeready-builder-for-rhel-8-x86_64-rpms",
                         "install",
@@ -635,10 +633,10 @@ for f in $packages; do
 done
 
 if [ -n "$to_install" ]; then
-    dnf install -y --disablerepo='*' --enablerepo=base,updates,storpool-contrib,codeready-builder-for-rhel-8-x86_64-rpms --setopt=localpkg_gpgcheck=0 -- $to_install
+    dnf install -y --disablerepo='*' --enablerepo=baseos,storpool-contrib,codeready-builder-for-rhel-8-x86_64-rpms --setopt=localpkg_gpgcheck=0 -- $to_install
 fi
 if [ -n "$to_reinstall" ]; then
-    dnf reinstall -y --disablerepo='*' --enablerepo=base,updates,storpool-contrib,codeready-builder-for-rhel-8-x86_64-rpms --setopt=localpkg_gpgcheck=0 -- $to_reinstall
+    dnf reinstall -y --disablerepo='*' --enablerepo=baseos,storpool-contrib,codeready-builder-for-rhel-8-x86_64-rpms --setopt=localpkg_gpgcheck=0 -- $to_reinstall
 fi
 """,  # noqa: E501  pylint: disable=line-too-long
                     ]
