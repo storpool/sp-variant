@@ -152,11 +152,6 @@ cmd_detect()
 	fi
 
 	
-	if [ -r '/etc/redhat-release' ] && grep -Eqe '^AlmaLinux[[:space:]].*[[:space:]]8\.([4-9]|[1-9][0-9])' -- '/etc/redhat-release'; then
-		printf -- '%s\n' 'ALMA8'
-		return
-	fi
-	
 	if [ -r '/etc/redhat-release' ] && grep -Eqe '^Rocky[[:space:]]+Linux[[:space:]].*[[:space:]]8\.([4-9]|[1-9][0-9])' -- '/etc/redhat-release'; then
 		printf -- '%s\n' 'ROCKY8'
 		return
@@ -184,6 +179,11 @@ cmd_detect()
 	
 	if [ -r '/etc/redhat-release' ] && grep -Eqe '^CentOS[[:space:]].*[[:space:]]8\.([3-9]|([12][0-9]))' -- '/etc/redhat-release'; then
 		printf -- '%s\n' 'CENTOS8'
+		return
+	fi
+	
+	if [ -r '/etc/redhat-release' ] && grep -Eqe '^AlmaLinux[[:space:]].*[[:space:]]8\.([4-9]|[1-9][0-9])' -- '/etc/redhat-release'; then
+		printf -- '%s\n' 'ALMA8'
 		return
 	fi
 	
@@ -330,7 +330,7 @@ show_ALMA8()
     "PYTHON_SIMPLEJSON": "python2-simplejson",
     "UDEV": "systemd"
   },
-  "parent": "CENTOS8",
+  "parent": "",
   "repo": {
     "keyring": "redhat/repo/RPM-GPG-KEY-StorPool",
     "yumdef": "redhat/repo/storpool-centos.repo"
@@ -630,7 +630,7 @@ show_CENTOS8()
     "PYTHON_SIMPLEJSON": "python2-simplejson",
     "UDEV": "systemd"
   },
-  "parent": "",
+  "parent": "ALMA8",
   "repo": {
     "keyring": "redhat/repo/RPM-GPG-KEY-StorPool",
     "yumdef": "redhat/repo/storpool-centos.repo"
@@ -1962,13 +1962,13 @@ cmd_show_all()
     }
   },
   "order": [
-    "ALMA8",
     "ROCKY8",
     "RHEL8",
     "ORACLE7",
     "CENTOS6",
     "CENTOS7",
     "CENTOS8",
+    "ALMA8",
     "UBUNTU1604",
     "UBUNTU1804",
     "UBUNTU2004",

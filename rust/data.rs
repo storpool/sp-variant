@@ -161,13 +161,13 @@ pub fn get_variants() -> &'static VariantDefTop {
                 },
             },
             order: vec![
-                    VariantKind::ALMA8,
                     VariantKind::ROCKY8,
                     VariantKind::RHEL8,
                     VariantKind::ORACLE7,
                     VariantKind::CENTOS6,
                     VariantKind::CENTOS7,
                     VariantKind::CENTOS8,
+                    VariantKind::ALMA8,
                     VariantKind::UBUNTU1604,
                     VariantKind::UBUNTU1804,
                     VariantKind::UBUNTU2004,
@@ -186,7 +186,7 @@ pub fn get_variants() -> &'static VariantDefTop {
                                 kind: VariantKind::ALMA8,
                                 descr: "AlmaLinux 8.x".to_owned(),
                                 family: "redhat".to_owned(),
-                                parent: "CENTOS8".to_owned(),
+                                parent: "".to_owned(),
                                 detect: Detect {
                                     filename: "/etc/redhat-release".to_owned(),
                                     regex: r"^ AlmaLinux \s .* \s 8 \. (?: [4-9] | [1-9][0-9] )".to_owned(),
@@ -645,7 +645,7 @@ fi
                                 kind: VariantKind::CENTOS8,
                                 descr: "CentOS 8.x".to_owned(),
                                 family: "redhat".to_owned(),
-                                parent: "".to_owned(),
+                                parent: "ALMA8".to_owned(),
                                 detect: Detect {
                                     filename: "/etc/redhat-release".to_owned(),
                                     regex: r"^ CentOS \s .* \s 8 \. (?: [3-9] | (?: [12][0-9] ) )".to_owned(),
