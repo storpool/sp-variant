@@ -667,7 +667,7 @@ fi
         updates={
             "builder": {
                 "alias": "rocky8",
-                "base_image": "rockylinux/rockylinux:8",
+                "base_image": "rockylinux:8",
                 "branch": "",
             },
         },
@@ -685,7 +685,7 @@ fi
         updates={
             "builder": {
                 "alias": "alma8",
-                "base_image": "almalinux/almalinux:8",
+                "base_image": "almalinux:8",
                 "branch": "",
             },
         },
