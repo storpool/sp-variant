@@ -94,7 +94,7 @@
     - always require the "typing" module to be installed
 - rust:
     - possibly incompatible change: the structs and enums exported by
-      the sp_variant crate are now marked as non-exhaustive
+      the `sp_variant` crate are now marked as non-exhaustive
     - possibly incompatible change: some functions are now marked as
       "must use"
     - import struct names directory for a more idiomatic Rust style
@@ -124,7 +124,7 @@
       the test suite to 0.920.
 - rust:
     - Fix a command.run bug: do not output the command to run, the tools
-      that invoke storpool_variant may use its output!
+      that invoke `storpool_variant` may use its output!
     - Code clean-up:
         - drop an unused internal "url" field
         - simplify a double match
