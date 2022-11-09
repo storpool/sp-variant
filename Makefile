@@ -94,7 +94,6 @@ ${RUST_DATA}:	${RUST_DATA}.j2 python/sp_build_repo/subst.py ${PYTHON_VBUILD}
 ${RUST_BIN}:	Cargo.toml .cargo/config.toml ${RUST_SRC}
 		[ -n '${NO_CARGO_FREEZE}' ] || ${SP_CARGO} sp-freeze
 		[ -n '${NO_CARGO_CLEAN}' ] || ${SP_CARGO} clean
-		rm -f -- Cargo.lock
 		${SP_CARGO} fmt -- --check
 		${SP_CARGO} build --release --offline
 		${SP_CARGO} test --release --offline
@@ -123,7 +122,6 @@ clean-repo:
 
 clean-rust:
 		${SP_CARGO} clean
-		rm -f -- Cargo.lock
 
 clean-sh:
 		rm -f -- '${SH_BIN}'
