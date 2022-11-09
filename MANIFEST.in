@@ -1,14 +1,5 @@
 include .editorconfig
-include Cargo.toml
-include clippy.toml
-include Makefile
-include MANIFEST-build-repo.in
 include NEWS.md
-include setup-build-repo.cfg
-include sp_variant.sh
-include sp_variant.sh.j2
 include tox.ini
-recursive-include .cargo *.toml
 recursive-include data *
 recursive-include python *.py *.typed
-recursive-include rust *.rs *.rs.j2
