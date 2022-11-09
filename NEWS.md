@@ -51,7 +51,6 @@
     - drop the outdated `pytest.pyi` typing stub
     - move the configuration for the check tools out of the `tox.ini` file,
       mostly into `pyproject.toml`, but still `setup.cfg` for `flake8`
-    - add a Nix expression for running the tox test suite
 - rust:
   - use a separate tool, `run-clippy.sh`, to invoke clippy;
     remove the `#![warn(...)]` directives from the individual source files
