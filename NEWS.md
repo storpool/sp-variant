@@ -21,6 +21,7 @@
 - python:
     - use the `cfg-diag` 0.4 `Config` class API
     - declare Python 3.10 and 3.11 as supported versions
+    - drop the Rust and POSIX shell implementations from the sdist tarball
     - `sp_variant`:
         - now that `sp_build_repo` and `test_docker` use the `click` library,
           drop the `base_parser()` method
