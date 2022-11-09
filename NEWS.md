@@ -2,6 +2,67 @@
 
 ## 3.0.0 (not yet)
 
+- INCOMPATIBLE CHANGES:
+  - Yum/DNF: when installing packages (both via the `package.install` and
+    `pkgfile.install` commands), disable all the configured repositories,
+    only enable some base system ones and the StorPool ones
+  - python:
+    - drop Python 2.6 support, use dict comprehensions
+  - rust:
+    - all the functions now return our own error enum instead of
+      `Box<dyn error::Error>`
+- all:
+  - correctly treat Linux Mint 21.x as a Ubuntu 22.04 equivalent
+  - allow repository definitions to be built using a different `storpool_variant`
+    interpretation, mostly for testing the correctness of the Rust one
+  - use the simpler container names for AlmaLinux and Rocky Linux
+  - make AlmaLinux the principal RPM-based distribution instead of CentOS
+  - add some initial support for AlmaLinux 9 and Rocky Linux 9
+- python:
+  - use the `cfg-diag` 0.4 `Config` class API
+  - declare Python 3.10 and 3.11 as supported versions
+  - `sp_variant`:
+    - now that `sp_build_repo` and `test_docker` use the `click` library,
+      drop the `base_parser()` method
+  - `sp_build_repo`:
+    - mark the `-r` option as required, rename its long form to `--runtime`
+    - allow repository URLs to be overridden using a TOML configuration file;
+      provide a sample as `examples/build-repo-overrides.toml`
+    - override a "duplicate code" warning from pylint
+    - use the `typedload` library for validating and loading configuration data
+    - use the `click` library for command-line argument parsing
+    - use f-strings
+    - use the Text type instead of str; long overdue
+    - correctly use the `name` and `slug` fields when generating the repository
+      definitions files
+  - `test_docker`:
+    - install the StorPool Python packages to make sure the repository is
+      indeed accessible and configured correctly
+    - only use `asyncio.run()` for the parts that need to run asynchronously
+      (e.g. not for command-line parsing or trivial queries)
+    - use the `click` library for command-line argument parsing
+    - run `docker swap` for the CentOS 8 container to switch to the CentOS Stream
+      repositories; maybe we need to start using the quay.io containers instead
+  - test suite:
+    - specify version constraints for the library dependencies
+    - use `pytest.mark.parametrize()` instead of the `ddt` library
+    - drop the Python 2.x mypy and the `flake8` + `hacking` test environments,
+      they do not provide much value nowadays
+    - drop the outdated `pytest.pyi` typing stub
+    - move the configuration for the check tools out of the `tox.ini` file,
+      mostly into `pyproject.toml`, but still `setup.cfg` for `flake8`
+    - add a Nix expression for running the tox test suite
+- rust:
+  - use a separate tool, `run-clippy.sh`, to invoke clippy;
+    remove the `#![warn(...)]` directives from the individual source files
+  - minor refactoring following some suggestions from clippy
+  - override several clippy lints, mostly for good reasons
+  - use the `clap` library for command-line parsing
+  - use the `thiserror` library instead of the `quick-error` one, it is cleaner
+  - use the `once_cell` library instead of the `lazy_static` one
+  - use the `anyhow` library instead of `expect-exit` in the command-line tool
+  - keep the `Cargo.lock` file under version control
+
 ## 2.3.3 (2022-04-28)
 
 - all:
