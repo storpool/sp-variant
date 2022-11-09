@@ -1,6 +1,6 @@
 # Change log for the sp-variant library
 
-## 3.0.0 (not yet)
+## 3.0.0 (2022-11-09)
 
 - INCOMPATIBLE CHANGES:
     - Yum/DNF: when installing packages (both via the `package.install` and
