@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021, 2022  StorPool <support@storpool.com>
+ * Copyright (c) 2021 - 2023  StorPool <support@storpool.com>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -2920,7 +2920,7 @@ fi
                     ),
                 ]
             ),
-            version: "3.0.0".to_owned(),
+            version: "3.0.1".to_owned(),
         }
     });
     assert!(
