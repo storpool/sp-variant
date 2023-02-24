@@ -267,13 +267,14 @@ show_ALMA8()
     "base_image": "almalinux:8",
     "branch": "",
     "kernel_package": "kernel-core",
-    "utf8_locale": "C.utf8"
+    "utf8_locale": "C.UTF-8"
   },
   "commands": {
     "package": {
       "install": [
         "dnf",
         "--disablerepo=*",
+        "--enablerepo=appstream",
         "--enablerepo=baseos",
         "--enablerepo=powertools",
         "--enablerepo=storpool-contrib",
@@ -321,7 +322,7 @@ show_ALMA8()
       "install": [
         "sh",
         "-c",
-        "\nunset to_install to_reinstall\nfor f in $packages; do\n    package=\"$(rpm -qp \"$f\")\"\n    if rpm -q -- \"$package\"; then\n        to_reinstall=\"$to_reinstall ./$f\"\n    else\n        to_install=\"$to_install ./$f\"\n    fi\ndone\n\nif [ -n \"$to_install\" ]; then\n    dnf install -y --disablerepo='*' --enablerepo=baseos,storpool-contrib,powertools --setopt=localpkg_gpgcheck=0 -- $to_install\nfi\nif [ -n \"$to_reinstall\" ]; then\n    dnf reinstall -y --disablerepo='*' --enablerepo=baseos,storpool-contrib,powertools --setopt=localpkg_gpgcheck=0 -- $to_reinstall\nfi\n"
+        "\nunset to_install to_reinstall\nfor f in $packages; do\n    package=\"$(rpm -qp \"$f\")\"\n    if rpm -q -- \"$package\"; then\n        to_reinstall=\"$to_reinstall ./$f\"\n    else\n        to_install=\"$to_install ./$f\"\n    fi\ndone\n\nif [ -n \"$to_install\" ]; then\n    dnf install -y --disablerepo='*' --enablerepo=appstream,baseos,storpool-contrib,powertools --setopt=localpkg_gpgcheck=0 -- $to_install\nfi\nif [ -n \"$to_reinstall\" ]; then\n    dnf reinstall -y --disablerepo='*' --enablerepo=appstream,baseos,storpool-contrib,powertools --setopt=localpkg_gpgcheck=0 -- $to_reinstall\nfi\n"
       ]
     }
   },
@@ -369,13 +370,14 @@ show_ALMA9()
     "base_image": "almalinux:9",
     "branch": "centos/9",
     "kernel_package": "kernel-core",
-    "utf8_locale": "C.utf8"
+    "utf8_locale": "C.UTF-8"
   },
   "commands": {
     "package": {
       "install": [
         "dnf",
         "--disablerepo=*",
+        "--enablerepo=appstream",
         "--enablerepo=baseos",
         "--enablerepo=storpool-contrib",
         "install",
@@ -422,7 +424,7 @@ show_ALMA9()
       "install": [
         "sh",
         "-c",
-        "\nunset to_install to_reinstall\nfor f in $packages; do\n    package=\"$(rpm -qp \"$f\")\"\n    if rpm -q -- \"$package\"; then\n        to_reinstall=\"$to_reinstall ./$f\"\n    else\n        to_install=\"$to_install ./$f\"\n    fi\ndone\n\nif [ -n \"$to_install\" ]; then\n    dnf install -y --disablerepo='*' --enablerepo=baseos,storpool-contrib --setopt=localpkg_gpgcheck=0 -- $to_install\nfi\nif [ -n \"$to_reinstall\" ]; then\n    dnf reinstall -y --disablerepo='*' --enablerepo=baseos,storpool-contrib --setopt=localpkg_gpgcheck=0 -- $to_reinstall\nfi\n"
+        "\nunset to_install to_reinstall\nfor f in $packages; do\n    package=\"$(rpm -qp \"$f\")\"\n    if rpm -q -- \"$package\"; then\n        to_reinstall=\"$to_reinstall ./$f\"\n    else\n        to_install=\"$to_install ./$f\"\n    fi\ndone\n\nif [ -n \"$to_install\" ]; then\n    dnf install -y --disablerepo='*' --enablerepo=appstream,baseos,storpool-contrib --setopt=localpkg_gpgcheck=0 -- $to_install\nfi\nif [ -n \"$to_reinstall\" ]; then\n    dnf reinstall -y --disablerepo='*' --enablerepo=appstream,baseos,storpool-contrib --setopt=localpkg_gpgcheck=0 -- $to_reinstall\nfi\n"
       ]
     }
   },
@@ -470,7 +472,7 @@ show_CENTOS6()
     "base_image": "centos:6",
     "branch": "centos/6",
     "kernel_package": "kernel",
-    "utf8_locale": "C"
+    "utf8_locale": "en_US.utf8"
   },
   "commands": {
     "package": {
@@ -569,7 +571,7 @@ show_CENTOS7()
     "base_image": "centos:7",
     "branch": "centos/7",
     "kernel_package": "kernel",
-    "utf8_locale": "C"
+    "utf8_locale": "en_US.utf8"
   },
   "commands": {
     "package": {
@@ -668,13 +670,14 @@ show_CENTOS8()
     "base_image": "centos:8",
     "branch": "centos/8",
     "kernel_package": "kernel-core",
-    "utf8_locale": "C.utf8"
+    "utf8_locale": "C.UTF-8"
   },
   "commands": {
     "package": {
       "install": [
         "dnf",
         "--disablerepo=*",
+        "--enablerepo=appstream",
         "--enablerepo=baseos",
         "--enablerepo=powertools",
         "--enablerepo=storpool-contrib",
@@ -722,7 +725,7 @@ show_CENTOS8()
       "install": [
         "sh",
         "-c",
-        "\nunset to_install to_reinstall\nfor f in $packages; do\n    package=\"$(rpm -qp \"$f\")\"\n    if rpm -q -- \"$package\"; then\n        to_reinstall=\"$to_reinstall ./$f\"\n    else\n        to_install=\"$to_install ./$f\"\n    fi\ndone\n\nif [ -n \"$to_install\" ]; then\n    dnf install -y --disablerepo='*' --enablerepo=baseos,storpool-contrib,powertools --setopt=localpkg_gpgcheck=0 -- $to_install\nfi\nif [ -n \"$to_reinstall\" ]; then\n    dnf reinstall -y --disablerepo='*' --enablerepo=baseos,storpool-contrib,powertools --setopt=localpkg_gpgcheck=0 -- $to_reinstall\nfi\n"
+        "\nunset to_install to_reinstall\nfor f in $packages; do\n    package=\"$(rpm -qp \"$f\")\"\n    if rpm -q -- \"$package\"; then\n        to_reinstall=\"$to_reinstall ./$f\"\n    else\n        to_install=\"$to_install ./$f\"\n    fi\ndone\n\nif [ -n \"$to_install\" ]; then\n    dnf install -y --disablerepo='*' --enablerepo=appstream,baseos,storpool-contrib,powertools --setopt=localpkg_gpgcheck=0 -- $to_install\nfi\nif [ -n \"$to_reinstall\" ]; then\n    dnf reinstall -y --disablerepo='*' --enablerepo=appstream,baseos,storpool-contrib,powertools --setopt=localpkg_gpgcheck=0 -- $to_reinstall\nfi\n"
       ]
     }
   },
@@ -1215,7 +1218,7 @@ show_ORACLE7()
     "base_image": "IGNORE",
     "branch": "",
     "kernel_package": "kernel",
-    "utf8_locale": "C"
+    "utf8_locale": "en_US.utf8"
   },
   "commands": {
     "package": {
@@ -1314,13 +1317,14 @@ show_RHEL8()
     "base_image": "redhat/ubi8:reg",
     "branch": "",
     "kernel_package": "kernel-core",
-    "utf8_locale": "C.utf8"
+    "utf8_locale": "C.UTF-8"
   },
   "commands": {
     "package": {
       "install": [
         "dnf",
         "--disablerepo=*",
+        "--enablerepo=appstream",
         "--enablerepo=baseos",
         "--enablerepo=storpool-contrib",
         "--enablerepo=codeready-builder-for-rhel-8-x86_64-rpms",
@@ -1368,7 +1372,7 @@ show_RHEL8()
       "install": [
         "sh",
         "-c",
-        "\nunset to_install to_reinstall\nfor f in $packages; do\n    package=\"$(rpm -qp \"$f\")\"\n    if rpm -q -- \"$package\"; then\n        to_reinstall=\"$to_reinstall ./$f\"\n    else\n        to_install=\"$to_install ./$f\"\n    fi\ndone\n\nif [ -n \"$to_install\" ]; then\n    dnf install -y --disablerepo='*' --enablerepo=baseos,storpool-contrib,codeready-builder-for-rhel-8-x86_64-rpms --setopt=localpkg_gpgcheck=0 -- $to_install\nfi\nif [ -n \"$to_reinstall\" ]; then\n    dnf reinstall -y --disablerepo='*' --enablerepo=baseos,storpool-contrib,codeready-builder-for-rhel-8-x86_64-rpms --setopt=localpkg_gpgcheck=0 -- $to_reinstall\nfi\n"
+        "\nunset to_install to_reinstall\nfor f in $packages; do\n    package=\"$(rpm -qp \"$f\")\"\n    if rpm -q -- \"$package\"; then\n        to_reinstall=\"$to_reinstall ./$f\"\n    else\n        to_install=\"$to_install ./$f\"\n    fi\ndone\n\nif [ -n \"$to_install\" ]; then\n    dnf install -y --disablerepo='*' --enablerepo=appstream,baseos,storpool-contrib,codeready-builder-for-rhel-8-x86_64-rpms --setopt=localpkg_gpgcheck=0 -- $to_install\nfi\nif [ -n \"$to_reinstall\" ]; then\n    dnf reinstall -y --disablerepo='*' --enablerepo=appstream,baseos,storpool-contrib,codeready-builder-for-rhel-8-x86_64-rpms --setopt=localpkg_gpgcheck=0 -- $to_reinstall\nfi\n"
       ]
     }
   },
@@ -1416,13 +1420,14 @@ show_ROCKY8()
     "base_image": "rockylinux:8",
     "branch": "",
     "kernel_package": "kernel-core",
-    "utf8_locale": "C.utf8"
+    "utf8_locale": "C.UTF-8"
   },
   "commands": {
     "package": {
       "install": [
         "dnf",
         "--disablerepo=*",
+        "--enablerepo=appstream",
         "--enablerepo=baseos",
         "--enablerepo=powertools",
         "--enablerepo=storpool-contrib",
@@ -1470,7 +1475,7 @@ show_ROCKY8()
       "install": [
         "sh",
         "-c",
-        "\nunset to_install to_reinstall\nfor f in $packages; do\n    package=\"$(rpm -qp \"$f\")\"\n    if rpm -q -- \"$package\"; then\n        to_reinstall=\"$to_reinstall ./$f\"\n    else\n        to_install=\"$to_install ./$f\"\n    fi\ndone\n\nif [ -n \"$to_install\" ]; then\n    dnf install -y --disablerepo='*' --enablerepo=baseos,storpool-contrib,powertools --setopt=localpkg_gpgcheck=0 -- $to_install\nfi\nif [ -n \"$to_reinstall\" ]; then\n    dnf reinstall -y --disablerepo='*' --enablerepo=baseos,storpool-contrib,powertools --setopt=localpkg_gpgcheck=0 -- $to_reinstall\nfi\n"
+        "\nunset to_install to_reinstall\nfor f in $packages; do\n    package=\"$(rpm -qp \"$f\")\"\n    if rpm -q -- \"$package\"; then\n        to_reinstall=\"$to_reinstall ./$f\"\n    else\n        to_install=\"$to_install ./$f\"\n    fi\ndone\n\nif [ -n \"$to_install\" ]; then\n    dnf install -y --disablerepo='*' --enablerepo=appstream,baseos,storpool-contrib,powertools --setopt=localpkg_gpgcheck=0 -- $to_install\nfi\nif [ -n \"$to_reinstall\" ]; then\n    dnf reinstall -y --disablerepo='*' --enablerepo=appstream,baseos,storpool-contrib,powertools --setopt=localpkg_gpgcheck=0 -- $to_reinstall\nfi\n"
       ]
     }
   },
@@ -1518,13 +1523,14 @@ show_ROCKY9()
     "base_image": "rockylinux:9",
     "branch": "",
     "kernel_package": "kernel-core",
-    "utf8_locale": "C.utf8"
+    "utf8_locale": "C.UTF-8"
   },
   "commands": {
     "package": {
       "install": [
         "dnf",
         "--disablerepo=*",
+        "--enablerepo=appstream",
         "--enablerepo=baseos",
         "--enablerepo=storpool-contrib",
         "install",
@@ -1571,7 +1577,7 @@ show_ROCKY9()
       "install": [
         "sh",
         "-c",
-        "\nunset to_install to_reinstall\nfor f in $packages; do\n    package=\"$(rpm -qp \"$f\")\"\n    if rpm -q -- \"$package\"; then\n        to_reinstall=\"$to_reinstall ./$f\"\n    else\n        to_install=\"$to_install ./$f\"\n    fi\ndone\n\nif [ -n \"$to_install\" ]; then\n    dnf install -y --disablerepo='*' --enablerepo=baseos,storpool-contrib --setopt=localpkg_gpgcheck=0 -- $to_install\nfi\nif [ -n \"$to_reinstall\" ]; then\n    dnf reinstall -y --disablerepo='*' --enablerepo=baseos,storpool-contrib --setopt=localpkg_gpgcheck=0 -- $to_reinstall\nfi\n"
+        "\nunset to_install to_reinstall\nfor f in $packages; do\n    package=\"$(rpm -qp \"$f\")\"\n    if rpm -q -- \"$package\"; then\n        to_reinstall=\"$to_reinstall ./$f\"\n    else\n        to_install=\"$to_install ./$f\"\n    fi\ndone\n\nif [ -n \"$to_install\" ]; then\n    dnf install -y --disablerepo='*' --enablerepo=appstream,baseos,storpool-contrib --setopt=localpkg_gpgcheck=0 -- $to_install\nfi\nif [ -n \"$to_reinstall\" ]; then\n    dnf reinstall -y --disablerepo='*' --enablerepo=appstream,baseos,storpool-contrib --setopt=localpkg_gpgcheck=0 -- $to_reinstall\nfi\n"
       ]
     }
   },
@@ -2329,7 +2335,7 @@ run_command()
 						install)
 							# The commands are quoted exactly as much as necessary.
 							# shellcheck disable=SC2016
-							$noop 'dnf' '--disablerepo=*' '--enablerepo=baseos' '--enablerepo=powertools' '--enablerepo=storpool-contrib' 'install' '-q' '-y' '--'  "$@"
+							$noop 'dnf' '--disablerepo=*' '--enablerepo=appstream' '--enablerepo=baseos' '--enablerepo=powertools' '--enablerepo=storpool-contrib' 'install' '-q' '-y' '--'  "$@"
 							;;
 						
 						list_all)
@@ -2394,10 +2400,10 @@ for f in $packages; do
 done
 
 if [ -n "$to_install" ]; then
-    dnf install -y --disablerepo='*' --enablerepo=baseos,storpool-contrib,powertools --setopt=localpkg_gpgcheck=0 -- $to_install
+    dnf install -y --disablerepo='*' --enablerepo=appstream,baseos,storpool-contrib,powertools --setopt=localpkg_gpgcheck=0 -- $to_install
 fi
 if [ -n "$to_reinstall" ]; then
-    dnf reinstall -y --disablerepo='*' --enablerepo=baseos,storpool-contrib,powertools --setopt=localpkg_gpgcheck=0 -- $to_reinstall
+    dnf reinstall -y --disablerepo='*' --enablerepo=appstream,baseos,storpool-contrib,powertools --setopt=localpkg_gpgcheck=0 -- $to_reinstall
 fi
 '  "$@"
 							;;
@@ -2427,7 +2433,7 @@ fi
 						install)
 							# The commands are quoted exactly as much as necessary.
 							# shellcheck disable=SC2016
-							$noop 'dnf' '--disablerepo=*' '--enablerepo=baseos' '--enablerepo=storpool-contrib' 'install' '-q' '-y' '--'  "$@"
+							$noop 'dnf' '--disablerepo=*' '--enablerepo=appstream' '--enablerepo=baseos' '--enablerepo=storpool-contrib' 'install' '-q' '-y' '--'  "$@"
 							;;
 						
 						list_all)
@@ -2492,10 +2498,10 @@ for f in $packages; do
 done
 
 if [ -n "$to_install" ]; then
-    dnf install -y --disablerepo='*' --enablerepo=baseos,storpool-contrib --setopt=localpkg_gpgcheck=0 -- $to_install
+    dnf install -y --disablerepo='*' --enablerepo=appstream,baseos,storpool-contrib --setopt=localpkg_gpgcheck=0 -- $to_install
 fi
 if [ -n "$to_reinstall" ]; then
-    dnf reinstall -y --disablerepo='*' --enablerepo=baseos,storpool-contrib --setopt=localpkg_gpgcheck=0 -- $to_reinstall
+    dnf reinstall -y --disablerepo='*' --enablerepo=appstream,baseos,storpool-contrib --setopt=localpkg_gpgcheck=0 -- $to_reinstall
 fi
 '  "$@"
 							;;
@@ -2721,7 +2727,7 @@ fi
 						install)
 							# The commands are quoted exactly as much as necessary.
 							# shellcheck disable=SC2016
-							$noop 'dnf' '--disablerepo=*' '--enablerepo=baseos' '--enablerepo=powertools' '--enablerepo=storpool-contrib' 'install' '-q' '-y' '--'  "$@"
+							$noop 'dnf' '--disablerepo=*' '--enablerepo=appstream' '--enablerepo=baseos' '--enablerepo=powertools' '--enablerepo=storpool-contrib' 'install' '-q' '-y' '--'  "$@"
 							;;
 						
 						list_all)
@@ -2786,10 +2792,10 @@ for f in $packages; do
 done
 
 if [ -n "$to_install" ]; then
-    dnf install -y --disablerepo='*' --enablerepo=baseos,storpool-contrib,powertools --setopt=localpkg_gpgcheck=0 -- $to_install
+    dnf install -y --disablerepo='*' --enablerepo=appstream,baseos,storpool-contrib,powertools --setopt=localpkg_gpgcheck=0 -- $to_install
 fi
 if [ -n "$to_reinstall" ]; then
-    dnf reinstall -y --disablerepo='*' --enablerepo=baseos,storpool-contrib,powertools --setopt=localpkg_gpgcheck=0 -- $to_reinstall
+    dnf reinstall -y --disablerepo='*' --enablerepo=appstream,baseos,storpool-contrib,powertools --setopt=localpkg_gpgcheck=0 -- $to_reinstall
 fi
 '  "$@"
 							;;
@@ -3241,7 +3247,7 @@ fi
 						install)
 							# The commands are quoted exactly as much as necessary.
 							# shellcheck disable=SC2016
-							$noop 'dnf' '--disablerepo=*' '--enablerepo=baseos' '--enablerepo=storpool-contrib' '--enablerepo=codeready-builder-for-rhel-8-x86_64-rpms' 'install' '-q' '-y' '--'  "$@"
+							$noop 'dnf' '--disablerepo=*' '--enablerepo=appstream' '--enablerepo=baseos' '--enablerepo=storpool-contrib' '--enablerepo=codeready-builder-for-rhel-8-x86_64-rpms' 'install' '-q' '-y' '--'  "$@"
 							;;
 						
 						list_all)
@@ -3306,10 +3312,10 @@ for f in $packages; do
 done
 
 if [ -n "$to_install" ]; then
-    dnf install -y --disablerepo='*' --enablerepo=baseos,storpool-contrib,codeready-builder-for-rhel-8-x86_64-rpms --setopt=localpkg_gpgcheck=0 -- $to_install
+    dnf install -y --disablerepo='*' --enablerepo=appstream,baseos,storpool-contrib,codeready-builder-for-rhel-8-x86_64-rpms --setopt=localpkg_gpgcheck=0 -- $to_install
 fi
 if [ -n "$to_reinstall" ]; then
-    dnf reinstall -y --disablerepo='*' --enablerepo=baseos,storpool-contrib,codeready-builder-for-rhel-8-x86_64-rpms --setopt=localpkg_gpgcheck=0 -- $to_reinstall
+    dnf reinstall -y --disablerepo='*' --enablerepo=appstream,baseos,storpool-contrib,codeready-builder-for-rhel-8-x86_64-rpms --setopt=localpkg_gpgcheck=0 -- $to_reinstall
 fi
 '  "$@"
 							;;
@@ -3339,7 +3345,7 @@ fi
 						install)
 							# The commands are quoted exactly as much as necessary.
 							# shellcheck disable=SC2016
-							$noop 'dnf' '--disablerepo=*' '--enablerepo=baseos' '--enablerepo=powertools' '--enablerepo=storpool-contrib' 'install' '-q' '-y' '--'  "$@"
+							$noop 'dnf' '--disablerepo=*' '--enablerepo=appstream' '--enablerepo=baseos' '--enablerepo=powertools' '--enablerepo=storpool-contrib' 'install' '-q' '-y' '--'  "$@"
 							;;
 						
 						list_all)
@@ -3404,10 +3410,10 @@ for f in $packages; do
 done
 
 if [ -n "$to_install" ]; then
-    dnf install -y --disablerepo='*' --enablerepo=baseos,storpool-contrib,powertools --setopt=localpkg_gpgcheck=0 -- $to_install
+    dnf install -y --disablerepo='*' --enablerepo=appstream,baseos,storpool-contrib,powertools --setopt=localpkg_gpgcheck=0 -- $to_install
 fi
 if [ -n "$to_reinstall" ]; then
-    dnf reinstall -y --disablerepo='*' --enablerepo=baseos,storpool-contrib,powertools --setopt=localpkg_gpgcheck=0 -- $to_reinstall
+    dnf reinstall -y --disablerepo='*' --enablerepo=appstream,baseos,storpool-contrib,powertools --setopt=localpkg_gpgcheck=0 -- $to_reinstall
 fi
 '  "$@"
 							;;
@@ -3437,7 +3443,7 @@ fi
 						install)
 							# The commands are quoted exactly as much as necessary.
 							# shellcheck disable=SC2016
-							$noop 'dnf' '--disablerepo=*' '--enablerepo=baseos' '--enablerepo=storpool-contrib' 'install' '-q' '-y' '--'  "$@"
+							$noop 'dnf' '--disablerepo=*' '--enablerepo=appstream' '--enablerepo=baseos' '--enablerepo=storpool-contrib' 'install' '-q' '-y' '--'  "$@"
 							;;
 						
 						list_all)
@@ -3502,10 +3508,10 @@ for f in $packages; do
 done
 
 if [ -n "$to_install" ]; then
-    dnf install -y --disablerepo='*' --enablerepo=baseos,storpool-contrib --setopt=localpkg_gpgcheck=0 -- $to_install
+    dnf install -y --disablerepo='*' --enablerepo=appstream,baseos,storpool-contrib --setopt=localpkg_gpgcheck=0 -- $to_install
 fi
 if [ -n "$to_reinstall" ]; then
-    dnf reinstall -y --disablerepo='*' --enablerepo=baseos,storpool-contrib --setopt=localpkg_gpgcheck=0 -- $to_reinstall
+    dnf reinstall -y --disablerepo='*' --enablerepo=appstream,baseos,storpool-contrib --setopt=localpkg_gpgcheck=0 -- $to_reinstall
 fi
 '  "$@"
 							;;

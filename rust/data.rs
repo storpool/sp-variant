@@ -216,6 +216,7 @@ pub fn get_variants() -> &'static VariantDefTop {
                                                         vec![
                                                             "dnf".to_owned(),
                                                             "--disablerepo=*".to_owned(),
+                                                            "--enablerepo=appstream".to_owned(),
                                                             "--enablerepo=baseos".to_owned(),
                                                             "--enablerepo=powertools".to_owned(),
                                                             "--enablerepo=storpool-contrib".to_owned(),
@@ -301,10 +302,10 @@ for f in $packages; do
 done
 
 if [ -n \"$to_install\" ]; then
-    dnf install -y --disablerepo='*' --enablerepo=baseos,storpool-contrib,powertools --setopt=localpkg_gpgcheck=0 -- $to_install
+    dnf install -y --disablerepo='*' --enablerepo=appstream,baseos,storpool-contrib,powertools --setopt=localpkg_gpgcheck=0 -- $to_install
 fi
 if [ -n \"$to_reinstall\" ]; then
-    dnf reinstall -y --disablerepo='*' --enablerepo=baseos,storpool-contrib,powertools --setopt=localpkg_gpgcheck=0 -- $to_reinstall
+    dnf reinstall -y --disablerepo='*' --enablerepo=appstream,baseos,storpool-contrib,powertools --setopt=localpkg_gpgcheck=0 -- $to_reinstall
 fi
 ".to_owned(),
                                                         ],
@@ -343,7 +344,7 @@ fi
                                     base_image: "almalinux:8".to_owned(),
                                     branch: "".to_owned(),
                                     kernel_package: "kernel-core".to_owned(),
-                                    utf8_locale: "C.utf8".to_owned(),
+                                    utf8_locale: "C.UTF-8".to_owned(),
                                 },
                             },
                     ),
@@ -371,6 +372,7 @@ fi
                                                         vec![
                                                             "dnf".to_owned(),
                                                             "--disablerepo=*".to_owned(),
+                                                            "--enablerepo=appstream".to_owned(),
                                                             "--enablerepo=baseos".to_owned(),
                                                             "--enablerepo=storpool-contrib".to_owned(),
                                                             "install".to_owned(),
@@ -455,10 +457,10 @@ for f in $packages; do
 done
 
 if [ -n \"$to_install\" ]; then
-    dnf install -y --disablerepo='*' --enablerepo=baseos,storpool-contrib --setopt=localpkg_gpgcheck=0 -- $to_install
+    dnf install -y --disablerepo='*' --enablerepo=appstream,baseos,storpool-contrib --setopt=localpkg_gpgcheck=0 -- $to_install
 fi
 if [ -n \"$to_reinstall\" ]; then
-    dnf reinstall -y --disablerepo='*' --enablerepo=baseos,storpool-contrib --setopt=localpkg_gpgcheck=0 -- $to_reinstall
+    dnf reinstall -y --disablerepo='*' --enablerepo=appstream,baseos,storpool-contrib --setopt=localpkg_gpgcheck=0 -- $to_reinstall
 fi
 ".to_owned(),
                                                         ],
@@ -497,7 +499,7 @@ fi
                                     base_image: "almalinux:9".to_owned(),
                                     branch: "centos/9".to_owned(),
                                     kernel_package: "kernel-core".to_owned(),
-                                    utf8_locale: "C.utf8".to_owned(),
+                                    utf8_locale: "C.UTF-8".to_owned(),
                                 },
                             },
                     ),
@@ -649,7 +651,7 @@ fi
                                     base_image: "centos:6".to_owned(),
                                     branch: "centos/6".to_owned(),
                                     kernel_package: "kernel".to_owned(),
-                                    utf8_locale: "C".to_owned(),
+                                    utf8_locale: "en_US.utf8".to_owned(),
                                 },
                             },
                     ),
@@ -801,7 +803,7 @@ fi
                                     base_image: "centos:7".to_owned(),
                                     branch: "centos/7".to_owned(),
                                     kernel_package: "kernel".to_owned(),
-                                    utf8_locale: "C".to_owned(),
+                                    utf8_locale: "en_US.utf8".to_owned(),
                                 },
                             },
                     ),
@@ -829,6 +831,7 @@ fi
                                                         vec![
                                                             "dnf".to_owned(),
                                                             "--disablerepo=*".to_owned(),
+                                                            "--enablerepo=appstream".to_owned(),
                                                             "--enablerepo=baseos".to_owned(),
                                                             "--enablerepo=powertools".to_owned(),
                                                             "--enablerepo=storpool-contrib".to_owned(),
@@ -914,10 +917,10 @@ for f in $packages; do
 done
 
 if [ -n \"$to_install\" ]; then
-    dnf install -y --disablerepo='*' --enablerepo=baseos,storpool-contrib,powertools --setopt=localpkg_gpgcheck=0 -- $to_install
+    dnf install -y --disablerepo='*' --enablerepo=appstream,baseos,storpool-contrib,powertools --setopt=localpkg_gpgcheck=0 -- $to_install
 fi
 if [ -n \"$to_reinstall\" ]; then
-    dnf reinstall -y --disablerepo='*' --enablerepo=baseos,storpool-contrib,powertools --setopt=localpkg_gpgcheck=0 -- $to_reinstall
+    dnf reinstall -y --disablerepo='*' --enablerepo=appstream,baseos,storpool-contrib,powertools --setopt=localpkg_gpgcheck=0 -- $to_reinstall
 fi
 ".to_owned(),
                                                         ],
@@ -956,7 +959,7 @@ fi
                                     base_image: "centos:8".to_owned(),
                                     branch: "centos/8".to_owned(),
                                     kernel_package: "kernel-core".to_owned(),
-                                    utf8_locale: "C.utf8".to_owned(),
+                                    utf8_locale: "C.UTF-8".to_owned(),
                                 },
                             },
                     ),
@@ -1713,7 +1716,7 @@ fi
                                     base_image: "IGNORE".to_owned(),
                                     branch: "".to_owned(),
                                     kernel_package: "kernel".to_owned(),
-                                    utf8_locale: "C".to_owned(),
+                                    utf8_locale: "en_US.utf8".to_owned(),
                                 },
                             },
                     ),
@@ -1741,6 +1744,7 @@ fi
                                                         vec![
                                                             "dnf".to_owned(),
                                                             "--disablerepo=*".to_owned(),
+                                                            "--enablerepo=appstream".to_owned(),
                                                             "--enablerepo=baseos".to_owned(),
                                                             "--enablerepo=storpool-contrib".to_owned(),
                                                             "--enablerepo=codeready-builder-for-rhel-8-x86_64-rpms".to_owned(),
@@ -1826,10 +1830,10 @@ for f in $packages; do
 done
 
 if [ -n \"$to_install\" ]; then
-    dnf install -y --disablerepo='*' --enablerepo=baseos,storpool-contrib,codeready-builder-for-rhel-8-x86_64-rpms --setopt=localpkg_gpgcheck=0 -- $to_install
+    dnf install -y --disablerepo='*' --enablerepo=appstream,baseos,storpool-contrib,codeready-builder-for-rhel-8-x86_64-rpms --setopt=localpkg_gpgcheck=0 -- $to_install
 fi
 if [ -n \"$to_reinstall\" ]; then
-    dnf reinstall -y --disablerepo='*' --enablerepo=baseos,storpool-contrib,codeready-builder-for-rhel-8-x86_64-rpms --setopt=localpkg_gpgcheck=0 -- $to_reinstall
+    dnf reinstall -y --disablerepo='*' --enablerepo=appstream,baseos,storpool-contrib,codeready-builder-for-rhel-8-x86_64-rpms --setopt=localpkg_gpgcheck=0 -- $to_reinstall
 fi
 ".to_owned(),
                                                         ],
@@ -1868,7 +1872,7 @@ fi
                                     base_image: "redhat/ubi8:reg".to_owned(),
                                     branch: "".to_owned(),
                                     kernel_package: "kernel-core".to_owned(),
-                                    utf8_locale: "C.utf8".to_owned(),
+                                    utf8_locale: "C.UTF-8".to_owned(),
                                 },
                             },
                     ),
@@ -1896,6 +1900,7 @@ fi
                                                         vec![
                                                             "dnf".to_owned(),
                                                             "--disablerepo=*".to_owned(),
+                                                            "--enablerepo=appstream".to_owned(),
                                                             "--enablerepo=baseos".to_owned(),
                                                             "--enablerepo=powertools".to_owned(),
                                                             "--enablerepo=storpool-contrib".to_owned(),
@@ -1981,10 +1986,10 @@ for f in $packages; do
 done
 
 if [ -n \"$to_install\" ]; then
-    dnf install -y --disablerepo='*' --enablerepo=baseos,storpool-contrib,powertools --setopt=localpkg_gpgcheck=0 -- $to_install
+    dnf install -y --disablerepo='*' --enablerepo=appstream,baseos,storpool-contrib,powertools --setopt=localpkg_gpgcheck=0 -- $to_install
 fi
 if [ -n \"$to_reinstall\" ]; then
-    dnf reinstall -y --disablerepo='*' --enablerepo=baseos,storpool-contrib,powertools --setopt=localpkg_gpgcheck=0 -- $to_reinstall
+    dnf reinstall -y --disablerepo='*' --enablerepo=appstream,baseos,storpool-contrib,powertools --setopt=localpkg_gpgcheck=0 -- $to_reinstall
 fi
 ".to_owned(),
                                                         ],
@@ -2023,7 +2028,7 @@ fi
                                     base_image: "rockylinux:8".to_owned(),
                                     branch: "".to_owned(),
                                     kernel_package: "kernel-core".to_owned(),
-                                    utf8_locale: "C.utf8".to_owned(),
+                                    utf8_locale: "C.UTF-8".to_owned(),
                                 },
                             },
                     ),
@@ -2051,6 +2056,7 @@ fi
                                                         vec![
                                                             "dnf".to_owned(),
                                                             "--disablerepo=*".to_owned(),
+                                                            "--enablerepo=appstream".to_owned(),
                                                             "--enablerepo=baseos".to_owned(),
                                                             "--enablerepo=storpool-contrib".to_owned(),
                                                             "install".to_owned(),
@@ -2135,10 +2141,10 @@ for f in $packages; do
 done
 
 if [ -n \"$to_install\" ]; then
-    dnf install -y --disablerepo='*' --enablerepo=baseos,storpool-contrib --setopt=localpkg_gpgcheck=0 -- $to_install
+    dnf install -y --disablerepo='*' --enablerepo=appstream,baseos,storpool-contrib --setopt=localpkg_gpgcheck=0 -- $to_install
 fi
 if [ -n \"$to_reinstall\" ]; then
-    dnf reinstall -y --disablerepo='*' --enablerepo=baseos,storpool-contrib --setopt=localpkg_gpgcheck=0 -- $to_reinstall
+    dnf reinstall -y --disablerepo='*' --enablerepo=appstream,baseos,storpool-contrib --setopt=localpkg_gpgcheck=0 -- $to_reinstall
 fi
 ".to_owned(),
                                                         ],
@@ -2177,7 +2183,7 @@ fi
                                     base_image: "rockylinux:9".to_owned(),
                                     branch: "".to_owned(),
                                     kernel_package: "kernel-core".to_owned(),
-                                    utf8_locale: "C.utf8".to_owned(),
+                                    utf8_locale: "C.UTF-8".to_owned(),
                                 },
                             },
                     ),
