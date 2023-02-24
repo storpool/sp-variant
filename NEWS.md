@@ -1,6 +1,6 @@
 # Change log for the sp-variant library
 
-## 3.0.1 (not yet)
+## [Unreleased]
 
 ### Other changes
 
@@ -8,7 +8,7 @@
     - use the StorPool Python 2.x interpreter for the Tox tests
     - use the `tox-stages` utility instead of the `tox-delay` one
 
-## 3.0.0 (2022-11-09)
+## [3.0.0] - 2022-11-09
 
 ### Incompatible changes
 
@@ -89,7 +89,7 @@
     - use the `once_cell` library instead of the `lazy_static` one
     - use the `anyhow` library instead of `expect-exit` in the command-line tool
 
-## 2.3.3 (2022-04-28)
+## [2.3.3] - 2022-04-28
 
 ### Fixes
 
@@ -106,7 +106,7 @@
     - minor changes to implement some shellcheck suggestions
     - add a shellcheck test unless `NO_SHELLCHECK` is specified
 
-## 2.3.2 (2022-04-27)
+## [2.3.2] - 2022-04-27
 
 ### Fixes
 
@@ -114,7 +114,7 @@
     - fix exiting on errors in some situations; local variable declarations
       and error-checked assignments do not mix
 
-## 2.3.1 (2022-04-27)
+## [2.3.1] - 2022-04-27
 
 ### Fixes
 
@@ -123,7 +123,7 @@
       use a POSIX extended regular expression with `grep -E`, not
       a Perl-compatible one!
 
-## 2.3.0 (2022-04-26)
+## [2.3.0] - 2022-04-26
 
 ### Incompatible changes
 
@@ -142,7 +142,7 @@
     - import struct names directory for a more idiomatic Rust style
     - many small improvements, mostly suggested by Clippy lints
 
-## 2.2.0 (2022-02-05)
+## [2.2.0] - 2022-02-05
 
 ### Fixes
 
@@ -166,7 +166,7 @@
     - change the dependency on nix to a >= relation, hoping they do not
       break backwards compatibility
 
-## 2.1.1 (2021-12-18)
+## [2.1.1] - 2021-12-18
 
 ### Fixes
 
@@ -191,7 +191,7 @@
         - use `.find_map()` instead of reimplementing it
         - streamline `yai::parse()`
 
-## 2.1.0 (2021-11-15)
+## [2.1.0] - 2021-11-15
 
 ### Fixes
 
@@ -205,7 +205,7 @@
 - all:
     - Add support for Ubuntu 21.10 (Impish Indri).
 
-## 2.0.0 (2021-10-24)
+## [2.0.0] - 2021-10-24
 
 ### Incompatible changes
 
@@ -249,8 +249,20 @@
     - Add the "-i" option to limit the images to run on.
     - Show the containers' output continually.
 
-## 1.3.0 (2021-09-15)
+## [1.3.0] - 2021-09-15
 
 ### Started
 
 - First public release.
+
+[Unreleased]: https://github.com/storpool/sp-variant/compare/release/3.0.0...main
+[3.0.0]: https://github.com/storpool/sp-variant/compare/release/2.3.3...release/3.0.0
+[2.3.3]: https://github.com/storpool/sp-variant/compare/release/2.3.2...release/2.3.3
+[2.3.2]: https://github.com/storpool/sp-variant/compare/release/2.3.1...release/2.3.2
+[2.3.1]: https://github.com/storpool/sp-variant/compare/release/2.3.0...release/2.3.1
+[2.3.0]: https://github.com/storpool/sp-variant/compare/release/2.2.0...release/2.3.0
+[2.2.0]: https://github.com/storpool/sp-variant/compare/release/2.1.1...release/2.2.0
+[2.1.1]: https://github.com/storpool/sp-variant/compare/release/2.1.0...release/2.1.1
+[2.1.0]: https://github.com/storpool/sp-variant/compare/release/2.0.0...release/2.1.0
+[2.0.0]: https://github.com/storpool/sp-variant/compare/release/1.3.0...release/2.0.0
+[1.3.0]: https://github.com/storpool/sp-variant/releases/tag/release%2F1.3.0
