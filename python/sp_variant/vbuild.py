@@ -478,7 +478,7 @@ fi
             base_image="almalinux:9",
             branch="centos/9",
             kernel_package="kernel-core",
-            utf8_locale="C.utf8",
+            utf8_locale="C.UTF-8",
         ),
     ),
     defs.VariantUpdate(
