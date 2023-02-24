@@ -1,6 +1,6 @@
 #!/usr/bin/make -f
 #
-# Copyright (c) 2021, 2022  StorPool <support@storpool.com>
+# Copyright (c) 2021 - 2023  StorPool <support@storpool.com>
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -57,7 +57,7 @@ TEMP_PACKAGE_LIST?=	${CURDIR}/package-list.txt
 
 all:		${RUST_BIN} ${SH_BIN}
 
-test:		test-trivial test-shellcheck test-tox-delay
+test:		test-trivial test-shellcheck test-tox-stages
 
 test-trivial:	all
 		${SP_PY3_INVOKE} features
@@ -104,8 +104,8 @@ ${SH_BIN}:	${SH_SRC} python/sp_build_repo/subst.py ${PYTHON_VBUILD}
 test-docker:	repo
 		${SP_PY3_ENV} -m test_docker -r '${REPO_BUILT}' -v ${TEST_DOCKER_ARGS}
 
-test-tox-delay:
-		tox-delay -p all -e unit-tests-2,unit-tests-3 -- -p all
+test-tox-stages:
+		tox-stages run
 
 test-shellcheck:	${SH_BIN}
 		[ -n '${NO_SHELLCHECK}' ] || shellcheck -- '${SH_BIN}'
@@ -146,4 +146,4 @@ pydist-build-repo:
 		mv -fv MANIFEST-variant.in MANIFEST.in
 		mv -fv setup-variant.cfg setup.cfg
 
-.PHONY:		all repo test test-trivial test-docker test-tox-delay clean clean-py clean-repo clean-rust clean-sh pydist pydist-build-repo
+.PHONY:		all repo test test-trivial test-docker test-tox-stages clean clean-py clean-repo clean-rust clean-sh pydist pydist-build-repo
