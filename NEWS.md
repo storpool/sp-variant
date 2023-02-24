@@ -2,6 +2,10 @@
 
 ## 3.0.1 (not yet)
 
+- python:
+    - use the StorPool Python 2.x interpreter for the Tox tests
+    - use the `tox-stages` utility instead of the `tox-delay` one
+
 ## 3.0.0 (2022-11-09)
 
 - INCOMPATIBLE CHANGES:
