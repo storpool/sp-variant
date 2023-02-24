@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021, 2022  StorPool <support@storpool.com>
+ * Copyright (c) 2021 - 2023  StorPool <support@storpool.com>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -61,16 +61,13 @@ fn detect_variant(varfull: &VariantDefTop) -> Result<&Variant> {
 fn cmd_features(varfull: &VariantDefTop) {
     let (major, minor) = sp_variant::get_format_version_from(varfull);
     let program_version = sp_variant::get_program_version_from(varfull);
-    println!(
-        "Features: format={}.{} variant={}",
-        major, minor, program_version
-    );
+    println!("Features: format={major}.{minor} variant={program_version}");
 }
 
 #[allow(clippy::print_stdout)]
 fn cmd_detect(varfull: &VariantDefTop) -> Result<()> {
     let var = detect_variant(varfull)?;
-    println!("{}", var.kind.as_ref());
+    println!("{kind}", kind = var.kind.as_ref());
     Ok(())
 }
 
@@ -78,32 +75,32 @@ fn cmd_detect(varfull: &VariantDefTop) -> Result<()> {
 fn run_command(cmdvec: &[String], action: &str, noop: bool) -> Result<()> {
     let cmdstr = cmdvec.join(" ");
     if noop {
-        println!("Would run `{}`", cmdstr);
+        println!("Would run `{cmdstr}`");
         return Ok(());
     }
 
     let (name, args) = cmdvec
         .split_first()
-        .with_context(|| format!("Internal error: empty '{}' command", action))?;
+        .with_context(|| format!("Internal error: empty '{action}' command"))?;
     let status = Command::new(name)
         .args(args)
         .spawn()
-        .with_context(|| format!("{}: {}", action, cmdstr))?
+        .with_context(|| format!("{action}: {cmdstr}"))?
         .wait()
-        .with_context(|| format!("{}: {}", action, cmdstr))?;
+        .with_context(|| format!("{action}: {cmdstr}"))?;
 
     if !status.success() {
         match status.signal() {
             None => match status.code() {
                 Some(code) => {
-                    bail!(format!("{}: {}: exit code {}", action, cmdstr, code));
+                    bail!(format!("{action}: {cmdstr}: exit code {code}"));
                 }
                 None => {
-                    bail!(format!("{}: {}: exit status {:?}", action, cmdstr, status));
+                    bail!(format!("{action}: {cmdstr}: exit status {status:?}"));
                 }
             },
             Some(sig) => {
-                bail!(format!("{}: {}: killed by signal {}", action, cmdstr, sig));
+                bail!(format!("{action}: {cmdstr}: killed by signal {sig}"));
             }
         }
     }
@@ -112,12 +109,11 @@ fn run_command(cmdvec: &[String], action: &str, noop: bool) -> Result<()> {
 
 #[allow(clippy::print_stdout)]
 fn copy_file(fname: &str, srcdir: &str, dstdir: &str, noop: bool) -> Result<()> {
-    let src = format!("{}/{}", srcdir, fname);
-    let dst = format!("{}/{}", dstdir, fname);
-    println!("Copying {} -> {}", src, dst);
+    let src = format!("{srcdir}/{fname}");
+    let dst = format!("{dstdir}/{fname}");
+    println!("Copying {src} -> {dst}");
 
-    let read_source_file =
-        || fs::read(&src).with_context(|| format!("Could not read from {}", src));
+    let read_source_file = || fs::read(&src).with_context(|| format!("Could not read from {src}"));
 
     let write_destination_file = |contents: &Vec<u8>| {
         let mut outfile = OpenOptions::new()
@@ -125,30 +121,30 @@ fn copy_file(fname: &str, srcdir: &str, dstdir: &str, noop: bool) -> Result<()> 
             .create(true)
             .truncate(true)
             .open(&dst)
-            .with_context(|| format!("Could not open {} for writing", dst))?;
+            .with_context(|| format!("Could not open {dst} for writing"))?;
         let mut perms = outfile
             .metadata()
-            .with_context(|| format!("Could not examine the newly-created {}", dst))?
+            .with_context(|| format!("Could not examine the newly-created {dst}"))?
             .permissions();
         perms.set_mode(0o644);
         outfile
             .set_permissions(perms)
-            .with_context(|| format!("Could not change the mode on {}", dst))?;
+            .with_context(|| format!("Could not change the mode on {dst}"))?;
         unistd::fchown(
             outfile.as_raw_fd(),
             Some(Uid::from_raw(0)),
             Some(Gid::from_raw(0)),
         )
-        .with_context(|| format!("Could not set the ownership of {}", dst))?;
+        .with_context(|| format!("Could not set the ownership of {dst}"))?;
         outfile
             .write_all(contents)
-            .with_context(|| format!("Could not write to {}", dst))
+            .with_context(|| format!("Could not write to {dst}"))
     };
 
     let contents = read_source_file()?;
 
     if noop {
-        println!("Would write {} bytes to {}", contents.len(), dst);
+        println!("Would write {count} bytes to {dst}", count = contents.len());
         return Ok(());
     }
 
@@ -159,8 +155,7 @@ fn copy_file(fname: &str, srcdir: &str, dstdir: &str, noop: bool) -> Result<()> 
 fn get_filename<'path>(path: &'path str, tag: &str) -> Result<&'path str> {
     path.rsplit('/').next().with_context(|| {
         format!(
-            "Internal error: could not parse a {}: could not obtain a filename from '{}'",
-            tag, path
+            "Internal error: could not parse a {tag}: could not obtain a filename from '{path}'"
         )
     })
 }
@@ -173,8 +168,7 @@ fn get_filename_extension<'fname>(
         .rsplit_once('.')
         .with_context(|| {
             format!(
-                "Internal error: could not parse a {}: Could not split '{}' into a filename and extension",
-                tag, filename
+                "Internal error: could not parse a {tag}: Could not split '{filename}' into a filename and extension"
             )
         })
 }
@@ -187,15 +181,15 @@ fn repo_add_deb(var: &Variant, config: &RepoAddConfig, vdir: &str, repo: &DebRep
             .get("package")
             .with_context(|| {
                 format!(
-                    "Internal error: no 'package' command category for {}",
-                    var.kind.as_ref()
+                    "Internal error: no 'package' command category for {kind}",
+                    kind = var.kind.as_ref()
                 )
             })?
             .get("install")
             .with_context(|| {
                 format!(
-                    "Internal error: no 'package.install' command for {}",
-                    var.kind.as_ref()
+                    "Internal error: no 'package.install' command for {kind}",
+                    kind = var.kind.as_ref()
                 )
             })?
             .clone();
@@ -211,10 +205,8 @@ fn repo_add_deb(var: &Variant, config: &RepoAddConfig, vdir: &str, repo: &DebRep
         let sources_orig = get_filename(&repo.sources, "Apt sources list")?;
         let (sources_base, sources_ext) = get_filename_extension(sources_orig, "Apt sources list")?;
         let sources_fname = format!(
-            "{}{}.{}",
-            sources_base,
-            config.repotype.extension(),
-            sources_ext
+            "{sources_base}{repotype}.{sources_ext}",
+            repotype = config.repotype.extension()
         );
         copy_file(&sources_fname, vdir, "/etc/apt/sources.list.d", config.noop)
     };
@@ -263,10 +255,8 @@ fn repo_add_yum(config: &RepoAddConfig, vdir: &str, repo: &YumRepo) -> Result<()
         let (yumdef_base, yumdef_ext) =
             get_filename_extension(yumdef_orig, "Yum repository definition")?;
         let yumdef_fname = format!(
-            "{}{}.{}",
-            yumdef_base,
-            config.repotype.extension(),
-            yumdef_ext
+            "{yumdef_base}{repotype}.{yumdef_ext}",
+            repotype = config.repotype.extension()
         );
         copy_file(&yumdef_fname, vdir, "/etc/yum.repos.d", config.noop)
     };
@@ -280,7 +270,7 @@ fn repo_add_yum(config: &RepoAddConfig, vdir: &str, repo: &YumRepo) -> Result<()
                 &[
                     "rpmkeys".to_owned(),
                     "--import".to_owned(),
-                    format!("/etc/pki/rpm-gpg/{}", keyring_fname),
+                    format!("/etc/pki/rpm-gpg/{keyring_fname}"),
                 ],
                 "Could not import the StorPool RPM OpenPGP keys",
                 config.noop,
@@ -295,7 +285,10 @@ fn repo_add_yum(config: &RepoAddConfig, vdir: &str, repo: &YumRepo) -> Result<()
             &[
                 "yum".to_owned(),
                 "--disablerepo=*".to_owned(),
-                format!("--enablerepo=storpool-{}", config.repotype.as_ref()),
+                format!(
+                    "--enablerepo=storpool-{repotype}",
+                    repotype = config.repotype.as_ref()
+                ),
                 "clean".to_owned(),
                 "metadata".to_owned(),
             ],
@@ -314,12 +307,16 @@ fn repo_add_yum(config: &RepoAddConfig, vdir: &str, repo: &YumRepo) -> Result<()
 
 fn cmd_repo_add(varfull: &VariantDefTop, config: &RepoAddConfig) -> Result<()> {
     let var = detect_variant(varfull)?;
-    let vdir = format!("{}/{}", config.repodir, var.kind.as_ref());
+    let vdir = format!(
+        "{repodir}/{kind}",
+        repodir = config.repodir,
+        kind = var.kind.as_ref()
+    );
     ensure!(
         fs::metadata(&vdir)
-            .with_context(|| format!("Could not examine {:?}", vdir))?
+            .with_context(|| format!("Could not examine {vdir:?}"))?
             .is_dir(),
-        format!("Not a directory: {:?}", vdir)
+        format!("Not a directory: {vdir:?}")
     );
     match var.repo {
         Repo::Deb(ref deb) => repo_add_deb(var, config, &vdir, deb),
@@ -343,9 +340,9 @@ fn cmd_command_list(varfull: &VariantDefTop) -> Result<()> {
     for (category, cmap) in sorted_by_key(&var.commands) {
         for (name, cmd) in sorted_by_key(cmap) {
             if category == "pkgfile" && name == "install" {
-                println!("{}.{}: ...", category, name);
+                println!("{category}.{name}: ...");
             } else {
-                println!("{}.{}: {}", category, name, cmd.join(" "));
+                println!("{category}.{name}: {cmd}", cmd = cmd.join(" "));
             }
         }
     }
@@ -370,8 +367,8 @@ fn cmd_command_run(varfull: &VariantDefTop, config: CommandRunConfig) -> Result<
 fn cmd_show(varfull: &VariantDefTop, config: &ShowConfig) -> Result<()> {
     if config.name == "all" {
         print!(
-            "{}",
-            serde_json::to_string(varfull)
+            "{json}",
+            json = serde_json::to_string(varfull)
                 .context("Internal error: could not serialize the variant data")?
         );
     } else {
@@ -393,8 +390,8 @@ fn cmd_show(varfull: &VariantDefTop, config: &ShowConfig) -> Result<()> {
             "version": sp_variant::get_program_version().to_owned(),
         });
         println!(
-            "{}",
-            serde_json::to_string_pretty(&single)
+            "{json}",
+            json = serde_json::to_string_pretty(&single)
                 .context("Internal error: could not serialize the variant data")?
         );
     }

@@ -2,6 +2,7 @@
 name = "sp-variant"
 version = "3.0.1"
 edition = "2021"
+rust-version = "1.58"
 authors = ["StorPool <support@storpool.com>"]
 description = " Detect the Linux distribution for the StorPool build system"
 readme = "README.md"

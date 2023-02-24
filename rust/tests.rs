@@ -28,7 +28,7 @@ use std::collections::HashSet;
 #[test]
 fn test_detect() -> Result<(), super::VariantError> {
     let variant = crate::detect()?;
-    println!("Detected {}", variant.kind.as_ref());
+    println!("Detected {kind}", kind = variant.kind.as_ref());
     Ok(())
 }
 
@@ -41,12 +41,12 @@ fn test_roundtrip() {
     let mut seen: HashSet<String> = HashSet::new();
 
     for kind in &all.order {
-        println!("Checking {}", kind.as_ref());
+        println!("Checking {kind}", kind = kind.as_ref());
         let var = &all.variants[&kind];
 
         let name = var.kind.as_ref().to_string();
         let alias = &var.builder.alias;
-        println!("- name {} alias {}", name, alias);
+        println!("- name {name} alias {alias}");
         assert_eq!(var.kind, *kind);
         assert!(!seen.contains(&name));
         seen.insert(name);
@@ -56,10 +56,14 @@ fn test_roundtrip() {
     }
 
     let mut seen_vec: Vec<String> = seen.drain().collect();
-    print!("Expected: {}, seen: {}:", seen_vec.len(), all.order.len());
+    print!(
+        "Expected: {count_seen}, seen: {count_all}:",
+        count_seen = seen_vec.len(),
+        count_all = all.order.len()
+    );
     seen_vec.sort_unstable();
     for name in &seen_vec {
-        print!(" {}", name);
+        print!(" {name}");
     }
     println!("");
     assert_eq!(seen_vec.len(), all.order.len());

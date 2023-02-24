@@ -238,8 +238,8 @@ pub fn detect_from(variants: &VariantDefTop) -> Result<&Variant, VariantError> {
                     for kind in &variants.order {
                         let var = &variants.variants.get(kind).ok_or_else(|| {
                             VariantError::Internal(format!(
-                                "Internal error: unknown variant {} in the order",
-                                kind.as_ref()
+                                "Internal error: unknown variant {kind} in the order",
+                                kind = kind.as_ref()
                             ))
                         })?;
                         if var.detect.os_id != *os_id {
@@ -250,10 +250,9 @@ pub fn detect_from(variants: &VariantDefTop) -> Result<&Variant, VariantError> {
                             .build()
                             .map_err(|err| {
                                 VariantError::Internal(format!(
-                                    "Internal error: {}: could not parse '{}': {}",
-                                    kind.as_ref(),
-                                    var.detect.regex,
-                                    err
+                                    "Internal error: {kind}: could not parse '{regex}': {err}",
+                                    kind = kind.as_ref(),
+                                    regex = var.detect.regex
                                 ))
                             })?;
                         if re_ver.is_match(version_id) {
@@ -271,8 +270,8 @@ pub fn detect_from(variants: &VariantDefTop) -> Result<&Variant, VariantError> {
     for kind in &variants.order {
         let var = &variants.variants.get(kind).ok_or_else(|| {
             VariantError::Internal(format!(
-                "Internal error: unknown variant {} in the order",
-                kind.as_ref()
+                "Internal error: unknown variant {kind} in the order",
+                kind = kind.as_ref()
             ))
         })?;
         let re_line = RegexBuilder::new(&var.detect.regex)
@@ -280,10 +279,9 @@ pub fn detect_from(variants: &VariantDefTop) -> Result<&Variant, VariantError> {
             .build()
             .map_err(|err| {
                 VariantError::Internal(format!(
-                    "Internal error: {}: could not parse '{}': {}",
-                    kind.as_ref(),
-                    var.detect.regex,
-                    err
+                    "Internal error: {kind}: could not parse '{regex}': {err}",
+                    kind = kind.as_ref(),
+                    regex = var.detect.regex
                 ))
             })?;
         match fs::read(&var.detect.filename) {
@@ -324,7 +322,7 @@ pub fn get_from<'defs>(
     variants
         .variants
         .get(&kind)
-        .ok_or_else(|| VariantError::Internal(format!("No data for the {} variant", name)))
+        .ok_or_else(|| VariantError::Internal(format!("No data for the {name} variant")))
 }
 
 /// Get the variant with the specified builder alias from the supplied data.
@@ -340,7 +338,7 @@ pub fn get_by_alias_from<'defs>(
         .variants
         .values()
         .find(|var| var.builder.alias == alias)
-        .ok_or_else(|| VariantError::Internal(format!("No variant with the {} alias", alias)))
+        .ok_or_else(|| VariantError::Internal(format!("No variant with the {alias} alias")))
 }
 
 /// Get the metadata format version of the variant data.

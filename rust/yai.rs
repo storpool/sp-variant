@@ -86,14 +86,14 @@ fn parse_line(line: &str) -> Result<Option<(String, String)>, YAIError> {
     static RE: Lazy<Result<Regex, RegexError>> = Lazy::new(|| Regex::new(RE_LINE));
     match RE
         .as_ref()
-        .map_err(|err| YAIError::Internal(format!("Could not parse '{}': {}", RE_LINE, err)))?
+        .map_err(|err| YAIError::Internal(format!("Could not parse '{RE_LINE}': {err}")))?
         .captures(line)
     {
         Some(caps) => {
             let cap = |name: &str| -> Result<&str, YAIError> {
                 Ok(caps
                     .name(name)
-                    .ok_or_else(|| YAIError::Internal(format!("No '{}' in {:?}", name, caps)))?
+                    .ok_or_else(|| YAIError::Internal(format!("No '{name}' in {caps:?}")))?
                     .as_str())
             };
 
@@ -124,8 +124,7 @@ fn parse_line(line: &str) -> Result<Option<(String, String)>, YAIError> {
                 }
                 Some(other) => {
                     return Err(YAIError::Internal(format!(
-                        "YAI parse_line: {:?}: q_open {:?}",
-                        line, other
+                        "YAI parse_line: {line:?}: q_open {other:?}"
                     )))
                 }
                 None => cap("full")?,
@@ -219,7 +218,7 @@ BUG_REPORT_URL=\"https://bugs.debian.org/\"";
     fn parse_bad() {
         println!("\nMaking sure malformed lines are rejected");
         for line in &LINES_BAD {
-            println!("- {:?}", line);
+            println!("- {line:?}");
             super::parse_line(line).unwrap_err();
         }
     }
@@ -228,9 +227,9 @@ BUG_REPORT_URL=\"https://bugs.debian.org/\"";
     fn parse_comments() {
         println!("\nMaking sure comments and empty lines are ignored");
         for line in &LINES_COMMENTS {
-            println!("- {:?}", line);
+            println!("- {line:?}");
             let res = super::parse_line(line).unwrap();
-            println!("  - {:?}", res);
+            println!("  - {res:?}");
             assert_eq!(res, None);
         }
     }
@@ -239,9 +238,9 @@ BUG_REPORT_URL=\"https://bugs.debian.org/\"";
     fn parse_good() {
         println!("\nMaking sure well-formed lines are parsed correctly");
         for (line, (varname, value)) in &LINES_OK {
-            println!("- {:?}", line);
+            println!("- {line:?}");
             let (p_varname, p_value) = super::parse_line(line).unwrap().unwrap();
-            println!("  - name {:?} value {:?}", p_varname, p_value);
+            println!("  - name {p_varname:?} value {p_value:?}");
             assert_eq!(varname, &p_varname);
             assert_eq!(value, &p_value);
         }
@@ -251,17 +250,20 @@ BUG_REPORT_URL=\"https://bugs.debian.org/\"";
     fn parse() -> Result<(), Box<dyn Error>> {
         let dir = tempfile::tempdir()?;
         let path = dir.path().join("os-release");
-        println!("\nWriting and parsing {}", path.to_string_lossy());
+        println!(
+            "\nWriting and parsing {path}",
+            path = path.to_string_lossy()
+        );
         fs::write(&path, CFG_TEXT.as_bytes())?;
         let res = super::parse(&path)?;
         assert_eq!(res.len(), 9);
         for (name, value) in &CFG_EXPECTED {
             let pvalue = res.get(&name.to_string());
-            println!("- {:?}: expected {:?}, got {:?}", name, value, pvalue);
+            println!("- {name:?}: expected {value:?}, got {pvalue:?}");
             match value {
                 Some(value) => match pvalue {
                     Some(pvalue) => assert_eq!(value, pvalue),
-                    None => panic!("{}: expected {:?} got {:?}", name, value, pvalue),
+                    None => panic!("{name}: expected {value:?} got {pvalue:?}"),
                 },
                 None => assert_eq!(pvalue, None),
             }
