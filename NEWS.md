@@ -1,9 +1,15 @@
-# Change log for the sp-variant library
+# Changelog
+
+All notable changes to the sp-variant project will be documented in this file.
+
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
+and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
 ### Other changes
 
+- use the "Keep a Changelog" format for the changelog file
 - python:
     - use the StorPool Python 2.x interpreter for the Tox tests
     - use the `tox-stages` utility instead of the `tox-delay` one
