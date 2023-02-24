@@ -40,6 +40,7 @@ done
 	-W rust-2021-compatibility \
 	-W unused \
 	-W clippy::restriction \
+		-A clippy::blanket_clippy_restriction_lints \
 		-A clippy::implicit_return \
 		-A clippy::missing_docs_in_private_items \
 		-A clippy::std_instead_of_alloc \
