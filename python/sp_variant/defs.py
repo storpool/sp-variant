@@ -1,4 +1,4 @@
-# Copyright (c) 2021, 2022  StorPool <support@storpool.com>
+# Copyright (c) 2021 - 2023  StorPool <support@storpool.com>
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -149,7 +149,7 @@ else:
     BytesType = str
 
 
-VERSION = "3.0.0"
+VERSION = "3.0.1"
 FORMAT_VERSION = (1, 3)
 
 REPO_TYPES = [
