@@ -337,6 +337,28 @@ async def test_add_repo(
 set -e
 set -x
 
+check_locale()
+{
+    local var="$1" value="$2"
+
+    if [ -z "$value" ]; then
+        echo "$var is not set" 1>&2
+        exit 1
+    fi
+    if [ -n "$(env LC_ALL="$value" locale -k -c LC_CTYPE 2>&1 > /dev/null)" ]; then
+        echo "$var specifies a '$value' locale that is not configured" 1>&2
+        exit 1
+    fi
+    if ! env LC_ALL="$value" locale -k -c LC_CTYPE | grep -Eqe '^charmap=.*UTF-8'; then
+        echo "$var specifies a '$value' locale with a non-UTF-8 charmap" 1>&2
+        exit 1
+    fi
+}
+
+# Make sure LC_ALL is set to a valid UTF-8-capable locale
+echo 'Checking whether LC_ALL specifies a valid UTF-8-capable locale'
+check_locale 'The LC_ALL environment variable' "$LC_ALL"
+
 # Parsing JSON without jq? Yeah, sure, why not...
 echo 'Checking for a Debian-like variant'
 unset is_debian
@@ -353,6 +375,13 @@ fi
 
 echo 'Running add-storpool-repo'
 /sp/add-storpool-repo.sh
+
+echo 'Installing jq'
+/sp/storpool_variant command run -- package.install jq
+
+echo 'Checking whether builder.utf8_locale specifies a valid UTF-8-capable locale'
+u8loc="$(/sp/storpool_variant show current | jq -r '.variant.builder.utf8_locale')"
+check_locale 'The builder.utf8_locale setting' "$u8loc"
 
 echo 'Installing some programs'
 /sp/storpool_variant command run -- package.install sp-python2 sp-python2-modules sp-python3 sp-python3-modules
