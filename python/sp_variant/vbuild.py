@@ -1,4 +1,4 @@
-# Copyright (c) 2021, 2022  StorPool <support@storpool.com>
+# Copyright (c) 2021 - 2023  StorPool <support@storpool.com>
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -608,7 +608,7 @@ fi
                 "base_image": "centos:7",
                 "branch": "centos/7",
                 "kernel_package": "kernel",
-                "utf8_locale": "C",
+                "utf8_locale": "en_US.utf8",
             },
         },
     ),
