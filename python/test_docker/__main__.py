@@ -189,7 +189,7 @@ async def run_detect_for_image(
     finally:
         res = await proc.wait()
         cfg.diag(lambda: f"{image}: exit code {res!r}")
-        if res != 0:
+        if res:
             errors.append(f"Non-zero exit code {res}")
 
     first_line_dec = None if first_line is None else first_line.decode("ISO-8859-15")
@@ -309,7 +309,7 @@ def analyze_add_repo_single(
         return [f"{image}: unexpected result {received!r}"]
 
     r_out, r_err, r_res = received
-    if r_res != 0:
+    if r_res:
         return [
             f"{image}: the script failed with exit code {r_res}; "
             f"stdout: {r_out!r} stderr {r_err!r}"
