@@ -173,7 +173,7 @@ class VariantConfigError(VariantError):
     """Invalid parameters passed to the variant routines."""
 
 
-class Config(object):  # pylint: disable=too-few-public-methods
+class Config:  # pylint: disable=too-few-public-methods
     """Basic configuration: a "verbose" field and a diag() method."""
 
     def __init__(

@@ -1,4 +1,4 @@
-# Copyright (c) 2021, 2022  StorPool <support@storpool.com>
+# Copyright (c) 2021 - 2023  StorPool <support@storpool.com>
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -55,7 +55,7 @@ _RE_YAIP_LINE = re.compile(
 )
 
 
-class YAIParser(object):
+class YAIParser:
     """Yet another INI-like file parser, this time for /etc/os-release."""
 
     def __init__(self, filename):
