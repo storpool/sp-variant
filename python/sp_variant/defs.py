@@ -24,8 +24,6 @@
 #
 """Common definitions for the OS/distribution variant detection library."""
 
-from __future__ import print_function
-
 import sys
 
 from typing import Any, Dict, List, NamedTuple, Optional, Pattern, Text, Union
