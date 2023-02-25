@@ -29,7 +29,7 @@ import subprocess
 import sys
 import tempfile
 
-from typing import Iterator, Optional, Text, Union
+from typing import Iterator, Optional, Union
 
 
 if sys.version_info[0] < 3:
@@ -40,12 +40,12 @@ else:
 
 @contextlib.contextmanager
 def TemporaryDirectory(  # pylint: disable=invalid-name
-    path: Optional[Union[pathlib.Path, Text, str]] = None
+    path: Optional[Union[pathlib.Path, str]] = None
 ) -> Iterator[pathlib.Path]:
     """Create a temporary directory and eventually remove it."""
     temp = None
     try:
-        temp = tempfile.mkdtemp(dir=Text(path) if isinstance(path, pathlib.Path) else path)
+        temp = tempfile.mkdtemp(dir=str(path) if isinstance(path, pathlib.Path) else path)
         yield pathlib.Path(temp)
     finally:
         if temp is not None:

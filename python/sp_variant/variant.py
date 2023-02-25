@@ -28,7 +28,7 @@ import errno
 import io
 import subprocess
 
-from typing import Dict, Iterable, List, Optional, Text
+from typing import Dict, Iterable, List, Optional
 
 from . import defs
 from . import vbuild
@@ -55,10 +55,10 @@ class VariantFileError(VariantError):
 class VariantRemoteError(VariantError):
     """An error occurred while communicating with a remote host."""
 
-    hostname: Text
-    msg: Text
+    hostname: str
+    msg: str
 
-    def __init__(self, hostname: Text, msg: Text) -> None:
+    def __init__(self, hostname: str, msg: str) -> None:
         """Store the hostname and the error message."""
         super().__init__()
         self.hostname = hostname
@@ -119,7 +119,7 @@ def detect_variant(cfg: Config = _DEFAULT_CONFIG) -> Variant:
     raise VariantDetectError("Could not detect the current host's build variant")
 
 
-def get_all_variants(cfg: Config = _DEFAULT_CONFIG) -> Dict[Text, Variant]:
+def get_all_variants(cfg: Config = _DEFAULT_CONFIG) -> Dict[str, Variant]:
     """Return information about all the supported variants."""
     vbuild.build_variants(cfg)
     return dict(vbuild.VARIANTS)
@@ -131,7 +131,7 @@ def get_all_variants_in_order(cfg: Config = _DEFAULT_CONFIG) -> List[Variant]:
     return list(vbuild.DETECT_ORDER)
 
 
-def get_by_alias(alias: Text, cfg: Config = _DEFAULT_CONFIG) -> Variant:
+def get_by_alias(alias: str, cfg: Config = _DEFAULT_CONFIG) -> Variant:
     """Return the variant with the specified name."""
     vbuild.build_variants(cfg)
     for var in vbuild.VARIANTS.values():
@@ -140,7 +140,7 @@ def get_by_alias(alias: Text, cfg: Config = _DEFAULT_CONFIG) -> Variant:
     raise VariantKeyError(f"No variant with alias {alias}")
 
 
-def get_variant(name: Text, cfg: Config = _DEFAULT_CONFIG) -> Variant:
+def get_variant(name: str, cfg: Config = _DEFAULT_CONFIG) -> Variant:
     """Return the variant with the specified name."""
     vbuild.build_variants(cfg)
     try:

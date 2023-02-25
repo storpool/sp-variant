@@ -27,7 +27,7 @@
 import io
 import re
 
-from typing import Dict, Optional, Text, Tuple, Union
+from typing import Dict, Optional, Tuple, Union
 
 from . import defs
 
@@ -58,10 +58,10 @@ _RE_YAIP_LINE = re.compile(
 class YAIParser:
     """Yet another INI-like file parser, this time for /etc/os-release."""
 
-    filename: Text
+    filename: str
     data: Dict[str, str]
 
-    def __init__(self, filename: Text) -> None:
+    def __init__(self, filename: str) -> None:
         """Initialize a YAIParser object: store the filename."""
         self.filename = filename
         self.data = {}

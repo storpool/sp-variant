@@ -41,7 +41,7 @@ import os
 import subprocess
 import sys
 
-from typing import Callable, List, Optional, Text, Tuple, TYPE_CHECKING
+from typing import Callable, List, Optional, Tuple, TYPE_CHECKING
 
 from . import defs
 from . import variant
@@ -67,7 +67,7 @@ def cmd_detect(cfg: defs.Config) -> None:
         sys.exit(1)
 
 
-def copy_file(cfg: defs.Config, src: Text, dstdir: Text) -> None:
+def copy_file(cfg: defs.Config, src: str, dstdir: str) -> None:
     """Use `install(8)` to install a configuration file."""
     dst = os.path.join(dstdir, os.path.basename(src))
     mode = "0644"
@@ -92,7 +92,7 @@ def copy_file(cfg: defs.Config, src: Text, dstdir: Text) -> None:
         raise variant.VariantFileError(f"Could not copy {src} over to {dst}: {err}")
 
 
-def repo_add_extension(cfg: defs.Config, name: Text) -> Text:
+def repo_add_extension(cfg: defs.Config, name: str) -> str:
     """Add the extension for the specified repository type."""
     parts = name.rsplit(".")
     if len(parts) != 2:
@@ -102,7 +102,7 @@ def repo_add_extension(cfg: defs.Config, name: Text) -> Text:
     return f"{parts[0]}{cfg.repotype.extension}.{parts[1]}"
 
 
-def repo_add_deb(cfg: defs.Config, var: defs.Variant, vardir: Text) -> None:
+def repo_add_deb(cfg: defs.Config, var: defs.Variant, vardir: str) -> None:
     """Install the StorPool Debian-like repo configuration."""
     assert isinstance(var.repo, defs.DebRepo)
 
@@ -130,7 +130,7 @@ def repo_add_deb(cfg: defs.Config, var: defs.Variant, vardir: Text) -> None:
         raise variant.VariantFileError(f"Could not update the APT database: {err}")
 
 
-def repo_add_yum(cfg: defs.Config, var: defs.Variant, vardir: Text) -> None:
+def repo_add_yum(cfg: defs.Config, var: defs.Variant, vardir: str) -> None:
     """Install the StorPool RedHat/CentOS-like repo configuration."""
     assert isinstance(var.repo, defs.YumRepo)
 
@@ -213,7 +213,7 @@ def cmd_repo_add(cfg: defs.Config) -> None:
         sys.exit(1)
 
 
-def command_find(cfg: defs.Config, var: defs.Variant) -> List[Text]:
+def command_find(cfg: defs.Config, var: defs.Variant) -> List[str]:
     """Get a distribution-specific command from the variant definition."""
     assert cfg.command is not None
 

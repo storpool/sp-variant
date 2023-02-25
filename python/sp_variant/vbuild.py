@@ -26,11 +26,11 @@
 
 import re
 
-from typing import Any, Dict, List, Text, Type, TypeVar, Tuple, Union
+from typing import Any, Dict, List, Type, TypeVar, Tuple, Union
 
 from . import defs
 
-CMD_NOOP: List[Text] = ["true"]
+CMD_NOOP: List[str] = ["true"]
 
 T = TypeVar("T")  # pylint: disable=invalid-name
 
@@ -770,7 +770,7 @@ fi
     ),
 ]
 
-VARIANTS: Dict[Text, defs.Variant] = {}
+VARIANTS: Dict[str, defs.Variant] = {}
 
 DETECT_ORDER: List[defs.Variant] = []
 
@@ -860,7 +860,7 @@ def build_variants(cfg: defs.Config) -> None:
     assert not DETECT_ORDER
 
     cfg.diag("Building the list of variants")
-    order: List[Text] = []
+    order: List[str] = []
     for var in _VARIANT_DEF:
         if isinstance(var, defs.VariantUpdate):
             current = merge_into_parent(cfg, VARIANTS[var.parent], var)

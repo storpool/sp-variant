@@ -26,36 +26,36 @@
 
 import sys
 
-from typing import Any, Dict, List, NamedTuple, Optional, Pattern, Text, Union
+from typing import Any, Dict, List, NamedTuple, Optional, Pattern, Union
 
 
 Detect = NamedTuple(  # pylint: disable=invalid-name
     "Detect",
     [
-        ("filename", Text),
-        ("regex", Pattern[Text]),
-        ("os_id", Text),
-        ("os_version_regex", Pattern[Text]),
+        ("filename", str),
+        ("regex", Pattern[str]),
+        ("os_id", str),
+        ("os_version_regex", Pattern[str]),
     ],
 )
 
 CommandsPackage = NamedTuple(  # pylint: disable=invalid-name
     "CommandsPackage",
     [
-        ("update_db", List[Text]),
-        ("install", List[Text]),
-        ("list_all", List[Text]),
-        ("purge", List[Text]),
-        ("remove", List[Text]),
-        ("remove_impl", List[Text]),
+        ("update_db", List[str]),
+        ("install", List[str]),
+        ("list_all", List[str]),
+        ("purge", List[str]),
+        ("remove", List[str]),
+        ("remove_impl", List[str]),
     ],
 )
 
 CommandsPkgFile = NamedTuple(  # pylint: disable=invalid-name
     "CommandsPkgFile",
     [
-        ("dep_query", List[Text]),
-        ("install", List[Text]),
+        ("dep_query", List[str]),
+        ("install", List[str]),
     ],
 )
 
@@ -70,48 +70,48 @@ Commands = NamedTuple(  # pylint: disable=invalid-name
 DebRepo = NamedTuple(  # pylint: disable=invalid-name
     "DebRepo",
     [
-        ("codename", Text),
-        ("vendor", Text),
-        ("sources", Text),
-        ("keyring", Text),
-        ("req_packages", List[Text]),
+        ("codename", str),
+        ("vendor", str),
+        ("sources", str),
+        ("keyring", str),
+        ("req_packages", List[str]),
     ],
 )
 
 YumRepo = NamedTuple(  # pylint: disable=invalid-name
     "YumRepo",
     [
-        ("yumdef", Text),
-        ("keyring", Text),
+        ("yumdef", str),
+        ("keyring", str),
     ],
 )
 
 Builder = NamedTuple(  # pylint: disable=invalid-name
     "Builder",
     [
-        ("alias", Text),
-        ("base_image", Text),
-        ("branch", Text),
-        ("kernel_package", Text),
-        ("utf8_locale", Text),
+        ("alias", str),
+        ("base_image", str),
+        ("branch", str),
+        ("kernel_package", str),
+        ("utf8_locale", str),
     ],
 )
 
 Variant = NamedTuple(  # pylint: disable=invalid-name
     "Variant",
     [
-        ("name", Text),
-        ("descr", Text),
-        ("parent", Text),
-        ("family", Text),
+        ("name", str),
+        ("descr", str),
+        ("parent", str),
+        ("family", str),
         ("detect", Detect),
         ("commands", Commands),
-        ("min_sys_python", Text),
+        ("min_sys_python", str),
         ("repo", Union[DebRepo, YumRepo]),
         ("package", Dict[str, str]),
-        ("systemd_lib", Text),
-        ("file_ext", Text),
-        ("initramfs_flavor", Text),
+        ("systemd_lib", str),
+        ("file_ext", str),
+        ("initramfs_flavor", str),
         ("builder", Builder),
     ],
 )
@@ -119,9 +119,9 @@ Variant = NamedTuple(  # pylint: disable=invalid-name
 VariantUpdate = NamedTuple(  # pylint: disable=invalid-name
     "VariantUpdate",
     [
-        ("name", Text),
-        ("descr", Text),
-        ("parent", Text),
+        ("name", str),
+        ("descr", str),
+        ("parent", str),
         ("detect", Detect),
         ("updates", Dict[str, Any]),
     ],
@@ -130,10 +130,10 @@ VariantUpdate = NamedTuple(  # pylint: disable=invalid-name
 OSPackage = NamedTuple(  # pylint: disable=invalid-name
     "OSPackage",
     [
-        ("name", Text),
-        ("version", Text),
-        ("arch", Text),
-        ("status", Text),
+        ("name", str),
+        ("version", str),
+        ("arch", str),
+        ("status", str),
     ],
 )
 
@@ -168,19 +168,19 @@ class VariantConfigError(VariantError):
 class Config:  # pylint: disable=too-few-public-methods
     """Basic configuration: a "verbose" field and a diag() method."""
 
-    args: Optional[List[Text]]
-    command: Optional[Text]
+    args: Optional[List[str]]
+    command: Optional[str]
     noop: bool
-    repodir: Optional[Text]
+    repodir: Optional[str]
     repotype: RepoType
     verbose: bool
 
     def __init__(
         self,
-        args: Optional[List[Text]] = None,
-        command: Optional[Text] = None,
+        args: Optional[List[str]] = None,
+        command: Optional[str] = None,
         noop: bool = False,
-        repodir: Optional[Text] = None,
+        repodir: Optional[str] = None,
         repotype: RepoType = REPO_TYPES[0],
         verbose: bool = False,
     ) -> None:
@@ -194,7 +194,7 @@ class Config:  # pylint: disable=too-few-public-methods
         self.verbose = verbose
         self._diag_to_stderr = True
 
-    def diag(self, msg: Text) -> None:
+    def diag(self, msg: str) -> None:
         """Output a diagnostic message in verbose mode."""
         if self.verbose:
             print(msg, file=sys.stderr if self._diag_to_stderr else sys.stdout)
