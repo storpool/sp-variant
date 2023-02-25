@@ -86,7 +86,7 @@ def detect_variant(cfg: Config = _DEFAULT_CONFIG) -> Variant:
     try:
         data = yaiparser.YAIParser("/etc/os-release").parse()
         os_id, os_version = data.get("ID"), data.get("VERSION_ID")
-    except (IOError, OSError) as err:
+    except OSError as err:
         if err.errno != errno.ENOENT:
             raise
         os_id, os_version = None, None
@@ -109,7 +109,7 @@ def detect_variant(cfg: Config = _DEFAULT_CONFIG) -> Variant:
                     if var.detect.regex.match(line):
                         cfg.diag(f"  - found it: {line}")
                         return var
-        except (IOError, OSError) as err:
+        except OSError as err:
             if err.errno != errno.ENOENT:
                 raise VariantDetectError(
                     f"Could not read the {var.detect.filename} file: {err}"

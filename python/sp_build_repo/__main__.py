@@ -205,7 +205,7 @@ def subst_debian_sources(
 
     try:
         dst.write_text(result + "\n", encoding="UTF-8")
-    except (IOError, OSError) as err:
+    except OSError as err:
         raise variant.VariantFileError(f"Could not write out {dst}: {err}")
 
 
@@ -239,7 +239,7 @@ def subst_yum_repo(
 
     try:
         dst.write_text(result + "\n", encoding="UTF-8")
-    except (IOError, OSError) as err:
+    except OSError as err:
         raise variant.VariantFileError(f"Could not write out {dst}: {err}")
 
 
