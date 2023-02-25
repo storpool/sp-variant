@@ -806,14 +806,8 @@ def update_namedtuple(data: T, updates: Dict[str, Any]) -> T:
                 newv[name].update(value)
             else:
                 raise defs.VariantConfigError(f"{prefix}: {name} is not a tuple")
-        elif isinstance(
-            value,
-            (
-                str,
-                defs.TextType,
-            ),
-        ):
-            check_type(name, orig, (str, defs.TextType), "string")
+        elif isinstance(value, (str, str)):
+            check_type(name, orig, (str, str), "string")
             newv[name] = value
         elif type(value).__name__ == "PosixPath":
             if orig is not None:

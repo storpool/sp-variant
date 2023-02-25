@@ -59,25 +59,23 @@ class YAIParser:
     """Yet another INI-like file parser, this time for /etc/os-release."""
 
     filename: Text
-    data: Dict[defs.TextType, defs.TextType]
+    data: Dict[str, str]
 
     def __init__(self, filename: Text) -> None:
         """Initialize a YAIParser object: store the filename."""
         self.filename = filename
         self.data = {}
 
-    def parse_line(
-        self, line: Union[defs.TextType, defs.BytesType]
-    ) -> Optional[Tuple[defs.TextType, defs.TextType]]:
+    def parse_line(self, line: Union[str, bytes]) -> Optional[Tuple[str, str]]:
         """Parse a single var=value line."""
-        if isinstance(line, defs.BytesType):
+        if isinstance(line, bytes):
             try:
                 line = line.decode("UTF-8")
             except UnicodeDecodeError as err:
                 raise VariantYAIError(
                     f"Invalid {self.filename} line, not a valid UTF-8 string: {line!r}: {err}"
                 ) from err
-        assert isinstance(line, defs.TextType)
+        assert isinstance(line, str)
 
         mline = _RE_YAIP_LINE.match(line)
         if not mline:
@@ -115,7 +113,7 @@ class YAIParser:
                 f"Weird {self.filename} line, open/close quote mismatch: {line!r}"
             )
 
-        res = defs.TextType("")
+        res = ""
         while quoted:
             try:
                 idx = quoted.index("\\")
@@ -135,7 +133,7 @@ class YAIParser:
 
         return (varname, res)
 
-    def parse(self) -> Dict[defs.TextType, defs.TextType]:
+    def parse(self) -> Dict[str, str]:
         """Parse a file, store and return the result."""
         with io.open(self.filename, mode="r", encoding="UTF-8") as infile:
             contents = infile.read()
@@ -149,9 +147,9 @@ class YAIParser:
         self.data = data
         return data
 
-    def get(self, key: Union[defs.TextType, defs.BytesType]) -> Optional[defs.TextType]:
+    def get(self, key: Union[str, bytes]) -> Optional[str]:
         """Get a value parsed from the configuration file."""
-        if isinstance(key, defs.BytesType):
+        if isinstance(key, bytes):
             key = key.decode("UTF-8")
-        assert isinstance(key, defs.TextType)
+        assert isinstance(key, str)
         return self.data.get(key)

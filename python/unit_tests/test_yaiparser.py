@@ -117,7 +117,7 @@ def test_parse() -> None:
     """Test the functionality of _YAIParser.parse() and .get()."""
     with util.TemporaryDirectory() as tempd:
         cfile = tempd / "os-release"
-        cfile.write_text(defs.TextType(_CFG_TEXT), encoding="UTF-8")
+        cfile.write_text(_CFG_TEXT, encoding="UTF-8")
 
         yai = yaiparser.YAIParser(str(cfile))  # pylint: disable=W0212
         data = yai.parse()

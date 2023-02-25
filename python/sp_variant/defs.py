@@ -139,14 +139,6 @@ OSPackage = NamedTuple(  # pylint: disable=invalid-name
 
 RepoType = NamedTuple("RepoType", [("name", str), ("extension", str), ("url", str)])
 
-if sys.version_info[0] >= 3:
-    TextType = str
-    BytesType = bytes
-else:
-    TextType = unicode  # noqa: F821  # pylint: disable=undefined-variable
-    BytesType = str
-
-
 VERSION = "3.0.1"
 FORMAT_VERSION = (1, 3)
 
