@@ -74,17 +74,13 @@ class YAIParser:
                 line = line.decode("UTF-8")
             except UnicodeDecodeError as err:
                 raise VariantYAIError(
-                    "Invalid {fname} line, not a valid UTF-8 string: {line!r}: {err}".format(
-                        fname=self.filename, line=line, err=err
-                    )
+                    f"Invalid {self.filename} line, not a valid UTF-8 string: {line!r}: {err}"
                 ) from err
         assert isinstance(line, defs.TextType)
 
         mline = _RE_YAIP_LINE.match(line)
         if not mline:
-            raise VariantYAIError(
-                "Unexpected {fname} line: {line!r}".format(fname=self.filename, line=line)
-            )
+            raise VariantYAIError(f"Unexpected {self.filename} line: {line!r}")
         if mline.group("comment") is not None:
             return None
 
@@ -100,15 +96,13 @@ class YAIParser:
             if oquot in quoted:
                 raise VariantYAIError(
                     (
-                        "Weird {fname} line, the quoted content "
-                        "contains the quote character: {line!r}"
-                    ).format(fname=self.filename, line=line)
+                        f"Weird {self.filename} line, the quoted content "
+                        f"contains the quote character: {line!r}"
+                    )
                 )
             if cquot != oquot:
                 raise VariantYAIError(
-                    "Weird {fname} line, open/close quote mismatch: {line!r}".format(
-                        fname=self.filename, line=line
-                    )
+                    f"Weird {self.filename} line, open/close quote mismatch: {line!r}"
                 )
 
             return (varname, quoted)
@@ -117,9 +111,7 @@ class YAIParser:
             quoted = full
         elif cquot != oquot:
             raise VariantYAIError(
-                "Weird {fname} line, open/close quote mismatch: {line!r}".format(
-                    fname=self.filename, line=line
-                )
+                f"Weird {self.filename} line, open/close quote mismatch: {line!r}"
             )
 
         res = defs.TextType("")
@@ -133,8 +125,9 @@ class YAIParser:
             if idx == len(quoted) - 1:
                 raise VariantYAIError(
                     (
-                        "Weird {fname} line, backslash at the end of the quoted string: {line!r}"
-                    ).format(fname=self.filename, line=line)
+                        f"Weird {self.filename} line, backslash at "
+                        f"the end of the quoted string: {line!r}"
+                    )
                 )
             res += quoted[:idx] + quoted[idx + 1]
             quoted = quoted[idx + 2 :]

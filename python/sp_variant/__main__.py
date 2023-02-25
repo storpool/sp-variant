@@ -73,7 +73,7 @@ def copy_file(cfg, src, dstdir):
     """Use `install(8)` to install a configuration file."""
     dst = os.path.join(dstdir, os.path.basename(src))
     mode = "0644"
-    cfg.diag("{src} -> {dst} [{mode}]".format(src=src, dst=dst, mode=mode))
+    cfg.diag(f"{src} -> {dst} [{mode}]")
     try:
         subprocess.check_call(
             [
@@ -91,9 +91,7 @@ def copy_file(cfg, src, dstdir):
             shell=False,
         )
     except subprocess.CalledProcessError as err:
-        raise variant.VariantFileError(
-            "Could not copy {src} over to {dst}: {err}".format(src=src, dst=dst, err=err)
-        )
+        raise variant.VariantFileError(f"Could not copy {src} over to {dst}: {err}")
 
 
 def repo_add_extension(cfg, name):
@@ -102,11 +100,9 @@ def repo_add_extension(cfg, name):
     parts = name.rsplit(".")
     if len(parts) != 2:
         raise variant.VariantFileError(
-            "Unexpected repository file name without an extension: {name}".format(name=name)
+            f"Unexpected repository file name without an extension: {name}"
         )
-    return "{stem}{extension}.{ext}".format(
-        stem=parts[0], extension=cfg.repotype.extension, ext=parts[1]
-    )
+    return f"{parts[0]}{cfg.repotype.extension}.{parts[1]}"
 
 
 def repo_add_deb(cfg, var, vardir):
@@ -118,9 +114,7 @@ def repo_add_deb(cfg, var, vardir):
         subprocess.check_call(var.commands.package.install + var.repo.req_packages, shell=False)
     except subprocess.CalledProcessError as err:
         raise variant.VariantFileError(
-            "Could not install the required packages {req}: {err}".format(
-                req=" ".join(var.repo.req_packages), err=err
-            )
+            f"Could not install the required packages {' '.join(var.repo.req_packages)}: {err}"
         )
 
     copy_file(
@@ -137,7 +131,7 @@ def repo_add_deb(cfg, var, vardir):
     try:
         subprocess.check_call(["apt-get", "update"], shell=False)
     except subprocess.CalledProcessError as err:
-        raise variant.VariantFileError("Could not update the APT database: {err}".format(err=err))
+        raise variant.VariantFileError(f"Could not update the APT database: {err}")
 
 
 def repo_add_yum(cfg, var, vardir):
@@ -159,7 +153,7 @@ def repo_add_yum(cfg, var, vardir):
         )
     except subprocess.CalledProcessError as err:
         raise variant.VariantFileError(
-            "Could not install the required ca-certificates package: {err}".format(err=err)
+            f"Could not install the required ca-certificates package: {err}"
         )
 
     copy_file(
@@ -184,25 +178,21 @@ def repo_add_yum(cfg, var, vardir):
                 shell=False,
             )
         except subprocess.CalledProcessError as err:
-            raise variant.VariantFileError(
-                "Could not import the RPM PGP keys: {err}".format(err=err)
-            )
+            raise variant.VariantFileError(f"Could not import the RPM PGP keys: {err}")
 
     try:
         subprocess.check_call(
             [
                 "yum",
                 "--disablerepo=*",
-                "--enablerepo=storpool-{name}".format(name=cfg.repotype.name),
+                f"--enablerepo=storpool-{cfg.repotype.name}",
                 "clean",
                 "metadata",
             ],
             shell=False,
         )
     except subprocess.CalledProcessError as err:
-        raise variant.VariantFileError(
-            "Could not clean the Yum repository metadata: {err}".format(err=err)
-        )
+        raise variant.VariantFileError(f"Could not clean the Yum repository metadata: {err}")
 
 
 def repo_add(cfg):
@@ -212,7 +202,7 @@ def repo_add(cfg):
     var = variant.detect_variant(cfg)
     vardir = os.path.join(cfg.repodir, var.name)
     if not os.path.isdir(vardir):
-        raise defs.VariantConfigError("No {vdir} directory".format(vdir=vardir))
+        raise defs.VariantConfigError(f"No {vardir} directory")
 
     if isinstance(var.repo, defs.DebRepo):
         repo_add_deb(cfg, var, vardir)
@@ -243,18 +233,14 @@ def command_find(cfg, var):
         fields = getattr(current, "_fields")  # type: List[str]
         if comp not in fields:
             raise defs.VariantConfigError(
-                "Invalid command component '{comp}', should be one of {fields}".format(
-                    comp=comp, fields=" ".join(fields)
-                )
+                f"Invalid command component '{comp}', should be one of {' '.join(fields)}"
             )
         current = getattr(current, comp)
 
     if not isinstance(current, list):
         fields = getattr(current, "_fields")
         raise defs.VariantConfigError(
-            "Incomplete command specification, should continue with one of {fields}".format(
-                fields=" ".join(fields)
-            )
+            f"Incomplete command specification, should continue with one of {' '.join(fields)}"
         )
 
     return current
@@ -266,7 +252,7 @@ def command_run(cfg):
     assert cfg.args is not None
 
     cmd = command_find(cfg, variant.detect_variant(cfg=cfg)) + cfg.args
-    cfg.diag("About to run `{cmd}`".format(cmd=" ".join(cmd)))
+    cfg.diag(f"About to run `{' '.join(cmd)}`")
     if cfg.noop:
         # Ahhh... we won't have shlex.quote() on Python 2.6, will we?
         print(" ".join(cmd))
@@ -275,9 +261,7 @@ def command_run(cfg):
     try:
         subprocess.check_call(cmd, shell=False)
     except subprocess.CalledProcessError as err:
-        raise variant.VariantFileError(
-            "Could not run `{cmd}`: {err}".format(cmd=" ".join(cmd), err=err)
-        )
+        raise variant.VariantFileError(f"Could not run `{' '.join(cmd)}`: {err}")
 
 
 def cmd_command_list(cfg):
@@ -294,7 +278,7 @@ def cmd_command_list(cfg):
         ):
             if (cat_name, cmd_name) in CMD_LIST_BRIEF:
                 command = ["..."]
-            print("{cat}.{name}: {cmd}".format(cat=cat_name, name=cmd_name, cmd=" ".join(command)))
+            print(f"{cat_name}.{cmd_name}: {' '.join(command)}")
 
 
 def cmd_command_run(cfg):
@@ -311,9 +295,8 @@ def cmd_features(_cfg):
     # type: (defs.Config) -> None
     """Display the features supported by storpool_variant."""
     print(
-        "Features: repo=0.2 variant={ver} format={f_major}.{f_minor}".format(
-            ver=defs.VERSION, f_major=defs.FORMAT_VERSION[0], f_minor=defs.FORMAT_VERSION[1]
-        )
+        f"Features: repo=0.2 variant={defs.VERSION} "
+        f"format={defs.FORMAT_VERSION[0]}.{defs.FORMAT_VERSION[1]}"
     )
 
 
@@ -343,7 +326,7 @@ def cmd_show(cfg):
             var = vbuild.VARIANTS.get(cfg.command)
 
         if var is None:
-            sys.exit("Invalid build variant '{name}'".format(name=cfg.command))
+            sys.exit(f"Invalid build variant '{cfg.command}'")
         data = defs.jsonify(
             {
                 "format": {

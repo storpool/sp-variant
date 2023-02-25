@@ -783,15 +783,11 @@ def update_namedtuple(data, updates):
     fields = getattr(data, "_fields")  # type: List[str]
 
     newv = {name: getattr(data, name) for name in fields}
-    prefix = "Internal error: could not update {newv} with {updates}".format(
-        newv=newv, updates=updates
-    )
+    prefix = f"Internal error: could not update {newv} with {updates}"
 
     for name, value in updates.items():
         if name not in newv:
-            raise defs.VariantConfigError(
-                "{prefix}: unexpected field {name}".format(prefix=prefix, name=name)
-            )
+            raise defs.VariantConfigError(f"{prefix}: unexpected field {name}")
         orig = newv[name]
 
         def check_type(
@@ -802,11 +798,7 @@ def update_namedtuple(data, updates):
         ):  # type: (...) -> None
             """Make sure the `orig` value is of the expected type."""
             if not isinstance(orig, expected):
-                raise defs.VariantConfigError(
-                    "{prefix}: {name} is not a {tname}".format(
-                        prefix=prefix, name=name, tname=tname
-                    )
-                )
+                raise defs.VariantConfigError(f"{prefix}: {name} is not a {tname}")
 
         if isinstance(value, dict):
             if isinstance(orig, tuple):
@@ -814,9 +806,7 @@ def update_namedtuple(data, updates):
             elif isinstance(orig, dict):
                 newv[name].update(value)
             else:
-                raise defs.VariantConfigError(
-                    "{prefix}: {name} is not a tuple".format(prefix=prefix, name=name)
-                )
+                raise defs.VariantConfigError(f"{prefix}: {name} is not a tuple")
         elif isinstance(
             value,
             (
@@ -835,11 +825,7 @@ def update_namedtuple(data, updates):
             newv[name] = value
         else:
             raise defs.VariantConfigError(
-                "{prefix}: weird {tname} update for {name}".format(
-                    prefix=prefix,
-                    tname=type(value).__name__,
-                    name=name,
-                )
+                f"{prefix}: weird {type(value).__name__} update for {name}"
             )
 
     updated = type(data)(**newv)
@@ -849,7 +835,7 @@ def update_namedtuple(data, updates):
 def merge_into_parent(cfg, parent, child):
     # type: (defs.Config, defs.Variant, defs.VariantUpdate) -> defs.Variant
     """Merge a child's definitions into the parent."""
-    cfg.diag("- merging {child} into {parent}".format(child=child.name, parent=parent.name))
+    cfg.diag(f"- merging {child.name} into {parent.name}")
     return update_namedtuple(
         defs.Variant(
             name=child.name,
@@ -893,4 +879,5 @@ def build_variants(cfg):
 
     order.reverse()
     DETECT_ORDER.extend([VARIANTS[name] for name in order])
+    # pylint: disable-next=consider-using-f-string
     cfg.diag("Detect order: {names}".format(names=" ".join(var.name for var in DETECT_ORDER)))

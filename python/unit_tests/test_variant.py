@@ -81,22 +81,22 @@ def test_list_all():
     var = variant.detect_variant()
     assert var is not None
     det_cmd = list(var.commands.package.list_all)
-    print("list_all command: {det_cmd!r}".format(det_cmd=det_cmd))
+    print(f"list_all command: {det_cmd!r}")
 
     pkgs_a = variant.list_all_packages(var, patterns=["a*"])
-    print("{count} packages with names starting with 'a'".format(count=len(pkgs_a)))
+    print(f"{len(pkgs_a)} packages with names starting with 'a'")
     assert det_cmd == var.commands.package.list_all
 
     pkgs_b = variant.list_all_packages(var, patterns=["b*"])
-    print("{count} packages with names starting with 'b'".format(count=len(pkgs_b)))
+    print(f"{len(pkgs_b)} packages with names starting with 'b'")
     assert det_cmd == var.commands.package.list_all
 
     pkgs_a_again = variant.list_all_packages(var, patterns=["a*"])
-    print("now {count} packages with names starting with 'a'".format(count=len(pkgs_a_again)))
+    print(f"now {len(pkgs_a_again)} packages with names starting with 'a'")
     assert det_cmd == var.commands.package.list_all
     assert set(pkgs_a) == set(pkgs_a_again)
 
     # There should be at least one package installed on the system... right?
     pkgs_all = variant.list_all_packages(var, patterns=["*"])
-    print("{count} total packages on the system".format(count=len(pkgs_all)))
+    print(f"{len(pkgs_all)} total packages on the system")
     assert pkgs_all

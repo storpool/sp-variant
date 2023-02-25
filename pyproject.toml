@@ -7,7 +7,6 @@ line-length = 100
 
 [tool.pylint.messages]
 disable = [
-  "consider-using-f-string",
 ]
 
 [tool.test-stages]

@@ -65,7 +65,7 @@ class VariantRemoteError(VariantError):
     def __str__(self):
         # type: () -> str
         """Return a human-readable representation of the error."""
-        return "{host}: {err}".format(host=self.hostname, err=self.msg)
+        return f"{self.hostname}: {self.msg}"
 
 
 class VariantDetectError(VariantError):
@@ -92,35 +92,29 @@ def detect_variant(cfg=_DEFAULT_CONFIG):
         os_id, os_version = None, None
 
     if os_id is not None and os_version is not None:
-        cfg.diag(
-            "Matching os-release id {os_id!r} version {os_version!r}".format(
-                os_id=os_id, os_version=os_version
-            )
-        )
+        cfg.diag(f"Matching os-release id {os_id!r} version {os_version!r}")
         for var in vbuild.DETECT_ORDER:
-            cfg.diag("- trying {name}".format(name=var.name))
+            cfg.diag(f"- trying {var.name}")
             if var.detect.os_id == os_id and var.detect.os_version_regex.match(os_version):
                 cfg.diag("  - found it!")
                 return var
 
     cfg.diag("Trying non-os-release-based heuristics")
     for var in vbuild.DETECT_ORDER:
-        cfg.diag("- trying {name}".format(name=var.name))
+        cfg.diag(f"- trying {var.name}")
         try:
             with io.open(var.detect.filename, mode="r", encoding=SAFEENC) as osf:
-                cfg.diag("  - {fname}".format(fname=var.detect.filename))
+                cfg.diag(f"  - {var.detect.filename}")
                 for line in (line.rstrip("\r\n") for line in osf.readlines()):
                     if var.detect.regex.match(line):
-                        cfg.diag("  - found it: {line}".format(line=line))
+                        cfg.diag(f"  - found it: {line}")
                         return var
         except (IOError, OSError) as err:
             if err.errno != errno.ENOENT:
                 raise VariantDetectError(
-                    "Could not read the {fname} file: {err}".format(
-                        fname=var.detect.filename, err=err
-                    )
+                    f"Could not read the {var.detect.filename} file: {err}"
                 ) from err
-            cfg.diag("  - no {fname}".format(fname=var.detect.filename))
+            cfg.diag(f"  - no {var.detect.filename}")
 
     raise VariantDetectError("Could not detect the current host's build variant")
 
@@ -146,7 +140,7 @@ def get_by_alias(alias, cfg=_DEFAULT_CONFIG):
     for var in vbuild.VARIANTS.values():
         if var.builder.alias == alias:
             return var
-    raise VariantKeyError("No variant with alias {alias}".format(alias=alias))
+    raise VariantKeyError(f"No variant with alias {alias}")
 
 
 def get_variant(name, cfg=_DEFAULT_CONFIG):
@@ -156,7 +150,7 @@ def get_variant(name, cfg=_DEFAULT_CONFIG):
     try:
         return vbuild.VARIANTS[name]
     except KeyError as err:
-        raise VariantKeyError("No variant named {name}".format(name=name)) from err
+        raise VariantKeyError(f"No variant named {name}") from err
 
 
 def list_all_packages(var, patterns=None):
@@ -170,11 +164,7 @@ def list_all_packages(var, patterns=None):
     for line in subprocess.check_output(cmd, shell=False).decode("UTF-8").splitlines():
         fields = line.split("\t")
         if len(fields) != 4:
-            raise VariantFileError(
-                "Unexpected line in the '{cmd}' output: {line}".format(
-                    cmd=" ".join(cmd), line=repr(line)
-                )
-            )
+            raise VariantFileError(f"Unexpected line in the '{' '.join(cmd)}' output: {line!r}")
         # This may need updating at some point, but it'll work for now
         if not fields[3].startswith("ii"):
             continue
