@@ -29,115 +29,111 @@ import sys
 from typing import Any, Dict, List, NamedTuple, Optional, Pattern, Union
 
 
-Detect = NamedTuple(  # pylint: disable=invalid-name
-    "Detect",
-    [
-        ("filename", str),
-        ("regex", Pattern[str]),
-        ("os_id", str),
-        ("os_version_regex", Pattern[str]),
-    ],
-)
+class Detect(NamedTuple):
+    """Where (and what for) to look when figuring out which variant this is."""
 
-CommandsPackage = NamedTuple(  # pylint: disable=invalid-name
-    "CommandsPackage",
-    [
-        ("update_db", List[str]),
-        ("install", List[str]),
-        ("list_all", List[str]),
-        ("purge", List[str]),
-        ("remove", List[str]),
-        ("remove_impl", List[str]),
-    ],
-)
+    filename: str
+    regex: Pattern[str]
+    os_id: str
+    os_version_regex: Pattern[str]
 
-CommandsPkgFile = NamedTuple(  # pylint: disable=invalid-name
-    "CommandsPkgFile",
-    [
-        ("dep_query", List[str]),
-        ("install", List[str]),
-    ],
-)
 
-Commands = NamedTuple(  # pylint: disable=invalid-name
-    "Commands",
-    [
-        ("package", CommandsPackage),
-        ("pkgfile", CommandsPkgFile),
-    ],
-)
+class CommandsPackage(NamedTuple):
+    """Variant-specific commands related to OS packages."""
 
-DebRepo = NamedTuple(  # pylint: disable=invalid-name
-    "DebRepo",
-    [
-        ("codename", str),
-        ("vendor", str),
-        ("sources", str),
-        ("keyring", str),
-        ("req_packages", List[str]),
-    ],
-)
+    update_db: List[str]
+    install: List[str]
+    list_all: List[str]
+    purge: List[str]
+    remove: List[str]
+    remove_impl: List[str]
 
-YumRepo = NamedTuple(  # pylint: disable=invalid-name
-    "YumRepo",
-    [
-        ("yumdef", str),
-        ("keyring", str),
-    ],
-)
 
-Builder = NamedTuple(  # pylint: disable=invalid-name
-    "Builder",
-    [
-        ("alias", str),
-        ("base_image", str),
-        ("branch", str),
-        ("kernel_package", str),
-        ("utf8_locale", str),
-    ],
-)
+class CommandsPkgFile(NamedTuple):
+    """Variant-specific commands related to OS package files."""
 
-Variant = NamedTuple(  # pylint: disable=invalid-name
-    "Variant",
-    [
-        ("name", str),
-        ("descr", str),
-        ("parent", str),
-        ("family", str),
-        ("detect", Detect),
-        ("commands", Commands),
-        ("min_sys_python", str),
-        ("repo", Union[DebRepo, YumRepo]),
-        ("package", Dict[str, str]),
-        ("systemd_lib", str),
-        ("file_ext", str),
-        ("initramfs_flavor", str),
-        ("builder", Builder),
-    ],
-)
+    dep_query: List[str]
+    install: List[str]
 
-VariantUpdate = NamedTuple(  # pylint: disable=invalid-name
-    "VariantUpdate",
-    [
-        ("name", str),
-        ("descr", str),
-        ("parent", str),
-        ("detect", Detect),
-        ("updates", Dict[str, Any]),
-    ],
-)
 
-OSPackage = NamedTuple(  # pylint: disable=invalid-name
-    "OSPackage",
-    [
-        ("name", str),
-        ("version", str),
-        ("arch", str),
-        ("status", str),
-    ],
-)
+class Commands(NamedTuple):
+    """Variant-specific commands, mainly related to the packaging system."""
 
-RepoType = NamedTuple("RepoType", [("name", str), ("extension", str), ("url", str)])
+    package: CommandsPackage
+    pkgfile: CommandsPkgFile
+
+
+class DebRepo(NamedTuple):
+    """The data to be stored in an Apt sources list file."""
+
+    codename: str
+    vendor: str
+    sources: str
+    keyring: str
+    req_packages: List[str]
+
+
+class YumRepo(NamedTuple):
+    """The data to be stored in a Yum repository file."""
+
+    yumdef: str
+    keyring: str
+
+
+class Builder(NamedTuple):
+    """Information related to the StorPool internal autobuilders."""
+
+    alias: str
+    base_image: str
+    branch: str
+    kernel_package: str
+    utf8_locale: str
+
+
+class Variant(NamedTuple):
+    """The information about a Linux distribution version (build variant)."""
+
+    name: str
+    descr: str
+    parent: str
+    family: str
+    detect: Detect
+    commands: Commands
+    min_sys_python: str
+    repo: Union[DebRepo, YumRepo]
+    package: Dict[str, str]
+    systemd_lib: str
+    file_ext: str
+    initramfs_flavor: str
+    builder: Builder
+
+
+class VariantUpdate(NamedTuple):
+    """The changes to be applied to the parent variant definition."""
+
+    name: str
+    descr: str
+    parent: str
+    detect: Detect
+    updates: Dict[str, Any]
+
+
+class OSPackage(NamedTuple):
+    """The attributes of a currently-installed or known OS package."""
+
+    name: str
+    version: str
+    arch: str
+    status: str
+
+
+class RepoType(NamedTuple):
+    """Attributes common to a StorPool package repository."""
+
+    name: str
+    extension: str
+    url: str
+
 
 VERSION = "3.0.1"
 FORMAT_VERSION = (1, 3)
