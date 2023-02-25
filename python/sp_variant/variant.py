@@ -25,7 +25,6 @@
 """Build variant definitions and commands."""
 
 import errno
-import io
 import subprocess
 
 from typing import Dict, Iterable, List, Optional
@@ -103,7 +102,7 @@ def detect_variant(cfg: Config = _DEFAULT_CONFIG) -> Variant:
     for var in vbuild.DETECT_ORDER:
         cfg.diag(f"- trying {var.name}")
         try:
-            with io.open(var.detect.filename, mode="r", encoding=SAFEENC) as osf:
+            with open(var.detect.filename, encoding=SAFEENC) as osf:
                 cfg.diag(f"  - {var.detect.filename}")
                 for line in (line.rstrip("\r\n") for line in osf.readlines()):
                     if var.detect.regex.match(line):

@@ -24,7 +24,6 @@
 #
 """Yet Another INI-style-file Parser."""
 
-import io
 import re
 
 from typing import Dict, Optional, Tuple, Union
@@ -135,7 +134,7 @@ class YAIParser:
 
     def parse(self) -> Dict[str, str]:
         """Parse a file, store and return the result."""
-        with io.open(self.filename, mode="r", encoding="UTF-8") as infile:
+        with open(self.filename, encoding="UTF-8") as infile:
             contents = infile.read()
         data = {}
         for line in contents.splitlines():
