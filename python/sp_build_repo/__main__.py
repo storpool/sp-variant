@@ -313,6 +313,7 @@ def build_repo(cfg: Config) -> pathlib.Path:
     return distfile
 
 
+# pylint: disable-next=too-complex
 def parse_overrides(path: pathlib.Path) -> Overrides:
     """Parse the TOML overrides file."""
     if path is None:

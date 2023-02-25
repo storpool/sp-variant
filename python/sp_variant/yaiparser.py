@@ -53,6 +53,8 @@ _RE_YAIP_LINE = re.compile(
     re.X,
 )
 
+_SINGLE_QUOTE = "'"
+
 
 class YAIParser:
     """Yet another INI-like file parser, this time for /etc/os-release."""
@@ -66,50 +68,38 @@ class YAIParser:
         self.data = {}
 
     def parse_line(self, line: Union[str, bytes]) -> Optional[Tuple[str, str]]:
-        """Parse a single var=value line."""
-        if isinstance(line, bytes):
-            try:
-                line = line.decode("UTF-8")
-            except UnicodeDecodeError as err:
-                raise VariantYAIError(
-                    f"Invalid {self.filename} line, not a valid UTF-8 string: {line!r}: {err}"
-                ) from err
-        assert isinstance(line, str)
+        """Convert a single var=value line to a string, then parse it."""
+        if isinstance(line, str):
+            return self._parse_line_str(line)
 
-        mline = _RE_YAIP_LINE.match(line)
-        if not mline:
-            raise VariantYAIError(f"Unexpected {self.filename} line: {line!r}")
-        if mline.group("comment") is not None:
-            return None
+        try:
+            str_line = line.decode("UTF-8")
+        except UnicodeDecodeError as err:
+            raise VariantYAIError(
+                f"Invalid {self.filename} line, not a valid UTF-8 string: {line!r}: {err}"
+            ) from err
+        return self._parse_line_str(str_line)
 
-        varname, oquot, cquot, quoted, full = (
-            mline.group("varname"),
-            mline.group("oquot"),
-            mline.group("cquot"),
-            mline.group("quoted"),
-            mline.group("full"),
-        )
-
-        if oquot == "'":
-            if oquot in quoted:
-                raise VariantYAIError(
-                    f"Weird {self.filename} line, the quoted content "
-                    f"contains the quote character: {line!r}"
-                )
-            if cquot != oquot:
-                raise VariantYAIError(
-                    f"Weird {self.filename} line, open/close quote mismatch: {line!r}"
-                )
-
-            return (varname, quoted)
-
-        if oquot is None:
-            quoted = full
-        elif cquot != oquot:
+    def _parse_line_quoted_single(
+        self, line: str, varname: str, quoted: str, cquot: str
+    ) -> Optional[Tuple[str, str]]:
+        """Parse a value enclosed in single quotes."""
+        if _SINGLE_QUOTE in quoted:
+            raise VariantYAIError(
+                f"Weird {self.filename} line, the quoted content "
+                f"contains the quote character: {line!r}"
+            )
+        if cquot != _SINGLE_QUOTE:
             raise VariantYAIError(
                 f"Weird {self.filename} line, open/close quote mismatch: {line!r}"
             )
 
+        return (varname, quoted)
+
+    def _parse_line_unquoted(
+        self, line: str, varname: str, quoted: str
+    ) -> Optional[Tuple[str, str]]:
+        """Escape any characters preceded by a backslash."""
         res = ""
         # pylint: disable-next=while-used
         while quoted:
@@ -128,6 +118,34 @@ class YAIParser:
             quoted = quoted[idx + 2 :]
 
         return (varname, res)
+
+    def _parse_line_str(self, line: str) -> Optional[Tuple[str, str]]:
+        """Parse a single var=value line."""
+        mline = _RE_YAIP_LINE.match(line)
+        if not mline:
+            raise VariantYAIError(f"Unexpected {self.filename} line: {line!r}")
+        if mline.group("comment") is not None:
+            return None
+
+        varname, oquot, cquot, quoted, full = (
+            mline.group("varname"),
+            mline.group("oquot"),
+            mline.group("cquot"),
+            mline.group("quoted"),
+            mline.group("full"),
+        )
+
+        if oquot == _SINGLE_QUOTE:
+            return self._parse_line_quoted_single(line, varname, quoted, cquot)
+
+        if oquot is None:
+            quoted = full
+        elif cquot != oquot:
+            raise VariantYAIError(
+                f"Weird {self.filename} line, open/close quote mismatch: {line!r}"
+            )
+
+        return self._parse_line_unquoted(line, varname, quoted)
 
     def parse(self) -> Dict[str, str]:
         """Parse a file, store and return the result."""

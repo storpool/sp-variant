@@ -139,25 +139,10 @@ def filter_docker_images(cfg: Config, var_data: Dict[str, SimpleVariant]) -> Dic
     return res
 
 
-async def run_detect_for_image(
-    cfg: Config, spdir: pathlib.Path, image: str
-) -> Tuple[Optional[str], Optional[str]]:
-    """Run `storpool_variant detect` in a single new Docker container."""
-    cfg.diag(lambda: f"{image}: starting a container")
-    proc = await aprocess.create_subprocess_exec(
-        "docker",
-        "run",
-        "--rm",
-        "-v",
-        f"{spdir}:/sp:ro",
-        "--",
-        image,
-        "/sp/storpool_variant",
-        "detect",
-        env=cfg.utf8_env,
-        stdout=aprocess.PIPE,
-    )
-    cfg.diag(lambda: f"{image}: created process {proc.pid}")
+async def process_detect_lines(
+    cfg: Config, image: str, proc: aprocess.Process
+) -> Tuple[Optional[bytes], List[str]]:
+    """Read the lines output by `storpool_variant detect`, see if they look okay."""
     assert proc.stdout is not None
 
     first_line = None
@@ -194,6 +179,30 @@ async def run_detect_for_image(
         if res:
             errors.append(f"Non-zero exit code {res}")
 
+    return first_line, errors
+
+
+async def run_detect_for_image(
+    cfg: Config, spdir: pathlib.Path, image: str
+) -> Tuple[Optional[str], Optional[str]]:
+    """Run `storpool_variant detect` in a single new Docker container."""
+    cfg.diag(lambda: f"{image}: starting a container")
+    proc = await aprocess.create_subprocess_exec(
+        "docker",
+        "run",
+        "--rm",
+        "-v",
+        f"{spdir}:/sp:ro",
+        "--",
+        image,
+        "/sp/storpool_variant",
+        "detect",
+        env=cfg.utf8_env,
+        stdout=aprocess.PIPE,
+    )
+    cfg.diag(lambda: f"{image}: created process {proc.pid}")
+
+    first_line, errors = await process_detect_lines(cfg, image, proc)
     first_line_dec = None if first_line is None else first_line.decode("ISO-8859-15")
     cfg.diag(lambda: f"{image}: first_line_dec {first_line_dec!r} errors {errors!r}")
     if errors:

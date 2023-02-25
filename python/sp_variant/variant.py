@@ -77,11 +77,8 @@ _DEFAULT_CONFIG = Config()
 SAFEENC = "Latin-1"
 
 
-def detect_variant(cfg: Config = _DEFAULT_CONFIG) -> Variant:
-    """Detect the build variant for the current host."""
-    vbuild.build_variants(cfg)
-    cfg.diag("Trying to detect the current hosts's build variant")
-
+def _detect_from_os_release(cfg: Config) -> Optional[Variant]:
+    """Try to match the contents of /etc/os-release with a known variant."""
     try:
         data = yaiparser.YAIParser("/etc/os-release").parse()
     except OSError as err:
@@ -99,6 +96,11 @@ def detect_variant(cfg: Config = _DEFAULT_CONFIG) -> Variant:
                 cfg.diag("  - found it!")
                 return var
 
+    return None
+
+
+def _detect_from_files(cfg: Config) -> Optional[Variant]:
+    """Try to match the contents of some variant-specific files."""
     cfg.diag("Trying non-os-release-based heuristics")
     for var in vbuild.DETECT_ORDER:
         cfg.diag(f"- trying {var.name}")
@@ -115,6 +117,22 @@ def detect_variant(cfg: Config = _DEFAULT_CONFIG) -> Variant:
                     f"Could not read the {var.detect.filename} file: {err}"
                 ) from err
             cfg.diag(f"  - no {var.detect.filename}")
+
+    return None
+
+
+def detect_variant(cfg: Config = _DEFAULT_CONFIG) -> Variant:
+    """Detect the build variant for the current host."""
+    vbuild.build_variants(cfg)
+    cfg.diag("Trying to detect the current hosts's build variant")
+
+    var = _detect_from_os_release(cfg)
+    if var is not None:
+        return var
+
+    var = _detect_from_files(cfg)
+    if var is not None:
+        return var
 
     raise VariantDetectError("Could not detect the current host's build variant")
 

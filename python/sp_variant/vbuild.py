@@ -27,7 +27,7 @@
 import pathlib
 import re
 
-from typing import Any, Dict, List, Type, TypeVar, Tuple, Union
+from typing import Any, Callable, Dict, List, Type, TypeVar, Tuple, Union
 
 from . import defs
 
@@ -776,6 +776,57 @@ VARIANTS: Dict[str, defs.Variant] = {}
 DETECT_ORDER: List[defs.Variant] = []
 
 
+def _check_type(
+    prefix: str,
+    name: str,
+    orig: Any,
+    expected: Union[Type[Any], Tuple[Type[Any], ...]],
+    tname: str,
+) -> None:
+    """Make sure the `orig` value is of the expected type."""
+    if not isinstance(orig, expected):
+        raise defs.VariantConfigError(f"{prefix}: {name} is not a {tname}")
+
+
+def _update_dict(prefix: str, name: str, orig: Any, value: Any) -> Any:
+    """Recurse into a tuple or replace a dictionary."""
+    if isinstance(orig, tuple):
+        return update_namedtuple(orig, value)
+
+    if isinstance(orig, dict):
+        orig.update(value)
+        return orig
+
+    raise defs.VariantConfigError(f"{prefix}: {name} is not a tuple")
+
+
+def _update_string(prefix: str, name: str, orig: Any, value: Any) -> Any:
+    """Replace a single string value."""
+    _check_type(prefix, name, orig, str, "string")
+    return value
+
+
+def _update_path(prefix: str, name: str, orig: Any, value: Any) -> Any:
+    """Replace a single filesystem path."""
+    if orig is not None:
+        _check_type(prefix, name, orig, type(value), "path")
+    return value
+
+
+def _update_list(prefix: str, name: str, orig: Any, value: Any) -> Any:
+    """Replace a list of values."""
+    _check_type(prefix, name, orig, list, "list")
+    return value
+
+
+_UPDATE_HANDLERS: Tuple[Tuple[Type[Any], Callable[[str, str, Any, Any], Any]], ...] = (
+    (dict, _update_dict),
+    (str, _update_string),
+    (pathlib.Path, _update_path),
+    (list, _update_list),
+)
+
+
 def update_namedtuple(data: T, updates: Dict[str, Any]) -> T:
     """Create a new named tuple with some updated values."""
     if not updates:
@@ -790,33 +841,10 @@ def update_namedtuple(data: T, updates: Dict[str, Any]) -> T:
             raise defs.VariantConfigError(f"{prefix}: unexpected field {name}")
         orig = newv[name]
 
-        def check_type(
-            name: str,
-            orig: Any,
-            expected: Union[Type[Any], Tuple[Type[Any], ...]],
-            tname: str,
-        ) -> None:
-            """Make sure the `orig` value is of the expected type."""
-            if not isinstance(orig, expected):
-                raise defs.VariantConfigError(f"{prefix}: {name} is not a {tname}")
-
-        if isinstance(value, dict):
-            if isinstance(orig, tuple):
-                newv[name] = update_namedtuple(orig, value)
-            elif isinstance(orig, dict):
-                newv[name].update(value)
-            else:
-                raise defs.VariantConfigError(f"{prefix}: {name} is not a tuple")
-        elif isinstance(value, (str, str)):
-            check_type(name, orig, (str, str), "string")
-            newv[name] = value
-        elif isinstance(value, pathlib.Path):
-            if orig is not None:
-                check_type(name, orig, type(value), "path")
-            newv[name] = value
-        elif isinstance(value, list):
-            check_type(name, orig, list, "list")
-            newv[name] = value
+        for vtype, handler in _UPDATE_HANDLERS:
+            if isinstance(value, vtype):
+                newv[name] = handler(prefix, name, orig, value)
+                break
         else:
             raise defs.VariantConfigError(
                 f"{prefix}: weird {type(value).__name__} update for {name}"
