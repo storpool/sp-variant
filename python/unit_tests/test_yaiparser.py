@@ -100,7 +100,7 @@ def test_bad(line: str) -> None:
     """Make sure parse_line() raises exceptions on errors."""
     yai = yaiparser.YAIParser("/dev/null")
     with pytest.raises(defs.VariantError):
-        raise Exception(repr(yai.parse_line(line)))
+        assert yai.parse_line(line) == ("not reached", "we hope")
 
 
 @pytest.mark.parametrize("line,res", _LINES_OK)
