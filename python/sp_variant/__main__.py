@@ -22,8 +22,7 @@
 # OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
 # SUCH DAMAGE.
 #
-"""
-Support for different OS distributions and StorPool build variants.
+"""Support for different OS distributions and StorPool build variants.
 
 NB: This should be the only file in the StorPool source that cannot
 really depend on sp-python2 and sp-python2-modules being installed.
