@@ -35,7 +35,7 @@ load-plugins = [
   "pylint.extensions.no_self_use",
   "pylint.extensions.overlapping_exceptions",
   "pylint.extensions.private_import",
-  # "pylint.extensions.redefined_loop_name",  # maybe fix these?
+  "pylint.extensions.redefined_loop_name",
   "pylint.extensions.redefined_variable_type",
   # "pylint.extensions.set_membership",  # maybe fix these?
   "pylint.extensions.typing",

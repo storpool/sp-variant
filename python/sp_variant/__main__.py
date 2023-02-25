@@ -265,9 +265,8 @@ def cmd_command_list(cfg: defs.Config) -> None:
         for cmd_name, command in (
             (name, getattr(category, name)) for name in sorted(category._fields)
         ):
-            if (cat_name, cmd_name) in CMD_LIST_BRIEF:
-                command = ["..."]
-            print(f"{cat_name}.{cmd_name}: {' '.join(command)}")
+            result = ["..."] if (cat_name, cmd_name) in CMD_LIST_BRIEF else command
+            print(f"{cat_name}.{cmd_name}: {' '.join(result)}")
 
 
 def cmd_command_run(cfg: defs.Config) -> None:
