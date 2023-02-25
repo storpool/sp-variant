@@ -93,10 +93,8 @@ class YAIParser:
         if oquot == "'":
             if oquot in quoted:
                 raise VariantYAIError(
-                    (
-                        f"Weird {self.filename} line, the quoted content "
-                        f"contains the quote character: {line!r}"
-                    )
+                    f"Weird {self.filename} line, the quoted content "
+                    f"contains the quote character: {line!r}"
                 )
             if cquot != oquot:
                 raise VariantYAIError(
@@ -122,10 +120,8 @@ class YAIParser:
 
             if idx == len(quoted) - 1:
                 raise VariantYAIError(
-                    (
-                        f"Weird {self.filename} line, backslash at "
-                        f"the end of the quoted string: {line!r}"
-                    )
+                    f"Weird {self.filename} line, backslash at "
+                    f"the end of the quoted string: {line!r}"
                 )
             res += quoted[:idx] + quoted[idx + 1]
             quoted = quoted[idx + 2 :]
