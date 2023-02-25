@@ -24,6 +24,7 @@
 #
 """Build the hierarchical structure of variant definitions."""
 
+import pathlib
 import re
 
 from typing import Any, Dict, List, Type, TypeVar, Tuple, Union
@@ -809,7 +810,7 @@ def update_namedtuple(data: T, updates: Dict[str, Any]) -> T:
         elif isinstance(value, (str, str)):
             check_type(name, orig, (str, str), "string")
             newv[name] = value
-        elif type(value).__name__ == "PosixPath":
+        elif isinstance(value, pathlib.Path):
             if orig is not None:
                 check_type(name, orig, type(value), "path")
             newv[name] = value

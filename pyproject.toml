@@ -30,7 +30,7 @@ load-plugins = [
   "pylint.extensions.emptystring",
   "pylint.extensions.eq_without_hash",
   "pylint.extensions.for_any_all",
-  # "pylint.extensions.magic_value",  # maybe fix this?
+  # "pylint.extensions.magic_value",  # maybe some day...
   # "pylint.extensions.mccabe",  # maybe fix or override these?
   "pylint.extensions.no_self_use",
   "pylint.extensions.overlapping_exceptions",
