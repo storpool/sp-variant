@@ -33,8 +33,7 @@ from sp_variant import variant
 from sp_variant import vbuild
 
 
-def test_get():
-    # type: () -> None
+def test_get() -> None:
     """Test the operation of get_variant()."""
     assert variant.get_variant("CENTOS7").name == "CENTOS7"
     assert variant.get_variant("CENTOS6").name == "CENTOS6"
@@ -53,8 +52,7 @@ def test_get():
         variant.get_variant("whee")
 
 
-def test_roundtrip():
-    # type: () -> None
+def test_roundtrip() -> None:
     """Run through the variants with some minimal sanity checks."""
     vbuild.build_variants(variant.Config(verbose=False))
     assert vbuild.VARIANTS
@@ -65,16 +63,14 @@ def test_roundtrip():
         assert avar == var
 
 
-def test_detect():
-    # type: () -> None
+def test_detect() -> None:
     """Make sure that detect_variant() returns a reasonably valid result."""
     var = variant.detect_variant()
     assert var is not None
     assert os.path.isfile(var.detect.filename)
 
 
-def test_list_all():
-    # type: () -> None
+def test_list_all() -> None:
     """Make sure that the package.list_all command does not go amok."""
     print("")
 

@@ -30,8 +30,7 @@ from unit_tests import util
 from unit_tests.util import pathlib
 
 
-def test_subst():
-    # type: () -> None
+def test_subst() -> None:
     """Test the substitution tool."""
     with util.TemporaryDirectory() as tempd_obj:
         tempd = pathlib.Path(tempd_obj)
@@ -71,8 +70,7 @@ Variant: {{ var.name }} alias: {{ var.builder.alias }} family: {{ var.family }} 
         assert c7_lines[0].startswith("Variant: CENTOS7 alias: centos7 family: redhat update: ")
 
 
-def test_subst_re():
-    # type: () -> None
+def test_subst_re() -> None:
     """Test the substitution tool."""
     with util.TemporaryDirectory() as tempd_obj:
         tempd = pathlib.Path(tempd_obj)

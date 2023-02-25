@@ -88,16 +88,14 @@ _CFG_EXPECTED = [
 
 
 @pytest.mark.parametrize("line", _LINES_COMMENTS)
-def test_parse_comments(line):
-    # type: (str) -> None
+def test_parse_comments(line: str) -> None:
     """Parse empty lines and comments."""
     yai = yaiparser.YAIParser("/dev/null")
     assert yai.parse_line(line) is None
 
 
 @pytest.mark.parametrize("line", _LINES_BAD)
-def test_bad(line):
-    # type: (str) -> None
+def test_bad(line: str) -> None:
     """Make sure parse_line() raises exceptions on errors."""
     yai = yaiparser.YAIParser("/dev/null")
     with pytest.raises(defs.VariantError):
@@ -105,8 +103,7 @@ def test_bad(line):
 
 
 @pytest.mark.parametrize("line,res", _LINES_OK)
-def test_parse_line_ok(line, res):
-    # type: (str, Tuple[str, str]) -> None
+def test_parse_line_ok(line: str, res: Tuple[str, str]) -> None:
     """Make sure parse_line() works on valid text.
 
     So we silently assume that `==` works between str and unicode on
@@ -116,8 +113,7 @@ def test_parse_line_ok(line, res):
     assert yai.parse_line(line) == res
 
 
-def test_parse():
-    # type: () -> None
+def test_parse() -> None:
     """Test the functionality of _YAIParser.parse() and .get()."""
     with util.TemporaryDirectory() as tempd:
         cfile = tempd / "os-release"

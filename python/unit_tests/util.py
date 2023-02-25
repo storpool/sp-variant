@@ -40,8 +40,8 @@ else:
 
 @contextlib.contextmanager
 def TemporaryDirectory(  # pylint: disable=invalid-name
-    path=None,  # type: Optional[Union[pathlib.Path, Text, str]]
-):  # type: (...) -> Iterator[pathlib.Path]
+    path: Optional[Union[pathlib.Path, Text, str]] = None
+) -> Iterator[pathlib.Path]:
     """Create a temporary directory and eventually remove it."""
     temp = None
     try:

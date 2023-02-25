@@ -30,11 +30,11 @@ from typing import Any, Dict, List, Text, Type, TypeVar, Tuple, Union
 
 from . import defs
 
-CMD_NOOP = ["true"]  # type: List[Text]
+CMD_NOOP: List[Text] = ["true"]
 
 T = TypeVar("T")  # pylint: disable=invalid-name
 
-_VARIANT_DEF = [
+_VARIANT_DEF: (List[Union[defs.Variant, defs.VariantUpdate]]) = [
     defs.Variant(
         name="DEBIAN12",
         descr="Debian 12.x (bookworm/unstable)",
@@ -768,19 +768,18 @@ fi
             },
         },
     ),
-]  # type: (List[Union[defs.Variant, defs.VariantUpdate]])
+]
 
-VARIANTS = {}  # type: Dict[Text, defs.Variant]
+VARIANTS: Dict[Text, defs.Variant] = {}
 
-DETECT_ORDER = []  # type: List[defs.Variant]
+DETECT_ORDER: List[defs.Variant] = []
 
 
-def update_namedtuple(data, updates):
-    # type: (T, Dict[str, Any]) -> T
+def update_namedtuple(data: T, updates: Dict[str, Any]) -> T:
     """Create a new named tuple with some updated values."""
     if not updates:
         return data
-    fields = getattr(data, "_fields")  # type: List[str]
+    fields: List[str] = getattr(data, "_fields")
 
     newv = {name: getattr(data, name) for name in fields}
     prefix = f"Internal error: could not update {newv} with {updates}"
@@ -791,11 +790,11 @@ def update_namedtuple(data, updates):
         orig = newv[name]
 
         def check_type(
-            name,  # type: str
-            orig,  # type: Any
-            expected,  # type: Union[Type[Any], Tuple[Type[Any], ...]]
-            tname,  # type: str
-        ):  # type: (...) -> None
+            name: str,
+            orig: Any,
+            expected: Union[Type[Any], Tuple[Type[Any], ...]],
+            tname: str,
+        ) -> None:
             """Make sure the `orig` value is of the expected type."""
             if not isinstance(orig, expected):
                 raise defs.VariantConfigError(f"{prefix}: {name} is not a {tname}")
@@ -832,8 +831,9 @@ def update_namedtuple(data, updates):
     return updated
 
 
-def merge_into_parent(cfg, parent, child):
-    # type: (defs.Config, defs.Variant, defs.VariantUpdate) -> defs.Variant
+def merge_into_parent(
+    cfg: defs.Config, parent: defs.Variant, child: defs.VariantUpdate
+) -> defs.Variant:
     """Merge a child's definitions into the parent."""
     cfg.diag(f"- merging {child.name} into {parent.name}")
     return update_namedtuple(
@@ -856,8 +856,7 @@ def merge_into_parent(cfg, parent, child):
     )
 
 
-def build_variants(cfg):
-    # type: (defs.Config) -> None
+def build_variants(cfg: defs.Config) -> None:
     """Build the variant definitions from the parent/child relations."""
     if VARIANTS:
         assert len(VARIANTS) == len(_VARIANT_DEF)
@@ -867,7 +866,7 @@ def build_variants(cfg):
     assert not DETECT_ORDER
 
     cfg.diag("Building the list of variants")
-    order = []  # type: List[Text]
+    order: List[Text] = []
     for var in _VARIANT_DEF:
         if isinstance(var, defs.VariantUpdate):
             current = merge_into_parent(cfg, VARIANTS[var.parent], var)

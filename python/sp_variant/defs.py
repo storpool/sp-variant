@@ -176,15 +176,22 @@ class VariantConfigError(VariantError):
 class Config:  # pylint: disable=too-few-public-methods
     """Basic configuration: a "verbose" field and a diag() method."""
 
+    args: Optional[List[Text]]
+    command: Optional[Text]
+    noop: bool
+    repodir: Optional[Text]
+    repotype: RepoType
+    verbose: bool
+
     def __init__(
-        self,  # type: Config
-        args=None,  # type: Optional[List[Text]]
-        command=None,  # type: Optional[Text]
-        noop=False,  # type: bool
-        repodir=None,  # type: Optional[Text]
-        repotype=REPO_TYPES[0],  # type: RepoType
-        verbose=False,  # type: bool
-    ):  # type: (...) -> None
+        self,
+        args: Optional[List[Text]] = None,
+        command: Optional[Text] = None,
+        noop: bool = False,
+        repodir: Optional[Text] = None,
+        repotype: RepoType = REPO_TYPES[0],
+        verbose: bool = False,
+    ) -> None:
         """Store the verbosity setting."""
         # pylint: disable=too-many-arguments
         self.args = args
@@ -195,15 +202,13 @@ class Config:  # pylint: disable=too-few-public-methods
         self.verbose = verbose
         self._diag_to_stderr = True
 
-    def diag(self, msg):
-        # type: (Config, Text) -> None
+    def diag(self, msg: Text) -> None:
         """Output a diagnostic message in verbose mode."""
         if self.verbose:
             print(msg, file=sys.stderr if self._diag_to_stderr else sys.stdout)
 
 
-def jsonify(obj):
-    # type: (Any) -> Any
+def jsonify(obj: Any) -> Any:
     """Return a more readable representation of an object."""
     if type(obj).__name__.endswith("Pattern") and hasattr(obj, "pattern"):
         return jsonify(obj.pattern)

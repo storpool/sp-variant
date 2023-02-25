@@ -58,16 +58,17 @@ _RE_YAIP_LINE = re.compile(
 class YAIParser:
     """Yet another INI-like file parser, this time for /etc/os-release."""
 
-    def __init__(self, filename):
-        # type: (YAIParser, Text) -> None
+    filename: Text
+    data: Dict[defs.TextType, defs.TextType]
+
+    def __init__(self, filename: Text) -> None:
         """Initialize a YAIParser object: store the filename."""
         self.filename = filename
-        self.data = {}  # type: Dict[defs.TextType, defs.TextType]
+        self.data = {}
 
     def parse_line(
-        self,  # type: YAIParser
-        line,  # type: Union[defs.TextType, defs.BytesType]
-    ):  # type: (...) -> Optional[Tuple[defs.TextType, defs.TextType]]
+        self, line: Union[defs.TextType, defs.BytesType]
+    ) -> Optional[Tuple[defs.TextType, defs.TextType]]:
         """Parse a single var=value line."""
         if isinstance(line, defs.BytesType):
             try:
@@ -134,8 +135,7 @@ class YAIParser:
 
         return (varname, res)
 
-    def parse(self):
-        # type: (YAIParser) -> Dict[defs.TextType, defs.TextType]
+    def parse(self) -> Dict[defs.TextType, defs.TextType]:
         """Parse a file, store and return the result."""
         with io.open(self.filename, mode="r", encoding="UTF-8") as infile:
             contents = infile.read()
@@ -149,8 +149,7 @@ class YAIParser:
         self.data = data
         return data
 
-    def get(self, key):
-        # type: (YAIParser, Union[defs.TextType, defs.BytesType]) -> Optional[defs.TextType]
+    def get(self, key: Union[defs.TextType, defs.BytesType]) -> Optional[defs.TextType]:
         """Get a value parsed from the configuration file."""
         if isinstance(key, defs.BytesType):
             key = key.decode("UTF-8")

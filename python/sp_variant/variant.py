@@ -55,15 +55,16 @@ class VariantFileError(VariantError):
 class VariantRemoteError(VariantError):
     """An error occurred while communicating with a remote host."""
 
-    def __init__(self, hostname, msg):
-        # type: (VariantRemoteError, Text, Text) -> None
+    hostname: Text
+    msg: Text
+
+    def __init__(self, hostname: Text, msg: Text) -> None:
         """Store the hostname and the error message."""
         super().__init__()
         self.hostname = hostname
         self.msg = msg
 
-    def __str__(self):
-        # type: () -> str
+    def __str__(self) -> str:
         """Return a human-readable representation of the error."""
         return f"{self.hostname}: {self.msg}"
 
@@ -77,8 +78,7 @@ _DEFAULT_CONFIG = Config()
 SAFEENC = "Latin-1"
 
 
-def detect_variant(cfg=_DEFAULT_CONFIG):
-    # type: (Config) -> Variant
+def detect_variant(cfg: Config = _DEFAULT_CONFIG) -> Variant:
     """Detect the build variant for the current host."""
     vbuild.build_variants(cfg)
     cfg.diag("Trying to detect the current hosts's build variant")
@@ -119,22 +119,19 @@ def detect_variant(cfg=_DEFAULT_CONFIG):
     raise VariantDetectError("Could not detect the current host's build variant")
 
 
-def get_all_variants(cfg=_DEFAULT_CONFIG):
-    # type: (Config) -> Dict[Text, Variant]
+def get_all_variants(cfg: Config = _DEFAULT_CONFIG) -> Dict[Text, Variant]:
     """Return information about all the supported variants."""
     vbuild.build_variants(cfg)
     return dict(vbuild.VARIANTS)
 
 
-def get_all_variants_in_order(cfg=_DEFAULT_CONFIG):
-    # type: (Config) -> List[Variant]
+def get_all_variants_in_order(cfg: Config = _DEFAULT_CONFIG) -> List[Variant]:
     """Return information about all supported variants in detect order."""
     vbuild.build_variants(cfg)
     return list(vbuild.DETECT_ORDER)
 
 
-def get_by_alias(alias, cfg=_DEFAULT_CONFIG):
-    # type: (Text, Config) -> Variant
+def get_by_alias(alias: Text, cfg: Config = _DEFAULT_CONFIG) -> Variant:
     """Return the variant with the specified name."""
     vbuild.build_variants(cfg)
     for var in vbuild.VARIANTS.values():
@@ -143,8 +140,7 @@ def get_by_alias(alias, cfg=_DEFAULT_CONFIG):
     raise VariantKeyError(f"No variant with alias {alias}")
 
 
-def get_variant(name, cfg=_DEFAULT_CONFIG):
-    # type: (Text, Config) -> Variant
+def get_variant(name: Text, cfg: Config = _DEFAULT_CONFIG) -> Variant:
     """Return the variant with the specified name."""
     vbuild.build_variants(cfg)
     try:
@@ -153,8 +149,9 @@ def get_variant(name, cfg=_DEFAULT_CONFIG):
         raise VariantKeyError(f"No variant named {name}") from err
 
 
-def list_all_packages(var, patterns=None):
-    # type: (Variant, Optional[Iterable[str]]) -> List[defs.OSPackage]
+def list_all_packages(
+    var: Variant, patterns: Optional[Iterable[str]] = None
+) -> List[defs.OSPackage]:
     """Parse the output of the "list installed packages" command."""
     cmd = list(var.commands.package.list_all)
     if patterns is not None:

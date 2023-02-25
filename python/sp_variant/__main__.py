@@ -58,8 +58,7 @@ CMD_LIST_BRIEF = [
 ]
 
 
-def cmd_detect(cfg):
-    # type: (defs.Config) -> None
+def cmd_detect(cfg: defs.Config) -> None:
     """Detect and output the build variant for the current host."""
     try:
         print(variant.detect_variant(cfg=cfg).name)
@@ -68,8 +67,7 @@ def cmd_detect(cfg):
         sys.exit(1)
 
 
-def copy_file(cfg, src, dstdir):
-    # type: (defs.Config, Text, Text) -> None
+def copy_file(cfg: defs.Config, src: Text, dstdir: Text) -> None:
     """Use `install(8)` to install a configuration file."""
     dst = os.path.join(dstdir, os.path.basename(src))
     mode = "0644"
@@ -94,8 +92,7 @@ def copy_file(cfg, src, dstdir):
         raise variant.VariantFileError(f"Could not copy {src} over to {dst}: {err}")
 
 
-def repo_add_extension(cfg, name):
-    # type: (defs.Config, Text) -> Text
+def repo_add_extension(cfg: defs.Config, name: Text) -> Text:
     """Add the extension for the specified repository type."""
     parts = name.rsplit(".")
     if len(parts) != 2:
@@ -105,8 +102,7 @@ def repo_add_extension(cfg, name):
     return f"{parts[0]}{cfg.repotype.extension}.{parts[1]}"
 
 
-def repo_add_deb(cfg, var, vardir):
-    # type: (defs.Config, defs.Variant, Text) -> None
+def repo_add_deb(cfg: defs.Config, var: defs.Variant, vardir: Text) -> None:
     """Install the StorPool Debian-like repo configuration."""
     assert isinstance(var.repo, defs.DebRepo)
 
@@ -134,8 +130,7 @@ def repo_add_deb(cfg, var, vardir):
         raise variant.VariantFileError(f"Could not update the APT database: {err}")
 
 
-def repo_add_yum(cfg, var, vardir):
-    # type: (defs.Config, defs.Variant, Text) -> None
+def repo_add_yum(cfg: defs.Config, var: defs.Variant, vardir: Text) -> None:
     """Install the StorPool RedHat/CentOS-like repo configuration."""
     assert isinstance(var.repo, defs.YumRepo)
 
@@ -195,8 +190,7 @@ def repo_add_yum(cfg, var, vardir):
         raise variant.VariantFileError(f"Could not clean the Yum repository metadata: {err}")
 
 
-def repo_add(cfg):
-    # type: (defs.Config) -> None
+def repo_add(cfg: defs.Config) -> None:
     """Install the StorPool repository configuration."""
     assert cfg.repodir is not None
     var = variant.detect_variant(cfg)
@@ -210,8 +204,7 @@ def repo_add(cfg):
         repo_add_yum(cfg, var, vardir)
 
 
-def cmd_repo_add(cfg):
-    # type: (defs.Config) -> None
+def cmd_repo_add(cfg: defs.Config) -> None:
     """Install the StorPool repository configuration, display errors."""
     try:
         repo_add(cfg)
@@ -220,8 +213,7 @@ def cmd_repo_add(cfg):
         sys.exit(1)
 
 
-def command_find(cfg, var):
-    # type: (defs.Config, defs.Variant) -> List[Text]
+def command_find(cfg: defs.Config, var: defs.Variant) -> List[Text]:
     """Get a distribution-specific command from the variant definition."""
     assert cfg.command is not None
 
@@ -230,7 +222,7 @@ def command_find(cfg, var):
         if not isinstance(current, tuple):
             raise defs.VariantConfigError("Too many command components")
 
-        fields = getattr(current, "_fields")  # type: List[str]
+        fields: List[str] = getattr(current, "_fields")
         if comp not in fields:
             raise defs.VariantConfigError(
                 f"Invalid command component '{comp}', should be one of {' '.join(fields)}"
@@ -246,8 +238,7 @@ def command_find(cfg, var):
     return current
 
 
-def command_run(cfg):
-    # type: (defs.Config) -> None
+def command_run(cfg: defs.Config) -> None:
     """Run a distribution-specific command."""
     assert cfg.args is not None
 
@@ -264,8 +255,7 @@ def command_run(cfg):
         raise variant.VariantFileError(f"Could not run `{' '.join(cmd)}`: {err}")
 
 
-def cmd_command_list(cfg):
-    # type: (defs.Config) -> None
+def cmd_command_list(cfg: defs.Config) -> None:
     """List the distribution-specific commands."""
     var = variant.detect_variant(cfg=cfg)
 
@@ -281,8 +271,7 @@ def cmd_command_list(cfg):
             print(f"{cat_name}.{cmd_name}: {' '.join(command)}")
 
 
-def cmd_command_run(cfg):
-    # type: (defs.Config) -> None
+def cmd_command_run(cfg: defs.Config) -> None:
     """Run a distribution-specific command."""
     try:
         command_run(cfg)
@@ -291,8 +280,7 @@ def cmd_command_run(cfg):
         sys.exit(1)
 
 
-def cmd_features(_cfg):
-    # type: (defs.Config) -> None
+def cmd_features(_cfg: defs.Config) -> None:
     """Display the features supported by storpool_variant."""
     print(
         f"Features: repo=0.2 variant={defs.VERSION} "
@@ -300,8 +288,7 @@ def cmd_features(_cfg):
     )
 
 
-def cmd_show(cfg):
-    # type: (defs.Config) -> None
+def cmd_show(cfg: defs.Config) -> None:
     """Display information about a single build variant."""
     assert cfg.command is not None
     vbuild.build_variants(cfg)
@@ -321,7 +308,7 @@ def cmd_show(cfg):
         )
     else:
         if cfg.command == "current":
-            var = variant.detect_variant(cfg)  # type: Optional[defs.Variant]
+            var: Optional[defs.Variant] = variant.detect_variant(cfg)
         else:
             var = vbuild.VARIANTS.get(cfg.command)
 
@@ -342,8 +329,7 @@ def cmd_show(cfg):
     print(json.dumps(data, sort_keys=True, indent=2))
 
 
-def parse_arguments():
-    # type: () -> Tuple[defs.Config, Callable[[defs.Config], None]]
+def parse_arguments() -> Tuple[defs.Config, Callable[[defs.Config], None]]:
     """Parse the command-line arguments."""
     parser = argparse.ArgumentParser(prog="storpool_variant")
     parser.add_argument(
@@ -429,8 +415,7 @@ def parse_arguments():
     )
 
 
-def main():
-    # type: () -> None
+def main() -> None:
     """Main routine: parse options, detect the variant."""
     cfg, func = parse_arguments()
     func(cfg)
