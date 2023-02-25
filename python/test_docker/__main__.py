@@ -172,6 +172,7 @@ async def run_detect_for_image(
 
         if first_line:
             first_line = first_line.rstrip(b"\n")
+            # pylint: disable-next=while-used
             while True:
                 try:
                     more = await proc.stdout.readline()
@@ -280,6 +281,7 @@ async def run_add_repo_for_image(
         """Read lines from a stream, output them, gather them."""
         cfg.diag(lambda: f"{image}: waiting for {stype} lines")
         res = b""
+        # pylint: disable-next=while-used
         while True:
             line = await stream.readline()
             if not line:

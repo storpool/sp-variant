@@ -111,6 +111,7 @@ class YAIParser:
             )
 
         res = ""
+        # pylint: disable-next=while-used
         while quoted:
             try:
                 idx = quoted.index("\\")
