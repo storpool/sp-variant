@@ -7,7 +7,6 @@ line-length = 100
 
 [tool.pylint.messages]
 disable = [
-  "super-with-arguments",
   "raise-missing-from",
   "consider-using-f-string",
 ]
