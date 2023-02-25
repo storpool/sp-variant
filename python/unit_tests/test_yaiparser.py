@@ -24,14 +24,15 @@
 #
 """Test the os-release parser class."""
 
+import pathlib
+import tempfile
+
 from typing import Tuple
 
 import pytest
 
 from sp_variant import defs
 from sp_variant import yaiparser
-
-from . import util
 
 
 _LINES_BAD = [
@@ -115,7 +116,8 @@ def test_parse_line_ok(line: str, res: Tuple[str, str]) -> None:
 
 def test_parse() -> None:
     """Test the functionality of _YAIParser.parse() and .get()."""
-    with util.TemporaryDirectory() as tempd:
+    with tempfile.TemporaryDirectory() as tempd_obj:
+        tempd = pathlib.Path(tempd_obj)
         cfile = tempd / "os-release"
         cfile.write_text(_CFG_TEXT, encoding="UTF-8")
 

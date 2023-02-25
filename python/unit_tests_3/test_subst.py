@@ -24,15 +24,15 @@
 #
 """Test the variant data template rendering tool."""
 
-from sp_build_repo import subst
+import pathlib
+import tempfile
 
-from unit_tests import util
-from unit_tests.util import pathlib
+from sp_build_repo import subst
 
 
 def test_subst() -> None:
     """Test the substitution tool."""
-    with util.TemporaryDirectory() as tempd_obj:
+    with tempfile.TemporaryDirectory() as tempd_obj:
         tempd = pathlib.Path(tempd_obj)
         cfg = subst.Config(
             output=tempd / "data.txt",
@@ -72,7 +72,7 @@ Variant: {{ var.name }} alias: {{ var.builder.alias }} family: {{ var.family }} 
 
 def test_subst_re() -> None:
     """Test the substitution tool."""
-    with util.TemporaryDirectory() as tempd_obj:
+    with tempfile.TemporaryDirectory() as tempd_obj:
         tempd = pathlib.Path(tempd_obj)
         cfg = subst.Config(
             output=tempd / "data.txt",
