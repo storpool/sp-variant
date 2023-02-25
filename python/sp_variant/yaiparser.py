@@ -77,7 +77,7 @@ class YAIParser:
                     "Invalid {fname} line, not a valid UTF-8 string: {line!r}: {err}".format(
                         fname=self.filename, line=line, err=err
                     )
-                )
+                ) from err
         assert isinstance(line, defs.TextType)
 
         mline = _RE_YAIP_LINE.match(line)

@@ -119,7 +119,7 @@ def detect_variant(cfg=_DEFAULT_CONFIG):
                     "Could not read the {fname} file: {err}".format(
                         fname=var.detect.filename, err=err
                     )
-                )
+                ) from err
             cfg.diag("  - no {fname}".format(fname=var.detect.filename))
 
     raise VariantDetectError("Could not detect the current host's build variant")
@@ -155,8 +155,8 @@ def get_variant(name, cfg=_DEFAULT_CONFIG):
     vbuild.build_variants(cfg)
     try:
         return vbuild.VARIANTS[name]
-    except KeyError:
-        raise VariantKeyError("No variant named {name}".format(name=name))
+    except KeyError as err:
+        raise VariantKeyError("No variant named {name}".format(name=name)) from err
 
 
 def list_all_packages(var, patterns=None):
