@@ -166,9 +166,12 @@ def copy_file(
     ensure_none(cfg, dst)
     try:
         shutil.copy2(src, dst)
-        dst.chmod(0o755 if executable else 0o644)
     except (OSError, subprocess.CalledProcessError) as err:
         raise variant.VariantFileError(f"Could not copy {src} to {dst}: {err}")
+    try:
+        dst.chmod(0o755 if executable else 0o644)
+    except OSError as err:
+        raise variant.VariantFileError(f"Could not set the permissions mode on {dst}: {err}")
 
 
 def subst_debian_sources(

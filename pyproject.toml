@@ -14,7 +14,7 @@ python_version = "3.6"
 py-version = "3.6"
 load-plugins = [
   "pylint.extensions.bad_builtin",
-  # "pylint.extensions.broad_try_clause",  # maybe fix these?
+  "pylint.extensions.broad_try_clause",
   "pylint.extensions.check_elif",
   "pylint.extensions.code_style",
   # "pylint.extensions.comparetozero",  # maybe fix this?

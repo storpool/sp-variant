@@ -162,7 +162,7 @@ async def run_detect_for_image(
     first_line = None
     rest = b""
     errors = []
-    try:
+    try:  # pylint: disable=too-many-try-statements
         try:
             first_line = await proc.stdout.readline()
         except Exception as err:  # pylint: disable=broad-except
@@ -403,9 +403,12 @@ echo 'Done, it seems'
 """,  # noqa: E501  pylint: disable=line-too-long
             encoding="UTF-8",
         )
-        addsh.chmod(0o755)
     except Exception as err:  # pylint: disable=broad-except
         return [f"Could not create {addsh}: {err}"]
+    try:
+        addsh.chmod(0o755)
+    except OSError as err:
+        return [f"Could not set the permissions mode on {addsh}: {err}"]
 
     cfg.diag_("Spawning the add-repo containers")
     gathering = asyncio.gather(

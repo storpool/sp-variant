@@ -84,11 +84,12 @@ def detect_variant(cfg: Config = _DEFAULT_CONFIG) -> Variant:
 
     try:
         data = yaiparser.YAIParser("/etc/os-release").parse()
-        os_id, os_version = data.get("ID"), data.get("VERSION_ID")
     except OSError as err:
         if err.errno != errno.ENOENT:
             raise
         os_id, os_version = None, None
+    else:
+        os_id, os_version = data.get("ID"), data.get("VERSION_ID")
 
     if os_id is not None and os_version is not None:
         cfg.diag(f"Matching os-release id {os_id!r} version {os_version!r}")
@@ -101,7 +102,7 @@ def detect_variant(cfg: Config = _DEFAULT_CONFIG) -> Variant:
     cfg.diag("Trying non-os-release-based heuristics")
     for var in vbuild.DETECT_ORDER:
         cfg.diag(f"- trying {var.name}")
-        try:
+        try:  # pylint: disable=too-many-try-statements
             with open(var.detect.filename, encoding=SAFEENC) as osf:
                 cfg.diag(f"  - {var.detect.filename}")
                 for line in (line.rstrip("\r\n") for line in osf.readlines()):
