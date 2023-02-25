@@ -159,10 +159,7 @@ def copy_file(
     executable: bool = False,
 ) -> None:
     """Copy a file with the appropriate access permissions."""
-    if dstname is None:
-        dst = dstdir / src.name
-    else:
-        dst = dstdir / dstname
+    dst = dstdir / (src.name if dstname is None else dstname)
     ensure_none(cfg, dst)
     try:
         shutil.copy2(src, dst)

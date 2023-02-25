@@ -862,11 +862,11 @@ def build_variants(cfg: defs.Config) -> None:
     cfg.diag("Building the list of variants")
     order: List[str] = []
     for var in _VARIANT_DEF:
-        if isinstance(var, defs.VariantUpdate):
-            current = merge_into_parent(cfg, VARIANTS[var.parent], var)
-        else:
-            current = var
-
+        current = (
+            merge_into_parent(cfg, VARIANTS[var.parent], var)
+            if isinstance(var, defs.VariantUpdate)
+            else var
+        )
         VARIANTS[var.name] = current
         order.append(var.name)
 
