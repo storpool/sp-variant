@@ -78,7 +78,7 @@ def extract_variants_data(
     cfg.diag_("Looking for a single directory")
     found = list(tempd.iterdir())
     if len(found) != 1 or not found[0].is_dir() or found[0].name != "add-storpool-repo":
-        sys.exit((f"Expected a single add-storpool-repo directory in " f"{tempd}: {found!r}"))
+        sys.exit(f"Expected a single add-storpool-repo directory in {tempd}: {found!r}")
     spdir = found[0]
 
     spvar = spdir / "storpool_variant"
