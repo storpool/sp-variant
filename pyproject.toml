@@ -37,7 +37,7 @@ load-plugins = [
   "pylint.extensions.private_import",
   "pylint.extensions.redefined_loop_name",
   "pylint.extensions.redefined_variable_type",
-  # "pylint.extensions.set_membership",  # maybe fix these?
+  "pylint.extensions.set_membership",
   "pylint.extensions.typing",
   # "pylint.extensions.while_used",  # maybe override this?
 ]

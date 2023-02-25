@@ -128,9 +128,10 @@ def filter_docker_images(cfg: Config, var_data: Dict[str, SimpleVariant]) -> Dic
         images = {name for name in images if cfg.images_filter in name}
 
     res = {}
+    ignored = {"IGNORE", "centos:6"}
     for var in var_data.values():
         for image in (var.builder.base_image, "builder:" + var.builder.alias):
-            if image in ("IGNORE", "centos:6"):
+            if image in ignored:
                 continue
             if image in images:
                 res[image] = var.name
