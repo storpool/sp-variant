@@ -1,4 +1,4 @@
-# Copyright (c) 2021  StorPool <support@storpool.com>
+# Copyright (c) 2021 - 2023  StorPool <support@storpool.com>
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
