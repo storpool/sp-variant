@@ -39,12 +39,16 @@ from typing import Dict, Final, Optional
 import cfg_diag
 import click
 import jinja2
-import tomli
 import typedload.dataloader
 
 from sp_variant import defs
 from sp_variant import variant
 from sp_variant import vbuild
+
+if sys.version_info >= (3, 11):
+    import tomllib
+else:
+    import tomli as tomllib
 
 
 @dataclasses.dataclass
@@ -334,7 +338,7 @@ def parse_overrides(path: pathlib.Path) -> Overrides:
         return Overrides(repo={})
 
     try:
-        raw: Final = tomli.loads(path.read_text(encoding="UTF-8"))
+        raw: Final = tomllib.loads(path.read_text(encoding="UTF-8"))
     except (OSError, ValueError) as err:
         sys.exit(f"Could not read or parse the {path} overrides file as valid TOML: {err}")
 
