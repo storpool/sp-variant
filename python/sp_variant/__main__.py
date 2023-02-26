@@ -392,7 +392,7 @@ def parse_arguments() -> tuple[defs.Config, Callable[[defs.Config], None]]:
 
 
 def main() -> None:
-    """Main routine: parse options, detect the variant."""
+    """Parse options, detect the variant."""
     cfg, func = parse_arguments()
     func(cfg)
 

@@ -410,7 +410,7 @@ def cmd_build(  # noqa: PLR0913
 @click.option("-v", "--verbose", is_flag=True, help="verbose operation; display diagnostic output")
 @click.pass_context
 def main(ctx: click.Context, verbose: bool) -> None:
-    """Main routine: parse options, build the repository definitions."""
+    """Parse options, build the repository definitions."""
     ctx.ensure_object(ConfigHolder)
     ctx.obj.verbose = verbose
 
