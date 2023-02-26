@@ -32,6 +32,8 @@ completely self-contained so that it may be copied over to
 a remote host and executed there.
 """
 
+from __future__ import annotations
+
 # pylint: disable=too-many-lines
 
 import argparse
@@ -40,7 +42,7 @@ import os
 import subprocess
 import sys
 
-from typing import Callable, List, Optional, Tuple, TYPE_CHECKING
+from typing import Callable, TYPE_CHECKING
 
 from . import defs
 from . import variant
@@ -212,7 +214,7 @@ def cmd_repo_add(cfg: defs.Config) -> None:
         sys.exit(1)
 
 
-def command_find(cfg: defs.Config, var: defs.Variant) -> List[str]:
+def command_find(cfg: defs.Config, var: defs.Variant) -> list[str]:
     """Get a distribution-specific command from the variant definition."""
     assert cfg.command is not None
 
@@ -221,7 +223,7 @@ def command_find(cfg: defs.Config, var: defs.Variant) -> List[str]:
         if not isinstance(current, tuple):
             raise defs.VariantConfigError("Too many command components")
 
-        fields: List[str] = getattr(current, "_fields")
+        fields: list[str] = getattr(current, "_fields")
         if comp not in fields:
             raise defs.VariantConfigError(
                 f"Invalid command component '{comp}', should be one of {' '.join(fields)}"
@@ -306,7 +308,7 @@ def cmd_show(cfg: defs.Config) -> None:
         )
     else:
         if cfg.command == "current":
-            var: Optional[defs.Variant] = variant.detect_variant(cfg)
+            var: defs.Variant | None = variant.detect_variant(cfg)
         else:
             var = vbuild.VARIANTS.get(cfg.command)
 
@@ -327,7 +329,7 @@ def cmd_show(cfg: defs.Config) -> None:
     print(json.dumps(data, sort_keys=True, indent=2))
 
 
-def parse_arguments() -> Tuple[defs.Config, Callable[[defs.Config], None]]:
+def parse_arguments() -> tuple[defs.Config, Callable[[defs.Config], None]]:
     """Parse the command-line arguments."""
     parser = argparse.ArgumentParser(prog="storpool_variant")
     parser.add_argument(

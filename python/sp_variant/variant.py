@@ -24,10 +24,12 @@
 #
 """Build variant definitions and commands."""
 
+from __future__ import annotations
+
 import errno
 import subprocess
 
-from typing import Dict, Iterable, List, Optional
+from typing import Iterable
 
 from . import defs
 from . import vbuild
@@ -77,7 +79,7 @@ _DEFAULT_CONFIG = Config()
 SAFEENC = "Latin-1"
 
 
-def _detect_from_os_release(cfg: Config) -> Optional[Variant]:
+def _detect_from_os_release(cfg: Config) -> Variant | None:
     """Try to match the contents of /etc/os-release with a known variant."""
     try:
         data = yaiparser.YAIParser("/etc/os-release").parse()
@@ -99,7 +101,7 @@ def _detect_from_os_release(cfg: Config) -> Optional[Variant]:
     return None
 
 
-def _detect_from_files(cfg: Config) -> Optional[Variant]:
+def _detect_from_files(cfg: Config) -> Variant | None:
     """Try to match the contents of some variant-specific files."""
     cfg.diag("Trying non-os-release-based heuristics")
     for var in vbuild.DETECT_ORDER:
@@ -137,13 +139,13 @@ def detect_variant(cfg: Config = _DEFAULT_CONFIG) -> Variant:
     raise VariantDetectError("Could not detect the current host's build variant")
 
 
-def get_all_variants(cfg: Config = _DEFAULT_CONFIG) -> Dict[str, Variant]:
+def get_all_variants(cfg: Config = _DEFAULT_CONFIG) -> dict[str, Variant]:
     """Return information about all the supported variants."""
     vbuild.build_variants(cfg)
     return dict(vbuild.VARIANTS)
 
 
-def get_all_variants_in_order(cfg: Config = _DEFAULT_CONFIG) -> List[Variant]:
+def get_all_variants_in_order(cfg: Config = _DEFAULT_CONFIG) -> list[Variant]:
     """Return information about all supported variants in detect order."""
     vbuild.build_variants(cfg)
     return list(vbuild.DETECT_ORDER)
@@ -167,9 +169,7 @@ def get_variant(name: str, cfg: Config = _DEFAULT_CONFIG) -> Variant:
         raise VariantKeyError(f"No variant named {name}") from err
 
 
-def list_all_packages(
-    var: Variant, patterns: Optional[Iterable[str]] = None
-) -> List[defs.OSPackage]:
+def list_all_packages(var: Variant, patterns: Iterable[str] | None = None) -> list[defs.OSPackage]:
     """Parse the output of the "list installed packages" command."""
     cmd = list(var.commands.package.list_all)
     if patterns is not None:

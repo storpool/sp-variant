@@ -24,13 +24,13 @@
 #
 """Substitute variant data using Jinja2 templates."""
 
+from __future__ import annotations
+
 import argparse
 import dataclasses
 import functools
 import json
 import pathlib
-
-from typing import Dict, List, Tuple
 
 import cfg_diag
 import jinja2
@@ -100,10 +100,10 @@ def regex_un_x(value: str) -> str:
     )
 
 
-def dictvsort(data: Dict[str, variant.Variant]) -> List[Tuple[str, variant.Variant]]:
+def dictvsort(data: dict[str, variant.Variant]) -> list[tuple[str, variant.Variant]]:
     """Sort a dict of variants by name, preserving some numerical order."""
 
-    def compare(left: Tuple[str, variant.Variant], right: Tuple[str, variant.Variant]) -> int:
+    def compare(left: tuple[str, variant.Variant], right: tuple[str, variant.Variant]) -> int:
         """Compare two variants by name."""
         res = trivver.compare(left[0], right[0])
         assert res
@@ -112,7 +112,7 @@ def dictvsort(data: Dict[str, variant.Variant]) -> List[Tuple[str, variant.Varia
     return sorted(data.items(), key=functools.cmp_to_key(compare))
 
 
-def vsort(names: List[str]) -> List[str]:
+def vsort(names: list[str]) -> list[str]:
     """Sort a list of variant names, preserving some numerical order."""
     return sorted(names, key=trivver.key_compare)
 

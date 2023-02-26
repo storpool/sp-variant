@@ -24,9 +24,9 @@
 #
 """Yet Another INI-style-file Parser."""
 
-import re
+from __future__ import annotations
 
-from typing import Dict, Optional, Tuple, Union
+import re
 
 from . import defs
 
@@ -60,14 +60,14 @@ class YAIParser:
     """Yet another INI-like file parser, this time for /etc/os-release."""
 
     filename: str
-    data: Dict[str, str]
+    data: dict[str, str]
 
     def __init__(self, filename: str) -> None:
         """Initialize a YAIParser object: store the filename."""
         self.filename = filename
         self.data = {}
 
-    def parse_line(self, line: Union[str, bytes]) -> Optional[Tuple[str, str]]:
+    def parse_line(self, line: str | bytes) -> tuple[str, str] | None:
         """Convert a single var=value line to a string, then parse it."""
         if isinstance(line, str):
             return self._parse_line_str(line)
@@ -82,7 +82,7 @@ class YAIParser:
 
     def _parse_line_quoted_single(
         self, line: str, varname: str, quoted: str, cquot: str
-    ) -> Optional[Tuple[str, str]]:
+    ) -> tuple[str, str] | None:
         """Parse a value enclosed in single quotes."""
         if _SINGLE_QUOTE in quoted:
             raise VariantYAIError(
@@ -96,9 +96,7 @@ class YAIParser:
 
         return (varname, quoted)
 
-    def _parse_line_unquoted(
-        self, line: str, varname: str, quoted: str
-    ) -> Optional[Tuple[str, str]]:
+    def _parse_line_unquoted(self, line: str, varname: str, quoted: str) -> tuple[str, str] | None:
         """Escape any characters preceded by a backslash."""
         res = ""
         # pylint: disable-next=while-used
@@ -119,7 +117,7 @@ class YAIParser:
 
         return (varname, res)
 
-    def _parse_line_str(self, line: str) -> Optional[Tuple[str, str]]:
+    def _parse_line_str(self, line: str) -> tuple[str, str] | None:
         """Parse a single var=value line."""
         mline = _RE_YAIP_LINE.match(line)
         if not mline:
@@ -147,7 +145,7 @@ class YAIParser:
 
         return self._parse_line_unquoted(line, varname, quoted)
 
-    def parse(self) -> Dict[str, str]:
+    def parse(self) -> dict[str, str]:
         """Parse a file, store and return the result."""
         with open(self.filename, encoding="UTF-8") as infile:
             contents = infile.read()
@@ -161,7 +159,7 @@ class YAIParser:
         self.data = data
         return data
 
-    def get(self, key: Union[str, bytes]) -> Optional[str]:
+    def get(self, key: str | bytes) -> str | None:
         """Get a value parsed from the configuration file."""
         if isinstance(key, bytes):
             key = key.decode("UTF-8")

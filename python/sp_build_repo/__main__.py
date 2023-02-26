@@ -24,14 +24,14 @@
 #
 """Build the "add StorPool repository" archive."""
 
+from __future__ import annotations
+
 import dataclasses
 import datetime
 import pathlib
 import shutil
 import subprocess
 import sys
-
-from typing import Dict, Optional
 
 import cfg_diag
 import click
@@ -87,17 +87,17 @@ class DataFormat:
 class OverrideRepo:
     """Override a repository's URL, URL slug, or other attributes."""
 
-    url: Optional[str] = None
-    slug: Optional[str] = None
-    vendor: Optional[str] = None
-    codename: Optional[str] = None
+    url: str | None = None
+    slug: str | None = None
+    vendor: str | None = None
+    codename: str | None = None
 
 
 @dataclasses.dataclass(frozen=True)
 class Overrides:
     """Overrides for some settings, e.g. repo URLs."""
 
-    repo: Dict[str, OverrideRepo]
+    repo: dict[str, OverrideRepo]
 
 
 @dataclasses.dataclass(frozen=True)
@@ -114,8 +114,8 @@ class Config(cfg_diag.Config):
 class Singles:
     """Keep some singleton objects in a controlled way."""
 
-    _jinja2_env: Dict[str, jinja2.Environment] = {}
-    _jinja2_loaders: Dict[str, jinja2.BaseLoader] = {}
+    _jinja2_env: dict[str, jinja2.Environment] = {}
+    _jinja2_loaders: dict[str, jinja2.BaseLoader] = {}
 
     @classmethod
     def jinja2_env(cls, path: pathlib.Path) -> jinja2.Environment:
@@ -155,7 +155,7 @@ def copy_file(
     cfg: Config,
     src: pathlib.Path,
     dstdir: pathlib.Path,
-    dstname: Optional[str] = None,
+    dstname: str | None = None,
     executable: bool = False,
 ) -> None:
     """Copy a file with the appropriate access permissions."""

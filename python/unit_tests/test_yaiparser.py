@@ -24,10 +24,10 @@
 #
 """Test the os-release parser class."""
 
+from __future__ import annotations
+
 import pathlib
 import tempfile
-
-from typing import Tuple
 
 import pytest
 
@@ -104,7 +104,7 @@ def test_bad(line: str) -> None:
 
 
 @pytest.mark.parametrize("line,res", _LINES_OK)
-def test_parse_line_ok(line: str, res: Tuple[str, str]) -> None:
+def test_parse_line_ok(line: str, res: tuple[str, str]) -> None:
     """Make sure parse_line() works on valid text.
 
     So we silently assume that `==` works between str and unicode on

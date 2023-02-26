@@ -24,9 +24,11 @@
 #
 """Common definitions for the OS/distribution variant detection library."""
 
+from __future__ import annotations
+
 import sys
 
-from typing import Any, Dict, List, NamedTuple, Optional, Pattern, Union
+from typing import Any, NamedTuple, Pattern
 
 
 class Detect(NamedTuple):
@@ -41,19 +43,19 @@ class Detect(NamedTuple):
 class CommandsPackage(NamedTuple):
     """Variant-specific commands related to OS packages."""
 
-    update_db: List[str]
-    install: List[str]
-    list_all: List[str]
-    purge: List[str]
-    remove: List[str]
-    remove_impl: List[str]
+    update_db: list[str]
+    install: list[str]
+    list_all: list[str]
+    purge: list[str]
+    remove: list[str]
+    remove_impl: list[str]
 
 
 class CommandsPkgFile(NamedTuple):
     """Variant-specific commands related to OS package files."""
 
-    dep_query: List[str]
-    install: List[str]
+    dep_query: list[str]
+    install: list[str]
 
 
 class Commands(NamedTuple):
@@ -70,7 +72,7 @@ class DebRepo(NamedTuple):
     vendor: str
     sources: str
     keyring: str
-    req_packages: List[str]
+    req_packages: list[str]
 
 
 class YumRepo(NamedTuple):
@@ -100,8 +102,8 @@ class Variant(NamedTuple):
     detect: Detect
     commands: Commands
     min_sys_python: str
-    repo: Union[DebRepo, YumRepo]
-    package: Dict[str, str]
+    repo: DebRepo | YumRepo
+    package: dict[str, str]
     systemd_lib: str
     file_ext: str
     initramfs_flavor: str
@@ -115,7 +117,7 @@ class VariantUpdate(NamedTuple):
     descr: str
     parent: str
     detect: Detect
-    updates: Dict[str, Any]
+    updates: dict[str, Any]
 
 
 class OSPackage(NamedTuple):
@@ -164,19 +166,19 @@ class VariantConfigError(VariantError):
 class Config:  # pylint: disable=too-few-public-methods
     """Basic configuration: a "verbose" field and a diag() method."""
 
-    args: Optional[List[str]]
-    command: Optional[str]
+    args: list[str] | None
+    command: str | None
     noop: bool
-    repodir: Optional[str]
+    repodir: str | None
     repotype: RepoType
     verbose: bool
 
     def __init__(
         self,
-        args: Optional[List[str]] = None,
-        command: Optional[str] = None,
+        args: list[str] | None = None,
+        command: str | None = None,
         noop: bool = False,
-        repodir: Optional[str] = None,
+        repodir: str | None = None,
         repotype: RepoType = REPO_TYPES[0],
         verbose: bool = False,
     ) -> None:

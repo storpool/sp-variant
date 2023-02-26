@@ -24,6 +24,8 @@
 #
 """Run some sp_variant tests using Docker containers."""
 
+from __future__ import annotations
+
 import asyncio
 import asyncio.subprocess as aprocess
 import dataclasses
@@ -33,7 +35,7 @@ import subprocess
 import sys
 import tempfile
 
-from typing import Dict, List, NamedTuple, Optional, Tuple, Union
+from typing import NamedTuple
 
 import cfg_diag
 import click
@@ -44,9 +46,9 @@ import utf8_locale
 class Config(cfg_diag.Config):
     """Runtime configuration for the Docker test runner."""
 
-    images_filter: Optional[str]
+    images_filter: str | None
     repo_file: pathlib.Path
-    utf8_env: Dict[str, str]
+    utf8_env: dict[str, str]
 
 
 class SimpleBuilder(NamedTuple):
@@ -66,7 +68,7 @@ class SimpleVariant(NamedTuple):
 
 def extract_variants_data(
     cfg: Config, tempd: pathlib.Path
-) -> Tuple[pathlib.Path, Dict[str, SimpleVariant]]:
+) -> tuple[pathlib.Path, dict[str, SimpleVariant]]:
     """Extract the variants data into the specified directory."""
     cfg.diag(lambda: f"Making sure the {tempd} directory is empty")
     found = list(tempd.iterdir())
@@ -114,7 +116,7 @@ def extract_variants_data(
     return spdir, res
 
 
-def filter_docker_images(cfg: Config, var_data: Dict[str, SimpleVariant]) -> Dict[str, str]:
+def filter_docker_images(cfg: Config, var_data: dict[str, SimpleVariant]) -> dict[str, str]:
     """Find the Docker images present on this system."""
     cfg.diag_("Querying Docker for the available images")
     images = set(
@@ -141,7 +143,7 @@ def filter_docker_images(cfg: Config, var_data: Dict[str, SimpleVariant]) -> Dic
 
 async def process_detect_lines(
     cfg: Config, image: str, proc: aprocess.Process
-) -> Tuple[Optional[bytes], List[str]]:
+) -> tuple[bytes | None, list[str]]:
     """Read the lines output by `storpool_variant detect`, see if they look okay."""
     assert proc.stdout is not None
 
@@ -184,7 +186,7 @@ async def process_detect_lines(
 
 async def run_detect_for_image(
     cfg: Config, spdir: pathlib.Path, image: str
-) -> Tuple[Optional[str], Optional[str]]:
+) -> tuple[str | None, str | None]:
     """Run `storpool_variant detect` in a single new Docker container."""
     cfg.diag(lambda: f"{image}: starting a container")
     proc = await aprocess.create_subprocess_exec(
@@ -214,8 +216,8 @@ def analyze_detect_single(
     cfg: Config,
     image: str,
     expected: str,
-    received: Union[BaseException, Tuple[Optional[str], Optional[str]]],
-) -> List[str]:
+    received: BaseException | tuple[str | None, str | None],
+) -> list[str]:
     """Analyze a single container result."""
     if isinstance(received, BaseException):
         return [f"{image}: {received}"]
@@ -234,8 +236,8 @@ def analyze_detect_single(
 
 
 async def test_detect(
-    cfg: Config, spdir: pathlib.Path, ordered: List[Tuple[str, str]]
-) -> List[str]:
+    cfg: Config, spdir: pathlib.Path, ordered: list[tuple[str, str]]
+) -> list[str]:
     """Run `storpool_variant detect` for all the images."""
     cfg.diag_("Spawning the detect containers")
     gathering = asyncio.gather(
@@ -264,7 +266,7 @@ async def run_add_repo_for_image(
     addsh: pathlib.Path,
     image: str,
     variant: SimpleVariant,
-) -> Tuple[bytes, bytes, int]:
+) -> tuple[bytes, bytes, int]:
     """Run `add-storpool-repo` in a single new Docker container."""
     cfg.diag(lambda: f"{image}: starting a container")
     proc = await aprocess.create_subprocess_exec(
@@ -312,8 +314,8 @@ async def run_add_repo_for_image(
 def analyze_add_repo_single(
     cfg: Config,
     image: str,
-    received: Union[BaseException, Tuple[bytes, bytes, int]],
-) -> List[str]:
+    received: BaseException | tuple[bytes, bytes, int],
+) -> list[str]:
     """Analyze a single add-storpool-repo result."""
     if isinstance(received, BaseException):
         return [f"{image}: {received}"]
@@ -334,9 +336,9 @@ def analyze_add_repo_single(
 async def test_add_repo(
     cfg: Config,
     spdir: pathlib.Path,
-    ordered: List[Tuple[str, str]],
-    var_data: Dict[str, SimpleVariant],
-) -> List[str]:
+    ordered: list[tuple[str, str]],
+    var_data: dict[str, SimpleVariant],
+) -> list[str]:
     """Run `storpool_variant detect` for all the images."""
     cfg.diag_("Preparing the add-repo script")
     addsh = spdir / "run-add-repo.sh"
@@ -449,8 +451,8 @@ echo 'Done, it seems'
 async def run_tests(
     cfg: Config,
     spdir: pathlib.Path,
-    ordered: List[Tuple[str, str]],
-    var_data: Dict[str, SimpleVariant],
+    ordered: list[tuple[str, str]],
+    var_data: dict[str, SimpleVariant],
 ) -> None:
     """Run the tests themselves."""
     errors = await test_detect(cfg, spdir, ordered)
@@ -481,7 +483,7 @@ async def run_tests(
     is_flag=True,
     help="Verbose operation; display diagnostic output",
 )
-def main(images_filter: Optional[str], repo_file: pathlib.Path, verbose: bool) -> None:
+def main(images_filter: str | None, repo_file: pathlib.Path, verbose: bool) -> None:
     """Parse command-line options, run tests."""
     cfg = Config(
         images_filter=images_filter,

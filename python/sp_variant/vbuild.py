@@ -24,18 +24,20 @@
 #
 """Build the hierarchical structure of variant definitions."""
 
+from __future__ import annotations
+
 import pathlib
 import re
 
-from typing import Any, Callable, Dict, List, Type, TypeVar, Tuple, Union
+from typing import Any, Callable, TypeVar
 
 from . import defs
 
-CMD_NOOP: List[str] = ["true"]
+CMD_NOOP: list[str] = ["true"]
 
 T = TypeVar("T")  # pylint: disable=invalid-name
 
-_VARIANT_DEF: (List[Union[defs.Variant, defs.VariantUpdate]]) = [
+_VARIANT_DEF: (list[defs.Variant | defs.VariantUpdate]) = [
     defs.Variant(
         name="DEBIAN12",
         descr="Debian 12.x (bookworm/unstable)",
@@ -771,16 +773,16 @@ fi
     ),
 ]
 
-VARIANTS: Dict[str, defs.Variant] = {}
+VARIANTS: dict[str, defs.Variant] = {}
 
-DETECT_ORDER: List[defs.Variant] = []
+DETECT_ORDER: list[defs.Variant] = []
 
 
 def _check_type(
     prefix: str,
     name: str,
     orig: Any,
-    expected: Union[Type[Any], Tuple[Type[Any], ...]],
+    expected: type[Any] | tuple[type[Any], ...],
     tname: str,
 ) -> None:
     """Make sure the `orig` value is of the expected type."""
@@ -819,7 +821,7 @@ def _update_list(prefix: str, name: str, orig: Any, value: Any) -> Any:
     return value
 
 
-_UPDATE_HANDLERS: Tuple[Tuple[Type[Any], Callable[[str, str, Any, Any], Any]], ...] = (
+_UPDATE_HANDLERS: tuple[tuple[type[Any], Callable[[str, str, Any, Any], Any]], ...] = (
     (dict, _update_dict),
     (str, _update_string),
     (pathlib.Path, _update_path),
@@ -827,11 +829,11 @@ _UPDATE_HANDLERS: Tuple[Tuple[Type[Any], Callable[[str, str, Any, Any], Any]], .
 )
 
 
-def update_namedtuple(data: T, updates: Dict[str, Any]) -> T:
+def update_namedtuple(data: T, updates: dict[str, Any]) -> T:
     """Create a new named tuple with some updated values."""
     if not updates:
         return data
-    fields: List[str] = getattr(data, "_fields")
+    fields: list[str] = getattr(data, "_fields")
 
     newv = {name: getattr(data, name) for name in fields}
     prefix = f"Internal error: could not update {newv} with {updates}"
@@ -889,7 +891,7 @@ def build_variants(cfg: defs.Config) -> None:
     assert not DETECT_ORDER
 
     cfg.diag("Building the list of variants")
-    order: List[str] = []
+    order: list[str] = []
     for var in _VARIANT_DEF:
         current = (
             merge_into_parent(cfg, VARIANTS[var.parent], var)
