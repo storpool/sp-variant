@@ -31,7 +31,7 @@ tab_size = 8
 indent_style = tab
 tab_size = 8
 
-[{setup.cfg,setup-build-repo.cfg}]
+[setup.cfg]
 indent_style = space
 indent_size = 4
 
