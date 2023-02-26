@@ -22,15 +22,7 @@
 # OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
 # SUCH DAMAGE.
 #
-"""Support for different OS distributions and StorPool build variants.
-
-NB: This should be the only file in the StorPool source that cannot
-really depend on sp-python2 and sp-python2-modules being installed.
-
-NB: This is a looong file. It has to be, since it needs to be
-completely self-contained so that it may be copied over to
-a remote host and executed there.
-"""
+"""Support for different OS distributions and StorPool build variants."""
 
 from __future__ import annotations
 
