@@ -50,4 +50,4 @@ disable = [
 ]
 
 [tool.test-stages]
-stages = ["@check", "@tests"]
+stages = ["@check and not @manual", "@tests and not @manual"]
