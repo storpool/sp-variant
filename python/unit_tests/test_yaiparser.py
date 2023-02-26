@@ -83,7 +83,7 @@ def test_bad(line: str) -> None:
         assert yai.parse_line(line) == ("not reached", "we hope")
 
 
-@pytest.mark.parametrize("line,res", _LINES_OK)
+@pytest.mark.parametrize(("line", "res"), _LINES_OK)
 def test_parse_line_ok(line: str, res: tuple[str, str]) -> None:
     """Make sure parse_line() works on valid text.
 
