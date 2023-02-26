@@ -27,6 +27,7 @@
 from __future__ import annotations
 
 import errno
+import shlex
 import subprocess
 
 from typing import Iterable
@@ -177,7 +178,7 @@ def list_all_packages(var: Variant, patterns: Iterable[str] | None = None) -> li
     for line in subprocess.check_output(cmd, shell=False).decode("UTF-8").splitlines():
         fields = line.split("\t")
         if len(fields) != 4:
-            raise VariantFileError(f"Unexpected line in the '{' '.join(cmd)}' output: {line!r}")
+            raise VariantFileError(f"Unexpected line in the '{shlex.join(cmd)}' output: {line!r}")
         # This may need updating at some point, but it'll work for now
         if not fields[3].startswith("ii"):
             continue

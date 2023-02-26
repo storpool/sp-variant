@@ -29,6 +29,7 @@ from __future__ import annotations
 import argparse
 import json
 import os
+import shlex
 import subprocess
 import sys
 
@@ -234,16 +235,16 @@ def command_run(cfg: defs.Config) -> None:
     assert cfg.args is not None
 
     cmd = command_find(cfg, variant.detect_variant(cfg=cfg)) + cfg.args
-    cfg.diag(f"About to run `{' '.join(cmd)}`")
+    cmdstr = shlex.join(cmd)
+    cfg.diag(f"About to run `{cmdstr}`")
     if cfg.noop:
-        # Ahhh... we won't have shlex.quote() on Python 2.6, will we?
-        print(" ".join(cmd))
+        print(cmdstr)
         return
 
     try:
         subprocess.check_call(cmd, shell=False)
     except subprocess.CalledProcessError as err:
-        raise variant.VariantFileError(f"Could not run `{' '.join(cmd)}`: {err}")
+        raise variant.VariantFileError(f"Could not run `{cmdstr}`: {err}")
 
 
 def cmd_command_list(cfg: defs.Config) -> None:
@@ -258,7 +259,7 @@ def cmd_command_list(cfg: defs.Config) -> None:
             (name, getattr(category, name)) for name in sorted(category._fields)
         ):
             result = ["..."] if (cat_name, cmd_name) in CMD_LIST_BRIEF else command
-            print(f"{cat_name}.{cmd_name}: {' '.join(result)}")
+            print(f"{cat_name}.{cmd_name}: {shlex.join(result)}")
 
 
 def cmd_command_run(cfg: defs.Config) -> None:
