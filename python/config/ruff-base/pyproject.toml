@@ -34,7 +34,6 @@ ignore = [
   "TRY003",
 
   # Fix these ASAP.
-  "B009",
   "D401",
   "DTZ011",
   "EXE001",

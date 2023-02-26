@@ -7,13 +7,13 @@ from __future__ import annotations
 import pathlib
 import re
 
-from typing import Any, Callable, Final, TypeVar
+from typing import Any, Callable, Final, NamedTuple, TypeVar
 
 from . import defs
 
 CMD_NOOP: Final[list[str]] = ["true"]
 
-T = TypeVar("T")  # pylint: disable=invalid-name
+_TNamedTuple = TypeVar("_TNamedTuple", bound=NamedTuple)  # pylint: disable=invalid-name
 
 _VARIANT_DEF: Final[list[defs.Variant | defs.VariantUpdate]] = [
     defs.Variant(
@@ -771,7 +771,7 @@ def _check_type(
 def _update_dict(prefix: str, name: str, orig: Any, value: Any) -> Any:
     """Recurse into a tuple or replace a dictionary."""
     if isinstance(orig, tuple):
-        return update_namedtuple(orig, value)
+        return update_namedtuple(orig, value)  # type: ignore[type-var]  # argh
 
     if isinstance(orig, dict):
         orig.update(value)
@@ -807,11 +807,11 @@ _UPDATE_HANDLERS: tuple[tuple[type[Any], Callable[[str, str, Any, Any], Any]], .
 )
 
 
-def update_namedtuple(data: T, updates: dict[str, Any]) -> T:
+def update_namedtuple(data: _TNamedTuple, updates: dict[str, Any]) -> _TNamedTuple:
     """Create a new named tuple with some updated values."""
     if not updates:
         return data
-    fields: Final[list[str]] = getattr(data, "_fields")
+    fields: Final[tuple[str, ...]] = data._fields
 
     newv: Final = {name: getattr(data, name) for name in fields}
     prefix: Final = f"Internal error: could not update {newv} with {updates}"

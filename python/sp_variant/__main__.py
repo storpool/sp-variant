@@ -194,7 +194,7 @@ def command_find(cfg: defs.Config, var: defs.Variant) -> list[str]:
         if not isinstance(current, tuple):
             raise defs.VariantConfigError("Too many command components")
 
-        fields: list[str] = getattr(current, "_fields")
+        fields: tuple[str, ...] = current._fields
         if comp not in fields:
             raise defs.VariantConfigError(
                 f"Invalid command component '{comp}', should be one of {' '.join(fields)}"
@@ -202,7 +202,7 @@ def command_find(cfg: defs.Config, var: defs.Variant) -> list[str]:
         current = getattr(current, comp)
 
     if not isinstance(current, list):
-        fields = getattr(current, "_fields")
+        fields = current._fields
         raise defs.VariantConfigError(
             f"Incomplete command specification, should continue with one of {' '.join(fields)}"
         )
