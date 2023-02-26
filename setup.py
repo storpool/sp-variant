@@ -4,7 +4,7 @@
 # SPDX-License-Identifier: BSD-2-Clause
 """Legacy setup infrastructure for the sp_variant library."""
 
-import setuptools  # type: ignore
+import setuptools  # type: ignore[import]
 
 
 setuptools.setup()
