@@ -35,7 +35,7 @@ import subprocess
 import sys
 import tempfile
 
-from typing import NamedTuple
+from typing import Final, NamedTuple
 
 import cfg_diag
 import click
@@ -80,15 +80,17 @@ def extract_variants_data(
     found = list(tempd.iterdir())
     if len(found) != 1 or not found[0].is_dir() or found[0].name != "add-storpool-repo":
         sys.exit(f"Expected a single add-storpool-repo directory in {tempd}: {found!r}")
-    spdir = found[0]
+    spdir: Final = found[0]
 
-    spvar = spdir / "storpool_variant"
+    spvar: Final = spdir / "storpool_variant"
     if not spvar.is_file() or (spvar.stat().st_mode & 0o555) != 0o555:
         sys.exit(f"Expected an executable {spvar} file")
 
-    output = subprocess.check_output([spvar, "show", "all"], encoding="UTF-8", env=cfg.utf8_env)
+    output: Final = subprocess.check_output(
+        [spvar, "show", "all"], encoding="UTF-8", env=cfg.utf8_env
+    )
     try:
-        data = json.loads(output)
+        data: Final = json.loads(output)
     except ValueError as err:
         sys.exit(f"Failed to decode the output of `{spvar} show all`: {err}")
 
@@ -101,7 +103,7 @@ def extract_variants_data(
     ):
         sys.exit(f"Missing or unsupported `{spvar} show all` format version")
 
-    res = {}
+    res: Final = {}
     for var in data["variants"].values():
         res[var["name"]] = SimpleVariant(
             name=var["name"],
@@ -118,18 +120,21 @@ def extract_variants_data(
 def filter_docker_images(cfg: Config, var_data: dict[str, SimpleVariant]) -> dict[str, str]:
     """Find the Docker images present on this system."""
     cfg.diag_("Querying Docker for the available images")
-    images = set(
+    all_images: Final = set(
         subprocess.check_output(
             ["docker", "image", "ls", "--format", "{{.Repository}}:{{.Tag}}"],
             encoding="UTF-8",
             env=cfg.utf8_env,
         ).splitlines()
     )
-    if cfg.images_filter is not None:
-        images = {name for name in images if cfg.images_filter in name}
+    images: Final = (
+        all_images
+        if cfg.images_filter is None
+        else {name for name in all_images if cfg.images_filter in name}
+    )
 
-    res = {}
-    ignored = {"IGNORE", "centos:6"}
+    res: Final = {}
+    ignored: Final = {"IGNORE", "centos:6"}
     for var in var_data.values():
         for image in (var.builder.base_image, "builder:" + var.builder.alias):
             if image in ignored:
@@ -148,7 +153,7 @@ async def process_detect_lines(
 
     first_line = None
     rest = b""
-    errors = []
+    errors: Final = []
     try:  # pylint: disable=too-many-try-statements
         try:
             first_line = await proc.stdout.readline()
@@ -175,7 +180,7 @@ async def process_detect_lines(
             assert first_line is not None
             errors.append(f"More than one line of output: {(first_line + rest)!r}")
     finally:
-        res = await proc.wait()
+        res: Final = await proc.wait()
         cfg.diag(lambda: f"{image}: exit code {res!r}")
         if res:
             errors.append(f"Non-zero exit code {res}")
@@ -188,7 +193,7 @@ async def run_detect_for_image(
 ) -> tuple[str | None, str | None]:
     """Run `storpool_variant detect` in a single new Docker container."""
     cfg.diag(lambda: f"{image}: starting a container")
-    proc = await aprocess.create_subprocess_exec(
+    proc: Final = await aprocess.create_subprocess_exec(
         "docker",
         "run",
         "--rm",
@@ -204,7 +209,7 @@ async def run_detect_for_image(
     cfg.diag(lambda: f"{image}: created process {proc.pid}")
 
     first_line, errors = await process_detect_lines(cfg, image, proc)
-    first_line_dec = None if first_line is None else first_line.decode("ISO-8859-15")
+    first_line_dec: Final = None if first_line is None else first_line.decode("ISO-8859-15")
     cfg.diag(lambda: f"{image}: first_line_dec {first_line_dec!r} errors {errors!r}")
     if errors:
         return (first_line_dec, "\n".join(errors))
@@ -239,15 +244,15 @@ async def test_detect(
 ) -> list[str]:
     """Run `storpool_variant detect` for all the images."""
     cfg.diag_("Spawning the detect containers")
-    gathering = asyncio.gather(
+    gathering: Final = asyncio.gather(
         *(run_detect_for_image(cfg, spdir, image) for image, _ in ordered),
         return_exceptions=True,
     )
     cfg.diag_("Waiting for the detect containers")
-    res = await gathering
+    res: Final = await gathering
 
     cfg.diag(lambda: f"Analyzing {len(res)} detect results")
-    errors = []
+    errors: Final = []
     for (image, expected), received in zip(ordered, res):
         errors.extend(analyze_detect_single(cfg, image, expected, received))
 
@@ -268,7 +273,7 @@ async def run_add_repo_for_image(
 ) -> tuple[bytes, bytes, int]:
     """Run `add-storpool-repo` in a single new Docker container."""
     cfg.diag(lambda: f"{image}: starting a container")
-    proc = await aprocess.create_subprocess_exec(
+    proc: Final = await aprocess.create_subprocess_exec(
         "docker",
         "run",
         "--rm",
@@ -305,7 +310,7 @@ async def run_add_repo_for_image(
     r_out, r_err = await asyncio.gather(
         read_stream("stdout", proc.stdout), read_stream("stderr", proc.stderr)
     )
-    res = await proc.wait()
+    res: Final = await proc.wait()
     return (r_out, r_err, res)
 
 
@@ -339,7 +344,7 @@ async def test_add_repo(
 ) -> list[str]:
     """Run `storpool_variant detect` for all the images."""
     cfg.diag_("Preparing the add-repo script")
-    addsh = spdir / "run-add-repo.sh"
+    addsh: Final = spdir / "run-add-repo.sh"
     if addsh.exists() or addsh.is_symlink():
         return [f"Did not expect {addsh} to exist"]
     try:
@@ -423,7 +428,7 @@ echo 'Done, it seems'
         return [f"Could not set the permissions mode on {addsh}: {err}"]
 
     cfg.diag_("Spawning the add-repo containers")
-    gathering = asyncio.gather(
+    gathering: Final = asyncio.gather(
         *(
             run_add_repo_for_image(cfg, spdir, addsh, image, var_data[variant])
             for image, variant in ordered
@@ -431,10 +436,10 @@ echo 'Done, it seems'
         return_exceptions=True,
     )
     cfg.diag_("Waiting for the add-repo containers")
-    res = await gathering
+    res: Final = await gathering
 
     cfg.diag(lambda: f"Analyzing {len(res)} add-repo results")
-    errors = []
+    errors: Final = []
     for (image, _), received in zip(ordered, res):
         errors.extend(analyze_add_repo_single(cfg, image, received))
 
@@ -481,20 +486,20 @@ async def run_tests(
 )
 def main(images_filter: str | None, repo_file: pathlib.Path, verbose: bool) -> None:
     """Parse command-line options, run tests."""
-    cfg = Config(
+    cfg: Final = Config(
         images_filter=images_filter,
         repo_file=repo_file,
         utf8_env=utf8_locale.get_utf8_env(),
         verbose=verbose,
     )
     with tempfile.TemporaryDirectory() as tempd_path:
-        tempd = pathlib.Path(tempd_path)
+        tempd: Final = pathlib.Path(tempd_path)
         cfg.diag(lambda: f"Using {tempd} as a temporary directory")
         spdir, var_data = extract_variants_data(cfg, tempd)
 
-        images = filter_docker_images(cfg, var_data)
+        images: Final = filter_docker_images(cfg, var_data)
         cfg.diag(lambda: f"About to test {len(images)} containers: {sorted(images.keys())}")
-        ordered = sorted(images.items())
+        ordered: Final = sorted(images.items())
 
         asyncio.run(run_tests(cfg, spdir, ordered, var_data))
 

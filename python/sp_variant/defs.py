@@ -29,7 +29,7 @@ from __future__ import annotations
 import dataclasses
 import sys
 
-from typing import Any, NamedTuple, Pattern
+from typing import Any, Final, NamedTuple, Pattern
 
 
 class Detect(NamedTuple):
@@ -138,10 +138,10 @@ class RepoType(NamedTuple):
     url: str
 
 
-VERSION = "3.0.1"
-FORMAT_VERSION = (1, 3)
+VERSION: Final = "3.0.1"
+FORMAT_VERSION: Final = (1, 3)
 
-REPO_TYPES = [
+REPO_TYPES: Final = [
     RepoType(name="contrib", extension="", url="https://repo.storpool.com/public/"),
     RepoType(
         name="staging",

@@ -30,7 +30,7 @@ import errno
 import shlex
 import subprocess
 
-from typing import Iterable
+from typing import Final, Iterable
 
 from . import defs
 from . import vbuild
@@ -83,7 +83,7 @@ SAFEENC = "Latin-1"
 def _detect_from_os_release(cfg: Config) -> Variant | None:
     """Try to match the contents of /etc/os-release with a known variant."""
     try:
-        data = yaiparser.YAIParser("/etc/os-release").parse()
+        data: Final = yaiparser.YAIParser("/etc/os-release").parse()
     except OSError as err:
         if err.errno != errno.ENOENT:
             raise
@@ -170,11 +170,11 @@ def get_variant(name: str, cfg: Config = _DEFAULT_CONFIG) -> Variant:
 
 def list_all_packages(var: Variant, patterns: Iterable[str] | None = None) -> list[defs.OSPackage]:
     """Parse the output of the "list installed packages" command."""
-    cmd = list(var.commands.package.list_all)
+    cmd: Final = list(var.commands.package.list_all)
     if patterns is not None:
         cmd.extend(patterns)
 
-    res = []
+    res: Final = []
     for line in subprocess.check_output(cmd, shell=False).decode("UTF-8").splitlines():
         fields = line.split("\t")
         if len(fields) != 4:

@@ -27,14 +27,16 @@
 import pathlib
 import tempfile
 
+from typing import Final
+
 from sp_build_repo import subst
 
 
 def test_subst() -> None:
     """Test the substitution tool."""
     with tempfile.TemporaryDirectory() as tempd_obj:
-        tempd = pathlib.Path(tempd_obj)
-        cfg = subst.Config(
+        tempd: Final = pathlib.Path(tempd_obj)
+        cfg: Final = subst.Config(
             output=tempd / "data.txt",
             output_mode=0o612,
             template=tempd / "template.j2",
@@ -61,11 +63,11 @@ Variant: {{ var.name }} alias: {{ var.builder.alias }} family: {{ var.family }} 
 
         assert cfg.output.is_file()
         assert (cfg.output.stat().st_mode & 0o7777) == 0o612
-        lines = cfg.output.read_text(encoding="UTF-8").splitlines()
+        lines: Final = cfg.output.read_text(encoding="UTF-8").splitlines()
         assert "- variant: ALMA8" in lines
         assert "- variant: ORACLE7" in lines
 
-        c7_lines = [line for line in lines if line.startswith("Variant: CENTOS7 ")]
+        c7_lines: Final = [line for line in lines if line.startswith("Variant: CENTOS7 ")]
         assert len(c7_lines) == 1
         assert c7_lines[0].startswith("Variant: CENTOS7 alias: centos7 family: redhat update: ")
 
@@ -73,8 +75,8 @@ Variant: {{ var.name }} alias: {{ var.builder.alias }} family: {{ var.family }} 
 def test_subst_re() -> None:
     """Test the substitution tool."""
     with tempfile.TemporaryDirectory() as tempd_obj:
-        tempd = pathlib.Path(tempd_obj)
-        cfg = subst.Config(
+        tempd: Final = pathlib.Path(tempd_obj)
+        cfg: Final = subst.Config(
             output=tempd / "data.txt",
             output_mode=0o747,
             template=tempd / "template.j2",
@@ -93,7 +95,7 @@ def test_subst_re() -> None:
 
         assert cfg.output.is_file()
         assert (cfg.output.stat().st_mode & 0o7777) == 0o747
-        lines = cfg.output.read_text(encoding="UTF-8").splitlines()
+        lines: Final = cfg.output.read_text(encoding="UTF-8").splitlines()
         assert lines
 
         for line in lines:

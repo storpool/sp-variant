@@ -29,15 +29,15 @@ from __future__ import annotations
 import pathlib
 import re
 
-from typing import Any, Callable, TypeVar
+from typing import Any, Callable, Final, TypeVar
 
 from . import defs
 
-CMD_NOOP: list[str] = ["true"]
+CMD_NOOP: Final[list[str]] = ["true"]
 
 T = TypeVar("T")  # pylint: disable=invalid-name
 
-_VARIANT_DEF: (list[defs.Variant | defs.VariantUpdate]) = [
+_VARIANT_DEF: Final[list[defs.Variant | defs.VariantUpdate]] = [
     defs.Variant(
         name="DEBIAN12",
         descr="Debian 12.x (bookworm/unstable)",
@@ -773,9 +773,9 @@ fi
     ),
 ]
 
-VARIANTS: dict[str, defs.Variant] = {}
+VARIANTS: Final[dict[str, defs.Variant]] = {}
 
-DETECT_ORDER: list[defs.Variant] = []
+DETECT_ORDER: Final[list[defs.Variant]] = []
 
 
 def _check_type(
@@ -833,10 +833,10 @@ def update_namedtuple(data: T, updates: dict[str, Any]) -> T:
     """Create a new named tuple with some updated values."""
     if not updates:
         return data
-    fields: list[str] = getattr(data, "_fields")
+    fields: Final[list[str]] = getattr(data, "_fields")
 
-    newv = {name: getattr(data, name) for name in fields}
-    prefix = f"Internal error: could not update {newv} with {updates}"
+    newv: Final = {name: getattr(data, name) for name in fields}
+    prefix: Final = f"Internal error: could not update {newv} with {updates}"
 
     for name, value in updates.items():
         if name not in newv:
@@ -852,7 +852,7 @@ def update_namedtuple(data: T, updates: dict[str, Any]) -> T:
                 f"{prefix}: weird {type(value).__name__} update for {name}"
             )
 
-    updated = type(data)(**newv)
+    updated: Final = type(data)(**newv)
     return updated
 
 
@@ -891,7 +891,7 @@ def build_variants(cfg: defs.Config) -> None:
     assert not DETECT_ORDER
 
     cfg.diag("Building the list of variants")
-    order: list[str] = []
+    order: Final[list[str]] = []
     for var in _VARIANT_DEF:
         current = (
             merge_into_parent(cfg, VARIANTS[var.parent], var)

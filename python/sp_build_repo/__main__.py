@@ -34,7 +34,7 @@ import shutil
 import subprocess
 import sys
 
-from typing import Dict, Optional
+from typing import Dict, Final, Optional
 
 import cfg_diag
 import click
@@ -54,10 +54,10 @@ class ConfigHolder:
     verbose: bool = False
 
 
-VERSION = "1.0.0"
+VERSION: Final = "1.0.0"
 
 
-OVERRIDES_SCHEMAS = {
+OVERRIDES_SCHEMAS: Final = {
     (0, 1): {
         "?repo": {
             "*": {
@@ -126,7 +126,7 @@ class Singles:
         if (abspath := str(path.absolute())) in cls._jinja2_env:
             return cls._jinja2_env[abspath]
 
-        env = jinja2.Environment(autoescape=False, loader=cls.jinja2_loader(path))
+        env: Final = jinja2.Environment(autoescape=False, loader=cls.jinja2_loader(path))
         cls._jinja2_env[abspath] = env
         return env
 
@@ -136,7 +136,7 @@ class Singles:
         if (abspath := str(path.absolute())) in cls._jinja2_loaders:
             return cls._jinja2_loaders[abspath]
 
-        loader = jinja2.FileSystemLoader(abspath)
+        loader: Final = jinja2.FileSystemLoader(abspath)
         cls._jinja2_loaders[abspath] = loader
         return loader
 
@@ -160,7 +160,7 @@ def copy_file(
     executable: bool = False,
 ) -> None:
     """Copy a file with the appropriate access permissions."""
-    dst = dstdir / (src.name if dstname is None else dstname)
+    dst: Final = dstdir / (src.name if dstname is None else dstname)
     ensure_none(cfg, dst)
     try:
         shutil.copy2(src, dst)
@@ -181,16 +181,16 @@ def subst_debian_sources(
 ) -> None:
     """Substitute the placeholder vars in a Debian sources list file."""
     assert isinstance(var.repo, defs.DebRepo)
-    vendor = var.repo.vendor
-    codename = var.repo.codename
-    dst = dstdir / (src.stem + rtype.extension + src.suffix)
+    vendor: Final = var.repo.vendor
+    codename: Final = var.repo.codename
+    dst: Final = dstdir / (src.stem + rtype.extension + src.suffix)
     cfg.diag(lambda: f"{src} -> {dst} [vendor {vendor}, codename {codename}]")
 
-    ovr = cfg.overrides.repo.get(
+    ovr: Final = cfg.overrides.repo.get(
         rtype.name, OverrideRepo(url=None, slug=None, vendor=None, codename=None)
     )
     try:
-        result = (
+        result: Final = (
             Singles.jinja2_env(src.parent)
             .get_template(src.name)
             .render(
@@ -219,14 +219,14 @@ def subst_yum_repo(
 ) -> None:
     """Substitute the placeholder vars in a Debian sources list file."""
     assert isinstance(var.repo, defs.YumRepo)
-    dst = dstdir / (src.stem + rtype.extension + src.suffix)
+    dst: Final = dstdir / (src.stem + rtype.extension + src.suffix)
     cfg.diag(lambda: f"{src} -> {dst} []")
 
-    ovr = cfg.overrides.repo.get(
+    ovr: Final = cfg.overrides.repo.get(
         rtype.name, OverrideRepo(url=None, slug=None, vendor=None, codename=None)
     )
     try:
-        result = (
+        result: Final = (
             Singles.jinja2_env(src.parent)
             .get_template(src.name)
             .render(
@@ -246,11 +246,18 @@ def subst_yum_repo(
 
 def build_repo(cfg: Config) -> pathlib.Path:
     """Build the StorPool repository archive."""
-    distname = "add-storpool-repo"
-    if not cfg.no_date:
-        distdate = datetime.date.today().strftime("%Y%m%d")
-        distname = f"{distname}-{distdate}"
-    distdir = cfg.destdir / distname
+
+    def get_distname() -> str:
+        """Build the distribution directory name."""
+        base = "add-storpool-repo"
+        if cfg.no_date:
+            return base
+
+        distdate: Final = datetime.date.today().strftime("%Y%m%d")
+        return f"{base}-{distdate}"
+
+    distname: Final = get_distname()
+    distdir: Final = cfg.destdir / distname
     ensure_none(cfg, distdir)
     distdir.mkdir()
 
@@ -301,7 +308,7 @@ def build_repo(cfg: Config) -> pathlib.Path:
                 f"No idea how to handle {type(var.repo).__name__} for {var.name}"
             )
 
-    distfile = (cfg.destdir / distname).with_suffix(".tar.gz")
+    distfile: Final = (cfg.destdir / distname).with_suffix(".tar.gz")
     ensure_none(cfg, distfile)
     cfg.diag(lambda: f"Creating {distfile}")
     try:
@@ -327,16 +334,16 @@ def parse_overrides(path: pathlib.Path) -> Overrides:
         return Overrides(repo={})
 
     try:
-        raw = tomli.loads(path.read_text(encoding="UTF-8"))
+        raw: Final = tomli.loads(path.read_text(encoding="UTF-8"))
     except (OSError, ValueError) as err:
         sys.exit(f"Could not read or parse the {path} overrides file as valid TOML: {err}")
 
     try:
-        raw_format = raw.pop("format")
+        raw_format: Final = raw.pop("format")
     except (TypeError, AttributeError, KeyError):
         sys.exit(f"No 'format' section in the {path} override file")
     try:
-        data_format = typed_loader().load(raw_format, DataFormat)
+        data_format: Final = typed_loader().load(raw_format, DataFormat)
     except (TypeError, AttributeError, KeyError, ValueError) as err:
         sys.exit(f"Could not read the 'format' section of the {path} overrides file: {err}")
     if (data_format.version.major, data_format.version.minor) != (0, 1):
@@ -395,9 +402,9 @@ def cmd_build(
 ) -> None:
     """Build the StorPool repository archive and output its name."""
     # pylint: disable=too-many-arguments
-    cfg_hold = ctx.find_object(ConfigHolder)
+    cfg_hold: Final = ctx.find_object(ConfigHolder)
     assert isinstance(cfg_hold, ConfigHolder)
-    cfg = Config(
+    cfg: Final = Config(
         datadir=datadir,
         destdir=destdir,
         no_date=no_date,

@@ -32,6 +32,8 @@ import functools
 import json
 import pathlib
 
+from typing import Final
+
 import cfg_diag
 import jinja2
 import trivver
@@ -51,7 +53,7 @@ class Config(cfg_diag.Config):
 
 def parse_args() -> Config:
     """Parse the command-line arguments."""
-    parser = argparse.ArgumentParser(prog="sp_var_subst")
+    parser: Final = argparse.ArgumentParser(prog="sp_var_subst")
     parser.add_argument(
         "-m",
         "--mode",
@@ -79,7 +81,7 @@ def parse_args() -> Config:
         help="verbose operation; display diagnostic messages",
     )
 
-    args = parser.parse_args()
+    args: Final = parser.parse_args()
 
     return Config(
         output=args.output,
@@ -105,7 +107,7 @@ def dictvsort(data: dict[str, variant.Variant]) -> list[tuple[str, variant.Varia
 
     def compare(left: tuple[str, variant.Variant], right: tuple[str, variant.Variant]) -> int:
         """Compare two variants by name."""
-        res = trivver.compare(left[0], right[0])
+        res: Final = trivver.compare(left[0], right[0])
         assert res
         return res
 
@@ -125,10 +127,10 @@ def build_json(var: variant.Variant) -> str:
 def substitute(cfg: Config) -> None:
     """Perform the substitutions."""
     cfg.diag_("Building the variants data")
-    variants = variant.get_all_variants_in_order()
+    variants: Final = variant.get_all_variants_in_order()
 
     cfg.diag_("Preparing the Jinja substitution environment")
-    jenv = jinja2.Environment(
+    jenv: Final = jinja2.Environment(
         autoescape=False,
         loader=jinja2.FileSystemLoader(cfg.template.parent),
         undefined=jinja2.StrictUndefined,
@@ -136,7 +138,7 @@ def substitute(cfg: Config) -> None:
     jenv.filters["dictvsort"] = dictvsort
     jenv.filters["regexunx"] = regex_un_x
     jenv.filters["vsort"] = vsort
-    jvars = {
+    jvars: Final = {
         "format_version": defs.FORMAT_VERSION,
         "order": [var.name for var in variants],
         "repotypes": {repo.name: repo for repo in defs.REPO_TYPES},
@@ -146,7 +148,7 @@ def substitute(cfg: Config) -> None:
     }
 
     cfg.diag_("Rendering the template")
-    result = jenv.get_template(cfg.template.name).render(**jvars)
+    result: Final = jenv.get_template(cfg.template.name).render(**jvars)
     cfg.diag(lambda: f"Got {len(result)} characters")
 
     cfg.diag(lambda: f"Generating the {cfg.output} output file")
@@ -158,7 +160,7 @@ def substitute(cfg: Config) -> None:
 
 def main() -> None:
     """Parse command-line arguments, substitute data."""
-    cfg = parse_args()
+    cfg: Final = parse_args()
     substitute(cfg)
 
 

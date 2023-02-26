@@ -33,7 +33,7 @@ import shlex
 import subprocess
 import sys
 
-from typing import Callable, TYPE_CHECKING
+from typing import Any, Callable, Final, TYPE_CHECKING
 
 from . import defs
 from . import variant
@@ -41,11 +41,11 @@ from . import vbuild
 
 
 if TYPE_CHECKING:
-    # pylint: disable-next=protected-access
-    SubPAction = argparse._SubParsersAction[argparse.ArgumentParser]
+    # pylint: disable-next=protected-access,invalid-name
+    SubPAction: Final = argparse._SubParsersAction[argparse.ArgumentParser]
 
 
-CMD_LIST_BRIEF = [
+CMD_LIST_BRIEF: Final = [
     ("pkgfile", "install"),
 ]
 
@@ -61,8 +61,8 @@ def cmd_detect(cfg: defs.Config) -> None:
 
 def copy_file(cfg: defs.Config, src: str, dstdir: str) -> None:
     """Use `install(8)` to install a configuration file."""
-    dst = os.path.join(dstdir, os.path.basename(src))
-    mode = "0644"
+    dst: Final = os.path.join(dstdir, os.path.basename(src))
+    mode: Final = "0644"
     cfg.diag(f"{src} -> {dst} [{mode}]")
     try:
         subprocess.check_call(
@@ -86,7 +86,7 @@ def copy_file(cfg: defs.Config, src: str, dstdir: str) -> None:
 
 def repo_add_extension(cfg: defs.Config, name: str) -> str:
     """Add the extension for the specified repository type."""
-    parts = name.rsplit(".")
+    parts: Final = name.rsplit(".")
     if len(parts) != 2:
         raise variant.VariantFileError(
             f"Unexpected repository file name without an extension: {name}"
@@ -185,8 +185,8 @@ def repo_add_yum(cfg: defs.Config, var: defs.Variant, vardir: str) -> None:
 def repo_add(cfg: defs.Config) -> None:
     """Install the StorPool repository configuration."""
     assert cfg.repodir is not None
-    var = variant.detect_variant(cfg)
-    vardir = os.path.join(cfg.repodir, var.name)
+    var: Final = variant.detect_variant(cfg)
+    vardir: Final = os.path.join(cfg.repodir, var.name)
     if not os.path.isdir(vardir):
         raise defs.VariantConfigError(f"No {vardir} directory")
 
@@ -234,8 +234,8 @@ def command_run(cfg: defs.Config) -> None:
     """Run a distribution-specific command."""
     assert cfg.args is not None
 
-    cmd = command_find(cfg, variant.detect_variant(cfg=cfg)) + cfg.args
-    cmdstr = shlex.join(cmd)
+    cmd: Final = command_find(cfg, variant.detect_variant(cfg=cfg)) + cfg.args
+    cmdstr: Final = shlex.join(cmd)
     cfg.diag(f"About to run `{cmdstr}`")
     if cfg.noop:
         print(cmdstr)
@@ -249,7 +249,7 @@ def command_run(cfg: defs.Config) -> None:
 
 def cmd_command_list(cfg: defs.Config) -> None:
     """List the distribution-specific commands."""
-    var = variant.detect_variant(cfg=cfg)
+    var: Final = variant.detect_variant(cfg=cfg)
 
     # We only have two levels, right?
     for cat_name, category in (
@@ -281,31 +281,35 @@ def cmd_features(_cfg: defs.Config) -> None:
 
 def cmd_show(cfg: defs.Config) -> None:
     """Display information about a single build variant."""
-    assert cfg.command is not None
     vbuild.build_variants(cfg)
-    if cfg.command == "all":
-        data = defs.jsonify(
-            {
-                "format": {
-                    "version": {
-                        "major": defs.FORMAT_VERSION[0],
-                        "minor": defs.FORMAT_VERSION[1],
-                    }
-                },
-                "version": defs.VERSION,
-                "variants": vbuild.VARIANTS,
-                "order": [var.name for var in vbuild.DETECT_ORDER],
-            }
-        )
-    else:
-        if cfg.command == "current":
-            var: defs.Variant | None = variant.detect_variant(cfg)
-        else:
-            var = vbuild.VARIANTS.get(cfg.command)
 
+    def get_data() -> Any:
+        """Build up the variant description."""
+        if cfg.command == "all":
+            return defs.jsonify(
+                {
+                    "format": {
+                        "version": {
+                            "major": defs.FORMAT_VERSION[0],
+                            "minor": defs.FORMAT_VERSION[1],
+                        }
+                    },
+                    "version": defs.VERSION,
+                    "variants": vbuild.VARIANTS,
+                    "order": [var.name for var in vbuild.DETECT_ORDER],
+                }
+            )
+
+        assert cfg.command is not None
+        var: Final[defs.Variant | None] = (
+            variant.detect_variant(cfg)
+            if cfg.command == "current"
+            else vbuild.VARIANTS.get(cfg.command)
+        )
         if var is None:
             sys.exit(f"Invalid build variant '{cfg.command}'")
-        data = defs.jsonify(
+
+        return defs.jsonify(
             {
                 "format": {
                     "version": {
@@ -317,12 +321,13 @@ def cmd_show(cfg: defs.Config) -> None:
                 "variant": var,
             }
         )
-    print(json.dumps(data, sort_keys=True, indent=2))
+
+    print(json.dumps(get_data(), sort_keys=True, indent=2))
 
 
 def parse_arguments() -> tuple[defs.Config, Callable[[defs.Config], None]]:
     """Parse the command-line arguments."""
-    parser = argparse.ArgumentParser(prog="storpool_variant")
+    parser: Final = argparse.ArgumentParser(prog="storpool_variant")
     parser.add_argument(
         "-v",
         "--verbose",
@@ -387,7 +392,7 @@ def parse_arguments() -> tuple[defs.Config, Callable[[defs.Config], None]]:
     )
     p_cmd.set_defaults(func=cmd_show)
 
-    args = parser.parse_args()
+    args: Final = parser.parse_args()
     if getattr(args, "func", None) is None:
         sys.exit("No command specified")
 

@@ -28,6 +28,8 @@ from __future__ import annotations
 
 import re
 
+from typing import Final
+
 from . import defs
 
 
@@ -73,7 +75,7 @@ class YAIParser:
             return self._parse_line_str(line)
 
         try:
-            str_line = line.decode("UTF-8")
+            str_line: Final = line.decode("UTF-8")
         except UnicodeDecodeError as err:
             raise VariantYAIError(
                 f"Invalid {self.filename} line, not a valid UTF-8 string: {line!r}: {err}"
@@ -147,8 +149,8 @@ class YAIParser:
     def parse(self) -> dict[str, str]:
         """Parse a file, store and return the result."""
         with open(self.filename, encoding="UTF-8") as infile:
-            contents = infile.read()
-        data = {}
+            contents: Final = infile.read()
+        data: Final = {}
         for line in contents.splitlines():
             if (res := self.parse_line(line)) is None:
                 continue
@@ -159,7 +161,5 @@ class YAIParser:
 
     def get(self, key: str | bytes) -> str | None:
         """Get a value parsed from the configuration file."""
-        if isinstance(key, bytes):
-            key = key.decode("UTF-8")
-        assert isinstance(key, str)
-        return self.data.get(key)
+        key_str: Final = key.decode("UTF-8") if isinstance(key, bytes) else key
+        return self.data.get(key_str)
