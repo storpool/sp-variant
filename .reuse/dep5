@@ -1,0 +1,11 @@
+Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
+Upstream-Name: sp-variant
+Upstream-Contact: StorPool <support@storpool.com>
+Source: https://github.com/storpool/sp-variant
+
+Files:
+  Cargo.lock
+  data/debian/repo/storpool-keyring.gpg
+  data/redhat/repo/RPM-GPG-KEY-StorPool
+Copyright: 2021 - 2023 StorPool <support@storpool.com>
+License: BSD-2-Clause

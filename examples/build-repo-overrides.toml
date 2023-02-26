@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: 2021 - 2023  StorPool <support@storpool.com>
+# SPDX-License-Identifier: BSD-2-Clause
+
 [format.version]
 major = 0
 minor = 1

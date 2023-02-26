@@ -1,3 +1,8 @@
+<!--
+SPDX-FileCopyrightText: 2021 - 2023  StorPool <support@storpool.com>
+SPDX-License-Identifier: BSD-2-Clause
+-->
+
 # sp-variant - detect the Linux distribution for the StorPool build system
 
 The `sp-variant` library is mainly useful within the StorPool internal

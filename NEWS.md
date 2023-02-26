@@ -1,3 +1,8 @@
+<!--
+SPDX-FileCopyrightText: 2021 - 2023  StorPool <support@storpool.com>
+SPDX-License-Identifier: BSD-2-Clause
+-->
+
 # Changelog
 
 All notable changes to the sp-variant project will be documented in this file.

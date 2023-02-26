@@ -1,4 +1,7 @@
 # The StorPool software repository for third-party CentOS RPMs
+#
+# SPDX-FileCopyrightText: 2021 - 2023  StorPool <support@storpool.com>
+# SPDX-License-Identifier: BSD-2-Clause
 
 [storpool-{{ name }}]
 name=StorPool third-party packages for CentOS

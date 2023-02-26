@@ -1,4 +1,7 @@
 #!/bin/sh
+#
+# SPDX-FileCopyrightText: 2022 - 2023  StorPool <support@storpool.com>
+# SPDX-License-Identifier: BSD-2-Clause
 
 set -e
 
