@@ -59,7 +59,7 @@ def copy_file(cfg: defs.Config, src: str, dstdir: str) -> None:
             shell=False,
         )
     except subprocess.CalledProcessError as err:
-        raise variant.VariantFileError(f"Could not copy {src} over to {dst}: {err}")
+        raise variant.VariantFileError(f"Could not copy {src} over to {dst}: {err}") from err
 
 
 def repo_add_extension(cfg: defs.Config, name: str) -> str:
@@ -81,7 +81,7 @@ def repo_add_deb(cfg: defs.Config, var: defs.Variant, vardir: str) -> None:
     except subprocess.CalledProcessError as err:
         raise variant.VariantFileError(
             f"Could not install the required packages {' '.join(var.repo.req_packages)}: {err}"
-        )
+        ) from err
 
     copy_file(
         cfg,
@@ -97,7 +97,7 @@ def repo_add_deb(cfg: defs.Config, var: defs.Variant, vardir: str) -> None:
     try:
         subprocess.check_call(["apt-get", "update"], shell=False)
     except subprocess.CalledProcessError as err:
-        raise variant.VariantFileError(f"Could not update the APT database: {err}")
+        raise variant.VariantFileError(f"Could not update the APT database: {err}") from err
 
 
 def repo_add_yum(cfg: defs.Config, var: defs.Variant, vardir: str) -> None:
@@ -119,7 +119,7 @@ def repo_add_yum(cfg: defs.Config, var: defs.Variant, vardir: str) -> None:
     except subprocess.CalledProcessError as err:
         raise variant.VariantFileError(
             f"Could not install the required ca-certificates package: {err}"
-        )
+        ) from err
 
     copy_file(
         cfg,
@@ -143,7 +143,7 @@ def repo_add_yum(cfg: defs.Config, var: defs.Variant, vardir: str) -> None:
                 shell=False,
             )
         except subprocess.CalledProcessError as err:
-            raise variant.VariantFileError(f"Could not import the RPM PGP keys: {err}")
+            raise variant.VariantFileError(f"Could not import the RPM PGP keys: {err}") from err
 
     try:
         subprocess.check_call(
@@ -157,7 +157,9 @@ def repo_add_yum(cfg: defs.Config, var: defs.Variant, vardir: str) -> None:
             shell=False,
         )
     except subprocess.CalledProcessError as err:
-        raise variant.VariantFileError(f"Could not clean the Yum repository metadata: {err}")
+        raise variant.VariantFileError(
+            f"Could not clean the Yum repository metadata: {err}"
+        ) from err
 
 
 def repo_add(cfg: defs.Config) -> None:
@@ -222,7 +224,7 @@ def command_run(cfg: defs.Config) -> None:
     try:
         subprocess.check_call(cmd, shell=False)
     except subprocess.CalledProcessError as err:
-        raise variant.VariantFileError(f"Could not run `{cmdstr}`: {err}")
+        raise variant.VariantFileError(f"Could not run `{cmdstr}`: {err}") from err
 
 
 def cmd_command_list(cfg: defs.Config) -> None:

@@ -131,7 +131,7 @@ def ensure_none(cfg: Config, path: pathlib.Path) -> None:
     try:
         subprocess.check_call(["rm", "-rf", "--", path])
     except subprocess.CalledProcessError as err:
-        raise variant.VariantFileError(f"Could not remove {path}: {err}")
+        raise variant.VariantFileError(f"Could not remove {path}: {err}") from err
 
 
 def copy_file(
@@ -147,11 +147,13 @@ def copy_file(
     try:
         shutil.copy2(src, dst)
     except (OSError, subprocess.CalledProcessError) as err:
-        raise variant.VariantFileError(f"Could not copy {src} to {dst}: {err}")
+        raise variant.VariantFileError(f"Could not copy {src} to {dst}: {err}") from err
     try:
         dst.chmod(0o755 if executable else 0o644)
     except OSError as err:
-        raise variant.VariantFileError(f"Could not set the permissions mode on {dst}: {err}")
+        raise variant.VariantFileError(
+            f"Could not set the permissions mode on {dst}: {err}"
+        ) from err
 
 
 def subst_debian_sources(
@@ -184,12 +186,12 @@ def subst_debian_sources(
             )
         )
     except jinja2.TemplateError as err:
-        raise variant.VariantFileError(f"Could not render the {src} template: {err}")
+        raise variant.VariantFileError(f"Could not render the {src} template: {err}") from err
 
     try:
         dst.write_text(result + "\n", encoding="UTF-8")
     except OSError as err:
-        raise variant.VariantFileError(f"Could not write out {dst}: {err}")
+        raise variant.VariantFileError(f"Could not write out {dst}: {err}") from err
 
 
 def subst_yum_repo(
@@ -218,12 +220,12 @@ def subst_yum_repo(
             )
         )
     except jinja2.TemplateError as err:
-        raise variant.VariantFileError(f"Could not render the {src} template: {err}")
+        raise variant.VariantFileError(f"Could not render the {src} template: {err}") from err
 
     try:
         dst.write_text(result + "\n", encoding="UTF-8")
     except OSError as err:
-        raise variant.VariantFileError(f"Could not write out {dst}: {err}")
+        raise variant.VariantFileError(f"Could not write out {dst}: {err}") from err
 
 
 def build_repo(cfg: Config) -> pathlib.Path:
@@ -299,7 +301,9 @@ def build_repo(cfg: Config) -> pathlib.Path:
             shell=False,
         )
     except subprocess.CalledProcessError as err:
-        raise variant.VariantFileError(f"Could not package {distdir} up into {distfile}: {err}")
+        raise variant.VariantFileError(
+            f"Could not package {distdir} up into {distfile}: {err}"
+        ) from err
     return distfile
 
 
