@@ -123,8 +123,7 @@ class Singles:
     @classmethod
     def jinja2_env(cls, path: pathlib.Path) -> jinja2.Environment:
         """Instantiate a Jinja2 environment if necessary."""
-        abspath = str(path.absolute())
-        if abspath in cls._jinja2_env:
+        if (abspath := str(path.absolute())) in cls._jinja2_env:
             return cls._jinja2_env[abspath]
 
         env = jinja2.Environment(autoescape=False, loader=cls.jinja2_loader(path))
@@ -134,8 +133,7 @@ class Singles:
     @classmethod
     def jinja2_loader(cls, path: pathlib.Path) -> jinja2.BaseLoader:
         """Instantiate a Jinja2 environment if necessary."""
-        abspath = str(path.absolute())
-        if abspath in cls._jinja2_loaders:
+        if (abspath := str(path.absolute())) in cls._jinja2_loaders:
             return cls._jinja2_loaders[abspath]
 
         loader = jinja2.FileSystemLoader(abspath)

@@ -71,8 +71,7 @@ def extract_variants_data(
 ) -> tuple[pathlib.Path, dict[str, SimpleVariant]]:
     """Extract the variants data into the specified directory."""
     cfg.diag(lambda: f"Making sure the {tempd} directory is empty")
-    found = list(tempd.iterdir())
-    if found:
+    if found := list(tempd.iterdir()):
         sys.exit(f"Unexpected stuff found in {tempd}: {found!r}")
 
     cfg.diag(lambda: f"Extracting {cfg.repo_file} into {tempd}")
@@ -294,8 +293,7 @@ async def run_add_repo_for_image(
         res = b""
         # pylint: disable-next=while-used
         while True:
-            line = await stream.readline()
-            if not line:
+            if not (line := await stream.readline()):
                 cfg.diag(lambda: f"{image}: no more {stype}")
                 break
 
@@ -455,12 +453,10 @@ async def run_tests(
     var_data: dict[str, SimpleVariant],
 ) -> None:
     """Run the tests themselves."""
-    errors = await test_detect(cfg, spdir, ordered)
-    if errors:
+    if errors := await test_detect(cfg, spdir, ordered):
         sys.exit("`storpool_variant detect` errors: " + "\n".join(errors))
 
-    errors = await test_add_repo(cfg, spdir, ordered, var_data)
-    if errors:
+    if errors := await test_add_repo(cfg, spdir, ordered, var_data):
         sys.exit("`add-storpool-repo.sh` errors: " + "\n".join(errors))
 
     cfg.diag_("Everything seems fine!")

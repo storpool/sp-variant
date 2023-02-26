@@ -128,12 +128,10 @@ def detect_variant(cfg: Config = _DEFAULT_CONFIG) -> Variant:
     vbuild.build_variants(cfg)
     cfg.diag("Trying to detect the current hosts's build variant")
 
-    var = _detect_from_os_release(cfg)
-    if var is not None:
+    if (var := _detect_from_os_release(cfg)) is not None:
         return var
 
-    var = _detect_from_files(cfg)
-    if var is not None:
+    if (var := _detect_from_files(cfg)) is not None:
         return var
 
     raise VariantDetectError("Could not detect the current host's build variant")

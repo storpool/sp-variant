@@ -119,8 +119,7 @@ class YAIParser:
 
     def _parse_line_str(self, line: str) -> tuple[str, str] | None:
         """Parse a single var=value line."""
-        mline = _RE_YAIP_LINE.match(line)
-        if not mline:
+        if not (mline := _RE_YAIP_LINE.match(line)):
             raise VariantYAIError(f"Unexpected {self.filename} line: {line!r}")
         if mline.group("comment") is not None:
             return None
@@ -151,8 +150,7 @@ class YAIParser:
             contents = infile.read()
         data = {}
         for line in contents.splitlines():
-            res = self.parse_line(line)
-            if res is None:
+            if (res := self.parse_line(line)) is None:
                 continue
             data[res[0]] = res[1]
 
