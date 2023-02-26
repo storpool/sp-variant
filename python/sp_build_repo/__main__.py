@@ -27,17 +27,20 @@
 from __future__ import annotations
 
 import dataclasses
+import functools
 import datetime
 import pathlib
 import shutil
 import subprocess
 import sys
 
+from typing import Dict, Optional
+
 import cfg_diag
 import click
 import jinja2
 import tomli
-import typedload
+import typedload.dataloader
 
 from sp_variant import defs
 from sp_variant import variant
@@ -87,17 +90,17 @@ class DataFormat:
 class OverrideRepo:
     """Override a repository's URL, URL slug, or other attributes."""
 
-    url: str | None = None
-    slug: str | None = None
-    vendor: str | None = None
-    codename: str | None = None
+    url: Optional[str] = None
+    slug: Optional[str] = None
+    vendor: Optional[str] = None
+    codename: Optional[str] = None
 
 
 @dataclasses.dataclass(frozen=True)
 class Overrides:
     """Overrides for some settings, e.g. repo URLs."""
 
-    repo: dict[str, OverrideRepo]
+    repo: Dict[str, OverrideRepo]
 
 
 @dataclasses.dataclass(frozen=True)
@@ -313,6 +316,12 @@ def build_repo(cfg: Config) -> pathlib.Path:
     return distfile
 
 
+@functools.lru_cache(maxsize=2)
+def typed_loader(failonextra: bool = False) -> typedload.dataloader.Loader:
+    """Prepare a loader that can parse annotated types."""
+    return typedload.dataloader.Loader(pep563=True, failonextra=failonextra)
+
+
 # pylint: disable-next=too-complex
 def parse_overrides(path: pathlib.Path) -> Overrides:
     """Parse the TOML overrides file."""
@@ -329,7 +338,7 @@ def parse_overrides(path: pathlib.Path) -> Overrides:
     except (TypeError, AttributeError, KeyError):
         sys.exit(f"No 'format' section in the {path} override file")
     try:
-        data_format = typedload.load(raw_format, DataFormat)
+        data_format = typed_loader().load(raw_format, DataFormat)
     except (TypeError, AttributeError, KeyError, ValueError) as err:
         sys.exit(f"Could not read the 'format' section of the {path} overrides file: {err}")
     if (data_format.version.major, data_format.version.minor) != (0, 1):
@@ -339,7 +348,7 @@ def parse_overrides(path: pathlib.Path) -> Overrides:
         )
 
     try:
-        return typedload.load(raw, Overrides, failonextra=True)
+        return typed_loader(failonextra=True).load(raw, Overrides)
     except (TypeError, AttributeError, KeyError, ValueError) as err:
         sys.exit(f"Invalid format for the {path} overrides file: {err}")
 
