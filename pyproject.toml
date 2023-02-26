@@ -3,15 +3,15 @@ requires = ["setuptools", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [tool.black]
-target-version = ["py36", "py37", "py38", "py39", "py310", "py311"]
+target-version = ["py37", "py38", "py39", "py310", "py311"]
 line-length = 100
 
 [tool.mypy]
 strict = true
-python_version = "3.6"
+python_version = "3.7"
 
 [tool.pylint]
-py-version = "3.6"
+py-version = "3.7"
 load-plugins = [
   "pylint.extensions.bad_builtin",
   "pylint.extensions.broad_try_clause",
