@@ -20,7 +20,7 @@ from . import vbuild
 
 if TYPE_CHECKING:
     # pylint: disable-next=protected-access,invalid-name
-    SubPAction: Final = argparse._SubParsersAction[argparse.ArgumentParser]
+    SubPAction: Final = argparse._SubParsersAction[argparse.ArgumentParser]  # noqa: SLF001
 
 
 CMD_LIST_BRIEF: Final = [
@@ -74,7 +74,7 @@ def repo_add_extension(cfg: defs.Config, name: str) -> str:
 
 def repo_add_deb(cfg: defs.Config, var: defs.Variant, vardir: str) -> None:
     """Install the StorPool Debian-like repo configuration."""
-    assert isinstance(var.repo, defs.DebRepo)
+    assert isinstance(var.repo, defs.DebRepo)  # noqa: S101  # mypy needs this
 
     try:
         subprocess.check_call(var.commands.package.install + var.repo.req_packages, shell=False)
@@ -102,7 +102,7 @@ def repo_add_deb(cfg: defs.Config, var: defs.Variant, vardir: str) -> None:
 
 def repo_add_yum(cfg: defs.Config, var: defs.Variant, vardir: str) -> None:
     """Install the StorPool RedHat/CentOS-like repo configuration."""
-    assert isinstance(var.repo, defs.YumRepo)
+    assert isinstance(var.repo, defs.YumRepo)  # noqa: S101  # mypy needs this
 
     try:
         subprocess.check_call(
@@ -162,7 +162,7 @@ def repo_add_yum(cfg: defs.Config, var: defs.Variant, vardir: str) -> None:
 
 def repo_add(cfg: defs.Config) -> None:
     """Install the StorPool repository configuration."""
-    assert cfg.repodir is not None
+    assert cfg.repodir is not None  # noqa: S101  # mypy needs this
     var: Final = variant.detect_variant(cfg)
     vardir: Final = os.path.join(cfg.repodir, var.name)
     if not os.path.isdir(vardir):
@@ -185,7 +185,7 @@ def cmd_repo_add(cfg: defs.Config) -> None:
 
 def command_find(cfg: defs.Config, var: defs.Variant) -> list[str]:
     """Get a distribution-specific command from the variant definition."""
-    assert cfg.command is not None
+    assert cfg.command is not None  # noqa: S101  # mypy needs this
 
     current = var.commands
     for comp in cfg.command.split("."):
@@ -210,7 +210,7 @@ def command_find(cfg: defs.Config, var: defs.Variant) -> list[str]:
 
 def command_run(cfg: defs.Config) -> None:
     """Run a distribution-specific command."""
-    assert cfg.args is not None
+    assert cfg.args is not None  # noqa: S101  # mypy needs this
 
     cmd: Final = command_find(cfg, variant.detect_variant(cfg=cfg)) + cfg.args
     cmdstr: Final = shlex.join(cmd)
@@ -261,7 +261,7 @@ def cmd_show(cfg: defs.Config) -> None:
     """Display information about a single build variant."""
     vbuild.build_variants(cfg)
 
-    def get_data() -> Any:
+    def get_data() -> Any:  # noqa: ANN401  # well, we know it's a dict...
         """Build up the variant description."""
         if cfg.command == "all":
             return defs.jsonify(
@@ -278,7 +278,7 @@ def cmd_show(cfg: defs.Config) -> None:
                 }
             )
 
-        assert cfg.command is not None
+        assert cfg.command is not None  # noqa: S101  # mypy needs this
         var: Final[defs.Variant | None] = (
             variant.detect_variant(cfg)
             if cfg.command == "current"

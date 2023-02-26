@@ -86,7 +86,7 @@ def dictvsort(data: dict[str, variant.Variant]) -> list[tuple[str, variant.Varia
     def compare(left: tuple[str, variant.Variant], right: tuple[str, variant.Variant]) -> int:
         """Compare two variants by name."""
         res: Final = trivver.compare(left[0], right[0])
-        assert res
+        assert res  # noqa: S101  # just to be absolutely sure
         return res
 
     return sorted(data.items(), key=functools.cmp_to_key(compare))

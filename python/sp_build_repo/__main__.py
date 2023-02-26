@@ -162,7 +162,7 @@ def subst_debian_sources(
     rtype: defs.RepoType,
 ) -> None:
     """Substitute the placeholder vars in a Debian sources list file."""
-    assert isinstance(var.repo, defs.DebRepo)
+    assert isinstance(var.repo, defs.DebRepo)  # noqa: S101  # mypy needs this
     vendor: Final = var.repo.vendor
     codename: Final = var.repo.codename
     dst: Final = dstdir / (src.stem + rtype.extension + src.suffix)
@@ -200,7 +200,7 @@ def subst_yum_repo(
     rtype: defs.RepoType,
 ) -> None:
     """Substitute the placeholder vars in a Debian sources list file."""
-    assert isinstance(var.repo, defs.YumRepo)
+    assert isinstance(var.repo, defs.YumRepo)  # noqa: S101  # mypy needs this
     dst: Final = dstdir / (src.stem + rtype.extension + src.suffix)
     cfg.diag(lambda: f"{src} -> {dst} []")
 
@@ -310,7 +310,7 @@ def typed_loader(failonextra: bool = False) -> typedload.dataloader.Loader:
 
 
 # pylint: disable-next=too-complex
-def parse_overrides(path: pathlib.Path) -> Overrides:
+def parse_overrides(path: pathlib.Path) -> Overrides:  # noqa: C901
     """Parse the TOML overrides file."""
     if path is None:
         return Overrides(repo={})
@@ -374,7 +374,7 @@ def parse_overrides(path: pathlib.Path) -> Overrides:
     help="Do not include the current date in the directory name",
 )
 @click.pass_context
-def cmd_build(
+def cmd_build(  # noqa: PLR0913
     ctx: click.Context,
     datadir: pathlib.Path,
     destdir: pathlib.Path,
@@ -385,7 +385,7 @@ def cmd_build(
     """Build the StorPool repository archive and output its name."""
     # pylint: disable=too-many-arguments
     cfg_hold: Final = ctx.find_object(ConfigHolder)
-    assert isinstance(cfg_hold, ConfigHolder)
+    assert isinstance(cfg_hold, ConfigHolder)  # noqa: S101  # mypy needs this
     cfg: Final = Config(
         datadir=datadir,
         destdir=destdir,

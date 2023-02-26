@@ -165,7 +165,7 @@ class Config:
             print(msg, file=sys.stderr if self._diag_to_stderr else sys.stdout)
 
 
-def jsonify(obj: Any) -> Any:
+def jsonify(obj: Any) -> Any:  # noqa: ANN401  # this needs to operate on, well, anything
     """Return a more readable representation of an object."""
     if type(obj).__name__.endswith("Pattern") and hasattr(obj, "pattern"):
         return jsonify(obj.pattern)

@@ -123,11 +123,11 @@ def filter_docker_images(cfg: Config, var_data: dict[str, SimpleVariant]) -> dic
     return res
 
 
-async def process_detect_lines(
+async def process_detect_lines(  # noqa: C901  # do ruff and pylint disagree here?
     cfg: Config, image: str, proc: aprocess.Process
 ) -> tuple[bytes | None, list[str]]:
     """Read the lines output by `storpool_variant detect`, see if they look okay."""
-    assert proc.stdout is not None
+    assert proc.stdout is not None  # noqa: S101  # mypy needs this
 
     first_line = None
     rest = b""
@@ -135,7 +135,7 @@ async def process_detect_lines(
     try:  # pylint: disable=too-many-try-statements
         try:
             first_line = await proc.stdout.readline()
-        except Exception as err:  # pylint: disable=broad-except
+        except Exception as err:  # pylint: disable=broad-except  # noqa: BLE001
             errors.append(f"Could not read the first line: {err}")
         cfg.diag(lambda: f"{image}: first line {first_line!r}")
 
@@ -145,17 +145,17 @@ async def process_detect_lines(
             while True:
                 try:
                     more = await proc.stdout.readline()
-                except Exception as err:  # pylint: disable=broad-except
+                except Exception as err:  # pylint: disable=broad-except  # noqa: BLE001
                     errors.append(f"Could not read a further line: {err}")
                     break
-                cfg.diag(lambda: f"{image}: more {more!r}")
+                cfg.diag(lambda: f"{image}: more {more!r}")  # noqa: B023
 
                 if not more:
                     break
                 rest += b"\n" + more.rstrip(b"\n")
 
         if rest:
-            assert first_line is not None
+            assert first_line is not None  # noqa: S101  # mypy needs this
             errors.append(f"More than one line of output: {(first_line + rest)!r}")
     finally:
         res: Final = await proc.wait()
@@ -267,8 +267,8 @@ async def run_add_repo_for_image(
         stderr=aprocess.PIPE,
     )
     cfg.diag(lambda: f"{image}: created process {proc.pid}")
-    assert proc.stdout is not None
-    assert proc.stderr is not None
+    assert proc.stdout is not None  # noqa: S101  # mypy needs this
+    assert proc.stderr is not None  # noqa: S101  # mypy needs this
 
     async def read_stream(stype: str, stream: asyncio.StreamReader) -> bytes:
         """Read lines from a stream, output them, gather them."""
@@ -398,7 +398,7 @@ echo 'Done, it seems'
 """,  # noqa: E501  pylint: disable=line-too-long
             encoding="UTF-8",
         )
-    except Exception as err:  # pylint: disable=broad-except
+    except Exception as err:  # pylint: disable=broad-except  # noqa: BLE001
         return [f"Could not create {addsh}: {err}"]
     try:
         addsh.chmod(0o755)

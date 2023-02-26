@@ -861,12 +861,13 @@ def merge_into_parent(
 
 def build_variants(cfg: defs.Config) -> None:
     """Build the variant definitions from the parent/child relations."""
+    # We really hope these asserts will not trigger, but let's leave them in for now.
     if VARIANTS:
-        assert len(VARIANTS) == len(_VARIANT_DEF)
-        assert DETECT_ORDER
-        assert len(DETECT_ORDER) == len(_VARIANT_DEF)
+        assert len(VARIANTS) == len(_VARIANT_DEF)  # noqa: S101
+        assert DETECT_ORDER  # noqa: S101
+        assert len(DETECT_ORDER) == len(_VARIANT_DEF)  # noqa: S101
         return
-    assert not DETECT_ORDER
+    assert not DETECT_ORDER  # noqa: S101
 
     cfg.diag("Building the list of variants")
     order: Final[list[str]] = []
