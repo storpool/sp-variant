@@ -237,7 +237,7 @@ def build_repo(cfg: Config) -> pathlib.Path:
         if cfg.no_date:
             return base
 
-        distdate: Final = datetime.date.today().strftime("%Y%m%d")
+        distdate: Final = datetime.datetime.now(tz=datetime.timezone.utc).date().strftime("%Y%m%d")
         return f"{base}-{distdate}"
 
     distname: Final = get_distname()
