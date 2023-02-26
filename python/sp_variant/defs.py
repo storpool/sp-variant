@@ -26,6 +26,7 @@
 
 from __future__ import annotations
 
+import dataclasses
 import sys
 
 from typing import Any, NamedTuple, Pattern
@@ -163,34 +164,22 @@ class VariantConfigError(VariantError):
     """Invalid parameters passed to the variant routines."""
 
 
-class Config:  # pylint: disable=too-few-public-methods
-    """Basic configuration: a "verbose" field and a diag() method."""
+@dataclasses.dataclass(frozen=True)
+class Config:
+    """Runtime configuration for the sp-variant library functions."""
 
-    args: list[str] | None
-    command: str | None
-    noop: bool
-    repodir: str | None
-    repotype: RepoType
-    verbose: bool
+    args: list[str] | None = None
+    command: str | None = None
+    noop: bool = False
+    repodir: str | None = None
+    repotype: RepoType = REPO_TYPES[0]
+    verbose: bool = False
 
-    def __init__(
-        self,
-        args: list[str] | None = None,
-        command: str | None = None,
-        noop: bool = False,
-        repodir: str | None = None,
-        repotype: RepoType = REPO_TYPES[0],
-        verbose: bool = False,
-    ) -> None:
-        """Store the verbosity setting."""
-        # pylint: disable=too-many-arguments
-        self.args = args
-        self.command = command
-        self.noop = noop
-        self.repodir = repodir
-        self.repotype = repotype
-        self.verbose = verbose
-        self._diag_to_stderr = True
+    _diag_to_stderr: bool = dataclasses.field(init=False)
+
+    def __post_init__(self) -> None:
+        """Log to the standard error stream by default."""
+        object.__setattr__(self, "_diag_to_stderr", True)
 
     def diag(self, msg: str) -> None:
         """Output a diagnostic message in verbose mode."""
