@@ -236,7 +236,7 @@ async def test_detect(
 
     if len(res) != len(ordered):
         errors.append(
-            f"Internal error: expected {len(ordered)} detect results, " f"got {len(res)} ones"
+            f"Internal error: expected {len(ordered)} detect results, got {len(res)} ones"
         )
 
     return errors
@@ -423,7 +423,7 @@ echo 'Done, it seems'
 
     if len(res) != len(ordered):
         errors.append(
-            f"Internal error: expected {len(ordered)} add-repo results, " f"got {len(res)} ones"
+            f"Internal error: expected {len(ordered)} add-repo results, got {len(res)} ones"
         )
 
     return errors
