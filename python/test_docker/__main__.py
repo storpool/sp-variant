@@ -398,7 +398,7 @@ u8loc="$(/sp/storpool_variant show current | jq -r '.variant.builder.utf8_locale
 check_locale 'The builder.utf8_locale setting' "$u8loc"
 
 echo 'Installing some programs'
-/sp/storpool_variant command run -- package.install sp-python2 sp-python2-modules sp-python3 sp-python3-modules
+/sp/storpool_variant command run -- package.install sp-python3 sp-python3-modules
 
 echo 'Running add-storpool-repo -t staging'
 /sp/add-storpool-repo.sh -t staging
