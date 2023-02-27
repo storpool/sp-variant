@@ -335,6 +335,9 @@ show_ALMA8()
     "keyring": "redhat/repo/RPM-GPG-KEY-StorPool",
     "yumdef": "redhat/repo/storpool-centos.repo"
   },
+  "supported": {
+    "repo": true
+  },
   "systemd_lib": "usr/lib/systemd/system"
 }
 EOVARIANT_JSON
@@ -437,6 +440,9 @@ show_ALMA9()
     "keyring": "redhat/repo/RPM-GPG-KEY-StorPool",
     "yumdef": "redhat/repo/storpool-centos.repo"
   },
+  "supported": {
+    "repo": false
+  },
   "systemd_lib": "usr/lib/systemd/system"
 }
 EOVARIANT_JSON
@@ -536,6 +542,9 @@ show_CENTOS6()
     "keyring": "redhat/repo/RPM-GPG-KEY-StorPool",
     "yumdef": "redhat/repo/storpool-centos.repo"
   },
+  "supported": {
+    "repo": false
+  },
   "systemd_lib": "usr/lib/systemd/system"
 }
 EOVARIANT_JSON
@@ -634,6 +643,9 @@ show_CENTOS7()
   "repo": {
     "keyring": "redhat/repo/RPM-GPG-KEY-StorPool",
     "yumdef": "redhat/repo/storpool-centos.repo"
+  },
+  "supported": {
+    "repo": true
   },
   "systemd_lib": "usr/lib/systemd/system"
 }
@@ -737,6 +749,9 @@ show_CENTOS8()
   "repo": {
     "keyring": "redhat/repo/RPM-GPG-KEY-StorPool",
     "yumdef": "redhat/repo/storpool-centos.repo"
+  },
+  "supported": {
+    "repo": true
   },
   "systemd_lib": "usr/lib/systemd/system"
 }
@@ -850,6 +865,9 @@ show_DEBIAN9()
     "sources": "debian/repo/storpool.sources",
     "vendor": "debian"
   },
+  "supported": {
+    "repo": true
+  },
   "systemd_lib": "lib/systemd/system"
 }
 EOVARIANT_JSON
@@ -960,6 +978,9 @@ show_DEBIAN10()
     ],
     "sources": "debian/repo/storpool.sources",
     "vendor": "debian"
+  },
+  "supported": {
+    "repo": true
   },
   "systemd_lib": "lib/systemd/system"
 }
@@ -1072,6 +1093,9 @@ show_DEBIAN11()
     "sources": "debian/repo/storpool.sources",
     "vendor": "debian"
   },
+  "supported": {
+    "repo": true
+  },
   "systemd_lib": "lib/systemd/system"
 }
 EOVARIANT_JSON
@@ -1183,6 +1207,9 @@ show_DEBIAN12()
     "sources": "debian/repo/storpool.sources",
     "vendor": "debian"
   },
+  "supported": {
+    "repo": false
+  },
   "systemd_lib": "lib/systemd/system"
 }
 EOVARIANT_JSON
@@ -1281,6 +1308,9 @@ show_ORACLE7()
   "repo": {
     "keyring": "redhat/repo/RPM-GPG-KEY-StorPool",
     "yumdef": "redhat/repo/storpool-centos.repo"
+  },
+  "supported": {
+    "repo": true
   },
   "systemd_lib": "usr/lib/systemd/system"
 }
@@ -1385,6 +1415,9 @@ show_RHEL8()
     "keyring": "redhat/repo/RPM-GPG-KEY-StorPool",
     "yumdef": "redhat/repo/storpool-centos.repo"
   },
+  "supported": {
+    "repo": true
+  },
   "systemd_lib": "usr/lib/systemd/system"
 }
 EOVARIANT_JSON
@@ -1488,6 +1521,9 @@ show_ROCKY8()
     "keyring": "redhat/repo/RPM-GPG-KEY-StorPool",
     "yumdef": "redhat/repo/storpool-centos.repo"
   },
+  "supported": {
+    "repo": true
+  },
   "systemd_lib": "usr/lib/systemd/system"
 }
 EOVARIANT_JSON
@@ -1589,6 +1625,9 @@ show_ROCKY9()
   "repo": {
     "keyring": "redhat/repo/RPM-GPG-KEY-StorPool",
     "yumdef": "redhat/repo/storpool-centos.repo"
+  },
+  "supported": {
+    "repo": false
   },
   "systemd_lib": "usr/lib/systemd/system"
 }
@@ -1703,6 +1742,9 @@ show_UBUNTU1604()
     "sources": "debian/repo/storpool.sources",
     "vendor": "ubuntu"
   },
+  "supported": {
+    "repo": false
+  },
   "systemd_lib": "lib/systemd/system"
 }
 EOVARIANT_JSON
@@ -1813,6 +1855,9 @@ show_UBUNTU1804()
     ],
     "sources": "debian/repo/storpool.sources",
     "vendor": "ubuntu"
+  },
+  "supported": {
+    "repo": true
   },
   "systemd_lib": "lib/systemd/system"
 }
@@ -1925,6 +1970,9 @@ show_UBUNTU2004()
     "sources": "debian/repo/storpool.sources",
     "vendor": "ubuntu"
   },
+  "supported": {
+    "repo": true
+  },
   "systemd_lib": "lib/systemd/system"
 }
 EOVARIANT_JSON
@@ -2035,6 +2083,9 @@ show_UBUNTU2110()
     ],
     "sources": "debian/repo/storpool.sources",
     "vendor": "ubuntu"
+  },
+  "supported": {
+    "repo": true
   },
   "systemd_lib": "lib/systemd/system"
 }
@@ -2147,6 +2198,9 @@ show_UBUNTU2204()
     "sources": "debian/repo/storpool.sources",
     "vendor": "ubuntu"
   },
+  "supported": {
+    "repo": true
+  },
   "systemd_lib": "lib/systemd/system"
 }
 EOVARIANT_JSON
@@ -2165,7 +2219,7 @@ cmd_show_all()
   "format": {
     "version": {
       "major": 1,
-      "minor": 3
+      "minor": 4
     }
   },
   "order": [
@@ -2263,7 +2317,7 @@ show_variant()
   "format": {
     "version": {
       "major": 1,
-      "minor": 3
+      "minor": 4
     }
   },
   "variant":
@@ -4216,7 +4270,7 @@ cmd_command()
 
 cmd_features()
 {
-	echo 'Features: format=1.3 version=3.1.0'
+	echo 'Features: format=1.4 version=3.1.0'
 }
 
 case "$1" in

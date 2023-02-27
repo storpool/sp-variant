@@ -13,7 +13,7 @@ use once_cell::sync::Lazy;
 use serde::{Deserialize, Serialize};
 
 use crate::{
-    Builder, DebRepo, Detect, Repo, Variant, VariantDefTop, VariantError, VariantFormat,
+    Builder, DebRepo, Detect, Repo, Supported, Variant, VariantDefTop, VariantError, VariantFormat,
     VariantFormatVersion, YumRepo,
 };
 
@@ -146,7 +146,7 @@ pub fn get_variants() -> &'static VariantDefTop {
             format: VariantFormat {
                 version: VariantFormatVersion {
                     major: 1,
-                    minor: 3,
+                    minor: 4,
                 },
             },
             order: vec![
@@ -183,6 +183,9 @@ pub fn get_variants() -> &'static VariantDefTop {
                                     regex: r"^ AlmaLinux \s .* \s 8 \. (?: [4-9] | [1-9][0-9] )".to_owned(),
                                     os_id: "alma".to_owned(),
                                     os_version_regex: r"^8(?:$|\.[4-9]|\.[1-9][0-9])".to_owned(),
+                                },
+                                supported: Supported {
+                                    repo: true,
                                 },
                                 commands: HashMap::from(
                                     [
@@ -340,6 +343,9 @@ fi
                                     os_id: "alma".to_owned(),
                                     os_version_regex: r"^9(?:$|\.[0-9])".to_owned(),
                                 },
+                                supported: Supported {
+                                    repo: false,
+                                },
                                 commands: HashMap::from(
                                     [
                                         (
@@ -495,6 +501,9 @@ fi
                                     os_id: "centos".to_owned(),
                                     os_version_regex: r"^6(?:$|\.[0-9])".to_owned(),
                                 },
+                                supported: Supported {
+                                    repo: false,
+                                },
                                 commands: HashMap::from(
                                     [
                                         (
@@ -647,6 +656,9 @@ fi
                                     os_id: "centos".to_owned(),
                                     os_version_regex: r"^7(?:$|\.[0-9])".to_owned(),
                                 },
+                                supported: Supported {
+                                    repo: true,
+                                },
                                 commands: HashMap::from(
                                     [
                                         (
@@ -798,6 +810,9 @@ fi
                                     regex: r"^ CentOS \s .* \s 8 \. (?: [3-9] | (?: [12][0-9] ) )".to_owned(),
                                     os_id: "centos".to_owned(),
                                     os_version_regex: r"^8(?:$|\.[4-9]|\.[1-9][0-9])".to_owned(),
+                                },
+                                supported: Supported {
+                                    repo: true,
                                 },
                                 commands: HashMap::from(
                                     [
@@ -959,6 +974,9 @@ fi
                                     os_id: "debian".to_owned(),
                                     os_version_regex: r"^9$".to_owned(),
                                 },
+                                supported: Supported {
+                                    repo: true,
+                                },
                                 commands: HashMap::from(
                                     [
                                         (
@@ -1111,6 +1129,9 @@ fi
                                     os_id: "debian".to_owned(),
                                     os_version_regex: r"^10$".to_owned(),
                                 },
+                                supported: Supported {
+                                    repo: true,
+                                },
                                 commands: HashMap::from(
                                     [
                                         (
@@ -1261,6 +1282,9 @@ fi
                 ".to_owned(),
                                     os_id: "debian".to_owned(),
                                     os_version_regex: r"^11$".to_owned(),
+                                },
+                                supported: Supported {
+                                    repo: true,
                                 },
                                 commands: HashMap::from(
                                     [
@@ -1413,6 +1437,9 @@ fi
                                     os_id: "debian".to_owned(),
                                     os_version_regex: r"^12$".to_owned(),
                                 },
+                                supported: Supported {
+                                    repo: false,
+                                },
                                 commands: HashMap::from(
                                     [
                                         (
@@ -1559,6 +1586,9 @@ fi
                                     regex: r"^ Oracle \s+ Linux \s .* \s 7 \.".to_owned(),
                                     os_id: "ol".to_owned(),
                                     os_version_regex: r"^7(?:$|\.[0-9])".to_owned(),
+                                },
+                                supported: Supported {
+                                    repo: true,
                                 },
                                 commands: HashMap::from(
                                     [
@@ -1711,6 +1741,9 @@ fi
                                     regex: r"^ Red \s+ Hat \s+ Enterprise \s+ Linux \s .* \s 8 \. (?: [4-9] | [1-9][0-9] )".to_owned(),
                                     os_id: "rhel".to_owned(),
                                     os_version_regex: r"^8(?:$|\.[4-9]|\.[1-9][0-9])".to_owned(),
+                                },
+                                supported: Supported {
+                                    repo: true,
                                 },
                                 commands: HashMap::from(
                                     [
@@ -1868,6 +1901,9 @@ fi
                                     os_id: "rocky".to_owned(),
                                     os_version_regex: r"^8(?:$|\.[4-9]|\.[1-9][0-9])".to_owned(),
                                 },
+                                supported: Supported {
+                                    repo: true,
+                                },
                                 commands: HashMap::from(
                                     [
                                         (
@@ -2024,6 +2060,9 @@ fi
                                     os_id: "rocky".to_owned(),
                                     os_version_regex: r"^8(?:$|\.[0-9])".to_owned(),
                                 },
+                                supported: Supported {
+                                    repo: false,
+                                },
                                 commands: HashMap::from(
                                     [
                                         (
@@ -2179,6 +2218,9 @@ fi
                                     os_id: "ubuntu".to_owned(),
                                     os_version_regex: r"^16\.04$".to_owned(),
                                 },
+                                supported: Supported {
+                                    repo: false,
+                                },
                                 commands: HashMap::from(
                                     [
                                         (
@@ -2328,6 +2370,9 @@ fi
                                     os_id: "ubuntu".to_owned(),
                                     os_version_regex: r"^18\.04$".to_owned(),
                                 },
+                                supported: Supported {
+                                    repo: true,
+                                },
                                 commands: HashMap::from(
                                     [
                                         (
@@ -2474,6 +2519,9 @@ fi
                                     regex: r"^ PRETTY_NAME= .* (?: Ubuntu \s+ 20 \. 04 | Mint \s+ 20 ) ".to_owned(),
                                     os_id: "ubuntu".to_owned(),
                                     os_version_regex: r"^20\.04$".to_owned(),
+                                },
+                                supported: Supported {
+                                    repo: true,
                                 },
                                 commands: HashMap::from(
                                     [
@@ -2622,6 +2670,9 @@ fi
                                     os_id: "ubuntu".to_owned(),
                                     os_version_regex: r"^21\.10$".to_owned(),
                                 },
+                                supported: Supported {
+                                    repo: true,
+                                },
                                 commands: HashMap::from(
                                     [
                                         (
@@ -2768,6 +2819,9 @@ fi
                                     regex: r"^ PRETTY_NAME= .* (?: Ubuntu \s+ 22 \. 04 | Mint \s+ 21 ) ".to_owned(),
                                     os_id: "ubuntu".to_owned(),
                                     os_version_regex: r"^22\.04$".to_owned(),
+                                },
+                                supported: Supported {
+                                    repo: true,
                                 },
                                 commands: HashMap::from(
                                     [
