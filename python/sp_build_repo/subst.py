@@ -109,7 +109,7 @@ def substitute(cfg: Config) -> None:
 
     cfg.diag_("Preparing the Jinja substitution environment")
     jenv: Final = jinja2.Environment(
-        autoescape=False,
+        autoescape=False,  # noqa: S701
         loader=jinja2.FileSystemLoader(cfg.template.parent),
         undefined=jinja2.StrictUndefined,
     )

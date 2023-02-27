@@ -108,7 +108,9 @@ class Singles:
         if (abspath := str(path.absolute())) in cls._jinja2_env:
             return cls._jinja2_env[abspath]
 
-        env: Final = jinja2.Environment(autoescape=False, loader=cls.jinja2_loader(path))
+        env: Final = jinja2.Environment(
+            autoescape=False, loader=cls.jinja2_loader(path)  # noqa: S701
+        )
         cls._jinja2_env[abspath] = env
         return env
 
