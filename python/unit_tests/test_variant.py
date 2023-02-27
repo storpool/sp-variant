@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: BSD-2-Clause
 """Test the functions in the sp.variant module."""
 
-import os
+import pathlib
 
 from typing import Final
 
@@ -47,7 +47,7 @@ def test_detect() -> None:
     """Make sure that detect_variant() returns a reasonably valid result."""
     var: Final = variant.detect_variant()
     assert var is not None
-    assert os.path.isfile(var.detect.filename)
+    assert pathlib.Path(var.detect.filename).is_file()
 
 
 def test_list_all() -> None:

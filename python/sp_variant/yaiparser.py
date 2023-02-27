@@ -4,6 +4,7 @@
 
 from __future__ import annotations
 
+import pathlib
 import re
 
 from typing import Final
@@ -39,12 +40,12 @@ _SINGLE_QUOTE = "'"
 class YAIParser:
     """Yet another INI-like file parser, this time for /etc/os-release."""
 
-    filename: str
+    filename: pathlib.Path
     data: dict[str, str]
 
     def __init__(self, filename: str) -> None:
         """Initialize a YAIParser object: store the filename."""
-        self.filename = filename
+        self.filename = pathlib.Path(filename)
         self.data = {}
 
     def parse_line(self, line: str | bytes) -> tuple[str, str] | None:
@@ -126,8 +127,7 @@ class YAIParser:
 
     def parse(self) -> dict[str, str]:
         """Parse a file, store and return the result."""
-        with open(self.filename, encoding="UTF-8") as infile:
-            contents: Final = infile.read()
+        contents: Final = self.filename.read_text(encoding="UTF-8")
         data: Final = {}
         for line in contents.splitlines():
             if (res := self.parse_line(line)) is None:

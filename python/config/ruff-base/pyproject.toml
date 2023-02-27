@@ -32,9 +32,6 @@ ignore = [
 
   # Too restrictive for now.
   "TRY003",
-
-  # Fix these ASAP.
-  "PTH",
 ]
 
 [tool.ruff.per-file-ignores]

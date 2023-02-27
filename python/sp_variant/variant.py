@@ -5,6 +5,7 @@
 from __future__ import annotations
 
 import errno
+import pathlib
 import shlex
 import subprocess
 
@@ -86,12 +87,11 @@ def _detect_from_files(cfg: Config) -> Variant | None:
     for var in vbuild.DETECT_ORDER:
         cfg.diag(f"- trying {var.name}")
         try:  # pylint: disable=too-many-try-statements
-            with open(var.detect.filename, encoding=SAFEENC) as osf:
-                cfg.diag(f"  - {var.detect.filename}")
-                for line in (line.rstrip("\r\n") for line in osf.readlines()):
-                    if var.detect.regex.match(line):
-                        cfg.diag(f"  - found it: {line}")
-                        return var
+            cfg.diag(f"  - {var.detect.filename}")
+            for line in pathlib.Path(var.detect.filename).read_text(encoding=SAFEENC).splitlines():
+                if var.detect.regex.match(line):
+                    cfg.diag(f"  - found it: {line}")
+                    return var
         except OSError as err:
             if err.errno != errno.ENOENT:
                 raise VariantDetectError(

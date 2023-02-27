@@ -7,7 +7,10 @@ from __future__ import annotations
 import dataclasses
 import sys
 
-from typing import Any, Final, NamedTuple, Pattern
+from typing import Any, Final, NamedTuple, Pattern, TYPE_CHECKING
+
+if TYPE_CHECKING:
+    import pathlib
 
 
 class Detect(NamedTuple):
@@ -149,7 +152,7 @@ class Config:
     args: list[str] | None = None
     command: str | None = None
     noop: bool = False
-    repodir: str | None = None
+    repodir: pathlib.Path | None = None
     repotype: RepoType = REPO_TYPES[0]
     verbose: bool = False
 

@@ -6,7 +6,7 @@ from __future__ import annotations
 
 import argparse
 import json
-import os
+import pathlib
 import shlex
 import subprocess
 import sys
@@ -27,6 +27,13 @@ CMD_LIST_BRIEF: Final = [
     ("pkgfile", "install"),
 ]
 
+_PATH_APT_SOURCES = pathlib.Path("/etc/apt/sources.list.d")
+_PATH_APT_KEYRINGS = pathlib.Path("/usr/share/keyrings")
+_PATH_RPM_GPG = pathlib.Path("/etc/pki/rpm-gpg")
+_PATH_YUM_REPOS = pathlib.Path("/etc/yum.repos.d")
+
+_PATH_PROG_RPMKEYS = pathlib.Path("/usr/bin/rpmkeys")
+
 
 def cmd_detect(cfg: defs.Config) -> None:
     """Detect and output the build variant for the current host."""
@@ -37,9 +44,9 @@ def cmd_detect(cfg: defs.Config) -> None:
         sys.exit(1)
 
 
-def copy_file(cfg: defs.Config, src: str, dstdir: str) -> None:
+def copy_file(cfg: defs.Config, src: pathlib.Path, dstdir: pathlib.Path) -> None:
     """Use `install(8)` to install a configuration file."""
-    dst: Final = os.path.join(dstdir, os.path.basename(src))
+    dst: Final = dstdir / src.name
     mode: Final = "0644"
     cfg.diag(f"{src} -> {dst} [{mode}]")
     try:
@@ -62,17 +69,16 @@ def copy_file(cfg: defs.Config, src: str, dstdir: str) -> None:
         raise variant.VariantFileError(f"Could not copy {src} over to {dst}: {err}") from err
 
 
-def repo_add_extension(cfg: defs.Config, name: str) -> str:
-    """Add the extension for the specified repository type."""
-    parts: Final = name.rsplit(".")
-    if len(parts) != 2:
+def repo_name_with_extension(cfg: defs.Config, path: pathlib.Path) -> str:
+    """Get the path basename, add the extension for the specified repository type."""
+    if len(path.suffixes) != 1:
         raise variant.VariantFileError(
-            f"Unexpected repository file name without an extension: {name}"
+            f"Unexpected repository file name without an extension: {path}"
         )
-    return f"{parts[0]}{cfg.repotype.extension}.{parts[1]}"
+    return f"{path.stem}{cfg.repotype.extension}{path.suffix}"
 
 
-def repo_add_deb(cfg: defs.Config, var: defs.Variant, vardir: str) -> None:
+def repo_add_deb(cfg: defs.Config, var: defs.Variant, vardir: pathlib.Path) -> None:
     """Install the StorPool Debian-like repo configuration."""
     assert isinstance(var.repo, defs.DebRepo)  # noqa: S101  # mypy needs this
 
@@ -85,13 +91,13 @@ def repo_add_deb(cfg: defs.Config, var: defs.Variant, vardir: str) -> None:
 
     copy_file(
         cfg,
-        os.path.join(vardir, repo_add_extension(cfg, os.path.basename(var.repo.sources))),
-        "/etc/apt/sources.list.d",
+        vardir / repo_name_with_extension(cfg, pathlib.Path(var.repo.sources)),
+        _PATH_APT_SOURCES,
     )
     copy_file(
         cfg,
-        os.path.join(vardir, os.path.basename(var.repo.keyring)),
-        "/usr/share/keyrings",
+        vardir / pathlib.Path(var.repo.keyring).name,
+        _PATH_APT_KEYRINGS,
     )
 
     try:
@@ -100,7 +106,7 @@ def repo_add_deb(cfg: defs.Config, var: defs.Variant, vardir: str) -> None:
         raise variant.VariantFileError(f"Could not update the APT database: {err}") from err
 
 
-def repo_add_yum(cfg: defs.Config, var: defs.Variant, vardir: str) -> None:
+def repo_add_yum(cfg: defs.Config, var: defs.Variant, vardir: pathlib.Path) -> None:
     """Install the StorPool RedHat/CentOS-like repo configuration."""
     assert isinstance(var.repo, defs.YumRepo)  # noqa: S101  # mypy needs this
 
@@ -123,22 +129,22 @@ def repo_add_yum(cfg: defs.Config, var: defs.Variant, vardir: str) -> None:
 
     copy_file(
         cfg,
-        os.path.join(vardir, repo_add_extension(cfg, os.path.basename(var.repo.yumdef))),
-        "/etc/yum.repos.d",
+        vardir / repo_name_with_extension(cfg, pathlib.Path(var.repo.yumdef)),
+        _PATH_YUM_REPOS,
     )
     copy_file(
         cfg,
-        os.path.join(vardir, os.path.basename(var.repo.keyring)),
-        "/etc/pki/rpm-gpg",
+        vardir / pathlib.Path(var.repo.keyring).name,
+        _PATH_RPM_GPG,
     )
 
-    if os.path.isfile("/usr/bin/rpmkeys"):
+    if _PATH_PROG_RPMKEYS.is_file():
         try:
             subprocess.check_call(
                 [
                     "rpmkeys",
                     "--import",
-                    os.path.join("/etc/pki/rpm-gpg", os.path.basename(var.repo.keyring)),
+                    _PATH_RPM_GPG / pathlib.Path(var.repo.keyring).name,
                 ],
                 shell=False,
             )
@@ -166,8 +172,8 @@ def repo_add(cfg: defs.Config) -> None:
     """Install the StorPool repository configuration."""
     assert cfg.repodir is not None  # noqa: S101  # mypy needs this
     var: Final = variant.detect_variant(cfg)
-    vardir: Final = os.path.join(cfg.repodir, var.name)
-    if not os.path.isdir(vardir):
+    vardir: Final = cfg.repodir / var.name
+    if not vardir.is_dir():
         raise defs.VariantConfigError(f"No {vardir} directory")
 
     if isinstance(var.repo, defs.DebRepo):
@@ -347,7 +353,7 @@ def parse_arguments() -> tuple[defs.Config, Callable[[defs.Config], None]]:
     p_subcmd.add_argument(
         "-d",
         "--repodir",
-        type=str,
+        type=pathlib.Path,
         required=True,
         help="The path to the directory with the repository configuration",
     )
