@@ -378,8 +378,32 @@ echo 'Checking whether builder.utf8_locale specifies a valid UTF-8-capable local
 u8loc="$(/sp/storpool_variant show current | jq -r '.variant.builder.utf8_locale')"
 check_locale 'The builder.utf8_locale setting' "$u8loc"
 
+echo 'Checking whether StorPool has a package repository for this variant'
+supp_repo="$(/sp/storpool_variant show current | jq -r '.variant.supported.repo')"
+case "$supp_repo" in
+    true)
+        supp_repo='1'
+        ;;
+
+    false)
+        supp_repo=''
+        ;;
+
+    *)
+        echo "storpool_variant output an unexpected value for supported.repo: '$supp_repo'" 1>&2
+        exit 1
+        ;;
+esac
+
 echo 'Installing some programs'
-/sp/storpool_variant command run -- package.install sp-python3 sp-python3-modules
+if ! /sp/storpool_variant command run -- package.install sp-python3 sp-python3-modules; then
+    if [ -z "$supp_repo" ]; then
+        echo 'Ignoring the package.install failure for an unsupported repository'
+    else
+        echo 'Installing the StorPool packages failed' 1>&2
+        exit 1
+    fi
+fi
 
 echo 'Running add-storpool-repo -t staging'
 /sp/add-storpool-repo.sh -t staging
@@ -388,10 +412,23 @@ echo 'Running the "update the repository metadata" command'
 /sp/storpool_variant.sh command run package.update_db
 
 echo 'Obtaining information about the sp-python3 package'
+res=0
 if [ -n "$is_debian" ]; then
-    apt-cache policy sp-python3
+    if ! apt-cache policy sp-python3; then
+        res="$?"
+    fi
 else
-    yum info sp-python3
+    if ! yum info sp-python3; then
+        res="$?"
+    fi
+fi
+if [ "$res" -ne 0 ]; then
+    if [ -z "$supp_repo" ]; then
+        echo 'Ignoring the package query failure for an unsupported repository'
+    else
+        echo 'Querying for the sp-python3 package failed' 1>&2
+        exit 1
+    fi
 fi
 
 echo 'Done, it seems'

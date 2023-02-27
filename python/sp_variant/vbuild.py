@@ -34,6 +34,7 @@ _VARIANT_DEF: Final[list[defs.Variant | defs.VariantUpdate]] = [
             os_id="debian",
             os_version_regex=re.compile(r"^12$"),
         ),
+        supported=defs.Supported(repo=False),
         commands=defs.Commands(
             package=defs.CommandsPackage(
                 update_db=["apt-get", "-q", "-y", "update"],
@@ -142,6 +143,7 @@ _VARIANT_DEF: Final[list[defs.Variant | defs.VariantUpdate]] = [
             os_version_regex=re.compile(r"^11$"),
         ),
         updates={
+            "supported": {"repo": True},
             "repo": {"codename": "bullseye"},
             "builder": {
                 "alias": "debian11",
@@ -227,6 +229,7 @@ _VARIANT_DEF: Final[list[defs.Variant | defs.VariantUpdate]] = [
             os_version_regex=re.compile(r"^22\.04$"),
         ),
         updates={
+            "supported": {"repo": True},
             "repo": {
                 "vendor": "ubuntu",
                 "codename": "jammy",
@@ -337,6 +340,7 @@ _VARIANT_DEF: Final[list[defs.Variant | defs.VariantUpdate]] = [
             os_version_regex=re.compile(r"^16\.04$"),
         ),
         updates={
+            "supported": {"repo": False},
             "repo": {
                 "codename": "xenial",
                 "req_packages": ["apt-transport-https", "ca-certificates"],
@@ -363,6 +367,7 @@ _VARIANT_DEF: Final[list[defs.Variant | defs.VariantUpdate]] = [
             os_id="alma",
             os_version_regex=re.compile(r"^9(?:$|\.[0-9])"),
         ),
+        supported=defs.Supported(repo=False),
         commands=defs.Commands(
             package=defs.CommandsPackage(
                 update_db=CMD_NOOP,
@@ -474,6 +479,7 @@ fi
             os_version_regex=re.compile(r"^8(?:$|\.[4-9]|\.[1-9][0-9])"),
         ),
         updates={
+            "supported": {"repo": True},
             "commands": {
                 "package": {
                     "install": [
@@ -606,6 +612,7 @@ fi
             os_version_regex=re.compile(r"^6(?:$|\.[0-9])"),
         ),
         updates={
+            "supported": {"repo": False},
             "min_sys_python": "2.6",
             "package": {
                 "KMOD": "module-init-tools",
@@ -786,6 +793,12 @@ def _update_string(prefix: str, name: str, orig: Any, value: Any) -> Any:
     return value
 
 
+def _update_bool(prefix: str, name: str, orig: Any, value: Any) -> Any:
+    """Replace a single boolean value."""
+    _check_type(prefix, name, orig, bool, "bool")
+    return value
+
+
 def _update_path(prefix: str, name: str, orig: Any, value: Any) -> Any:
     """Replace a single filesystem path."""
     if orig is not None:
@@ -802,6 +815,7 @@ def _update_list(prefix: str, name: str, orig: Any, value: Any) -> Any:
 _UPDATE_HANDLERS: tuple[tuple[type[Any], Callable[[str, str, Any, Any], Any]], ...] = (
     (dict, _update_dict),
     (str, _update_string),
+    (bool, _update_bool),
     (pathlib.Path, _update_path),
     (list, _update_list),
 )
@@ -846,6 +860,7 @@ def merge_into_parent(
             parent=parent.name,
             family=parent.family,
             detect=child.detect,
+            supported=parent.supported,
             commands=parent.commands,
             repo=parent.repo,
             package=dict(parent.package),

@@ -90,6 +90,14 @@ pub struct Detect {
     pub os_version_regex: String,
 }
 
+/// The aspects of the StorPool operation supported for this build variant.
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[non_exhaustive]
+pub struct Supported {
+    /// Is there a StorPool third-party packages repository?
+    repo: bool,
+}
+
 /// Debian package repository data.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[non_exhaustive]
@@ -158,6 +166,8 @@ pub struct Variant {
     pub parent: String,
     /// The ways to check whether we are running this variant.
     pub detect: Detect,
+    /// The aspects of StorPool operation supported for this build variant.
+    pub supported: Supported,
     /// The OS commands to execute for particular purposes.
     pub commands: HashMap<String, HashMap<String, Vec<String>>>,
     /// The minimum Python version that we can depend on.

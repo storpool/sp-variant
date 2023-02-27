@@ -80,6 +80,11 @@ def regex_un_x(value: str) -> str:
     )
 
 
+def rust_bool(value: bool) -> str:  # noqa: FBT001  # this is a conversion routine
+    """Format a boolean value as a Rust bool one."""
+    return "true" if value else "false"
+
+
 def dictvsort(data: dict[str, variant.Variant]) -> list[tuple[str, variant.Variant]]:
     """Sort a dict of variants by name, preserving some numerical order."""
 
@@ -115,6 +120,7 @@ def substitute(cfg: Config) -> None:
     )
     jenv.filters["dictvsort"] = dictvsort
     jenv.filters["regexunx"] = regex_un_x
+    jenv.filters["rust_bool"] = rust_bool
     jenv.filters["vsort"] = vsort
     jvars: Final = {
         "format_version": defs.FORMAT_VERSION,

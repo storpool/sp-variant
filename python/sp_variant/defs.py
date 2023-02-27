@@ -74,6 +74,12 @@ class Builder(NamedTuple):
     utf8_locale: str
 
 
+class Supported(NamedTuple):
+    """The aspects of the StorPool environment that are supported for this variant."""
+
+    repo: bool
+
+
 class Variant(NamedTuple):
     """The information about a Linux distribution version (build variant)."""
 
@@ -82,6 +88,7 @@ class Variant(NamedTuple):
     parent: str
     family: str
     detect: Detect
+    supported: Supported
     commands: Commands
     min_sys_python: str
     repo: DebRepo | YumRepo

@@ -13,7 +13,7 @@ use once_cell::sync::Lazy;
 use serde::{Deserialize, Serialize};
 
 use crate::{
-    Builder, DebRepo, Detect, Repo, Variant, VariantDefTop, VariantError, VariantFormat,
+    Builder, DebRepo, Detect, Repo, Supported, Variant, VariantDefTop, VariantError, VariantFormat,
     VariantFormatVersion, YumRepo,
 };
 
@@ -92,6 +92,9 @@ pub fn get_variants() -> &'static VariantDefTop {
                                     regex: r"{{ var.detect.regex.pattern }}".to_owned(),
                                     os_id: "{{ var.detect.os_id }}".to_owned(),
                                     os_version_regex: r"{{ var.detect.os_version_regex.pattern }}".to_owned(),
+                                },
+                                supported: Supported {
+                                    repo: {{ var.supported.repo|rust_bool }},
                                 },
                                 commands: HashMap::from(
                                     [
