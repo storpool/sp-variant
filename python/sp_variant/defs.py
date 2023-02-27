@@ -127,7 +127,7 @@ class RepoType(NamedTuple):
 
 
 VERSION: Final = "3.1.0"
-FORMAT_VERSION: Final = (1, 3)
+FORMAT_VERSION: Final = (1, 4)
 
 REPO_TYPES: Final = [
     RepoType(name="contrib", extension="", url="https://repo.storpool.com/public/"),
