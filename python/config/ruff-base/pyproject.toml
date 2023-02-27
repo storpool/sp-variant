@@ -34,9 +34,6 @@ ignore = [
   "TRY003",
 
   # Fix these ASAP.
-  "FBT001",
-  "FBT002",
-  "FBT003",
   "PTH",
 ]
 

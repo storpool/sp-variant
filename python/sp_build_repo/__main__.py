@@ -140,6 +140,7 @@ def copy_file(
     cfg: Config,
     src: pathlib.Path,
     dstdir: pathlib.Path,
+    *,
     dstname: str | None = None,
     executable: bool = False,
 ) -> None:
@@ -310,7 +311,7 @@ def build_repo(cfg: Config) -> pathlib.Path:
 
 
 @functools.lru_cache(maxsize=2)
-def typed_loader(failonextra: bool = False) -> typedload.dataloader.Loader:
+def typed_loader(*, failonextra: bool = False) -> typedload.dataloader.Loader:
     """Prepare a loader that can parse annotated types."""
     return typedload.dataloader.Loader(pep563=True, failonextra=failonextra)
 
@@ -380,8 +381,9 @@ def parse_overrides(path: pathlib.Path) -> Overrides:  # noqa: C901
     help="Do not include the current date in the directory name",
 )
 @click.pass_context
-def cmd_build(  # noqa: PLR0913
+def cmd_build(
     ctx: click.Context,
+    *,
     datadir: pathlib.Path,
     destdir: pathlib.Path,
     overrides: pathlib.Path,
@@ -411,7 +413,7 @@ def cmd_build(  # noqa: PLR0913
 @click.group()
 @click.option("-v", "--verbose", is_flag=True, help="verbose operation; display diagnostic output")
 @click.pass_context
-def main(ctx: click.Context, verbose: bool) -> None:
+def main(ctx: click.Context, *, verbose: bool) -> None:
     """Parse options, build the repository definitions."""
     ctx.ensure_object(ConfigHolder)
     ctx.obj.verbose = verbose
@@ -421,4 +423,4 @@ main.add_command(cmd_build)
 
 
 if __name__ == "__main__":
-    main()  # pylint: disable=no-value-for-parameter
+    main()  # pylint: disable=no-value-for-parameter,missing-kwoa

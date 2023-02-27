@@ -157,7 +157,7 @@ class Config:
 
     def __post_init__(self) -> None:
         """Log to the standard error stream by default."""
-        object.__setattr__(self, "_diag_to_stderr", True)
+        object.__setattr__(self, "_diag_to_stderr", True)  # noqa: FBT003
 
     def diag(self, msg: str) -> None:
         """Output a diagnostic message in verbose mode."""

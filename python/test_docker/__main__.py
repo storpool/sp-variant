@@ -462,7 +462,7 @@ async def run_tests(
     is_flag=True,
     help="Verbose operation; display diagnostic output",
 )
-def main(images_filter: str | None, repo_file: pathlib.Path, verbose: bool) -> None:
+def main(*, images_filter: str | None, repo_file: pathlib.Path, verbose: bool) -> None:
     """Parse command-line options, run tests."""
     cfg: Final = Config(
         images_filter=images_filter,
@@ -483,4 +483,4 @@ def main(images_filter: str | None, repo_file: pathlib.Path, verbose: bool) -> N
 
 
 if __name__ == "__main__":
-    main()  # pylint: disable=no-value-for-parameter
+    main()  # pylint: disable=missing-kwoa
