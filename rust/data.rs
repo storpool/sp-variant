@@ -2905,7 +2905,7 @@ fi
                     ),
                 ]
             ),
-            version: "3.0.1".to_owned(),
+            version: "3.1.0".to_owned(),
         }
     });
     assert!(
