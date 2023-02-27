@@ -39,6 +39,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
     - `sp_build_repo`: obtain the current date in a better timezone-aware way
     - mark the `setup.py` file as executable
 
+### Additions
+
+- all:
+    - add the `supported` variant member with a single boolean field, `repo`,
+      that declares whether StorPool provides a third-party OS packages
+      repository for that variant
+    - bump the variant description format version to 1.4 for the added
+      `supported` member
+
 ### Other changes
 
 - use the "Keep a Changelog" format for the changelog file
