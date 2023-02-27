@@ -12,12 +12,50 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Semi-incompatible changes
+
+- python
+    - drop Python 2.x compatibility
+    - drop Python 3.6 and 3.7 compatibility; 3.8 and 3.9 will probably also be
+      dropped in an upcoming release
+- rust
+    - use named arguments for `format!()`, `println!()`, etc, and declare
+      a minimum Rust supported version of 1.58
+
+### Fixes
+
+- use the `en_US.UTF-8` locale for CentOS 7.x and the related variants;
+  we should really specify a UTF-8-capable locale, and `en_US.UTF-8` is
+  installed by default on most minimal container setups
+- use the `C.UTF-8` locale for CentOS 8.x/9.x and the related variants;
+  this is the preferred POSIX name of the locale, `C.utf8` is merely
+  an implementation detail
+- use the `appstream` DNF/Yum repository for CentOS 8.x/9.x and the related
+  variants; it should be enabled by default at this point in time, and some of
+  the software that the various StorPool packages need has moved there
+- python:
+    - fix the way the `_fields` member of various named tuples is accessed
+    - fix the format of several module and function docstrings
+    - `sp_build_repo`: obtain the current date in a better timezone-aware way
+    - mark the `setup.py` file as executable
+
 ### Other changes
 
 - use the "Keep a Changelog" format for the changelog file
 - python:
     - use the StorPool Python 2.x interpreter for the Tox tests
     - use the `tox-stages` utility instead of the `tox-delay` one
+    - drop the Python 2.x, 3.6, and 3.7 compatibility, use some Python 3.x
+      language features and modules that are in the standard library now
+    - use black 23.x and flake8 6.x with no changes
+    - use pylint 2.16.x, fix some of the issues it reported
+    - start using ruff, fix some of the issues it reported
+- rust:
+    - bump the minor versions of the `anyhow`, `once_cell`, and `thiserror`
+      dependencies to sync them with the StorPool `sp-rust-crates-io` package
+    - let clippy know that we do mean to request a blanket `clippy::restriction`
+      set of checks
+- test-docker: test the `builder.utf8_locale` setting
 
 ## [3.0.0] - 2022-11-09
 
