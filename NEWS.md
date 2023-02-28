@@ -17,6 +17,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - python:
     - do not build a universal wheel
 
+### Other changes
+
+- python:
+    - test with ruff 0.0.253 with no changes
+
 ## [3.1.0] - 2023-02-28
 
 ### Semi-incompatible changes
