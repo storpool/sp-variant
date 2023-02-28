@@ -21,11 +21,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Semi-incompatible changes
 
-- python
+- python:
     - drop Python 2.x compatibility
     - drop Python 3.6 and 3.7 compatibility; 3.8 and 3.9 will probably also be
       dropped in an upcoming release
-- rust
+- rust:
     - use named arguments for `format!()`, `println!()`, etc, and declare
       a minimum Rust supported version of 1.58
 
