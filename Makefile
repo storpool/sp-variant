@@ -83,7 +83,7 @@ test-docker:	repo
 		${SP_PY3_ENV} -m test_docker -r '${REPO_BUILT}' -v ${TEST_DOCKER_ARGS}
 
 test-tox-stages:
-		${SP_PYTHON3} -m test_stages.tox_stages run
+		"$$(dirname -- '${SP_PYTHON3}')/tox-stages" run
 
 test-shellcheck:	${SH_BIN}
 		[ -n '${NO_SHELLCHECK}' ] || shellcheck -- '${SH_BIN}'
