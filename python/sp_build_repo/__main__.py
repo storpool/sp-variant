@@ -317,7 +317,7 @@ def typed_loader(*, failonextra: bool = False) -> typedload.dataloader.Loader:
 
 
 # pylint: disable-next=too-complex
-def parse_overrides(path: pathlib.Path) -> Overrides:  # noqa: C901
+def parse_overrides(path: pathlib.Path) -> Overrides:
     """Parse the TOML overrides file."""
     if path is None:
         return Overrides(repo={})

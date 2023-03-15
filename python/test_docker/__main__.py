@@ -123,7 +123,7 @@ def filter_docker_images(cfg: Config, var_data: dict[str, SimpleVariant]) -> dic
     return res
 
 
-async def process_detect_lines(  # noqa: C901  # do ruff and pylint disagree here?
+async def process_detect_lines(
     cfg: Config, image: str, proc: aprocess.Process
 ) -> tuple[bytes | None, list[str]]:
     """Read the lines output by `storpool_variant detect`, see if they look okay."""
