@@ -1,0 +1,13 @@
+# SPDX-FileCopyrightText: 2021 - 2023  StorPool <support@storpool.com>
+# SPDX-License-Identifier: BSD-2-Clause
+
+# sp_build_repo
+cfg_diag >= 0.4, < 0.5
+click >= 8.1, < 9
+jinja2 >= 3, < 4
+tomli >= 2, < 3
+trivver >= 2, < 3
+typedload >= 2.16, < 3
+
+# test_docker
+utf8_locale >= 1, < 2

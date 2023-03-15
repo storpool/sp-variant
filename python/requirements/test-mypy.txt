@@ -1,0 +1,11 @@
+# SPDX-FileCopyrightText: 2021 - 2023  StorPool <support@storpool.com>
+# SPDX-License-Identifier: BSD-2-Clause
+
+-r test-unit.txt
+
+# Always install tomli; mypy checks what other Python versions will do, too.
+tomli >= 2, < 3
+
+# Typing stubs for modules that do not really provide them
+types-dataclasses
+types-Jinja2 >= 2, < 4

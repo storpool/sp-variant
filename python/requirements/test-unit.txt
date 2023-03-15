@@ -1,0 +1,7 @@
+# SPDX-FileCopyrightText: 2021 - 2023  StorPool <support@storpool.com>
+# SPDX-License-Identifier: BSD-2-Clause
+
+-r tools.txt
+
+# The unit tests suite
+pytest >= 6, < 8
