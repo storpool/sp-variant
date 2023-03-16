@@ -88,7 +88,7 @@ test-tox-stages:
 test-shellcheck:	${SH_BIN}
 		[ -n '${NO_SHELLCHECK}' ] || shellcheck -- '${SH_BIN}'
 
-clean:		clean-py clean-repo clean-rust clean-sh
+clean:		clean-py clean-repo clean-rust clean-sh clean-site
 
 clean-py:
 		find -- '${CURDIR}/python' -type d \( -name __pycache__ -or -name '*.egg-info' \) -exec rm -rf -- '{}' +
@@ -104,6 +104,10 @@ clean-rust:
 
 clean-sh:
 		rm -f -- '${SH_BIN}'
+
+clean-site:
+		rm -rf -- site/docs
+		rmdir site || true
 
 pydist:
 		rm -rf build
