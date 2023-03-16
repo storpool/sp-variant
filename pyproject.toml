@@ -2,8 +2,54 @@
 # SPDX-License-Identifier: BSD-2-Clause
 
 [build-system]
-requires = ["setuptools", "wheel"]
+requires = ["setuptools >= 61", "wheel"]
 build-backend = "setuptools.build_meta"
+
+[project]
+name = "sp-variant"
+description = "Detect the Linux distribution for the StorPool build system"
+readme = "README.md"
+license = {"text" = "BSD-2-Clause"}
+requires-python = ">= 3.8"
+classifiers = [
+  "Development Status :: 5 - Production/Stable",
+  "Intended Audience :: Developers",
+  "License :: DFSG approved",
+  "License :: Freely Distributable",
+  "License :: OSI Approved :: BSD License",
+  "Operating System :: OS Independent",
+  "Programming Language :: Python",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3 :: Only",
+  "Programming Language :: Python :: 3.8",
+  "Programming Language :: Python :: 3.9",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Topic :: Software Development :: Libraries",
+  "Topic :: Software Development :: Libraries :: Python Modules",
+]
+dynamic = ["version"]
+
+[[project.authors]]
+name = "StorPool"
+email = "support@storpool.com"
+
+[project.scripts]
+sp_variant = "sp_variant.__main__:main"
+
+[project.urls]
+Homepage = "https://github.com/storpool/sp-variant"
+
+[tool.setuptools]
+zip-safe = true
+package-dir = {"" = "python"}
+packages = ["sp_variant"]
+
+[tool.setuptools.package-data]
+sp_variant = ["py.typed"]
+
+[tool.setuptools.dynamic]
+version = {"attr" = "sp_variant.defs.VERSION"}
 
 [tool.black]
 target-version = ["py38", "py39", "py310", "py311"]
