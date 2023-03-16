@@ -28,6 +28,7 @@ site_url: https://storpool.com/
 site_dir: site/docs
 nav:
   - 'index.md'
+  - 'Changelog': 'changes.md'
 markdown_extensions:
   - toc:
   - pymdownx.highlight:
