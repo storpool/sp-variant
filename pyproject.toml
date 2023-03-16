@@ -13,7 +13,9 @@ license = {"text" = "BSD-2-Clause"}
 requires-python = ">= 3.8"
 classifiers = [
   "Development Status :: 5 - Production/Stable",
+  "Environment :: Console",
   "Intended Audience :: Developers",
+  "Intended Audience :: System Administrators",
   "License :: DFSG approved",
   "License :: Freely Distributable",
   "License :: OSI Approved :: BSD License",
@@ -27,6 +29,9 @@ classifiers = [
   "Programming Language :: Python :: 3.11",
   "Topic :: Software Development :: Libraries",
   "Topic :: Software Development :: Libraries :: Python Modules",
+  "Topic :: System :: Systems Administration",
+  "Topic :: Utilities",
+  "Typing :: Typed",
 ]
 dynamic = ["version"]
 
