@@ -12,6 +12,32 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Semi-incompatible changes
+
+- python:
+    - deprecate the `defs.Config._diag_to_stderr` member variable;
+      replace it with a read-only property that always returns true and
+      a `__setattr__()` override that detects and ignores attempts to
+      modify it. Both will be removed in a future version of sp-variant.
+
+### Additions
+
+- python:
+    - break out the Tox environments' dependencies into separate files so
+      that they may be reused by external tools
+
+### Other changes
+
+- python:
+    - test with ruff 0.0.256, drop a couple of overrides for false
+      positives emitted by earlier versions of Ruff
+    - invoke the `tox-stages` tool from the directory where the Python 3.x
+      interpreter lives, so that it is virtually certain that `tox-stages`
+      (and consequenty Tox) will use the same Python interpreter
+    - `test_docker`: allow multiple `-i imagepattern` options to be
+      specified so that several unrelated Docker images may be tested in
+      a single run
+
 ## [3.1.1] - 2023-02-28
 
 ### Fixes
