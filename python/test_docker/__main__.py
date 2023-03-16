@@ -24,7 +24,7 @@ import utf8_locale
 class Config(cfg_diag.Config):
     """Runtime configuration for the Docker test runner."""
 
-    images_filter: str | None
+    images_filter: tuple[str, ...]
     repo_file: pathlib.Path
     utf8_env: dict[str, str]
 
@@ -107,8 +107,8 @@ def filter_docker_images(cfg: Config, var_data: dict[str, SimpleVariant]) -> dic
     )
     images: Final = (
         all_images
-        if cfg.images_filter is None
-        else {name for name in all_images if cfg.images_filter in name}
+        if not cfg.images_filter
+        else {name for name in all_images if any(word in name for word in cfg.images_filter)}
     )
 
     res: Final = {}
@@ -484,7 +484,11 @@ async def run_tests(
 
 @click.command()
 @click.option(
-    "-i", "--images-filter", type=str, help="Only process images with names containing this string"
+    "-i",
+    "--images-filter",
+    type=str,
+    multiple=True,
+    help="Only process images with names containing this string; may be specified multiple times",
 )
 @click.option(
     "-r",
@@ -499,7 +503,7 @@ async def run_tests(
     is_flag=True,
     help="Verbose operation; display diagnostic output",
 )
-def main(*, images_filter: str | None, repo_file: pathlib.Path, verbose: bool) -> None:
+def main(*, images_filter: tuple[str, ...], repo_file: pathlib.Path, verbose: bool) -> None:
     """Parse command-line options, run tests."""
     cfg: Final = Config(
         images_filter=images_filter,
