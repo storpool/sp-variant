@@ -92,7 +92,8 @@ clean:		clean-py clean-repo clean-rust clean-sh
 
 clean-py:
 		find -- '${CURDIR}/python' -type d \( -name __pycache__ -or -name '*.egg-info' \) -exec rm -rf -- '{}' +
-		find -- '${CURDIR}/python' -type f -name '*.pyc' -exec rm -- '{}' +
+		find -- '${CURDIR}/python' -type f -name '*.pyc' -delete
+		find . -mindepth 1 -maxdepth 1 -type d \( -name '.tox' -or -name '.mypy_cache' -or -name '.pytest_cache' -or -name '.nox' -or -name '.ruff_cache' \) -exec rm -rf -- '{}' +
 		rm -f -- '${TEMP_CURRENT_JSON}' '${TEMP_ALL_JSON}' '${TEMP_PACKAGE_LIST}'
 
 clean-repo:
