@@ -156,6 +156,8 @@ class VariantConfigError(VariantError):
 class Config:
     """Runtime configuration for the sp-variant library functions."""
 
+    # pylint: disable=too-many-instance-attributes
+
     args: list[str] | None = None
     command: str | None = None
     noop: bool = False
@@ -163,16 +165,29 @@ class Config:
     repotype: RepoType = REPO_TYPES[0]
     verbose: bool = False
 
-    _diag_to_stderr: bool = dataclasses.field(init=False)
-
-    def __post_init__(self) -> None:
-        """Log to the standard error stream by default."""
-        object.__setattr__(self, "_diag_to_stderr", True)  # noqa: FBT003
-
     def diag(self, msg: str) -> None:
         """Output a diagnostic message in verbose mode."""
         if self.verbose:
-            print(msg, file=sys.stderr if self._diag_to_stderr else sys.stdout)
+            print(msg, file=sys.stderr)  # noqa: T201
+
+    @property
+    def _diag_to_stderr(self) -> bool:
+        """We always send the diagnostic messages to stderr now."""
+        return True
+
+    # OK, this is a bit ugly. It's going away soon.
+    def _do_setattr(self, name: str, value: Any) -> None:  # noqa: ANN401
+        """Ignore any attempts to set the `_diag_to_stderr` member."""
+        if name == "_diag_to_stderr":
+            return
+
+        _config_orig_setattr(self, name, value)
+
+
+# Let us not do this ever again.
+_config_orig_setattr = Config.__setattr__
+# pylint: disable-next=protected-access
+Config.__setattr__ = Config._do_setattr  # type: ignore[method-assign,assignment]
 
 
 def jsonify(obj: Any) -> Any:  # noqa: ANN401  # this needs to operate on, well, anything

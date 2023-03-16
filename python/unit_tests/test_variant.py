@@ -92,30 +92,31 @@ def test_config_diag() -> None:
     """Test the `cfg_diag`-like functionality of the `Config` class."""
     output: list[tuple[str, IO[str]]] = []
 
-    def check(*, seen: bool, to_stderr: bool = True) -> None:
+    def check(*, seen: bool) -> None:
         """Make sure the output is exactly as expected."""
         if not seen:
             assert not output
             return
 
-        assert output == [(_MSG_SEEN, sys.stderr if to_stderr else sys.stdout)]
+        assert output == [(_MSG_SEEN, sys.stderr)]
         output.clear()
 
-    def init_cfg(
-        *, verbose: bool, diag_to_stderr: bool = True, use_setattr: bool = False
-    ) -> defs.Config:
+    def init_cfg(*, verbose: bool, diag_to_stderr: bool = True) -> defs.Config:
         """Initialize a defs.Config object in the specified way."""
         # pylint: disable=protected-access
         cfg = defs.Config(verbose=verbose)
         assert cfg._diag_to_stderr  # noqa: SLF001
-        if diag_to_stderr:
-            return cfg
 
-        if use_setattr:
-            object.__setattr__(cfg, "_diag_to_stderr", False)  # noqa: FBT003
-        else:
+        if not diag_to_stderr:
             cfg._diag_to_stderr = False  # type: ignore[misc]  # noqa: SLF001
-        assert not cfg._diag_to_stderr  # noqa: SLF001
+            # It... did not change... right?
+            assert cfg._diag_to_stderr  # noqa: SLF001
+
+        # We cannot just set random properties, can we?
+        with pytest.raises(dataclasses.FrozenInstanceError):
+            cfg.random_property = 616  # type: ignore[attr-defined]
+        assert not hasattr(cfg, "random_property")
+
         return cfg
 
     def mock_print(msg: str, *, file: IO[str]) -> None:
@@ -136,15 +137,16 @@ def test_config_diag() -> None:
 
     check(seen=True)
 
-    # We can't set _diag_to_stderr directly, right?
-    with pytest.raises(dataclasses.FrozenInstanceError):
-        cfg = init_cfg(verbose=True, diag_to_stderr=False)
-
-    check(seen=False)
-
-    # OK, can we do stdout now?
-    cfg = init_cfg(verbose=True, diag_to_stderr=False, use_setattr=True)
+    # OK, can we do stdout now? No, right?
+    cfg = init_cfg(verbose=True, diag_to_stderr=False)
     with mock.patch("builtins.print", new=mock_print):
         cfg.diag(_MSG_SEEN)
 
-    check(seen=True, to_stderr=False)
+    check(seen=True)
+
+    # Just for kicks...
+    cfg = init_cfg(verbose=False, diag_to_stderr=False)
+    with mock.patch("builtins.print", new=mock_print):
+        cfg.diag(_MSG_NOT_SEEN)
+
+    check(seen=False)
