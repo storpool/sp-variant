@@ -4,6 +4,11 @@
 recursive-include data *
 recursive-include docs *.md
 include .editorconfig
+recursive-include examples *.toml
 recursive-include python *.py *.typed
+recursive-include python/config *.toml
+recursive-include python/requirements *.txt
+recursive-include LICENSES *.txt
 include mkdocs.yml
+include .reuse/dep5
 include tox.ini
