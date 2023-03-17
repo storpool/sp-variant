@@ -23,20 +23,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Additions
 
 - python:
+    - add some more PyPI trove classifiers to the setuptools metadata
     - break out the Tox environments' dependencies into separate files so
       that they may be reused by external tools
+    - `test_docker`: allow multiple `-i imagepattern` options to be
+      specified so that several unrelated Docker images may be tested in
+      a single run
+- Start some MkDocs-based documentation with a copy of the README file and
+  the changelog moved there
 
 ### Other changes
 
 - python:
+    - move the setuptools metadata to the `pyproject.toml` file
     - test with ruff 0.0.256, drop a couple of overrides for false
       positives emitted by earlier versions of Ruff
     - invoke the `tox-stages` tool from the directory where the Python 3.x
       interpreter lives, so that it is virtually certain that `tox-stages`
       (and consequenty Tox) will use the same Python interpreter
-    - `test_docker`: allow multiple `-i imagepattern` options to be
-      specified so that several unrelated Docker images may be tested in
-      a single run
+    - drop the `types-dataclasses` dependency for the `mypy` Tox test
+      environment; dataclasses are included with Python 3.8
+    - clean up some more Python-related files in the `clean` Makefile target
 
 ## [3.1.1] - 2023-02-28
 
