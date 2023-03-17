@@ -2,7 +2,8 @@
 # SPDX-License-Identifier: BSD-2-Clause
 
 include .editorconfig
-include NEWS.md
+include mkdocs.yml
 include tox.ini
 recursive-include data *
+recursive-include docs *.md
 recursive-include python *.py *.typed
