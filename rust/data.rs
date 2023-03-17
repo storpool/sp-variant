@@ -2959,7 +2959,7 @@ fi
                     ),
                 ]
             ),
-            version: "3.1.1".to_owned(),
+            version: "3.1.2".to_owned(),
         }
     });
     assert!(
