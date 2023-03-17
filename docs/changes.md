@@ -12,6 +12,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [3.1.2] - 2023-03-17
+
 ### Semi-incompatible changes
 
 - python:
@@ -360,7 +362,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - First public release.
 
-[Unreleased]: https://github.com/storpool/sp-variant/compare/release/3.1.0...main
+[Unreleased]: https://github.com/storpool/sp-variant/compare/release/3.1.2...main
+[3.1.2]: https://github.com/storpool/sp-variant/compare/release/3.1.1...release/3.1.2
 [3.1.1]: https://github.com/storpool/sp-variant/compare/release/3.1.0...release/3.1.1
 [3.1.0]: https://github.com/storpool/sp-variant/compare/release/3.0.0...release/3.1.0
 [3.0.0]: https://github.com/storpool/sp-variant/compare/release/2.3.3...release/3.0.0

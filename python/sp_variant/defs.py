@@ -126,7 +126,7 @@ class RepoType(NamedTuple):
     url: str
 
 
-VERSION: Final = "3.1.1"
+VERSION: Final = "3.1.2"
 FORMAT_VERSION: Final = (1, 4)
 
 REPO_TYPES: Final = [
