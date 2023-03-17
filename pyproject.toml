@@ -44,7 +44,7 @@ sp_variant = "sp_variant.__main__:main"
 
 [project.urls]
 Homepage = "https://github.com/storpool/sp-variant"
-Changelog = "https://github.com/storpool/sp-variant/blob/main/NEWS.md"
+Changelog = "https://github.com/storpool/sp-variant/blob/main/docs/changes.md"
 
 [tool.setuptools]
 zip-safe = true
