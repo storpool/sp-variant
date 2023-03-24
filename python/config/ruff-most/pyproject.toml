@@ -27,6 +27,7 @@ select = [
   # "I",
   "ICN",
   "INP",
+  "INT",
   "ISC",
   "N",
   "NPY",
