@@ -108,7 +108,7 @@ def test_config_diag() -> None:
         assert cfg._diag_to_stderr  # noqa: SLF001
 
         if not diag_to_stderr:
-            cfg._diag_to_stderr = False  # type: ignore[misc]  # noqa: SLF001
+            cfg._diag_to_stderr = False  # noqa: SLF001
             # It... did not change... right?
             assert cfg._diag_to_stderr  # noqa: SLF001
 

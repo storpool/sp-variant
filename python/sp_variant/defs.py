@@ -175,6 +175,10 @@ class Config:
         """We always send the diagnostic messages to stderr now."""
         return True
 
+    @_diag_to_stderr.setter
+    def _diag_to_stderr(self, value: bool) -> None:
+        """Simulate setting the property, do nothing instead."""
+
     # OK, this is a bit ugly. It's going away soon.
     def _do_setattr(self, name: str, value: Any) -> None:  # noqa: ANN401
         """Ignore any attempts to set the `_diag_to_stderr` member."""
