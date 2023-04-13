@@ -11,7 +11,7 @@ import pathlib
 import shutil
 import subprocess
 import sys
-from typing import Dict, Final, Optional
+from typing import TYPE_CHECKING, Dict, Optional
 
 import cfg_diag
 import click
@@ -21,6 +21,10 @@ import typedload.dataloader
 from sp_variant import defs
 from sp_variant import variant
 from sp_variant import vbuild
+
+
+if TYPE_CHECKING:
+    from typing import Final
 
 
 if sys.version_info >= (3, 11):

@@ -6,11 +6,12 @@ from __future__ import annotations
 
 import dataclasses
 import sys
-from typing import TYPE_CHECKING, Any, Final, NamedTuple, Pattern
+from typing import TYPE_CHECKING, NamedTuple
 
 
 if TYPE_CHECKING:
     import pathlib
+    from typing import Any, Final, Pattern
 
 
 class Detect(NamedTuple):

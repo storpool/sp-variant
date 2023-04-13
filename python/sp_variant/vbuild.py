@@ -6,14 +6,18 @@ from __future__ import annotations
 
 import pathlib
 import re
-from typing import Any, Callable, Final, NamedTuple, TypeVar
+from typing import TYPE_CHECKING, NamedTuple
 
 from . import defs
 
 
-CMD_NOOP: Final[list[str]] = ["true"]
+if TYPE_CHECKING:
+    from typing import Any, Callable, Final, TypeVar
 
-_TNamedTuple = TypeVar("_TNamedTuple", bound=NamedTuple)  # pylint: disable=invalid-name
+    _TNamedTuple = TypeVar("_TNamedTuple", bound=NamedTuple)  # pylint: disable=invalid-name
+
+
+CMD_NOOP: Final[list[str]] = ["true"]
 
 _VARIANT_DEF: Final[list[defs.Variant | defs.VariantUpdate]] = [
     defs.Variant(

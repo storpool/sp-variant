@@ -6,12 +6,16 @@ from __future__ import annotations
 
 import pathlib
 import tempfile
-from typing import Final
+import typing
 
 import pytest
 
 from sp_variant import defs
 from sp_variant import yaiparser
+
+
+if typing.TYPE_CHECKING:
+    from typing import Final
 
 
 _LINES_BAD: Final = [

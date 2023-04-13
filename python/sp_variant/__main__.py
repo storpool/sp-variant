@@ -10,14 +10,16 @@ import pathlib
 import shlex
 import subprocess
 import sys
-from typing import TYPE_CHECKING, Any, Callable, Final
+import typing
 
 from . import defs
 from . import variant
 from . import vbuild
 
 
-if TYPE_CHECKING:
+if typing.TYPE_CHECKING:
+    from typing import Any, Callable, Final
+
     # pylint: disable-next=protected-access,invalid-name
     SubPAction: Final = argparse._SubParsersAction[argparse.ArgumentParser]  # noqa: SLF001
 

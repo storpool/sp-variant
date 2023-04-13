@@ -7,7 +7,7 @@ from __future__ import annotations
 import dataclasses
 import pathlib
 import sys
-from typing import IO, Final
+import typing
 from unittest import mock
 
 import pytest
@@ -15,6 +15,10 @@ import pytest
 from sp_variant import defs
 from sp_variant import variant
 from sp_variant import vbuild
+
+
+if typing.TYPE_CHECKING:
+    from typing import IO, Final
 
 
 _MSG_NOT_SEEN = "This should not be seen"

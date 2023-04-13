@@ -4,9 +4,13 @@
 
 import pathlib
 import tempfile
-from typing import Final
+import typing
 
 from sp_build_repo import subst
+
+
+if typing.TYPE_CHECKING:
+    from typing import Final
 
 
 def test_subst() -> None:

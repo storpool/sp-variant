@@ -6,9 +6,13 @@ from __future__ import annotations
 
 import pathlib
 import re
-from typing import Final
+import typing
 
 from . import defs
+
+
+if typing.TYPE_CHECKING:
+    from typing import Final
 
 
 class VariantYAIError(defs.VariantError):

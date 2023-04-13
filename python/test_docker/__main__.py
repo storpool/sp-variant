@@ -12,11 +12,15 @@ import pathlib
 import subprocess
 import sys
 import tempfile
-from typing import Final, NamedTuple
+from typing import TYPE_CHECKING, NamedTuple
 
 import cfg_diag
 import click
 import utf8_locale
+
+
+if TYPE_CHECKING:
+    from typing import Final
 
 
 @dataclasses.dataclass(frozen=True)

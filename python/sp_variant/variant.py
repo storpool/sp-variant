@@ -8,7 +8,7 @@ import errno
 import pathlib
 import shlex
 import subprocess
-from typing import Final, Iterable
+import typing
 
 from . import defs
 from . import vbuild
@@ -20,6 +20,10 @@ from .defs import (
     VariantError,
 )
 from .vbuild import update_namedtuple
+
+
+if typing.TYPE_CHECKING:
+    from typing import Final, Iterable
 
 
 class VariantKeyError(VariantError):

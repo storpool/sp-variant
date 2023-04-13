@@ -9,7 +9,7 @@ import dataclasses
 import functools
 import json
 import pathlib
-from typing import Final
+import typing
 
 import cfg_diag
 import jinja2
@@ -17,6 +17,10 @@ import trivver
 
 from sp_variant import defs
 from sp_variant import variant
+
+
+if typing.TYPE_CHECKING:
+    from typing import Final
 
 
 @dataclasses.dataclass(frozen=True)
