@@ -7,10 +7,8 @@ from __future__ import annotations
 import dataclasses
 import pathlib
 import sys
-
+from typing import IO, Final
 from unittest import mock
-
-from typing import Final, IO
 
 import pytest
 

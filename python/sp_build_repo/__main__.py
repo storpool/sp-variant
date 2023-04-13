@@ -5,13 +5,12 @@
 from __future__ import annotations
 
 import dataclasses
-import functools
 import datetime
+import functools
 import pathlib
 import shutil
 import subprocess
 import sys
-
 from typing import Dict, Final, Optional
 
 import cfg_diag
@@ -22,6 +21,7 @@ import typedload.dataloader
 from sp_variant import defs
 from sp_variant import variant
 from sp_variant import vbuild
+
 
 if sys.version_info >= (3, 11):
     import tomllib

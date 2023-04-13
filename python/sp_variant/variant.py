@@ -8,20 +8,17 @@ import errno
 import pathlib
 import shlex
 import subprocess
-
 from typing import Final, Iterable
 
 from . import defs
 from . import vbuild
 from . import yaiparser
-
 from .defs import (
+    VERSION,
     Config,
     Variant,
     VariantError,
-    VERSION,
 )
-
 from .vbuild import update_namedtuple
 
 

@@ -12,7 +12,6 @@ import pathlib
 import subprocess
 import sys
 import tempfile
-
 from typing import Final, NamedTuple
 
 import cfg_diag

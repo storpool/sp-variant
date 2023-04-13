@@ -4,7 +4,6 @@
 
 import pathlib
 import tempfile
-
 from typing import Final
 
 from sp_build_repo import subst

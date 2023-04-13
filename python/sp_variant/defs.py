@@ -6,8 +6,8 @@ from __future__ import annotations
 
 import dataclasses
 import sys
+from typing import TYPE_CHECKING, Any, Final, NamedTuple, Pattern
 
-from typing import Any, Final, NamedTuple, Pattern, TYPE_CHECKING
 
 if TYPE_CHECKING:
     import pathlib

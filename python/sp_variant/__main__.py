@@ -10,8 +10,7 @@ import pathlib
 import shlex
 import subprocess
 import sys
-
-from typing import Any, Callable, Final, TYPE_CHECKING
+from typing import TYPE_CHECKING, Any, Callable, Final
 
 from . import defs
 from . import variant
