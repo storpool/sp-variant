@@ -12,6 +12,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixes
+
+- python:
+    - add a no-op `_diag_to_stderr` property setter to avoid mypy errors on
+      (wrong, deprecated) attempts to set that field. Those attempts are
+      ignored anyway since the changes in version 3.1.2, but let mypy know
+      that they are still not completely forbidden.
+
+### Other changes
+
+- python:
+    - use Ruff 0.0.261 in the test suite, enable another check area with
+      no code changes
+
 ## [3.1.2] - 2023-03-17
 
 ### Semi-incompatible changes
