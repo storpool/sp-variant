@@ -251,35 +251,9 @@ _VARIANT_DEF: Final[list[defs.Variant | defs.VariantUpdate]] = [
         },
     ),
     defs.VariantUpdate(
-        name="UBUNTU2110",
-        descr="Ubuntu 21.10 LTS (Impish Indri)",
-        parent="UBUNTU2204",
-        detect=defs.Detect(
-            filename="/etc/os-release",
-            regex=re.compile(
-                r"^ PRETTY_NAME= .* (?: Ubuntu \s+ 21 \. 10 ) ",
-                re.X,
-            ),
-            os_id="ubuntu",
-            os_version_regex=re.compile(r"^21\.10$"),
-        ),
-        updates={
-            "supported": {"repo": False},
-            "repo": {
-                "vendor": "ubuntu",
-                "codename": "impish",
-            },
-            "builder": {
-                "alias": "ubuntu-21.10",
-                "base_image": "ubuntu:impish",
-                "branch": "ubuntu/impish",
-            },
-        },
-    ),
-    defs.VariantUpdate(
         name="UBUNTU2004",
         descr="Ubuntu 20.04 LTS (Focal Fossa)",
-        parent="UBUNTU2110",
+        parent="UBUNTU2204",
         detect=defs.Detect(
             filename="/etc/os-release",
             regex=re.compile(
