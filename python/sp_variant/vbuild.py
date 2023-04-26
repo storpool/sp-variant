@@ -115,8 +115,8 @@ _VARIANT_DEF: Final[list[defs.Variant | defs.VariantUpdate]] = [
             "BINDINGS_PYTHON_SIMPLEJSON": "python3-simplejson",
             "CGROUP": "cgroup-tools",
             "CPUPOWER": "linux-cpupower",
-            "LIBSSL": "libssl1.1",
-            "MCELOG": "mcelog",
+            "LIBSSL": "libssl3",
+            "MCELOG": "bash",
         },
         systemd_lib="lib/systemd/system",
         file_ext="deb",
@@ -149,6 +149,9 @@ _VARIANT_DEF: Final[list[defs.Variant | defs.VariantUpdate]] = [
         updates={
             "supported": {"repo": True},
             "repo": {"codename": "bullseye"},
+            "package": {
+                "LIBSSL": "libssl1.1",
+            },
             "builder": {
                 "alias": "debian11",
                 "base_image": "debian:bullseye",
@@ -241,7 +244,6 @@ _VARIANT_DEF: Final[list[defs.Variant | defs.VariantUpdate]] = [
             },
             "package": {
                 "CPUPOWER": "linux-tools-generic",
-                "MCELOG": "bash",
             },
             "builder": {
                 "alias": "ubuntu-22.04",
@@ -268,6 +270,9 @@ _VARIANT_DEF: Final[list[defs.Variant | defs.VariantUpdate]] = [
             "repo": {
                 "vendor": "ubuntu",
                 "codename": "focal",
+            },
+            "package": {
+                "LIBSSL": "libssl1.1",
             },
             "min_sys_python": "3.8",
             "builder": {
@@ -427,14 +432,14 @@ fi
         ),
         package={
             "KMOD": "kmod",
-            "LIBCGROUP": "libcgroup-tools",
+            "LIBCGROUP": "bash",
             "LIBUDEV": "systemd-libs",
             "OPENSSL": "openssl-libs",
             "PERL_AUTODIE": "perl-autodie",
             "PERL_FILE_PATH": "perl-File-Path",
             "PERL_LWP_PROTO_HTTPS": "perl-LWP-Protocol-https",
             "PERL_SYS_SYSLOG": "perl-Sys-Syslog",
-            "PYTHON_SIMPLEJSON": "python2-simplejson",
+            "PYTHON_SIMPLEJSON": "bash",
             "PROCPS": "procps-ng",
             "UDEV": "systemd",
         },
@@ -461,6 +466,10 @@ fi
         ),
         updates={
             "supported": {"repo": True},
+            "package": {
+                "LIBCGROUP": "libcgroup-tools",
+                "PYTHON_SIMPLEJSON": "python2-simplejson",
+            },
             "commands": {
                 "package": {
                     "install": [
