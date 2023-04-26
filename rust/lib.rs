@@ -77,7 +77,7 @@ struct VariantFormatTop {
 }
 
 /// Check whether this host is running this particular OS variant.
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct Detect {
     /// The name of the file to read.
@@ -91,7 +91,7 @@ pub struct Detect {
 }
 
 /// The aspects of the StorPool operation supported for this build variant.
-#[derive(Debug, Clone, Copy, Serialize, Deserialize)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct Supported {
     /// Is there a StorPool third-party packages repository?
@@ -99,7 +99,7 @@ pub struct Supported {
 }
 
 /// Debian package repository data.
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct DebRepo {
     /// The distribution codename (e.g. "buster").
@@ -115,7 +115,7 @@ pub struct DebRepo {
 }
 
 /// Yum/DNF package repository data.
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct YumRepo {
     /// The *.repo file to copy to /etc/yum.repos.d/.
@@ -125,7 +125,7 @@ pub struct YumRepo {
 }
 
 /// OS package repository data.
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(untagged)]
 #[non_exhaustive]
 pub enum Repo {
@@ -136,7 +136,7 @@ pub enum Repo {
 }
 
 /// StorPool builder data.
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct Builder {
     /// The builder name.
@@ -152,7 +152,7 @@ pub struct Builder {
 }
 
 /// A single StorPool build variant with all its options.
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct Variant {
     /// Which variant is that?
