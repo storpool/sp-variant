@@ -208,6 +208,7 @@ _VARIANT_DEF: Final[list[defs.Variant | defs.VariantUpdate]] = [
             os_version_regex=re.compile(r"^9$"),
         ),
         updates={
+            "supported": {"repo": False},
             "repo": {
                 "codename": "stretch",
                 "req_packages": ["apt-transport-https", "ca-certificates"],
