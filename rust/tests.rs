@@ -4,8 +4,10 @@
  */
 use std::collections::HashSet;
 
+use super::VariantError;
+
 #[test]
-fn test_detect() -> Result<(), super::VariantError> {
+fn test_detect() -> Result<(), VariantError> {
     let variant = crate::detect()?;
     println!("Detected {kind}", kind = variant.kind.as_ref());
     Ok(())
