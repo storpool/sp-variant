@@ -439,6 +439,20 @@ if [ "$res" -ne 0 ]; then
     fi
 fi
 
+pkg_count="$(jq '.variant.package | length' < "$tempf")"
+echo "Trying to install $pkg_count packages"
+
+failed=''
+for pkg in $(jq -r '.variant.package | to_entries[] | .value' < "$tempf"); do
+    if ! /sp/storpool_variant command run -- package.install "$pkg"; then
+        failed="$failed $pkg"
+    fi
+done
+if [ -n "$failed" ]; then
+    echo "Could not install some packages:$failed" 1>&2
+    exit 1
+fi
+
 echo 'Done, it seems'
 """,
             encoding="UTF-8",
