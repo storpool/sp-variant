@@ -357,10 +357,15 @@ check_locale()
 echo 'Checking whether LC_ALL specifies a valid UTF-8-capable locale'
 check_locale 'The LC_ALL environment variable' "$LC_ALL"
 
+tempf="$(mktemp -t current-variant.json.XXXXXX)"
+trap "rm -f -- '$tempf'" HUP INT TERM EXIT
+echo "Stashing the `sp_variant show current` output into $tempf"
+/sp/storpool_variant show current > "$tempf"
+
 # Parsing JSON without jq? Yeah, sure, why not...
 echo 'Checking for a Debian-like variant'
 unset is_debian
-if /sp/storpool_variant show current | tr "\n" ' ' | grep -Eqe '"family"[[:space:]]*:[[:space:]]*"debian"'; then
+if tr "\n" ' ' < "$tempf" | grep -Eqe '"family"[[:space:]]*:[[:space:]]*"debian"'; then
     is_debian=1
     echo 'Running apt-get update'
     apt-get update
@@ -378,11 +383,11 @@ echo 'Installing jq'
 /sp/storpool_variant command run -- package.install jq
 
 echo 'Checking whether builder.utf8_locale specifies a valid UTF-8-capable locale'
-u8loc="$(/sp/storpool_variant show current | jq -r '.variant.builder.utf8_locale')"
+u8loc="$(jq -r '.variant.builder.utf8_locale' < "$tempf")"
 check_locale 'The builder.utf8_locale setting' "$u8loc"
 
 echo 'Checking whether StorPool has a package repository for this variant'
-supp_repo="$(/sp/storpool_variant show current | jq -r '.variant.supported.repo')"
+supp_repo="$(jq -r '.variant.supported.repo' < "$tempf")"
 case "$supp_repo" in
     true)
         supp_repo='1'
@@ -435,7 +440,7 @@ if [ "$res" -ne 0 ]; then
 fi
 
 echo 'Done, it seems'
-""",  # noqa: E501  pylint: disable=line-too-long
+""",
             encoding="UTF-8",
         )
     except Exception as err:  # pylint: disable=broad-except  # noqa: BLE001
