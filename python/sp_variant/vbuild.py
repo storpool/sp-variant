@@ -264,6 +264,7 @@ _VARIANT_DEF: Final[list[defs.Variant | defs.VariantUpdate]] = [
             os_version_regex=re.compile(r"^21\.10$"),
         ),
         updates={
+            "supported": {"repo": False},
             "repo": {
                 "vendor": "ubuntu",
                 "codename": "impish",
@@ -289,6 +290,7 @@ _VARIANT_DEF: Final[list[defs.Variant | defs.VariantUpdate]] = [
             os_version_regex=re.compile(r"^20\.04$"),
         ),
         updates={
+            "supported": {"repo": True},
             "repo": {
                 "vendor": "ubuntu",
                 "codename": "focal",
