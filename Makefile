@@ -17,6 +17,11 @@ SH_SRC=		sp_variant.sh.j2
 SH_BIN=		sp_variant.sh
 
 SP_CARGO?=	sp-cargo
+ifeq (,${NO_CARGO_OFFLINE})
+SP_CARGO_OFFLINE=	--offline
+else
+SP_CARGO_OFFLINE=
+endif
 
 SP_PYTHON3?=	/opt/storpool/python3/bin/python3
 SP_PY3_ENV?=	env PYTHONPATH='${CURDIR}/python' ${SP_PYTHON3} -B -u
@@ -73,8 +78,8 @@ ${RUST_BIN}:	Cargo.toml .cargo/config.toml ${RUST_SRC}
 		[ -n '${NO_CARGO_FREEZE}' ] || ${SP_CARGO} sp-freeze
 		[ -n '${NO_CARGO_CLEAN}' ] || ${SP_CARGO} clean
 		${SP_CARGO} fmt -- --check
-		${SP_CARGO} build --release --offline
-		${SP_CARGO} test --release --offline
+		${SP_CARGO} build --release ${SP_CARGO_OFFLINE}
+		${SP_CARGO} test --release ${SP_CARGO_OFFLINE}
 
 ${SH_BIN}:	${SH_SRC} python/sp_build_repo/subst.py ${PYTHON_VBUILD}
 		${SP_PY3_ENV} -m sp_build_repo.subst -m 755 -t '${SH_SRC}' -o '${SH_BIN}' -v || { rm -f -- '${SH_BIN}'; false; }
