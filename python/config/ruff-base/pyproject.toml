@@ -41,13 +41,21 @@ single-line-exclusions = ["defs", "typing"]
 # This is a command-line tool. Console output is part of its task.
 # Also, it needs to be able to run typedload on Python < 3.10, so it cannot
 # leverage the full power of X | Y unions, X | None optional values, etc.
-"*/sp_build_repo/__main__.py" = ["T201", "UP006", "UP007"]
+# We also make sure to use `subprocess` responsibly.
+"*/sp_build_repo/__main__.py" = ["S603", "S607", "T201", "UP006", "UP007"]
 
 # This is a command-line tool. Console output is part of its task.
-"*/sp_variant/__main__.py" = ["T201"]
+# We also make sure to use `subprocess` responsibly.
+"*/sp_variant/__main__.py" = ["S603", "S607", "T201"]
+
+# We only run commands defined in our variants structure.
+"*/sp_variant/variant.py" = ["S603", "S607"]
 
 # The "update a named tuple / dictionary functions need to use typing.Any.
 "*/sp_variant/vbuild.py" = ["ANN401"]
+
+# We make sure to use `subprocess` responsibly.
+"*/test_docker/__main__.py" = ["S603", "S607"]
 
 # This is a test suite.
 "*/unit_tests/*.py" = ["S101", "T201"]
