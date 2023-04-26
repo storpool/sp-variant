@@ -40,7 +40,7 @@ TEMP_PACKAGE_LIST?=	${CURDIR}/package-list.txt
 
 all:		${RUST_BIN} ${SH_BIN}
 
-test:		test-trivial test-shellcheck test-tox-stages
+test:		test-trivial test-shellcheck test-cargo test-tox-stages
 
 test-trivial:	all
 		${SP_PY3_INVOKE} features
@@ -79,13 +79,15 @@ ${RUST_BIN}:	Cargo.toml .cargo/config.toml ${RUST_SRC}
 		[ -n '${NO_CARGO_CLEAN}' ] || ${SP_CARGO} clean
 		${SP_CARGO} fmt -- --check
 		${SP_CARGO} build --release ${SP_CARGO_OFFLINE}
-		${SP_CARGO} test --release ${SP_CARGO_OFFLINE}
 
 ${SH_BIN}:	${SH_SRC} python/sp_build_repo/subst.py ${PYTHON_VBUILD}
 		${SP_PY3_ENV} -m sp_build_repo.subst -m 755 -t '${SH_SRC}' -o '${SH_BIN}' -v || { rm -f -- '${SH_BIN}'; false; }
 
 test-docker:	repo
 		${SP_PY3_ENV} -m test_docker -r '${REPO_BUILT}' -v ${TEST_DOCKER_ARGS}
+
+test-cargo:	${RUST_BIN}
+		${SP_CARGO} test --release ${SP_CARGO_OFFLINE}
 
 test-tox-stages:
 		"$$(dirname -- '${SP_PYTHON3}')/tox-stages" run
