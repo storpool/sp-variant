@@ -56,6 +56,8 @@ pub enum VariantKind {
     UBUNTU2004,
     /// Ubuntu 22.04 LTS (Jammy Jellyfish)
     UBUNTU2204,
+    /// Ubuntu 23.04 LTS (Lunar Lobster)
+    UBUNTU2304,
 }
 
 impl VariantKind {
@@ -76,6 +78,7 @@ impl VariantKind {
     const UBUNTU1804_NAME: &'static str = "UBUNTU1804";
     const UBUNTU2004_NAME: &'static str = "UBUNTU2004";
     const UBUNTU2204_NAME: &'static str = "UBUNTU2204";
+    const UBUNTU2304_NAME: &'static str = "UBUNTU2304";
 }
 
 impl AsRef<str> for VariantKind {
@@ -99,6 +102,7 @@ impl AsRef<str> for VariantKind {
             Self::UBUNTU1804 => Self::UBUNTU1804_NAME,
             Self::UBUNTU2004 => Self::UBUNTU2004_NAME,
             Self::UBUNTU2204 => Self::UBUNTU2204_NAME,
+            Self::UBUNTU2304 => Self::UBUNTU2304_NAME,
         }
     }
 }
@@ -126,6 +130,7 @@ impl FromStr for VariantKind {
             Self::UBUNTU1804_NAME => Ok(Self::UBUNTU1804),
             Self::UBUNTU2004_NAME => Ok(Self::UBUNTU2004),
             Self::UBUNTU2204_NAME => Ok(Self::UBUNTU2204),
+            Self::UBUNTU2304_NAME => Ok(Self::UBUNTU2304),
             other => Err(VariantError::BadVariant(other.to_owned())),
         }
     }
@@ -159,6 +164,7 @@ pub fn get_variants() -> &'static VariantDefTop {
                     VariantKind::UBUNTU1804,
                     VariantKind::UBUNTU2004,
                     VariantKind::UBUNTU2204,
+                    VariantKind::UBUNTU2304,
                     VariantKind::DEBIAN9,
                     VariantKind::DEBIAN10,
                     VariantKind::DEBIAN11,
@@ -2658,7 +2664,7 @@ fi
                                 kind: VariantKind::UBUNTU2204,
                                 descr: "Ubuntu 22.04 LTS (Jammy Jellyfish)".to_owned(),
                                 family: "debian".to_owned(),
-                                parent: "DEBIAN12".to_owned(),
+                                parent: "UBUNTU2304".to_owned(),
                                 detect: Detect {
                                     filename: "/etc/os-release".to_owned(),
                                     regex: r"^ PRETTY_NAME= .* (?: Ubuntu \s+ 22 \. 04 | Mint \s+ 21 ) ".to_owned(),
@@ -2797,6 +2803,156 @@ fi
                                     alias: "ubuntu-22.04".to_owned(),
                                     base_image: "ubuntu:jammy".to_owned(),
                                     branch: "ubuntu/jammy".to_owned(),
+                                    kernel_package: "linux-headers".to_owned(),
+                                    utf8_locale: "C.UTF-8".to_owned(),
+                                },
+                            },
+                    ),
+                    (
+                            VariantKind::UBUNTU2304,
+                            Variant {
+                                kind: VariantKind::UBUNTU2304,
+                                descr: "Ubuntu 23.04 LTS (Lunar Lobster)".to_owned(),
+                                family: "debian".to_owned(),
+                                parent: "DEBIAN12".to_owned(),
+                                detect: Detect {
+                                    filename: "/etc/os-release".to_owned(),
+                                    regex: r"^ PRETTY_NAME= .* Ubuntu \s+ 23 \. 04 ".to_owned(),
+                                    os_id: "ubuntu".to_owned(),
+                                    os_version_regex: r"^23\.04$".to_owned(),
+                                },
+                                supported: Supported {
+                                    repo: false,
+                                },
+                                commands: HashMap::from(
+                                    [
+                                        (
+                                            "package".to_owned(),
+                                            HashMap::from(
+                                                [
+                                                    (
+                                                        "install".to_owned(),
+                                                        vec![
+                                                            "env".to_owned(),
+                                                            "DEBIAN_FRONTEND=noninteractive".to_owned(),
+                                                            "apt-get".to_owned(),
+                                                            "-q".to_owned(),
+                                                            "-y".to_owned(),
+                                                            "--no-install-recommends".to_owned(),
+                                                            "install".to_owned(),
+                                                            "--".to_owned(),
+                                                        ],
+                                                    ),
+                                                    (
+                                                        "list_all".to_owned(),
+                                                        vec![
+                                                            "dpkg-query".to_owned(),
+                                                            "-W".to_owned(),
+                                                            "-f".to_owned(),
+                                                            "${Package}\\t${Version}\\t${Architecture}\\t${db:Status-Abbrev}\\n".to_owned(),
+                                                            "--".to_owned(),
+                                                        ],
+                                                    ),
+                                                    (
+                                                        "purge".to_owned(),
+                                                        vec![
+                                                            "env".to_owned(),
+                                                            "DEBIAN_FRONTEND=noninteractive".to_owned(),
+                                                            "apt-get".to_owned(),
+                                                            "-q".to_owned(),
+                                                            "-y".to_owned(),
+                                                            "purge".to_owned(),
+                                                            "--".to_owned(),
+                                                        ],
+                                                    ),
+                                                    (
+                                                        "remove".to_owned(),
+                                                        vec![
+                                                            "env".to_owned(),
+                                                            "DEBIAN_FRONTEND=noninteractive".to_owned(),
+                                                            "apt-get".to_owned(),
+                                                            "-q".to_owned(),
+                                                            "-y".to_owned(),
+                                                            "remove".to_owned(),
+                                                            "--".to_owned(),
+                                                        ],
+                                                    ),
+                                                    (
+                                                        "remove_impl".to_owned(),
+                                                        vec![
+                                                            "env".to_owned(),
+                                                            "DEBIAN_FRONTEND=noninteractive".to_owned(),
+                                                            "dpkg".to_owned(),
+                                                            "-r".to_owned(),
+                                                            "--".to_owned(),
+                                                        ],
+                                                    ),
+                                                    (
+                                                        "update_db".to_owned(),
+                                                        vec![
+                                                            "apt-get".to_owned(),
+                                                            "-q".to_owned(),
+                                                            "-y".to_owned(),
+                                                            "update".to_owned(),
+                                                        ],
+                                                    ),
+                                                ]
+                                            ),
+                                        ),
+                                        (
+                                            "pkgfile".to_owned(),
+                                            HashMap::from(
+                                                [
+                                                    (
+                                                        "dep_query".to_owned(),
+                                                        vec![
+                                                            "sh".to_owned(),
+                                                            "-c".to_owned(),
+                                                            "dpkg-deb -f -- \"$pkg\" \"Depends\" | sed -e \"s/ *, */,/g\" | tr \",\" \"\\n\"".to_owned(),
+                                                        ],
+                                                    ),
+                                                    (
+                                                        "install".to_owned(),
+                                                        vec![
+                                                            "sh".to_owned(),
+                                                            "-c".to_owned(),
+                                                            "env DEBIAN_FRONTEND=noninteractive apt-get install --no-install-recommends --reinstall -y -o DPkg::Options::=--force-confnew -- $packages".to_owned(),
+                                                        ],
+                                                    ),
+                                                ]
+                                            ),
+                                        ),
+                                    ]
+                                ),
+                                min_sys_python: "3.9".to_owned(),
+                                repo:
+                                    Repo::Deb(DebRepo {
+                                        codename: "lunar".to_owned(),
+                                        vendor: "ubuntu".to_owned(),
+                                        sources: "debian/repo/storpool.sources".to_owned(),
+                                        keyring: "debian/repo/storpool-keyring.gpg".to_owned(),
+                                        req_packages: vec![
+                                            "ca-certificates".to_owned(),
+                                        ],
+                                    }),
+                                    package: HashMap::from(
+                                    [
+                                        ("BINDINGS_PYTHON".to_owned(), "python3".to_owned()),
+                                        ("BINDINGS_PYTHON_CONFGET".to_owned(), "python3-confget".to_owned()),
+                                        ("BINDINGS_PYTHON_SIMPLEJSON".to_owned(), "python3-simplejson".to_owned()),
+                                        ("CGROUP".to_owned(), "cgroup-tools".to_owned()),
+                                        ("CPUPOWER".to_owned(), "linux-tools-generic".to_owned()),
+                                        ("LIBSSL".to_owned(), "libssl3".to_owned()),
+                                        ("MCELOG".to_owned(), "bash".to_owned()),
+                                    ]
+                                ),
+                                systemd_lib: "lib/systemd/system".to_owned(),
+                                file_ext: "deb".to_owned(),
+                                initramfs_flavor: "update-initramfs".to_owned(),
+                                builder: Builder {
+                                    alias: "ubuntu-23.04".to_owned(),
+                                    base_image: "ubuntu:lunar".to_owned(),
+                                    branch: "ubuntu/lunar".to_owned(),
                                     kernel_package: "linux-headers".to_owned(),
                                     utf8_locale: "C.UTF-8".to_owned(),
                                 },

@@ -118,6 +118,11 @@ detect_from_os_release()
 		return
 	fi
 	
+	if [ "$os_id" = 'ubuntu' ] && printf -- '%s\n' "$version_id" | grep -Eqe '^23\.04$'; then
+		printf -- '%s\n' 'UBUNTU2304'
+		return
+	fi
+	
 }
 
 cmd_detect()
@@ -198,6 +203,11 @@ cmd_detect()
 	
 	if [ -r '/etc/os-release' ] && grep -Eqe '^PRETTY_NAME=.*(Ubuntu[[:space:]]+22\.04|Mint[[:space:]]+21)' -- '/etc/os-release'; then
 		printf -- '%s\n' 'UBUNTU2204'
+		return
+	fi
+	
+	if [ -r '/etc/os-release' ] && grep -Eqe '^PRETTY_NAME=.*Ubuntu[[:space:]]+23\.04' -- '/etc/os-release'; then
+		printf -- '%s\n' 'UBUNTU2304'
 		return
 	fi
 	
@@ -2064,7 +2074,7 @@ show_UBUNTU2204()
     "LIBSSL": "libssl3",
     "MCELOG": "bash"
   },
-  "parent": "DEBIAN12",
+  "parent": "UBUNTU2304",
   "repo": {
     "codename": "jammy",
     "keyring": "debian/repo/storpool-keyring.gpg",
@@ -2076,6 +2086,120 @@ show_UBUNTU2204()
   },
   "supported": {
     "repo": true
+  },
+  "systemd_lib": "lib/systemd/system"
+}
+EOVARIANT_JSON
+}
+
+show_UBUNTU2304()
+{
+	cat <<'EOVARIANT_JSON'
+  {
+  "builder": {
+    "alias": "ubuntu-23.04",
+    "base_image": "ubuntu:lunar",
+    "branch": "ubuntu/lunar",
+    "kernel_package": "linux-headers",
+    "utf8_locale": "C.UTF-8"
+  },
+  "commands": {
+    "package": {
+      "install": [
+        "env",
+        "DEBIAN_FRONTEND=noninteractive",
+        "apt-get",
+        "-q",
+        "-y",
+        "--no-install-recommends",
+        "install",
+        "--"
+      ],
+      "list_all": [
+        "dpkg-query",
+        "-W",
+        "-f",
+        "${Package}\\t${Version}\\t${Architecture}\\t${db:Status-Abbrev}\\n",
+        "--"
+      ],
+      "purge": [
+        "env",
+        "DEBIAN_FRONTEND=noninteractive",
+        "apt-get",
+        "-q",
+        "-y",
+        "purge",
+        "--"
+      ],
+      "remove": [
+        "env",
+        "DEBIAN_FRONTEND=noninteractive",
+        "apt-get",
+        "-q",
+        "-y",
+        "remove",
+        "--"
+      ],
+      "remove_impl": [
+        "env",
+        "DEBIAN_FRONTEND=noninteractive",
+        "dpkg",
+        "-r",
+        "--"
+      ],
+      "update_db": [
+        "apt-get",
+        "-q",
+        "-y",
+        "update"
+      ]
+    },
+    "pkgfile": {
+      "dep_query": [
+        "sh",
+        "-c",
+        "dpkg-deb -f -- \"$pkg\" \"Depends\" | sed -e \"s/ *, */,/g\" | tr \",\" \"\\n\""
+      ],
+      "install": [
+        "sh",
+        "-c",
+        "env DEBIAN_FRONTEND=noninteractive apt-get install --no-install-recommends --reinstall -y -o DPkg::Options::=--force-confnew -- $packages"
+      ]
+    }
+  },
+  "descr": "Ubuntu 23.04 LTS (Lunar Lobster)",
+  "detect": {
+    "filename": "/etc/os-release",
+    "os_id": "ubuntu",
+    "os_version_regex": "^23\\.04$",
+    "regex": "^ PRETTY_NAME= .* Ubuntu \\s+ 23 \\. 04 "
+  },
+  "family": "debian",
+  "file_ext": "deb",
+  "initramfs_flavor": "update-initramfs",
+  "min_sys_python": "3.9",
+  "name": "UBUNTU2304",
+  "package": {
+    "BINDINGS_PYTHON": "python3",
+    "BINDINGS_PYTHON_CONFGET": "python3-confget",
+    "BINDINGS_PYTHON_SIMPLEJSON": "python3-simplejson",
+    "CGROUP": "cgroup-tools",
+    "CPUPOWER": "linux-tools-generic",
+    "LIBSSL": "libssl3",
+    "MCELOG": "bash"
+  },
+  "parent": "DEBIAN12",
+  "repo": {
+    "codename": "lunar",
+    "keyring": "debian/repo/storpool-keyring.gpg",
+    "req_packages": [
+      "ca-certificates"
+    ],
+    "sources": "debian/repo/storpool.sources",
+    "vendor": "ubuntu"
+  },
+  "supported": {
+    "repo": false
   },
   "systemd_lib": "lib/systemd/system"
 }
@@ -2112,6 +2236,7 @@ cmd_show_all()
     "UBUNTU1804",
     "UBUNTU2004",
     "UBUNTU2204",
+    "UBUNTU2304",
     "DEBIAN9",
     "DEBIAN10",
     "DEBIAN11",
@@ -2171,6 +2296,9 @@ EOPROLOGUE
   echo ','
   printf -- '    "%s": ' 'UBUNTU2204'
   show_UBUNTU2204
+  echo ','
+  printf -- '    "%s": ' 'UBUNTU2304'
+  show_UBUNTU2304
   
 
 	cat <<'EOEPILOGUE'
@@ -3761,6 +3889,87 @@ fi
 			esac
 			;;
 		
+		UBUNTU2304)
+			case "$cmd_cat" in
+				
+				package)
+					case "$cmd_item" in
+						
+						install)
+							# The commands are quoted exactly as much as necessary.
+							# shellcheck disable=SC2016
+							$noop 'env' 'DEBIAN_FRONTEND=noninteractive' 'apt-get' '-q' '-y' '--no-install-recommends' 'install' '--'  "$@"
+							;;
+						
+						list_all)
+							# The commands are quoted exactly as much as necessary.
+							# shellcheck disable=SC2016
+							$noop 'dpkg-query' '-W' '-f' '${Package}\t${Version}\t${Architecture}\t${db:Status-Abbrev}\n' '--'  "$@"
+							;;
+						
+						purge)
+							# The commands are quoted exactly as much as necessary.
+							# shellcheck disable=SC2016
+							$noop 'env' 'DEBIAN_FRONTEND=noninteractive' 'apt-get' '-q' '-y' 'purge' '--'  "$@"
+							;;
+						
+						remove)
+							# The commands are quoted exactly as much as necessary.
+							# shellcheck disable=SC2016
+							$noop 'env' 'DEBIAN_FRONTEND=noninteractive' 'apt-get' '-q' '-y' 'remove' '--'  "$@"
+							;;
+						
+						remove_impl)
+							# The commands are quoted exactly as much as necessary.
+							# shellcheck disable=SC2016
+							$noop 'env' 'DEBIAN_FRONTEND=noninteractive' 'dpkg' '-r' '--'  "$@"
+							;;
+						
+						update_db)
+							# The commands are quoted exactly as much as necessary.
+							# shellcheck disable=SC2016
+							$noop 'apt-get' '-q' '-y' 'update'  "$@"
+							;;
+						
+
+						*)
+							echo "Invalid command '$cmd_item' in the '$cmd_cat' category" 1>&2
+							exit 1
+							;;
+					esac
+					;;
+				
+				pkgfile)
+					case "$cmd_item" in
+						
+						dep_query)
+							# The commands are quoted exactly as much as necessary.
+							# shellcheck disable=SC2016
+							$noop 'sh' '-c' 'dpkg-deb -f -- "$pkg" "Depends" | sed -e "s/ *, */,/g" | tr "," "\n"'  "$@"
+							;;
+						
+						install)
+							# The commands are quoted exactly as much as necessary.
+							# shellcheck disable=SC2016
+							$noop 'sh' '-c' 'env DEBIAN_FRONTEND=noninteractive apt-get install --no-install-recommends --reinstall -y -o DPkg::Options::=--force-confnew -- $packages'  "$@"
+							;;
+						
+
+						*)
+							echo "Invalid command '$cmd_item' in the '$cmd_cat' category" 1>&2
+							exit 1
+							;;
+					esac
+					;;
+				
+
+				*)
+					echo "Invalid command category '$cmd_cat'" 1>&2
+					exit 1
+					;;
+			esac
+			;;
+		
 
 		*)
 			echo "Internal error: invalid variant '$name'" 1>&2
@@ -4004,6 +4213,12 @@ cmd_repo_add()
 			
 			;;
 		
+		UBUNTU2304)
+			
+			repo_add_deb 'UBUNTU2304' "$vdir" "$repotype" 'debian/repo/storpool.sources' 'debian/repo/storpool-keyring.gpg' 'ca-certificates'
+			
+			;;
+		
 
 		*)
 			echo "Internal error: '$variant' should be recognized at this point" 1>&2
@@ -4169,6 +4384,10 @@ case "$1" in
 			
 			UBUNTU2204)
 				show_variant 'UBUNTU2204'
+				;;
+			
+			UBUNTU2304)
+				show_variant 'UBUNTU2304'
 				;;
 			
 
