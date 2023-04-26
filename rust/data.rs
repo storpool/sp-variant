@@ -18,7 +18,7 @@ use crate::{
 };
 
 /// The supported StorPool build variants (OS distribution, version, etc).
-#[derive(Debug, Clone, PartialEq, Hash, Eq, Serialize, Deserialize)]
+#[derive(Debug, Clone, Copy, PartialEq, Hash, Eq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub enum VariantKind {
     /// AlmaLinux 8.x
