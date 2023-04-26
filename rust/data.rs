@@ -9,6 +9,7 @@
 use std::collections::HashMap;
 use std::str::FromStr;
 
+use enum_iterator::Sequence;
 use once_cell::sync::Lazy;
 use serde::{Deserialize, Serialize};
 
@@ -18,7 +19,7 @@ use crate::{
 };
 
 /// The supported StorPool build variants (OS distribution, version, etc).
-#[derive(Debug, Clone, Copy, PartialEq, Hash, Eq, Serialize, Deserialize)]
+#[derive(Debug, Clone, Copy, PartialEq, Hash, Eq, Serialize, Deserialize, Sequence)]
 #[non_exhaustive]
 pub enum VariantKind {
     /// AlmaLinux 8.x

@@ -330,6 +330,38 @@ pub fn get_by_alias_from<'defs>(
         .ok_or_else(|| VariantError::Internal(format!("No variant with the {alias} alias")))
 }
 
+/// Get information about all variants.
+#[inline]
+#[must_use]
+pub fn get_all_variants() -> &'static HashMap<VariantKind, Variant> {
+    get_all_variants_from(build_variants())
+}
+
+/// Get information about all variants defined in the specified structure.
+#[inline]
+#[must_use]
+pub const fn get_all_variants_from(variants: &VariantDefTop) -> &HashMap<VariantKind, Variant> {
+    &variants.variants
+}
+
+/// Get information about all variants in the order of inheritance between them.
+#[inline]
+pub fn get_all_variants_in_order() -> impl Iterator<Item = &'static Variant> {
+    get_all_variants_in_order_from(build_variants())
+}
+
+/// Get information about all variants defined in the specified structure in order.
+///
+/// # Panics
+/// May panic if the variants data is inconsistent and the variants order array
+/// includes a [`VariantKind`] that is not present in the actual hashmap.
+/// This should hopefully never ever happen, and there is a unit test for that.
+#[inline]
+#[allow(clippy::indexing_slicing)]
+pub fn get_all_variants_in_order_from(variants: &VariantDefTop) -> impl Iterator<Item = &Variant> {
+    variants.order.iter().map(|kind| &variants.variants[kind])
+}
+
 /// Get the metadata format version of the variant data.
 #[inline]
 #[must_use]
