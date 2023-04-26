@@ -54,8 +54,6 @@ pub enum VariantKind {
     UBUNTU1804,
     /// Ubuntu 20.04 LTS (Focal Fossa)
     UBUNTU2004,
-    /// Ubuntu 21.10 LTS (Impish Indri)
-    UBUNTU2110,
     /// Ubuntu 22.04 LTS (Jammy Jellyfish)
     UBUNTU2204,
 }
@@ -77,7 +75,6 @@ impl VariantKind {
     const UBUNTU1604_NAME: &'static str = "UBUNTU1604";
     const UBUNTU1804_NAME: &'static str = "UBUNTU1804";
     const UBUNTU2004_NAME: &'static str = "UBUNTU2004";
-    const UBUNTU2110_NAME: &'static str = "UBUNTU2110";
     const UBUNTU2204_NAME: &'static str = "UBUNTU2204";
 }
 
@@ -101,7 +98,6 @@ impl AsRef<str> for VariantKind {
             Self::UBUNTU1604 => Self::UBUNTU1604_NAME,
             Self::UBUNTU1804 => Self::UBUNTU1804_NAME,
             Self::UBUNTU2004 => Self::UBUNTU2004_NAME,
-            Self::UBUNTU2110 => Self::UBUNTU2110_NAME,
             Self::UBUNTU2204 => Self::UBUNTU2204_NAME,
         }
     }
@@ -129,7 +125,6 @@ impl FromStr for VariantKind {
             Self::UBUNTU1604_NAME => Ok(Self::UBUNTU1604),
             Self::UBUNTU1804_NAME => Ok(Self::UBUNTU1804),
             Self::UBUNTU2004_NAME => Ok(Self::UBUNTU2004),
-            Self::UBUNTU2110_NAME => Ok(Self::UBUNTU2110),
             Self::UBUNTU2204_NAME => Ok(Self::UBUNTU2204),
             other => Err(VariantError::BadVariant(other.to_owned())),
         }
@@ -163,7 +158,6 @@ pub fn get_variants() -> &'static VariantDefTop {
                     VariantKind::UBUNTU1604,
                     VariantKind::UBUNTU1804,
                     VariantKind::UBUNTU2004,
-                    VariantKind::UBUNTU2110,
                     VariantKind::UBUNTU2204,
                     VariantKind::DEBIAN9,
                     VariantKind::DEBIAN10,
@@ -465,7 +459,7 @@ fi
                                     package: HashMap::from(
                                     [
                                         ("KMOD".to_owned(), "kmod".to_owned()),
-                                        ("LIBCGROUP".to_owned(), "libcgroup-tools".to_owned()),
+                                        ("LIBCGROUP".to_owned(), "bash".to_owned()),
                                         ("LIBUDEV".to_owned(), "systemd-libs".to_owned()),
                                         ("OPENSSL".to_owned(), "openssl-libs".to_owned()),
                                         ("PERL_AUTODIE".to_owned(), "perl-autodie".to_owned()),
@@ -473,7 +467,7 @@ fi
                                         ("PERL_LWP_PROTO_HTTPS".to_owned(), "perl-LWP-Protocol-https".to_owned()),
                                         ("PERL_SYS_SYSLOG".to_owned(), "perl-Sys-Syslog".to_owned()),
                                         ("PROCPS".to_owned(), "procps-ng".to_owned()),
-                                        ("PYTHON_SIMPLEJSON".to_owned(), "python2-simplejson".to_owned()),
+                                        ("PYTHON_SIMPLEJSON".to_owned(), "bash".to_owned()),
                                         ("UDEV".to_owned(), "systemd".to_owned()),
                                     ]
                                 ),
@@ -976,7 +970,7 @@ fi
                                     os_version_regex: r"^9$".to_owned(),
                                 },
                                 supported: Supported {
-                                    repo: true,
+                                    repo: false,
                                 },
                                 commands: HashMap::from(
                                     [
@@ -1098,7 +1092,7 @@ fi
                                         ("CGROUP".to_owned(), "cgroup-tools".to_owned()),
                                         ("CPUPOWER".to_owned(), "linux-cpupower".to_owned()),
                                         ("LIBSSL".to_owned(), "libssl1.1".to_owned()),
-                                        ("MCELOG".to_owned(), "mcelog".to_owned()),
+                                        ("MCELOG".to_owned(), "bash".to_owned()),
                                     ]
                                 ),
                                 systemd_lib: "lib/systemd/system".to_owned(),
@@ -1252,7 +1246,7 @@ fi
                                         ("CGROUP".to_owned(), "cgroup-tools".to_owned()),
                                         ("CPUPOWER".to_owned(), "linux-cpupower".to_owned()),
                                         ("LIBSSL".to_owned(), "libssl1.1".to_owned()),
-                                        ("MCELOG".to_owned(), "mcelog".to_owned()),
+                                        ("MCELOG".to_owned(), "bash".to_owned()),
                                     ]
                                 ),
                                 systemd_lib: "lib/systemd/system".to_owned(),
@@ -1406,7 +1400,7 @@ fi
                                         ("CGROUP".to_owned(), "cgroup-tools".to_owned()),
                                         ("CPUPOWER".to_owned(), "linux-cpupower".to_owned()),
                                         ("LIBSSL".to_owned(), "libssl1.1".to_owned()),
-                                        ("MCELOG".to_owned(), "mcelog".to_owned()),
+                                        ("MCELOG".to_owned(), "bash".to_owned()),
                                     ]
                                 ),
                                 systemd_lib: "lib/systemd/system".to_owned(),
@@ -1559,8 +1553,8 @@ fi
                                         ("BINDINGS_PYTHON_SIMPLEJSON".to_owned(), "python3-simplejson".to_owned()),
                                         ("CGROUP".to_owned(), "cgroup-tools".to_owned()),
                                         ("CPUPOWER".to_owned(), "linux-cpupower".to_owned()),
-                                        ("LIBSSL".to_owned(), "libssl1.1".to_owned()),
-                                        ("MCELOG".to_owned(), "mcelog".to_owned()),
+                                        ("LIBSSL".to_owned(), "libssl3".to_owned()),
+                                        ("MCELOG".to_owned(), "bash".to_owned()),
                                     ]
                                 ),
                                 systemd_lib: "lib/systemd/system".to_owned(),
@@ -2182,7 +2176,7 @@ fi
                                     package: HashMap::from(
                                     [
                                         ("KMOD".to_owned(), "kmod".to_owned()),
-                                        ("LIBCGROUP".to_owned(), "libcgroup-tools".to_owned()),
+                                        ("LIBCGROUP".to_owned(), "bash".to_owned()),
                                         ("LIBUDEV".to_owned(), "systemd-libs".to_owned()),
                                         ("OPENSSL".to_owned(), "openssl-libs".to_owned()),
                                         ("PERL_AUTODIE".to_owned(), "perl-autodie".to_owned()),
@@ -2190,7 +2184,7 @@ fi
                                         ("PERL_LWP_PROTO_HTTPS".to_owned(), "perl-LWP-Protocol-https".to_owned()),
                                         ("PERL_SYS_SYSLOG".to_owned(), "perl-Sys-Syslog".to_owned()),
                                         ("PROCPS".to_owned(), "procps-ng".to_owned()),
-                                        ("PYTHON_SIMPLEJSON".to_owned(), "python2-simplejson".to_owned()),
+                                        ("PYTHON_SIMPLEJSON".to_owned(), "bash".to_owned()),
                                         ("UDEV".to_owned(), "systemd".to_owned()),
                                     ]
                                 ),
@@ -2514,7 +2508,7 @@ fi
                                 kind: VariantKind::UBUNTU2004,
                                 descr: "Ubuntu 20.04 LTS (Focal Fossa)".to_owned(),
                                 family: "debian".to_owned(),
-                                parent: "UBUNTU2110".to_owned(),
+                                parent: "UBUNTU2204".to_owned(),
                                 detect: Detect {
                                     filename: "/etc/os-release".to_owned(),
                                     regex: r"^ PRETTY_NAME= .* (?: Ubuntu \s+ 20 \. 04 | Mint \s+ 20 ) ".to_owned(),
@@ -2659,156 +2653,6 @@ fi
                             },
                     ),
                     (
-                            VariantKind::UBUNTU2110,
-                            Variant {
-                                kind: VariantKind::UBUNTU2110,
-                                descr: "Ubuntu 21.10 LTS (Impish Indri)".to_owned(),
-                                family: "debian".to_owned(),
-                                parent: "UBUNTU2204".to_owned(),
-                                detect: Detect {
-                                    filename: "/etc/os-release".to_owned(),
-                                    regex: r"^ PRETTY_NAME= .* (?: Ubuntu \s+ 21 \. 10 ) ".to_owned(),
-                                    os_id: "ubuntu".to_owned(),
-                                    os_version_regex: r"^21\.10$".to_owned(),
-                                },
-                                supported: Supported {
-                                    repo: true,
-                                },
-                                commands: HashMap::from(
-                                    [
-                                        (
-                                            "package".to_owned(),
-                                            HashMap::from(
-                                                [
-                                                    (
-                                                        "install".to_owned(),
-                                                        vec![
-                                                            "env".to_owned(),
-                                                            "DEBIAN_FRONTEND=noninteractive".to_owned(),
-                                                            "apt-get".to_owned(),
-                                                            "-q".to_owned(),
-                                                            "-y".to_owned(),
-                                                            "--no-install-recommends".to_owned(),
-                                                            "install".to_owned(),
-                                                            "--".to_owned(),
-                                                        ],
-                                                    ),
-                                                    (
-                                                        "list_all".to_owned(),
-                                                        vec![
-                                                            "dpkg-query".to_owned(),
-                                                            "-W".to_owned(),
-                                                            "-f".to_owned(),
-                                                            "${Package}\\t${Version}\\t${Architecture}\\t${db:Status-Abbrev}\\n".to_owned(),
-                                                            "--".to_owned(),
-                                                        ],
-                                                    ),
-                                                    (
-                                                        "purge".to_owned(),
-                                                        vec![
-                                                            "env".to_owned(),
-                                                            "DEBIAN_FRONTEND=noninteractive".to_owned(),
-                                                            "apt-get".to_owned(),
-                                                            "-q".to_owned(),
-                                                            "-y".to_owned(),
-                                                            "purge".to_owned(),
-                                                            "--".to_owned(),
-                                                        ],
-                                                    ),
-                                                    (
-                                                        "remove".to_owned(),
-                                                        vec![
-                                                            "env".to_owned(),
-                                                            "DEBIAN_FRONTEND=noninteractive".to_owned(),
-                                                            "apt-get".to_owned(),
-                                                            "-q".to_owned(),
-                                                            "-y".to_owned(),
-                                                            "remove".to_owned(),
-                                                            "--".to_owned(),
-                                                        ],
-                                                    ),
-                                                    (
-                                                        "remove_impl".to_owned(),
-                                                        vec![
-                                                            "env".to_owned(),
-                                                            "DEBIAN_FRONTEND=noninteractive".to_owned(),
-                                                            "dpkg".to_owned(),
-                                                            "-r".to_owned(),
-                                                            "--".to_owned(),
-                                                        ],
-                                                    ),
-                                                    (
-                                                        "update_db".to_owned(),
-                                                        vec![
-                                                            "apt-get".to_owned(),
-                                                            "-q".to_owned(),
-                                                            "-y".to_owned(),
-                                                            "update".to_owned(),
-                                                        ],
-                                                    ),
-                                                ]
-                                            ),
-                                        ),
-                                        (
-                                            "pkgfile".to_owned(),
-                                            HashMap::from(
-                                                [
-                                                    (
-                                                        "dep_query".to_owned(),
-                                                        vec![
-                                                            "sh".to_owned(),
-                                                            "-c".to_owned(),
-                                                            "dpkg-deb -f -- \"$pkg\" \"Depends\" | sed -e \"s/ *, */,/g\" | tr \",\" \"\\n\"".to_owned(),
-                                                        ],
-                                                    ),
-                                                    (
-                                                        "install".to_owned(),
-                                                        vec![
-                                                            "sh".to_owned(),
-                                                            "-c".to_owned(),
-                                                            "env DEBIAN_FRONTEND=noninteractive apt-get install --no-install-recommends --reinstall -y -o DPkg::Options::=--force-confnew -- $packages".to_owned(),
-                                                        ],
-                                                    ),
-                                                ]
-                                            ),
-                                        ),
-                                    ]
-                                ),
-                                min_sys_python: "3.9".to_owned(),
-                                repo:
-                                    Repo::Deb(DebRepo {
-                                        codename: "impish".to_owned(),
-                                        vendor: "ubuntu".to_owned(),
-                                        sources: "debian/repo/storpool.sources".to_owned(),
-                                        keyring: "debian/repo/storpool-keyring.gpg".to_owned(),
-                                        req_packages: vec![
-                                            "ca-certificates".to_owned(),
-                                        ],
-                                    }),
-                                    package: HashMap::from(
-                                    [
-                                        ("BINDINGS_PYTHON".to_owned(), "python3".to_owned()),
-                                        ("BINDINGS_PYTHON_CONFGET".to_owned(), "python3-confget".to_owned()),
-                                        ("BINDINGS_PYTHON_SIMPLEJSON".to_owned(), "python3-simplejson".to_owned()),
-                                        ("CGROUP".to_owned(), "cgroup-tools".to_owned()),
-                                        ("CPUPOWER".to_owned(), "linux-tools-generic".to_owned()),
-                                        ("LIBSSL".to_owned(), "libssl1.1".to_owned()),
-                                        ("MCELOG".to_owned(), "bash".to_owned()),
-                                    ]
-                                ),
-                                systemd_lib: "lib/systemd/system".to_owned(),
-                                file_ext: "deb".to_owned(),
-                                initramfs_flavor: "update-initramfs".to_owned(),
-                                builder: Builder {
-                                    alias: "ubuntu-21.10".to_owned(),
-                                    base_image: "ubuntu:impish".to_owned(),
-                                    branch: "ubuntu/impish".to_owned(),
-                                    kernel_package: "linux-headers".to_owned(),
-                                    utf8_locale: "C.UTF-8".to_owned(),
-                                },
-                            },
-                    ),
-                    (
                             VariantKind::UBUNTU2204,
                             Variant {
                                 kind: VariantKind::UBUNTU2204,
@@ -2942,7 +2786,7 @@ fi
                                         ("BINDINGS_PYTHON_SIMPLEJSON".to_owned(), "python3-simplejson".to_owned()),
                                         ("CGROUP".to_owned(), "cgroup-tools".to_owned()),
                                         ("CPUPOWER".to_owned(), "linux-tools-generic".to_owned()),
-                                        ("LIBSSL".to_owned(), "libssl1.1".to_owned()),
+                                        ("LIBSSL".to_owned(), "libssl3".to_owned()),
                                         ("MCELOG".to_owned(), "bash".to_owned()),
                                     ]
                                 ),

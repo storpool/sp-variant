@@ -113,11 +113,6 @@ detect_from_os_release()
 		return
 	fi
 	
-	if [ "$os_id" = 'ubuntu' ] && printf -- '%s\n' "$version_id" | grep -Eqe '^21\.10$'; then
-		printf -- '%s\n' 'UBUNTU2110'
-		return
-	fi
-	
 	if [ "$os_id" = 'ubuntu' ] && printf -- '%s\n' "$version_id" | grep -Eqe '^22\.04$'; then
 		printf -- '%s\n' 'UBUNTU2204'
 		return
@@ -198,11 +193,6 @@ cmd_detect()
 	
 	if [ -r '/etc/os-release' ] && grep -Eqe '^PRETTY_NAME=.*(Ubuntu[[:space:]]+20\.04|Mint[[:space:]]+20)' -- '/etc/os-release'; then
 		printf -- '%s\n' 'UBUNTU2004'
-		return
-	fi
-	
-	if [ -r '/etc/os-release' ] && grep -Eqe '^PRETTY_NAME=.*(Ubuntu[[:space:]]+21\.10)' -- '/etc/os-release'; then
-		printf -- '%s\n' 'UBUNTU2110'
 		return
 	fi
 	
@@ -424,7 +414,7 @@ show_ALMA9()
   "name": "ALMA9",
   "package": {
     "KMOD": "kmod",
-    "LIBCGROUP": "libcgroup-tools",
+    "LIBCGROUP": "bash",
     "LIBUDEV": "systemd-libs",
     "OPENSSL": "openssl-libs",
     "PERL_AUTODIE": "perl-autodie",
@@ -432,7 +422,7 @@ show_ALMA9()
     "PERL_LWP_PROTO_HTTPS": "perl-LWP-Protocol-https",
     "PERL_SYS_SYSLOG": "perl-Sys-Syslog",
     "PROCPS": "procps-ng",
-    "PYTHON_SIMPLEJSON": "python2-simplejson",
+    "PYTHON_SIMPLEJSON": "bash",
     "UDEV": "systemd"
   },
   "parent": "",
@@ -852,7 +842,7 @@ show_DEBIAN9()
     "CGROUP": "cgroup-tools",
     "CPUPOWER": "linux-cpupower",
     "LIBSSL": "libssl1.1",
-    "MCELOG": "mcelog"
+    "MCELOG": "bash"
   },
   "parent": "DEBIAN10",
   "repo": {
@@ -866,7 +856,7 @@ show_DEBIAN9()
     "vendor": "debian"
   },
   "supported": {
-    "repo": true
+    "repo": false
   },
   "systemd_lib": "lib/systemd/system"
 }
@@ -967,7 +957,7 @@ show_DEBIAN10()
     "CGROUP": "cgroup-tools",
     "CPUPOWER": "linux-cpupower",
     "LIBSSL": "libssl1.1",
-    "MCELOG": "mcelog"
+    "MCELOG": "bash"
   },
   "parent": "DEBIAN11",
   "repo": {
@@ -1081,7 +1071,7 @@ show_DEBIAN11()
     "CGROUP": "cgroup-tools",
     "CPUPOWER": "linux-cpupower",
     "LIBSSL": "libssl1.1",
-    "MCELOG": "mcelog"
+    "MCELOG": "bash"
   },
   "parent": "DEBIAN12",
   "repo": {
@@ -1194,8 +1184,8 @@ show_DEBIAN12()
     "BINDINGS_PYTHON_SIMPLEJSON": "python3-simplejson",
     "CGROUP": "cgroup-tools",
     "CPUPOWER": "linux-cpupower",
-    "LIBSSL": "libssl1.1",
-    "MCELOG": "mcelog"
+    "LIBSSL": "libssl3",
+    "MCELOG": "bash"
   },
   "parent": "",
   "repo": {
@@ -1610,7 +1600,7 @@ show_ROCKY9()
   "name": "ROCKY9",
   "package": {
     "KMOD": "kmod",
-    "LIBCGROUP": "libcgroup-tools",
+    "LIBCGROUP": "bash",
     "LIBUDEV": "systemd-libs",
     "OPENSSL": "openssl-libs",
     "PERL_AUTODIE": "perl-autodie",
@@ -1618,7 +1608,7 @@ show_ROCKY9()
     "PERL_LWP_PROTO_HTTPS": "perl-LWP-Protocol-https",
     "PERL_SYS_SYSLOG": "perl-Sys-Syslog",
     "PROCPS": "procps-ng",
-    "PYTHON_SIMPLEJSON": "python2-simplejson",
+    "PYTHON_SIMPLEJSON": "bash",
     "UDEV": "systemd"
   },
   "parent": "ALMA9",
@@ -1960,123 +1950,9 @@ show_UBUNTU2004()
     "LIBSSL": "libssl1.1",
     "MCELOG": "bash"
   },
-  "parent": "UBUNTU2110",
-  "repo": {
-    "codename": "focal",
-    "keyring": "debian/repo/storpool-keyring.gpg",
-    "req_packages": [
-      "ca-certificates"
-    ],
-    "sources": "debian/repo/storpool.sources",
-    "vendor": "ubuntu"
-  },
-  "supported": {
-    "repo": true
-  },
-  "systemd_lib": "lib/systemd/system"
-}
-EOVARIANT_JSON
-}
-
-show_UBUNTU2110()
-{
-	cat <<'EOVARIANT_JSON'
-  {
-  "builder": {
-    "alias": "ubuntu-21.10",
-    "base_image": "ubuntu:impish",
-    "branch": "ubuntu/impish",
-    "kernel_package": "linux-headers",
-    "utf8_locale": "C.UTF-8"
-  },
-  "commands": {
-    "package": {
-      "install": [
-        "env",
-        "DEBIAN_FRONTEND=noninteractive",
-        "apt-get",
-        "-q",
-        "-y",
-        "--no-install-recommends",
-        "install",
-        "--"
-      ],
-      "list_all": [
-        "dpkg-query",
-        "-W",
-        "-f",
-        "${Package}\\t${Version}\\t${Architecture}\\t${db:Status-Abbrev}\\n",
-        "--"
-      ],
-      "purge": [
-        "env",
-        "DEBIAN_FRONTEND=noninteractive",
-        "apt-get",
-        "-q",
-        "-y",
-        "purge",
-        "--"
-      ],
-      "remove": [
-        "env",
-        "DEBIAN_FRONTEND=noninteractive",
-        "apt-get",
-        "-q",
-        "-y",
-        "remove",
-        "--"
-      ],
-      "remove_impl": [
-        "env",
-        "DEBIAN_FRONTEND=noninteractive",
-        "dpkg",
-        "-r",
-        "--"
-      ],
-      "update_db": [
-        "apt-get",
-        "-q",
-        "-y",
-        "update"
-      ]
-    },
-    "pkgfile": {
-      "dep_query": [
-        "sh",
-        "-c",
-        "dpkg-deb -f -- \"$pkg\" \"Depends\" | sed -e \"s/ *, */,/g\" | tr \",\" \"\\n\""
-      ],
-      "install": [
-        "sh",
-        "-c",
-        "env DEBIAN_FRONTEND=noninteractive apt-get install --no-install-recommends --reinstall -y -o DPkg::Options::=--force-confnew -- $packages"
-      ]
-    }
-  },
-  "descr": "Ubuntu 21.10 LTS (Impish Indri)",
-  "detect": {
-    "filename": "/etc/os-release",
-    "os_id": "ubuntu",
-    "os_version_regex": "^21\\.10$",
-    "regex": "^ PRETTY_NAME= .* (?: Ubuntu \\s+ 21 \\. 10 ) "
-  },
-  "family": "debian",
-  "file_ext": "deb",
-  "initramfs_flavor": "update-initramfs",
-  "min_sys_python": "3.9",
-  "name": "UBUNTU2110",
-  "package": {
-    "BINDINGS_PYTHON": "python3",
-    "BINDINGS_PYTHON_CONFGET": "python3-confget",
-    "BINDINGS_PYTHON_SIMPLEJSON": "python3-simplejson",
-    "CGROUP": "cgroup-tools",
-    "CPUPOWER": "linux-tools-generic",
-    "LIBSSL": "libssl1.1",
-    "MCELOG": "bash"
-  },
   "parent": "UBUNTU2204",
   "repo": {
-    "codename": "impish",
+    "codename": "focal",
     "keyring": "debian/repo/storpool-keyring.gpg",
     "req_packages": [
       "ca-certificates"
@@ -2185,7 +2061,7 @@ show_UBUNTU2204()
     "BINDINGS_PYTHON_SIMPLEJSON": "python3-simplejson",
     "CGROUP": "cgroup-tools",
     "CPUPOWER": "linux-tools-generic",
-    "LIBSSL": "libssl1.1",
+    "LIBSSL": "libssl3",
     "MCELOG": "bash"
   },
   "parent": "DEBIAN12",
@@ -2235,7 +2111,6 @@ cmd_show_all()
     "UBUNTU1604",
     "UBUNTU1804",
     "UBUNTU2004",
-    "UBUNTU2110",
     "UBUNTU2204",
     "DEBIAN9",
     "DEBIAN10",
@@ -2293,9 +2168,6 @@ EOPROLOGUE
   echo ','
   printf -- '    "%s": ' 'UBUNTU2004'
   show_UBUNTU2004
-  echo ','
-  printf -- '    "%s": ' 'UBUNTU2110'
-  show_UBUNTU2110
   echo ','
   printf -- '    "%s": ' 'UBUNTU2204'
   show_UBUNTU2204
@@ -3808,87 +3680,6 @@ fi
 			esac
 			;;
 		
-		UBUNTU2110)
-			case "$cmd_cat" in
-				
-				package)
-					case "$cmd_item" in
-						
-						install)
-							# The commands are quoted exactly as much as necessary.
-							# shellcheck disable=SC2016
-							$noop 'env' 'DEBIAN_FRONTEND=noninteractive' 'apt-get' '-q' '-y' '--no-install-recommends' 'install' '--'  "$@"
-							;;
-						
-						list_all)
-							# The commands are quoted exactly as much as necessary.
-							# shellcheck disable=SC2016
-							$noop 'dpkg-query' '-W' '-f' '${Package}\t${Version}\t${Architecture}\t${db:Status-Abbrev}\n' '--'  "$@"
-							;;
-						
-						purge)
-							# The commands are quoted exactly as much as necessary.
-							# shellcheck disable=SC2016
-							$noop 'env' 'DEBIAN_FRONTEND=noninteractive' 'apt-get' '-q' '-y' 'purge' '--'  "$@"
-							;;
-						
-						remove)
-							# The commands are quoted exactly as much as necessary.
-							# shellcheck disable=SC2016
-							$noop 'env' 'DEBIAN_FRONTEND=noninteractive' 'apt-get' '-q' '-y' 'remove' '--'  "$@"
-							;;
-						
-						remove_impl)
-							# The commands are quoted exactly as much as necessary.
-							# shellcheck disable=SC2016
-							$noop 'env' 'DEBIAN_FRONTEND=noninteractive' 'dpkg' '-r' '--'  "$@"
-							;;
-						
-						update_db)
-							# The commands are quoted exactly as much as necessary.
-							# shellcheck disable=SC2016
-							$noop 'apt-get' '-q' '-y' 'update'  "$@"
-							;;
-						
-
-						*)
-							echo "Invalid command '$cmd_item' in the '$cmd_cat' category" 1>&2
-							exit 1
-							;;
-					esac
-					;;
-				
-				pkgfile)
-					case "$cmd_item" in
-						
-						dep_query)
-							# The commands are quoted exactly as much as necessary.
-							# shellcheck disable=SC2016
-							$noop 'sh' '-c' 'dpkg-deb -f -- "$pkg" "Depends" | sed -e "s/ *, */,/g" | tr "," "\n"'  "$@"
-							;;
-						
-						install)
-							# The commands are quoted exactly as much as necessary.
-							# shellcheck disable=SC2016
-							$noop 'sh' '-c' 'env DEBIAN_FRONTEND=noninteractive apt-get install --no-install-recommends --reinstall -y -o DPkg::Options::=--force-confnew -- $packages'  "$@"
-							;;
-						
-
-						*)
-							echo "Invalid command '$cmd_item' in the '$cmd_cat' category" 1>&2
-							exit 1
-							;;
-					esac
-					;;
-				
-
-				*)
-					echo "Invalid command category '$cmd_cat'" 1>&2
-					exit 1
-					;;
-			esac
-			;;
-		
 		UBUNTU2204)
 			case "$cmd_cat" in
 				
@@ -4207,12 +3998,6 @@ cmd_repo_add()
 			
 			;;
 		
-		UBUNTU2110)
-			
-			repo_add_deb 'UBUNTU2110' "$vdir" "$repotype" 'debian/repo/storpool.sources' 'debian/repo/storpool-keyring.gpg' 'ca-certificates'
-			
-			;;
-		
 		UBUNTU2204)
 			
 			repo_add_deb 'UBUNTU2204' "$vdir" "$repotype" 'debian/repo/storpool.sources' 'debian/repo/storpool-keyring.gpg' 'ca-certificates'
@@ -4380,10 +4165,6 @@ case "$1" in
 			
 			UBUNTU2004)
 				show_variant 'UBUNTU2004'
-				;;
-			
-			UBUNTU2110)
-				show_variant 'UBUNTU2110'
 				;;
 			
 			UBUNTU2204)
