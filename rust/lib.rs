@@ -54,7 +54,7 @@ pub enum VariantError {
 }
 
 /// The version of the variant definition format data.
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Copy, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct VariantFormatVersion {
     /// The version major number.
@@ -64,7 +64,7 @@ pub struct VariantFormatVersion {
 }
 
 /// The internal format of the variant definition format data.
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Copy, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct VariantFormat {
     /// The version of the metadata format.
@@ -91,7 +91,7 @@ pub struct Detect {
 }
 
 /// The aspects of the StorPool operation supported for this build variant.
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Copy, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct Supported {
     /// Is there a StorPool third-party packages repository?
