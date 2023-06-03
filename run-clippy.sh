@@ -46,6 +46,7 @@ done
 		-A clippy::blanket_clippy_restriction_lints \
 		-A clippy::implicit_return \
 		-A clippy::missing_docs_in_private_items \
+		-A clippy::question_mark_used \
 		-A clippy::std_instead_of_alloc \
 		-A clippy::std_instead_of_core \
 	-W clippy::pedantic \
