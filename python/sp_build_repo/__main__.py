@@ -385,7 +385,7 @@ def parse_overrides(path: pathlib.Path) -> Overrides:
     help="Do not include the current date in the directory name",
 )
 @click.pass_context
-def cmd_build(
+def cmd_build(  # noqa: PLR0913
     ctx: click.Context,
     *,
     datadir: pathlib.Path,
