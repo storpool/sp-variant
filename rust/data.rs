@@ -38,8 +38,10 @@ pub enum VariantKind {
     DEBIAN10,
     /// Debian 11.x (bullseye)
     DEBIAN11,
-    /// Debian 12.x (bookworm/unstable)
+    /// Debian 12.x (bookworm)
     DEBIAN12,
+    /// Debian 13.x (trixie/unstable)
+    DEBIAN13,
     /// Oracle Linux 7.x
     ORACLE7,
     /// RedHat Enterprise Linux 8.x
@@ -70,6 +72,7 @@ impl VariantKind {
     const DEBIAN10_NAME: &'static str = "DEBIAN10";
     const DEBIAN11_NAME: &'static str = "DEBIAN11";
     const DEBIAN12_NAME: &'static str = "DEBIAN12";
+    const DEBIAN13_NAME: &'static str = "DEBIAN13";
     const ORACLE7_NAME: &'static str = "ORACLE7";
     const RHEL8_NAME: &'static str = "RHEL8";
     const ROCKY8_NAME: &'static str = "ROCKY8";
@@ -94,6 +97,7 @@ impl AsRef<str> for VariantKind {
             Self::DEBIAN10 => Self::DEBIAN10_NAME,
             Self::DEBIAN11 => Self::DEBIAN11_NAME,
             Self::DEBIAN12 => Self::DEBIAN12_NAME,
+            Self::DEBIAN13 => Self::DEBIAN13_NAME,
             Self::ORACLE7 => Self::ORACLE7_NAME,
             Self::RHEL8 => Self::RHEL8_NAME,
             Self::ROCKY8 => Self::ROCKY8_NAME,
@@ -122,6 +126,7 @@ impl FromStr for VariantKind {
             Self::DEBIAN10_NAME => Ok(Self::DEBIAN10),
             Self::DEBIAN11_NAME => Ok(Self::DEBIAN11),
             Self::DEBIAN12_NAME => Ok(Self::DEBIAN12),
+            Self::DEBIAN13_NAME => Ok(Self::DEBIAN13),
             Self::ORACLE7_NAME => Ok(Self::ORACLE7),
             Self::RHEL8_NAME => Ok(Self::RHEL8),
             Self::ROCKY8_NAME => Ok(Self::ROCKY8),
@@ -169,6 +174,7 @@ pub fn get_variants() -> &'static VariantDefTop {
                     VariantKind::DEBIAN10,
                     VariantKind::DEBIAN11,
                     VariantKind::DEBIAN12,
+                    VariantKind::DEBIAN13,
             ],
             variants: HashMap::from(
                 [
@@ -1425,9 +1431,9 @@ fi
                             VariantKind::DEBIAN12,
                             Variant {
                                 kind: VariantKind::DEBIAN12,
-                                descr: "Debian 12.x (bookworm/unstable)".to_owned(),
+                                descr: "Debian 12.x (bookworm)".to_owned(),
                                 family: "debian".to_owned(),
-                                parent: "".to_owned(),
+                                parent: "DEBIAN13".to_owned(),
                                 detect: Detect {
                                     filename: "/etc/os-release".to_owned(),
                                     regex: r"^
@@ -1437,6 +1443,160 @@ fi
                 ".to_owned(),
                                     os_id: "debian".to_owned(),
                                     os_version_regex: r"^12$".to_owned(),
+                                },
+                                supported: Supported {
+                                    repo: true,
+                                },
+                                commands: HashMap::from(
+                                    [
+                                        (
+                                            "package".to_owned(),
+                                            HashMap::from(
+                                                [
+                                                    (
+                                                        "install".to_owned(),
+                                                        vec![
+                                                            "env".to_owned(),
+                                                            "DEBIAN_FRONTEND=noninteractive".to_owned(),
+                                                            "apt-get".to_owned(),
+                                                            "-q".to_owned(),
+                                                            "-y".to_owned(),
+                                                            "--no-install-recommends".to_owned(),
+                                                            "install".to_owned(),
+                                                            "--".to_owned(),
+                                                        ],
+                                                    ),
+                                                    (
+                                                        "list_all".to_owned(),
+                                                        vec![
+                                                            "dpkg-query".to_owned(),
+                                                            "-W".to_owned(),
+                                                            "-f".to_owned(),
+                                                            "${Package}\\t${Version}\\t${Architecture}\\t${db:Status-Abbrev}\\n".to_owned(),
+                                                            "--".to_owned(),
+                                                        ],
+                                                    ),
+                                                    (
+                                                        "purge".to_owned(),
+                                                        vec![
+                                                            "env".to_owned(),
+                                                            "DEBIAN_FRONTEND=noninteractive".to_owned(),
+                                                            "apt-get".to_owned(),
+                                                            "-q".to_owned(),
+                                                            "-y".to_owned(),
+                                                            "purge".to_owned(),
+                                                            "--".to_owned(),
+                                                        ],
+                                                    ),
+                                                    (
+                                                        "remove".to_owned(),
+                                                        vec![
+                                                            "env".to_owned(),
+                                                            "DEBIAN_FRONTEND=noninteractive".to_owned(),
+                                                            "apt-get".to_owned(),
+                                                            "-q".to_owned(),
+                                                            "-y".to_owned(),
+                                                            "remove".to_owned(),
+                                                            "--".to_owned(),
+                                                        ],
+                                                    ),
+                                                    (
+                                                        "remove_impl".to_owned(),
+                                                        vec![
+                                                            "env".to_owned(),
+                                                            "DEBIAN_FRONTEND=noninteractive".to_owned(),
+                                                            "dpkg".to_owned(),
+                                                            "-r".to_owned(),
+                                                            "--".to_owned(),
+                                                        ],
+                                                    ),
+                                                    (
+                                                        "update_db".to_owned(),
+                                                        vec![
+                                                            "apt-get".to_owned(),
+                                                            "-q".to_owned(),
+                                                            "-y".to_owned(),
+                                                            "update".to_owned(),
+                                                        ],
+                                                    ),
+                                                ]
+                                            ),
+                                        ),
+                                        (
+                                            "pkgfile".to_owned(),
+                                            HashMap::from(
+                                                [
+                                                    (
+                                                        "dep_query".to_owned(),
+                                                        vec![
+                                                            "sh".to_owned(),
+                                                            "-c".to_owned(),
+                                                            "dpkg-deb -f -- \"$pkg\" \"Depends\" | sed -e \"s/ *, */,/g\" | tr \",\" \"\\n\"".to_owned(),
+                                                        ],
+                                                    ),
+                                                    (
+                                                        "install".to_owned(),
+                                                        vec![
+                                                            "sh".to_owned(),
+                                                            "-c".to_owned(),
+                                                            "env DEBIAN_FRONTEND=noninteractive apt-get install --no-install-recommends --reinstall -y -o DPkg::Options::=--force-confnew -- $packages".to_owned(),
+                                                        ],
+                                                    ),
+                                                ]
+                                            ),
+                                        ),
+                                    ]
+                                ),
+                                min_sys_python: "3.9".to_owned(),
+                                repo:
+                                    Repo::Deb(DebRepo {
+                                        codename: "bookworm".to_owned(),
+                                        vendor: "debian".to_owned(),
+                                        sources: "debian/repo/storpool.sources".to_owned(),
+                                        keyring: "debian/repo/storpool-keyring.gpg".to_owned(),
+                                        req_packages: vec![
+                                            "ca-certificates".to_owned(),
+                                        ],
+                                    }),
+                                    package: HashMap::from(
+                                    [
+                                        ("BINDINGS_PYTHON".to_owned(), "python3".to_owned()),
+                                        ("BINDINGS_PYTHON_CONFGET".to_owned(), "python3-confget".to_owned()),
+                                        ("BINDINGS_PYTHON_SIMPLEJSON".to_owned(), "python3-simplejson".to_owned()),
+                                        ("CGROUP".to_owned(), "cgroup-tools".to_owned()),
+                                        ("CPUPOWER".to_owned(), "linux-cpupower".to_owned()),
+                                        ("LIBSSL".to_owned(), "libssl3".to_owned()),
+                                        ("MCELOG".to_owned(), "bash".to_owned()),
+                                    ]
+                                ),
+                                systemd_lib: "lib/systemd/system".to_owned(),
+                                file_ext: "deb".to_owned(),
+                                initramfs_flavor: "update-initramfs".to_owned(),
+                                builder: Builder {
+                                    alias: "debian12".to_owned(),
+                                    base_image: "debian:bookworm".to_owned(),
+                                    branch: "debian/bookworm".to_owned(),
+                                    kernel_package: "linux-headers".to_owned(),
+                                    utf8_locale: "C.UTF-8".to_owned(),
+                                },
+                            },
+                    ),
+                    (
+                            VariantKind::DEBIAN13,
+                            Variant {
+                                kind: VariantKind::DEBIAN13,
+                                descr: "Debian 13.x (trixie/unstable)".to_owned(),
+                                family: "debian".to_owned(),
+                                parent: "".to_owned(),
+                                detect: Detect {
+                                    filename: "/etc/os-release".to_owned(),
+                                    regex: r"^
+                    PRETTY_NAME= .*
+                    Debian \s+ GNU/Linux \s+
+                    (?: trixie | 13 ) (?: \s | / )
+                ".to_owned(),
+                                    os_id: "debian".to_owned(),
+                                    os_version_regex: r"^13$".to_owned(),
                                 },
                                 supported: Supported {
                                     repo: false,
@@ -1567,7 +1727,7 @@ fi
                                 file_ext: "deb".to_owned(),
                                 initramfs_flavor: "update-initramfs".to_owned(),
                                 builder: Builder {
-                                    alias: "debian12".to_owned(),
+                                    alias: "debian13".to_owned(),
                                     base_image: "debian:unstable".to_owned(),
                                     branch: "debian/unstable".to_owned(),
                                     kernel_package: "linux-headers".to_owned(),
@@ -2822,7 +2982,7 @@ fi
                                     os_version_regex: r"^23\.04$".to_owned(),
                                 },
                                 supported: Supported {
-                                    repo: false,
+                                    repo: true,
                                 },
                                 commands: HashMap::from(
                                     [

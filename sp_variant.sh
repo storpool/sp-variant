@@ -78,6 +78,11 @@ detect_from_os_release()
 		return
 	fi
 	
+	if [ "$os_id" = 'debian' ] && printf -- '%s\n' "$version_id" | grep -Eqe '^13$'; then
+		printf -- '%s\n' 'DEBIAN13'
+		return
+	fi
+	
 	if [ "$os_id" = 'ol' ] && printf -- '%s\n' "$version_id" | grep -Eqe '^7($|\.[0-9])'; then
 		printf -- '%s\n' 'ORACLE7'
 		return
@@ -228,6 +233,11 @@ cmd_detect()
 	
 	if [ -r '/etc/os-release' ] && grep -Eqe '^PRETTY_NAME=.*Debian[[:space:]]+GNU/Linux[[:space:]]+(bookworm|12)([[:space:]]|/)' -- '/etc/os-release'; then
 		printf -- '%s\n' 'DEBIAN12'
+		return
+	fi
+	
+	if [ -r '/etc/os-release' ] && grep -Eqe '^PRETTY_NAME=.*Debian[[:space:]]+GNU/Linux[[:space:]]+(trixie|13)([[:space:]]|/)' -- '/etc/os-release'; then
+		printf -- '%s\n' 'DEBIAN13'
 		return
 	fi
 	
@@ -1107,6 +1117,120 @@ show_DEBIAN12()
   {
   "builder": {
     "alias": "debian12",
+    "base_image": "debian:bookworm",
+    "branch": "debian/bookworm",
+    "kernel_package": "linux-headers",
+    "utf8_locale": "C.UTF-8"
+  },
+  "commands": {
+    "package": {
+      "install": [
+        "env",
+        "DEBIAN_FRONTEND=noninteractive",
+        "apt-get",
+        "-q",
+        "-y",
+        "--no-install-recommends",
+        "install",
+        "--"
+      ],
+      "list_all": [
+        "dpkg-query",
+        "-W",
+        "-f",
+        "${Package}\\t${Version}\\t${Architecture}\\t${db:Status-Abbrev}\\n",
+        "--"
+      ],
+      "purge": [
+        "env",
+        "DEBIAN_FRONTEND=noninteractive",
+        "apt-get",
+        "-q",
+        "-y",
+        "purge",
+        "--"
+      ],
+      "remove": [
+        "env",
+        "DEBIAN_FRONTEND=noninteractive",
+        "apt-get",
+        "-q",
+        "-y",
+        "remove",
+        "--"
+      ],
+      "remove_impl": [
+        "env",
+        "DEBIAN_FRONTEND=noninteractive",
+        "dpkg",
+        "-r",
+        "--"
+      ],
+      "update_db": [
+        "apt-get",
+        "-q",
+        "-y",
+        "update"
+      ]
+    },
+    "pkgfile": {
+      "dep_query": [
+        "sh",
+        "-c",
+        "dpkg-deb -f -- \"$pkg\" \"Depends\" | sed -e \"s/ *, */,/g\" | tr \",\" \"\\n\""
+      ],
+      "install": [
+        "sh",
+        "-c",
+        "env DEBIAN_FRONTEND=noninteractive apt-get install --no-install-recommends --reinstall -y -o DPkg::Options::=--force-confnew -- $packages"
+      ]
+    }
+  },
+  "descr": "Debian 12.x (bookworm)",
+  "detect": {
+    "filename": "/etc/os-release",
+    "os_id": "debian",
+    "os_version_regex": "^12$",
+    "regex": "^\n                    PRETTY_NAME= .*\n                    Debian \\s+ GNU/Linux \\s+\n                    (?: bookworm | 12 ) (?: \\s | / )\n                "
+  },
+  "family": "debian",
+  "file_ext": "deb",
+  "initramfs_flavor": "update-initramfs",
+  "min_sys_python": "3.9",
+  "name": "DEBIAN12",
+  "package": {
+    "BINDINGS_PYTHON": "python3",
+    "BINDINGS_PYTHON_CONFGET": "python3-confget",
+    "BINDINGS_PYTHON_SIMPLEJSON": "python3-simplejson",
+    "CGROUP": "cgroup-tools",
+    "CPUPOWER": "linux-cpupower",
+    "LIBSSL": "libssl3",
+    "MCELOG": "bash"
+  },
+  "parent": "DEBIAN13",
+  "repo": {
+    "codename": "bookworm",
+    "keyring": "debian/repo/storpool-keyring.gpg",
+    "req_packages": [
+      "ca-certificates"
+    ],
+    "sources": "debian/repo/storpool.sources",
+    "vendor": "debian"
+  },
+  "supported": {
+    "repo": true
+  },
+  "systemd_lib": "lib/systemd/system"
+}
+EOVARIANT_JSON
+}
+
+show_DEBIAN13()
+{
+	cat <<'EOVARIANT_JSON'
+  {
+  "builder": {
+    "alias": "debian13",
     "base_image": "debian:unstable",
     "branch": "debian/unstable",
     "kernel_package": "linux-headers",
@@ -1176,18 +1300,18 @@ show_DEBIAN12()
       ]
     }
   },
-  "descr": "Debian 12.x (bookworm/unstable)",
+  "descr": "Debian 13.x (trixie/unstable)",
   "detect": {
     "filename": "/etc/os-release",
     "os_id": "debian",
-    "os_version_regex": "^12$",
-    "regex": "^\n                    PRETTY_NAME= .*\n                    Debian \\s+ GNU/Linux \\s+\n                    (?: bookworm | 12 ) (?: \\s | / )\n                "
+    "os_version_regex": "^13$",
+    "regex": "^\n                    PRETTY_NAME= .*\n                    Debian \\s+ GNU/Linux \\s+\n                    (?: trixie | 13 ) (?: \\s | / )\n                "
   },
   "family": "debian",
   "file_ext": "deb",
   "initramfs_flavor": "update-initramfs",
   "min_sys_python": "3.9",
-  "name": "DEBIAN12",
+  "name": "DEBIAN13",
   "package": {
     "BINDINGS_PYTHON": "python3",
     "BINDINGS_PYTHON_CONFGET": "python3-confget",
@@ -2199,7 +2323,7 @@ show_UBUNTU2304()
     "vendor": "ubuntu"
   },
   "supported": {
-    "repo": false
+    "repo": true
   },
   "systemd_lib": "lib/systemd/system"
 }
@@ -2240,7 +2364,8 @@ cmd_show_all()
     "DEBIAN9",
     "DEBIAN10",
     "DEBIAN11",
-    "DEBIAN12"
+    "DEBIAN12",
+    "DEBIAN13"
   ],
   "variants": {
 EOPROLOGUE
@@ -2272,6 +2397,9 @@ EOPROLOGUE
   echo ','
   printf -- '    "%s": ' 'DEBIAN12'
   show_DEBIAN12
+  echo ','
+  printf -- '    "%s": ' 'DEBIAN13'
+  show_DEBIAN13
   echo ','
   printf -- '    "%s": ' 'ORACLE7'
   show_ORACLE7
@@ -3093,6 +3221,87 @@ fi
 			;;
 		
 		DEBIAN12)
+			case "$cmd_cat" in
+				
+				package)
+					case "$cmd_item" in
+						
+						install)
+							# The commands are quoted exactly as much as necessary.
+							# shellcheck disable=SC2016
+							$noop 'env' 'DEBIAN_FRONTEND=noninteractive' 'apt-get' '-q' '-y' '--no-install-recommends' 'install' '--'  "$@"
+							;;
+						
+						list_all)
+							# The commands are quoted exactly as much as necessary.
+							# shellcheck disable=SC2016
+							$noop 'dpkg-query' '-W' '-f' '${Package}\t${Version}\t${Architecture}\t${db:Status-Abbrev}\n' '--'  "$@"
+							;;
+						
+						purge)
+							# The commands are quoted exactly as much as necessary.
+							# shellcheck disable=SC2016
+							$noop 'env' 'DEBIAN_FRONTEND=noninteractive' 'apt-get' '-q' '-y' 'purge' '--'  "$@"
+							;;
+						
+						remove)
+							# The commands are quoted exactly as much as necessary.
+							# shellcheck disable=SC2016
+							$noop 'env' 'DEBIAN_FRONTEND=noninteractive' 'apt-get' '-q' '-y' 'remove' '--'  "$@"
+							;;
+						
+						remove_impl)
+							# The commands are quoted exactly as much as necessary.
+							# shellcheck disable=SC2016
+							$noop 'env' 'DEBIAN_FRONTEND=noninteractive' 'dpkg' '-r' '--'  "$@"
+							;;
+						
+						update_db)
+							# The commands are quoted exactly as much as necessary.
+							# shellcheck disable=SC2016
+							$noop 'apt-get' '-q' '-y' 'update'  "$@"
+							;;
+						
+
+						*)
+							echo "Invalid command '$cmd_item' in the '$cmd_cat' category" 1>&2
+							exit 1
+							;;
+					esac
+					;;
+				
+				pkgfile)
+					case "$cmd_item" in
+						
+						dep_query)
+							# The commands are quoted exactly as much as necessary.
+							# shellcheck disable=SC2016
+							$noop 'sh' '-c' 'dpkg-deb -f -- "$pkg" "Depends" | sed -e "s/ *, */,/g" | tr "," "\n"'  "$@"
+							;;
+						
+						install)
+							# The commands are quoted exactly as much as necessary.
+							# shellcheck disable=SC2016
+							$noop 'sh' '-c' 'env DEBIAN_FRONTEND=noninteractive apt-get install --no-install-recommends --reinstall -y -o DPkg::Options::=--force-confnew -- $packages'  "$@"
+							;;
+						
+
+						*)
+							echo "Invalid command '$cmd_item' in the '$cmd_cat' category" 1>&2
+							exit 1
+							;;
+					esac
+					;;
+				
+
+				*)
+					echo "Invalid command category '$cmd_cat'" 1>&2
+					exit 1
+					;;
+			esac
+			;;
+		
+		DEBIAN13)
 			case "$cmd_cat" in
 				
 				package)
@@ -4165,6 +4374,12 @@ cmd_repo_add()
 			
 			;;
 		
+		DEBIAN13)
+			
+			repo_add_deb 'DEBIAN13' "$vdir" "$repotype" 'debian/repo/storpool.sources' 'debian/repo/storpool-keyring.gpg' 'ca-certificates'
+			
+			;;
+		
 		ORACLE7)
 			
 			repo_add_yum 'ORACLE7' "$vdir" "$repotype" 'redhat/repo/storpool-centos.repo' 'redhat/repo/RPM-GPG-KEY-StorPool'
@@ -4352,6 +4567,10 @@ case "$1" in
 			
 			DEBIAN12)
 				show_variant 'DEBIAN12'
+				;;
+			
+			DEBIAN13)
+				show_variant 'DEBIAN13'
 				;;
 			
 			ORACLE7)
