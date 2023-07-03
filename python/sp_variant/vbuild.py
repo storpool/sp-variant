@@ -21,8 +21,8 @@ CMD_NOOP: Final[list[str]] = ["true"]
 
 _VARIANT_DEF: Final[list[defs.Variant | defs.VariantUpdate]] = [
     defs.Variant(
-        name="DEBIAN12",
-        descr="Debian 12.x (bookworm/unstable)",
+        name="DEBIAN13",
+        descr="Debian 13.x (trixie/unstable)",
         parent="",
         family="debian",
         detect=defs.Detect(
@@ -31,12 +31,12 @@ _VARIANT_DEF: Final[list[defs.Variant | defs.VariantUpdate]] = [
                 r"""^
                     PRETTY_NAME= .*
                     Debian \s+ GNU/Linux \s+
-                    (?: bookworm | 12 ) (?: \s | / )
+                    (?: trixie | 13 ) (?: \s | / )
                 """,
                 re.X,
             ),
             os_id="debian",
-            os_version_regex=re.compile(r"^12$"),
+            os_version_regex=re.compile(r"^13$"),
         ),
         supported=defs.Supported(repo=False),
         commands=defs.Commands(
@@ -122,12 +122,39 @@ _VARIANT_DEF: Final[list[defs.Variant | defs.VariantUpdate]] = [
         file_ext="deb",
         initramfs_flavor="update-initramfs",
         builder=defs.Builder(
-            alias="debian12",
+            alias="debian13",
             base_image="debian:unstable",
             branch="debian/unstable",
             kernel_package="linux-headers",
             utf8_locale="C.UTF-8",
         ),
+    ),
+    defs.VariantUpdate(
+        name="DEBIAN12",
+        descr="Debian 12.x (bookworm)",
+        parent="DEBIAN13",
+        detect=defs.Detect(
+            filename="/etc/os-release",
+            regex=re.compile(
+                r"""^
+                    PRETTY_NAME= .*
+                    Debian \s+ GNU/Linux \s+
+                    (?: bookworm | 12 ) (?: \s | / )
+                """,
+                re.X,
+            ),
+            os_id="debian",
+            os_version_regex=re.compile(r"^12$"),
+        ),
+        updates={
+            "supported": {"repo": True},
+            "repo": {"codename": "bookworm"},
+            "builder": {
+                "alias": "debian12",
+                "base_image": "debian:bookworm",
+                "branch": "debian/bookworm",
+            },
+        },
     ),
     defs.VariantUpdate(
         name="DEBIAN11",
