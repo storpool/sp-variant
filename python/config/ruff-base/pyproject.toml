@@ -24,6 +24,9 @@ ignore = [
   # Too restrictive.
   "EM",
 
+  # We want to report exceptions with as much context as possible.
+  "PERF203",
+
   # Maybe we shall fix the use of magic values... some sunny day.
   "PLR2004",
 
