@@ -24,7 +24,7 @@ from sp_variant import vbuild
 
 
 if TYPE_CHECKING:
-    from typing import Final
+    from typing import ClassVar, Final
 
 
 if sys.version_info >= (3, 11):
@@ -103,8 +103,8 @@ class Config(cfg_diag.Config):
 class Singles:
     """Keep some singleton objects in a controlled way."""
 
-    _jinja2_env: dict[str, jinja2.Environment] = {}
-    _jinja2_loaders: dict[str, jinja2.BaseLoader] = {}
+    _jinja2_env: ClassVar[dict[str, jinja2.Environment]] = {}
+    _jinja2_loaders: ClassVar[dict[str, jinja2.BaseLoader]] = {}
 
     @classmethod
     def jinja2_env(cls, path: pathlib.Path) -> jinja2.Environment:
