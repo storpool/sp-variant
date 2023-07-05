@@ -2,8 +2,11 @@
 # SPDX-License-Identifier: BSD-2-Clause
 
 [build-system]
-requires = ["setuptools >= 61", "wheel"]
-build-backend = "setuptools.build_meta"
+requires = [
+  "hatchling >= 1.8, < 2",
+  "hatch-requirements-txt >= 0.3, < 0.5",
+]
+build-backend = "hatchling.build"
 
 [project]
 name = "sp-variant"
@@ -46,16 +49,25 @@ sp_variant = "sp_variant.__main__:main"
 Homepage = "https://github.com/storpool/sp-variant"
 Changelog = "https://github.com/storpool/sp-variant/blob/main/docs/changes.md"
 
-[tool.setuptools]
-zip-safe = true
-package-dir = {"" = "python"}
-packages = ["sp_variant"]
+[tool.hatch.build]
+include = [
+  "/data",
+  "/docs",
+  ".editorconfig",
+  "/examples",
+  "/python",
+  "/LICENSES",
+  "/mkdocs.yml",
+  "/.reuse",
+  "/tox.ini",
+]
 
-[tool.setuptools.package-data]
-sp_variant = ["py.typed"]
+[tool.hatch.build.targets.wheel]
+packages = ["python/sp_variant"]
 
-[tool.setuptools.dynamic]
-version = {"attr" = "sp_variant.defs.VERSION"}
+[tool.hatch.version]
+path = "python/sp_variant/defs.py"
+pattern = 'VERSION: Final = "(?P<version>[^"]+)"'
 
 [tool.black]
 target-version = ["py38", "py39", "py310", "py311"]
