@@ -1,0 +1,12 @@
+# SPDX-FileCopyrightText: 2023  StorPool <support@storpool.com>
+# SPDX-License-Identifier: BSD-2-Clause
+
+python/**/__pycache__/
+repo-build/
+site/
+target/
+.tox/
+
+all-variants.json
+current-variant.json
+package-list.txt
