@@ -104,7 +104,7 @@ def test_parse() -> None:
         cfile: Final = tempd / "os-release"
         cfile.write_text(_CFG_TEXT, encoding="UTF-8")
 
-        yai: Final = yaiparser.YAIParser(str(cfile))  # pylint: disable=W0212
+        yai: Final = yaiparser.YAIParser(str(cfile))
         data: Final = yai.parse()
 
         for name, value in _CFG_EXPECTED:

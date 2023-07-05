@@ -36,7 +36,7 @@ Let's examine some variants:
 {% for name, var in variants|dictvsort %}
 Variant: {{ var.name }} alias: {{ var.builder.alias }} family: {{ var.family }} update: {{ var.commands.package.update_db }}
 {% endfor %}
-""",  # noqa: E501  pylint: disable=line-too-long
+""",  # noqa: E501
             encoding="UTF-8",
         )
 

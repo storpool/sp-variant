@@ -87,7 +87,7 @@ def _detect_from_files(cfg: Config) -> Variant | None:
     cfg.diag("Trying non-os-release-based heuristics")
     for var in vbuild.DETECT_ORDER:
         cfg.diag(f"- trying {var.name}")
-        try:  # pylint: disable=too-many-try-statements
+        try:
             cfg.diag(f"  - {var.detect.filename}")
             for line in pathlib.Path(var.detect.filename).read_text(encoding=SAFEENC).splitlines():
                 if var.detect.regex.match(line):

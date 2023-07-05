@@ -14,7 +14,7 @@ from . import defs
 if TYPE_CHECKING:
     from typing import Any, Callable, Final, TypeVar
 
-    _TNamedTuple = TypeVar("_TNamedTuple", bound=NamedTuple)  # pylint: disable=invalid-name
+    _TNamedTuple = TypeVar("_TNamedTuple", bound=NamedTuple)
 
 
 CMD_NOOP: Final[list[str]] = ["true"]
@@ -473,7 +473,7 @@ fi
 if [ -n "$to_reinstall" ]; then
     dnf reinstall -y --disablerepo='*' --enablerepo=appstream,baseos,storpool-contrib --setopt=localpkg_gpgcheck=0 -- $to_reinstall
 fi
-""",  # noqa: E501  pylint: disable=line-too-long
+""",  # noqa: E501
                 ],
             ),
         ),
@@ -558,7 +558,7 @@ fi
 if [ -n "$to_reinstall" ]; then
     dnf reinstall -y --disablerepo='*' --enablerepo=appstream,baseos,storpool-contrib,powertools --setopt=localpkg_gpgcheck=0 -- $to_reinstall
 fi
-""",  # noqa: E501  pylint: disable=line-too-long
+""",  # noqa: E501
                     ],
                 },
             },
@@ -630,7 +630,7 @@ fi
 if [ -n "$to_reinstall" ]; then
     yum reinstall -y --disablerepo='*' --enablerepo=base,updates,storpool-contrib --setopt=localpkg_gpgcheck=0 -- $to_reinstall
 fi
-""",  # noqa: E501  pylint: disable=line-too-long
+""",  # noqa: E501
                     ],
                 },
             },
@@ -745,7 +745,7 @@ fi
 if [ -n "$to_reinstall" ]; then
     dnf reinstall -y --disablerepo='*' --enablerepo=appstream,baseos,storpool-contrib,codeready-builder-for-rhel-8-x86_64-rpms --setopt=localpkg_gpgcheck=0 -- $to_reinstall
 fi
-""",  # noqa: E501  pylint: disable=line-too-long
+""",  # noqa: E501
                     ]
                 },
             },
@@ -939,5 +939,4 @@ def build_variants(cfg: defs.Config) -> None:
 
     order.reverse()
     DETECT_ORDER.extend([VARIANTS[name] for name in order])
-    # pylint: disable-next=consider-using-f-string
     cfg.diag("Detect order: {names}".format(names=" ".join(var.name for var in DETECT_ORDER)))

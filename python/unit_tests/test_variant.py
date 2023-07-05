@@ -105,7 +105,6 @@ def test_config_diag() -> None:
 
     def init_cfg(*, verbose: bool, diag_to_stderr: bool = True) -> defs.Config:
         """Initialize a defs.Config object in the specified way."""
-        # pylint: disable=protected-access
         cfg = defs.Config(verbose=verbose)
         assert cfg._diag_to_stderr  # noqa: SLF001
 

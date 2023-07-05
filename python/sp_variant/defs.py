@@ -157,8 +157,6 @@ class VariantConfigError(VariantError):
 class Config:
     """Runtime configuration for the sp-variant library functions."""
 
-    # pylint: disable=too-many-instance-attributes
-
     args: list[str] | None = None
     command: str | None = None
     noop: bool = False
@@ -191,7 +189,6 @@ class Config:
 
 # Let us not do this ever again.
 _config_orig_setattr = Config.__setattr__
-# pylint: disable-next=protected-access
 Config.__setattr__ = Config._do_setattr  # type: ignore[method-assign,assignment]
 
 

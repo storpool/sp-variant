@@ -20,7 +20,6 @@ from . import vbuild
 if typing.TYPE_CHECKING:
     from typing import Any, Callable, Final
 
-    # pylint: disable-next=protected-access,invalid-name
     SubPAction: Final = argparse._SubParsersAction[argparse.ArgumentParser]  # noqa: SLF001
 
 

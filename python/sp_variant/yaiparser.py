@@ -83,7 +83,6 @@ class YAIParser:
     def _parse_line_unquoted(self, line: str, varname: str, quoted: str) -> tuple[str, str] | None:
         """Escape any characters preceded by a backslash."""
         res = ""
-        # pylint: disable-next=while-used
         while quoted:
             try:
                 idx = quoted.index("\\")

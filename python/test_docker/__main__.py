@@ -135,20 +135,19 @@ async def process_detect_lines(
     first_line = None
     rest = b""
     errors: Final = []
-    try:  # pylint: disable=too-many-try-statements
+    try:
         try:
             first_line = await proc.stdout.readline()
-        except Exception as err:  # pylint: disable=broad-except  # noqa: BLE001
+        except Exception as err:  # noqa: BLE001
             errors.append(f"Could not read the first line: {err}")
         cfg.diag(lambda: f"{image}: first line {first_line!r}")
 
         if first_line:
             first_line = first_line.rstrip(b"\n")
-            # pylint: disable-next=while-used
             while True:
                 try:
                     more = await proc.stdout.readline()
-                except Exception as err:  # pylint: disable=broad-except  # noqa: BLE001
+                except Exception as err:  # noqa: BLE001
                     errors.append(f"Could not read a further line: {err}")
                     break
                 cfg.diag(lambda: f"{image}: more {more!r}")  # noqa: B023
@@ -277,7 +276,6 @@ async def run_add_repo_for_image(
         """Read lines from a stream, output them, gather them."""
         cfg.diag(lambda: f"{image}: waiting for {stype} lines")
         res = b""
-        # pylint: disable-next=while-used
         while True:
             if not (line := await stream.readline()):
                 cfg.diag(lambda: f"{image}: no more {stype}")
@@ -457,7 +455,7 @@ echo 'Done, it seems'
 """,
             encoding="UTF-8",
         )
-    except Exception as err:  # pylint: disable=broad-except  # noqa: BLE001
+    except Exception as err:  # noqa: BLE001
         return [f"Could not create {addsh}: {err}"]
     try:
         addsh.chmod(0o755)
@@ -546,4 +544,4 @@ def main(*, images_filter: tuple[str, ...], repo_file: pathlib.Path, verbose: bo
 
 
 if __name__ == "__main__":
-    main()  # pylint: disable=missing-kwoa
+    main()

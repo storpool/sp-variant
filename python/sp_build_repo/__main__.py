@@ -320,7 +320,6 @@ def typed_loader(*, failonextra: bool = False) -> typedload.dataloader.Loader:
     return typedload.dataloader.Loader(pep563=True, failonextra=failonextra)
 
 
-# pylint: disable-next=too-complex
 def parse_overrides(path: pathlib.Path) -> Overrides:
     """Parse the TOML overrides file."""
     if path is None:
@@ -395,7 +394,6 @@ def cmd_build(  # noqa: PLR0913
     no_date: bool,
 ) -> None:
     """Build the StorPool repository archive and output its name."""
-    # pylint: disable=too-many-arguments
     cfg_hold: Final = ctx.find_object(ConfigHolder)
     assert isinstance(cfg_hold, ConfigHolder)  # noqa: S101  # mypy needs this
     cfg: Final = Config(
@@ -427,4 +425,4 @@ main.add_command(cmd_build)
 
 
 if __name__ == "__main__":
-    main()  # pylint: disable=no-value-for-parameter,missing-kwoa
+    main()
