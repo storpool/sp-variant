@@ -102,4 +102,4 @@ disable = [
 ]
 
 [tool.test-stages]
-stages = ["ruff and not @manual", "@check and not @manual", "@tests and not @manual"]
+stages = ["ruff and @check and not @manual", "@check and not @manual", "@tests and not @manual"]
