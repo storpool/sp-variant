@@ -29,6 +29,7 @@ site_dir: site/docs
 nav:
   - 'index.md'
   - 'Changelog': 'changes.md'
+  - 'API Reference': 'api.md'
 markdown_extensions:
   - toc:
   - pymdownx.highlight:
