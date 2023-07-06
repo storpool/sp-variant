@@ -3,7 +3,7 @@
 
 [package]
 name = "sp-variant"
-version = "3.1.2"
+version = "3.2.0"
 edition = "2021"
 rust-version = "1.58"
 authors = ["StorPool <support@storpool.com>"]
