@@ -5,6 +5,8 @@ SPDX-License-Identifier: BSD-2-Clause
 
 # sp-variant - detect the Linux distribution for the StorPool build system
 
+\[[Home][repo-sp-variant] | [GitHub][github] | [PyPI][pypi] | [crates.io][crates-io]\]
+
 The `sp-variant` library is mainly useful within the StorPool internal
 build and QA environment, as well as the first step of installations on
 end-user systems. It examines several files and tries to determine what
@@ -46,3 +48,8 @@ The `sp-variant` crate exports several constants and functions, among them:
 
 For more information, as well as for suggestions and problem reports, please
 contact [the StorPool support team](mailto:support@storpool.com).
+
+[repo-sp-variant]: https://repo.storpool.com/public/doc/sp-variant/ "The sp-variant home page"
+[github]: https://github.com/storpool/sp-variant "The sp-variant GitHub repository"
+[pypi]: https://pypi.org/project/sp-variant/ "The sp-variant PyPI project page"
+[crates-io]: https://crates.io/crates/sp-variant "The sp-variant Rust crate page"
