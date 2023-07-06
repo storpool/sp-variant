@@ -131,6 +131,7 @@ OCTAL_INTEGER: Final = OctalInteger()
     "-m",
     "--mode",
     type=OCTAL_INTEGER,
+    default=0o644,
     help="the octal permissions mode of the output file",
 )
 @click.option(
