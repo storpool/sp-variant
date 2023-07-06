@@ -354,27 +354,56 @@ def parse_overrides(path: pathlib.Path) -> Overrides:
 @click.option(
     "-d",
     "--datadir",
-    type=pathlib.Path,
+    type=click.Path(
+        exists=True,
+        file_okay=False,
+        dir_okay=True,
+        writable=True,
+        resolve_path=True,
+        path_type=pathlib.Path,
+    ),
     required=True,
     help="The directory to place the repo file in",
 )
 @click.option(
     "-D",
     "--destdir",
-    type=pathlib.Path,
+    type=click.Path(
+        exists=True,
+        file_okay=False,
+        dir_okay=True,
+        writable=True,
+        resolve_path=True,
+        path_type=pathlib.Path,
+    ),
     required=True,
     help="The directory to place the repo file in",
 )
 @click.option(
     "-o",
     "--overrides",
-    type=pathlib.Path,
+    type=click.Path(
+        exists=True,
+        file_okay=True,
+        dir_okay=False,
+        readable=True,
+        resolve_path=True,
+        path_type=pathlib.Path,
+    ),
     help="The path to a TOML configuration overrides file",
 )
 @click.option(
     "-r",
     "--runtime",
-    type=pathlib.Path,
+    type=click.Path(
+        exists=True,
+        file_okay=True,
+        dir_okay=False,
+        readable=True,
+        executable=True,
+        resolve_path=True,
+        path_type=pathlib.Path,
+    ),
     required=True,
     help="The storpool_variant executable to use",
 )

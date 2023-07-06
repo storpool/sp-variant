@@ -513,7 +513,14 @@ async def run_tests(
 @click.option(
     "-r",
     "--repo-file",
-    type=pathlib.Path,
+    type=click.Path(
+        exists=True,
+        file_okay=True,
+        dir_okay=False,
+        readable=True,
+        resolve_path=True,
+        path_type=pathlib.Path,
+    ),
     required=True,
     help="The add-storpool-repo archive to test",
 )
