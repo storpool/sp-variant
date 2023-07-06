@@ -4,7 +4,6 @@
 
 from __future__ import annotations
 
-import argparse
 import dataclasses
 import functools
 import json
@@ -12,6 +11,7 @@ import pathlib
 import typing
 
 import cfg_diag
+import click
 import jinja2
 import trivver
 
@@ -30,46 +30,6 @@ class Config(cfg_diag.Config):
     output: pathlib.Path
     output_mode: int
     template: pathlib.Path
-
-
-def parse_args() -> Config:
-    """Parse the command-line arguments."""
-    parser: Final = argparse.ArgumentParser(prog="sp_var_subst")
-    parser.add_argument(
-        "-m",
-        "--mode",
-        type=lambda value: int(value, 8),
-        help="the octal permissions mode of the output file",
-    )
-    parser.add_argument(
-        "-o",
-        "--output",
-        type=pathlib.Path,
-        required=True,
-        help="the output file to generate",
-    )
-    parser.add_argument(
-        "-t",
-        "--template",
-        type=pathlib.Path,
-        required=True,
-        help="the template to render",
-    )
-    parser.add_argument(
-        "-v",
-        "--verbose",
-        action="store_true",
-        help="verbose operation; display diagnostic messages",
-    )
-
-    args: Final = parser.parse_args()
-
-    return Config(
-        output=args.output,
-        output_mode=args.mode,
-        template=args.template,
-        verbose=args.verbose,
-    )
 
 
 def regex_un_x(value: str) -> str:
@@ -145,9 +105,72 @@ def substitute(cfg: Config) -> None:
     cfg.diag(lambda: f"Rendered {cfg.template} into {cfg.output}")
 
 
-def main() -> None:
+class OctalInteger(click.ParamType):
+    """Convert a string value to an integer using base 8."""
+
+    name = "octal"
+
+    def convert(
+        self, value: str | int, param: click.Parameter | None, ctx: click.Context | None
+    ) -> int:
+        """Convert a string to an integer using base 8."""
+        if isinstance(value, int):
+            return value
+
+        try:
+            return int(value, 8)
+        except ValueError as err:
+            self.fail(f"{value!r} is not a valid integer: {err}", param, ctx)
+
+
+OCTAL_INTEGER: Final = OctalInteger()
+
+
+@click.command(name="subst")
+@click.option(
+    "-m",
+    "--mode",
+    type=OCTAL_INTEGER,
+    help="the octal permissions mode of the output file",
+)
+@click.option(
+    "-o",
+    "--output",
+    type=click.Path(
+        dir_okay=False, file_okay=True, writable=True, resolve_path=True, path_type=pathlib.Path
+    ),
+    required=True,
+    help="the output file to generate",
+)
+@click.option(
+    "-t",
+    "--template",
+    type=click.Path(
+        exists=True,
+        dir_okay=False,
+        file_okay=True,
+        readable=True,
+        resolve_path=True,
+        path_type=pathlib.Path,
+    ),
+    required=True,
+    help="the template to render",
+)
+@click.option(
+    "-v",
+    "--verbose",
+    type=bool,
+    is_flag=True,
+    help="verbose operation; display diagnostic messages",
+)
+def main(*, mode: int, output: pathlib.Path, template: pathlib.Path, verbose: bool) -> None:
     """Parse command-line arguments, substitute data."""
-    cfg: Final = parse_args()
+    cfg: Final = Config(
+        output=output,
+        output_mode=mode,
+        template=template,
+        verbose=verbose,
+    )
     substitute(cfg)
 
 
