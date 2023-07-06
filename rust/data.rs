@@ -3120,7 +3120,7 @@ fi
                     ),
                 ]
             ),
-            version: "3.1.2".to_owned(),
+            version: "3.2.0".to_owned(),
         }
     });
     assert!(
