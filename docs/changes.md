@@ -12,6 +12,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixes
+
+- docs:
+    - fix the 3.2.1 GitHub commit log URL
+
+### Additions
+
+- docs:
+    - add a navigational bar-like list of URLs at the top of the index page
+    - use a link reference for the StorPool support team e-mail address
+- python:
+    - add the repo.storpool.com URL as the project homepage, keep the GitHub one as
+      "Source Code"
+
 ## [3.2.1] - 2023-07-06
 
 ### Fixes
