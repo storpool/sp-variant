@@ -45,8 +45,9 @@ email = "support@storpool.com"
 sp_variant = "sp_variant.__main__:main"
 
 [project.urls]
-Homepage = "https://github.com/storpool/sp-variant"
+Homepage = "https://repo.storpool.com/public/doc/sp-variant/"
 Changelog = "https://github.com/storpool/sp-variant/blob/main/docs/changes.md"
+"Source Code" = "https://github.com/storpool/sp-variant"
 
 [tool.hatch.build]
 include = [
