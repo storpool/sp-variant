@@ -47,9 +47,10 @@ The `sp-variant` crate exports several constants and functions, among them:
   the distribution
 
 For more information, as well as for suggestions and problem reports, please
-contact [the StorPool support team](mailto:support@storpool.com).
+contact [the StorPool support team][sp-support].
 
 [repo-sp-variant]: https://repo.storpool.com/public/doc/sp-variant/ "The sp-variant home page"
 [github]: https://github.com/storpool/sp-variant "The sp-variant GitHub repository"
 [pypi]: https://pypi.org/project/sp-variant/ "The sp-variant PyPI project page"
 [crates-io]: https://crates.io/crates/sp-variant "The sp-variant Rust crate page"
+[sp-support]: mailto:support@storpool.com "The StorPool support team"
