@@ -14,17 +14,67 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixes
 
+- data:
+    - drop the `Architectures` line from the Debian sources list file so that
+      `add-storpool-repo` can also be used on arm64 hosts
+    - mark Debian 9.x (stretch) as no longer supported
+    - drop the `mcelog` package definition for Debian, it was only ever
+      present in the unsupported Debian 9.x and Ubuntu 16.04
+    - refer to the OpenSSL 3.x package for Debian unstable and Ubuntu 22.04
+    - reflect the removal of the `libcgroup-tools` and `python2-simplejson`
+      packages in CentOS 9.x
+    - add a 0644 default to the `--mode` argument of `sp_build_repo.subst`
 - python:
     - add a no-op `_diag_to_stderr` property setter to avoid mypy errors on
       (wrong, deprecated) attempts to set that field. Those attempts are
       ignored anyway since the changes in version 3.1.2, but let mypy know
       that they are still not completely forbidden.
 
+### Additions
+
+- data:
+    - add Debian 12.x (bookworm), mark Debian unstable as Debian 13.x (trixie)
+    - add Ubuntu 23.04 (Lunar Lobster) as an unsupported variant
+- docs:
+    - add a raw Python API reference
+- python:
+    - install the OS packages defined for each variant during the Docker test
+- rust:
+    - add the `get_all_variants()` and `get_all_variants_in_order()`
+      functions that return all known StorPool build variants
+    - derive `Copy` for some structs and enums
+    - derive `PartialEq` and `Eq` for most structs
+    - allow the Makefile Rust build infrastructure to not pass the `--offline`
+      option to Cargo if the `NO_CARGO_OFFLINE` environment variable is set
+    - run the Cargo tests in the Makefile `test` target
+
 ### Other changes
 
+- data:
+    - drop the definitions for the temporary, intermediate, non-LTS
+      Ubuntu 21.10 version
+- docs:
+    - point to version 1.1.0 of the "Keep a Changelog" specification
 - python:
-    - use Ruff 0.0.261 in the test suite, enable another check area with
-      no code changes
+    - switch from `setuptools` to `hatchling` for the PEP 517 build
+    - use Ruff 0.0.277 in the test suite:
+        - override some checks related to the use of the `subprocess` library
+        - override a "too many parameters" check for the click-decorated main
+          function of `sp_build_repo`
+        - globally disable the "performance penalty for try/except in loops" check;
+          we want our exceptions to provide as much context as possible, including
+          the values of the loop variables
+    - pin the Ruff version to avoid failures due to newly-added future checks
+    - use Ruff's isort implementation to format the source files and
+      rename the `black` and `black-reformat` Tox testing environments to
+      `format` and `reformat` respectively
+    - hide some imports behind `TYPE_CHECKING` checks
+    - use `ClassVar` as needed for singleton data holder classes
+    - narrow down the "run Ruff" stage specification in the `test-stages` definition
+    - drop the `flake8` and `pylint` Tox test environments, rely on Ruff
+    - use `click.Path` in `sp_build_repo` and `test_docker`
+- rust:
+    - import the `VariantError` struct directly in the test suite
 
 ## [3.1.2] - 2023-03-17
 
