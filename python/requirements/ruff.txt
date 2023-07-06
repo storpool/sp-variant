@@ -1,0 +1,4 @@
+# SPDX-FileCopyrightText: 2023  StorPool <support@storpool.com>
+# SPDX-License-Identifier: BSD-2-Clause
+
+ruff == 0.0.277
