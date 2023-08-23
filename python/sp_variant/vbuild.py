@@ -402,7 +402,7 @@ _VARIANT_DEF: Final[list[defs.Variant | defs.VariantUpdate]] = [
         detect=defs.Detect(
             filename="/etc/redhat-release",
             regex=re.compile(r"^ AlmaLinux \s .* \s 9 \. [0-9]", re.X),
-            os_id="alma",
+            os_id="almalinux",
             os_version_regex=re.compile(r"^9(?:$|\.[0-9])"),
         ),
         supported=defs.Supported(repo=False),
@@ -513,7 +513,7 @@ fi
         detect=defs.Detect(
             filename="/etc/redhat-release",
             regex=re.compile(r"^ AlmaLinux \s .* \s 8 \. (?: [4-9] | [1-9][0-9] )", re.X),
-            os_id="alma",
+            os_id="almalinux",
             os_version_regex=re.compile(r"^8(?:$|\.[4-9]|\.[1-9][0-9])"),
         ),
         updates={
