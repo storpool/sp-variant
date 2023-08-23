@@ -188,7 +188,7 @@ pub fn get_variants() -> &'static VariantDefTop {
                                 detect: Detect {
                                     filename: "/etc/redhat-release".to_owned(),
                                     regex: r"^ AlmaLinux \s .* \s 8 \. (?: [4-9] | [1-9][0-9] )".to_owned(),
-                                    os_id: "alma".to_owned(),
+                                    os_id: "almalinux".to_owned(),
                                     os_version_regex: r"^8(?:$|\.[4-9]|\.[1-9][0-9])".to_owned(),
                                 },
                                 supported: Supported {
@@ -347,7 +347,7 @@ fi
                                 detect: Detect {
                                     filename: "/etc/redhat-release".to_owned(),
                                     regex: r"^ AlmaLinux \s .* \s 9 \. [0-9]".to_owned(),
-                                    os_id: "alma".to_owned(),
+                                    os_id: "almalinux".to_owned(),
                                     os_version_regex: r"^9(?:$|\.[0-9])".to_owned(),
                                 },
                                 supported: Supported {
@@ -366,6 +366,7 @@ fi
                                                             "--disablerepo=*".to_owned(),
                                                             "--enablerepo=appstream".to_owned(),
                                                             "--enablerepo=baseos".to_owned(),
+                                                            "--enablerepo=crb".to_owned(),
                                                             "--enablerepo=storpool-contrib".to_owned(),
                                                             "install".to_owned(),
                                                             "-q".to_owned(),
@@ -449,10 +450,10 @@ for f in $packages; do
 done
 
 if [ -n \"$to_install\" ]; then
-    dnf install -y --disablerepo='*' --enablerepo=appstream,baseos,storpool-contrib --setopt=localpkg_gpgcheck=0 -- $to_install
+    dnf install -y --disablerepo='*' --enablerepo=appstream,baseos,crb,storpool-contrib --setopt=localpkg_gpgcheck=0 -- $to_install
 fi
 if [ -n \"$to_reinstall\" ]; then
-    dnf reinstall -y --disablerepo='*' --enablerepo=appstream,baseos,storpool-contrib --setopt=localpkg_gpgcheck=0 -- $to_reinstall
+    dnf reinstall -y --disablerepo='*' --enablerepo=appstream,baseos,crb,storpool-contrib --setopt=localpkg_gpgcheck=0 -- $to_reinstall
 fi
 ".to_owned(),
                                                         ],
@@ -2237,6 +2238,7 @@ fi
                                                             "--disablerepo=*".to_owned(),
                                                             "--enablerepo=appstream".to_owned(),
                                                             "--enablerepo=baseos".to_owned(),
+                                                            "--enablerepo=crb".to_owned(),
                                                             "--enablerepo=storpool-contrib".to_owned(),
                                                             "install".to_owned(),
                                                             "-q".to_owned(),
@@ -2320,10 +2322,10 @@ for f in $packages; do
 done
 
 if [ -n \"$to_install\" ]; then
-    dnf install -y --disablerepo='*' --enablerepo=appstream,baseos,storpool-contrib --setopt=localpkg_gpgcheck=0 -- $to_install
+    dnf install -y --disablerepo='*' --enablerepo=appstream,baseos,crb,storpool-contrib --setopt=localpkg_gpgcheck=0 -- $to_install
 fi
 if [ -n \"$to_reinstall\" ]; then
-    dnf reinstall -y --disablerepo='*' --enablerepo=appstream,baseos,storpool-contrib --setopt=localpkg_gpgcheck=0 -- $to_reinstall
+    dnf reinstall -y --disablerepo='*' --enablerepo=appstream,baseos,crb,storpool-contrib --setopt=localpkg_gpgcheck=0 -- $to_reinstall
 fi
 ".to_owned(),
                                                         ],

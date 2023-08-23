@@ -33,12 +33,12 @@ detect_from_os_release()
 		return
 	fi
 	
-	if [ "$os_id" = 'alma' ] && printf -- '%s\n' "$version_id" | grep -Eqe '^8($|\.[4-9]|\.[1-9][0-9])'; then
+	if [ "$os_id" = 'almalinux' ] && printf -- '%s\n' "$version_id" | grep -Eqe '^8($|\.[4-9]|\.[1-9][0-9])'; then
 		printf -- '%s\n' 'ALMA8'
 		return
 	fi
 	
-	if [ "$os_id" = 'alma' ] && printf -- '%s\n' "$version_id" | grep -Eqe '^9($|\.[0-9])'; then
+	if [ "$os_id" = 'almalinux' ] && printf -- '%s\n' "$version_id" | grep -Eqe '^9($|\.[0-9])'; then
 		printf -- '%s\n' 'ALMA9'
 		return
 	fi
@@ -318,7 +318,7 @@ show_ALMA8()
   "descr": "AlmaLinux 8.x",
   "detect": {
     "filename": "/etc/redhat-release",
-    "os_id": "alma",
+    "os_id": "almalinux",
     "os_version_regex": "^8(?:$|\\.[4-9]|\\.[1-9][0-9])",
     "regex": "^ AlmaLinux \\s .* \\s 8 \\. (?: [4-9] | [1-9][0-9] )"
   },
@@ -371,6 +371,7 @@ show_ALMA9()
         "--disablerepo=*",
         "--enablerepo=appstream",
         "--enablerepo=baseos",
+        "--enablerepo=crb",
         "--enablerepo=storpool-contrib",
         "install",
         "-q",
@@ -416,14 +417,14 @@ show_ALMA9()
       "install": [
         "sh",
         "-c",
-        "\nunset to_install to_reinstall\nfor f in $packages; do\n    package=\"$(rpm -qp \"$f\")\"\n    if rpm -q -- \"$package\"; then\n        to_reinstall=\"$to_reinstall ./$f\"\n    else\n        to_install=\"$to_install ./$f\"\n    fi\ndone\n\nif [ -n \"$to_install\" ]; then\n    dnf install -y --disablerepo='*' --enablerepo=appstream,baseos,storpool-contrib --setopt=localpkg_gpgcheck=0 -- $to_install\nfi\nif [ -n \"$to_reinstall\" ]; then\n    dnf reinstall -y --disablerepo='*' --enablerepo=appstream,baseos,storpool-contrib --setopt=localpkg_gpgcheck=0 -- $to_reinstall\nfi\n"
+        "\nunset to_install to_reinstall\nfor f in $packages; do\n    package=\"$(rpm -qp \"$f\")\"\n    if rpm -q -- \"$package\"; then\n        to_reinstall=\"$to_reinstall ./$f\"\n    else\n        to_install=\"$to_install ./$f\"\n    fi\ndone\n\nif [ -n \"$to_install\" ]; then\n    dnf install -y --disablerepo='*' --enablerepo=appstream,baseos,crb,storpool-contrib --setopt=localpkg_gpgcheck=0 -- $to_install\nfi\nif [ -n \"$to_reinstall\" ]; then\n    dnf reinstall -y --disablerepo='*' --enablerepo=appstream,baseos,crb,storpool-contrib --setopt=localpkg_gpgcheck=0 -- $to_reinstall\nfi\n"
       ]
     }
   },
   "descr": "AlmaLinux 9.x",
   "detect": {
     "filename": "/etc/redhat-release",
-    "os_id": "alma",
+    "os_id": "almalinux",
     "os_version_regex": "^9(?:$|\\.[0-9])",
     "regex": "^ AlmaLinux \\s .* \\s 9 \\. [0-9]"
   },
@@ -1671,6 +1672,7 @@ show_ROCKY9()
         "--disablerepo=*",
         "--enablerepo=appstream",
         "--enablerepo=baseos",
+        "--enablerepo=crb",
         "--enablerepo=storpool-contrib",
         "install",
         "-q",
@@ -1716,7 +1718,7 @@ show_ROCKY9()
       "install": [
         "sh",
         "-c",
-        "\nunset to_install to_reinstall\nfor f in $packages; do\n    package=\"$(rpm -qp \"$f\")\"\n    if rpm -q -- \"$package\"; then\n        to_reinstall=\"$to_reinstall ./$f\"\n    else\n        to_install=\"$to_install ./$f\"\n    fi\ndone\n\nif [ -n \"$to_install\" ]; then\n    dnf install -y --disablerepo='*' --enablerepo=appstream,baseos,storpool-contrib --setopt=localpkg_gpgcheck=0 -- $to_install\nfi\nif [ -n \"$to_reinstall\" ]; then\n    dnf reinstall -y --disablerepo='*' --enablerepo=appstream,baseos,storpool-contrib --setopt=localpkg_gpgcheck=0 -- $to_reinstall\nfi\n"
+        "\nunset to_install to_reinstall\nfor f in $packages; do\n    package=\"$(rpm -qp \"$f\")\"\n    if rpm -q -- \"$package\"; then\n        to_reinstall=\"$to_reinstall ./$f\"\n    else\n        to_install=\"$to_install ./$f\"\n    fi\ndone\n\nif [ -n \"$to_install\" ]; then\n    dnf install -y --disablerepo='*' --enablerepo=appstream,baseos,crb,storpool-contrib --setopt=localpkg_gpgcheck=0 -- $to_install\nfi\nif [ -n \"$to_reinstall\" ]; then\n    dnf reinstall -y --disablerepo='*' --enablerepo=appstream,baseos,crb,storpool-contrib --setopt=localpkg_gpgcheck=0 -- $to_reinstall\nfi\n"
       ]
     }
   },
@@ -2594,7 +2596,7 @@ fi
 						install)
 							# The commands are quoted exactly as much as necessary.
 							# shellcheck disable=SC2016
-							$noop 'dnf' '--disablerepo=*' '--enablerepo=appstream' '--enablerepo=baseos' '--enablerepo=storpool-contrib' 'install' '-q' '-y' '--'  "$@"
+							$noop 'dnf' '--disablerepo=*' '--enablerepo=appstream' '--enablerepo=baseos' '--enablerepo=crb' '--enablerepo=storpool-contrib' 'install' '-q' '-y' '--'  "$@"
 							;;
 						
 						list_all)
@@ -2659,10 +2661,10 @@ for f in $packages; do
 done
 
 if [ -n "$to_install" ]; then
-    dnf install -y --disablerepo='*' --enablerepo=appstream,baseos,storpool-contrib --setopt=localpkg_gpgcheck=0 -- $to_install
+    dnf install -y --disablerepo='*' --enablerepo=appstream,baseos,crb,storpool-contrib --setopt=localpkg_gpgcheck=0 -- $to_install
 fi
 if [ -n "$to_reinstall" ]; then
-    dnf reinstall -y --disablerepo='*' --enablerepo=appstream,baseos,storpool-contrib --setopt=localpkg_gpgcheck=0 -- $to_reinstall
+    dnf reinstall -y --disablerepo='*' --enablerepo=appstream,baseos,crb,storpool-contrib --setopt=localpkg_gpgcheck=0 -- $to_reinstall
 fi
 '  "$@"
 							;;
@@ -3685,7 +3687,7 @@ fi
 						install)
 							# The commands are quoted exactly as much as necessary.
 							# shellcheck disable=SC2016
-							$noop 'dnf' '--disablerepo=*' '--enablerepo=appstream' '--enablerepo=baseos' '--enablerepo=storpool-contrib' 'install' '-q' '-y' '--'  "$@"
+							$noop 'dnf' '--disablerepo=*' '--enablerepo=appstream' '--enablerepo=baseos' '--enablerepo=crb' '--enablerepo=storpool-contrib' 'install' '-q' '-y' '--'  "$@"
 							;;
 						
 						list_all)
@@ -3750,10 +3752,10 @@ for f in $packages; do
 done
 
 if [ -n "$to_install" ]; then
-    dnf install -y --disablerepo='*' --enablerepo=appstream,baseos,storpool-contrib --setopt=localpkg_gpgcheck=0 -- $to_install
+    dnf install -y --disablerepo='*' --enablerepo=appstream,baseos,crb,storpool-contrib --setopt=localpkg_gpgcheck=0 -- $to_install
 fi
 if [ -n "$to_reinstall" ]; then
-    dnf reinstall -y --disablerepo='*' --enablerepo=appstream,baseos,storpool-contrib --setopt=localpkg_gpgcheck=0 -- $to_reinstall
+    dnf reinstall -y --disablerepo='*' --enablerepo=appstream,baseos,crb,storpool-contrib --setopt=localpkg_gpgcheck=0 -- $to_reinstall
 fi
 '  "$@"
 							;;
