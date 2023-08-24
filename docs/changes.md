@@ -12,6 +12,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixes
+
+- data:
+    - look for "almalinux" instead of "alma" in the `ID` field of the `os-release` file
+    - catch up with the renaming of the powertools repository to CodeReadyBuilder in
+      AlmaLinux 9.x and the like
+
+### Other changes
+
+- python:
+    - use Ruff 0.0.285 in the test suite:
+        - override a warning related to the `Config.diag_to_stderr` weirdness
+    - use MyPy 1.5 in the test suite:
+        - override an "arguments too generic" check for a `NamedTuple` initialization
+- rust:
+    - let clippy know that we do use the `ref` keyword
+
 ## [3.2.2] - 2023-07-06
 
 ### Fixes
