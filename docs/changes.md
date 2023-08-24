@@ -12,6 +12,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [3.2.3] - 2023-08-24
+
 ### Fixes
 
 - data:
@@ -468,7 +470,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - First public release.
 
-[Unreleased]: https://github.com/storpool/sp-variant/compare/release/3.2.2...main
+[Unreleased]: https://github.com/storpool/sp-variant/compare/release/3.2.3...main
+[3.2.3]: https://github.com/storpool/sp-variant/compare/release/3.2.2...release/3.2.3
 [3.2.2]: https://github.com/storpool/sp-variant/compare/release/3.2.1...release/3.2.2
 [3.2.1]: https://github.com/storpool/sp-variant/compare/release/3.2.0...release/3.2.1
 [3.2.0]: https://github.com/storpool/sp-variant/compare/release/3.1.2...release/3.2.0
