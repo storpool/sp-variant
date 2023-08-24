@@ -887,7 +887,7 @@ def update_namedtuple(data: _TNamedTuple, updates: dict[str, Any]) -> _TNamedTup
                 f"{prefix}: weird {type(value).__name__} update for {name}"
             )
 
-    updated: Final = type(data)(**newv)
+    updated: Final[_TNamedTuple] = type(data)(**newv)  # type: ignore[call-overload]
     return updated
 
 
