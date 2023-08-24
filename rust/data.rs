@@ -3122,7 +3122,7 @@ fi
                     ),
                 ]
             ),
-            version: "3.2.2".to_owned(),
+            version: "3.2.3".to_owned(),
         }
     });
     assert!(
