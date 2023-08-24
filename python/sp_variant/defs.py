@@ -189,7 +189,7 @@ class Config:
 
 # Let us not do this ever again.
 _config_orig_setattr = Config.__setattr__
-Config.__setattr__ = Config._do_setattr  # type: ignore[method-assign,assignment]
+Config.__setattr__ = Config._do_setattr  # type: ignore[method-assign,assignment]  # noqa: SLF001
 
 
 def jsonify(obj: Any) -> Any:  # noqa: ANN401  # this needs to operate on, well, anything
