@@ -47,6 +47,7 @@ done
 		-A clippy::implicit_return \
 		-A clippy::missing_docs_in_private_items \
 		-A clippy::question_mark_used \
+		-A clippy::ref_patterns \
 		-A clippy::std_instead_of_alloc \
 		-A clippy::std_instead_of_core \
 	-W clippy::pedantic \
