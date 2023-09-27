@@ -49,8 +49,8 @@ impl FromStr for VariantKind {
     type Err = VariantError;
 
     #[inline]
-    fn from_str(s: &str) -> Result<Self, Self::Err> {
-        match s {
+    fn from_str(value: &str) -> Result<Self, Self::Err> {
+        match value {
             {%- for name in variants|vsort -%}
             Self::{{ name }}_NAME => Ok(Self::{{ name }}),
             {%- endfor -%}
