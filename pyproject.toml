@@ -78,4 +78,4 @@ strict = true
 python_version = "3.8"
 
 [tool.test-stages]
-stages = ["ruff and @check and not @manual", "@check and not @manual", "@tests and not @manual"]
+stages = ["@check and @quick and not @manual", "@check and not @manual", "@tests and not @manual"]
