@@ -115,8 +115,8 @@ impl FromStr for VariantKind {
     type Err = VariantError;
 
     #[inline]
-    fn from_str(s: &str) -> Result<Self, Self::Err> {
-        match s {
+    fn from_str(value: &str) -> Result<Self, Self::Err> {
+        match value {
             Self::ALMA8_NAME => Ok(Self::ALMA8),
             Self::ALMA9_NAME => Ok(Self::ALMA9),
             Self::CENTOS6_NAME => Ok(Self::CENTOS6),
@@ -187,8 +187,10 @@ pub fn get_variants() -> &'static VariantDefTop {
                                 parent: "ALMA9".to_owned(),
                                 detect: Detect {
                                     filename: "/etc/redhat-release".to_owned(),
+                                    #[allow(clippy::needless_raw_strings)]
                                     regex: r"^ AlmaLinux \s .* \s 8 \. (?: [4-9] | [1-9][0-9] )".to_owned(),
                                     os_id: "almalinux".to_owned(),
+                                    #[allow(clippy::needless_raw_strings)]
                                     os_version_regex: r"^8(?:$|\.[4-9]|\.[1-9][0-9])".to_owned(),
                                 },
                                 supported: Supported {
@@ -346,8 +348,10 @@ fi
                                 parent: "".to_owned(),
                                 detect: Detect {
                                     filename: "/etc/redhat-release".to_owned(),
+                                    #[allow(clippy::needless_raw_strings)]
                                     regex: r"^ AlmaLinux \s .* \s 9 \. [0-9]".to_owned(),
                                     os_id: "almalinux".to_owned(),
+                                    #[allow(clippy::needless_raw_strings)]
                                     os_version_regex: r"^9(?:$|\.[0-9])".to_owned(),
                                 },
                                 supported: Supported {
@@ -505,8 +509,10 @@ fi
                                 parent: "CENTOS7".to_owned(),
                                 detect: Detect {
                                     filename: "/etc/redhat-release".to_owned(),
+                                    #[allow(clippy::needless_raw_strings)]
                                     regex: r"^ CentOS \s .* \s 6 \.".to_owned(),
                                     os_id: "centos".to_owned(),
+                                    #[allow(clippy::needless_raw_strings)]
                                     os_version_regex: r"^6(?:$|\.[0-9])".to_owned(),
                                 },
                                 supported: Supported {
@@ -660,8 +666,10 @@ fi
                                 parent: "CENTOS8".to_owned(),
                                 detect: Detect {
                                     filename: "/etc/redhat-release".to_owned(),
+                                    #[allow(clippy::needless_raw_strings)]
                                     regex: r"^ (?: CentOS | Virtuozzo ) \s .* \s 7 \.".to_owned(),
                                     os_id: "centos".to_owned(),
+                                    #[allow(clippy::needless_raw_strings)]
                                     os_version_regex: r"^7(?:$|\.[0-9])".to_owned(),
                                 },
                                 supported: Supported {
@@ -815,8 +823,10 @@ fi
                                 parent: "ALMA8".to_owned(),
                                 detect: Detect {
                                     filename: "/etc/redhat-release".to_owned(),
+                                    #[allow(clippy::needless_raw_strings)]
                                     regex: r"^ CentOS \s .* \s 8 \. (?: [3-9] | (?: [12][0-9] ) )".to_owned(),
                                     os_id: "centos".to_owned(),
+                                    #[allow(clippy::needless_raw_strings)]
                                     os_version_regex: r"^8(?:$|\.[4-9]|\.[1-9][0-9])".to_owned(),
                                 },
                                 supported: Supported {
@@ -974,12 +984,14 @@ fi
                                 parent: "DEBIAN10".to_owned(),
                                 detect: Detect {
                                     filename: "/etc/os-release".to_owned(),
+                                    #[allow(clippy::needless_raw_strings)]
                                     regex: r"^
                     PRETTY_NAME= .*
                     Debian \s+ GNU/Linux \s+
                     (?: stretch | 9 ) (?: \s | / )
                 ".to_owned(),
                                     os_id: "debian".to_owned(),
+                                    #[allow(clippy::needless_raw_strings)]
                                     os_version_regex: r"^9$".to_owned(),
                                 },
                                 supported: Supported {
@@ -1129,12 +1141,14 @@ fi
                                 parent: "DEBIAN11".to_owned(),
                                 detect: Detect {
                                     filename: "/etc/os-release".to_owned(),
+                                    #[allow(clippy::needless_raw_strings)]
                                     regex: r"^
                     PRETTY_NAME= .*
                     Debian \s+ GNU/Linux \s+
                     (?: buster | 10 ) (?: \s | / )
                 ".to_owned(),
                                     os_id: "debian".to_owned(),
+                                    #[allow(clippy::needless_raw_strings)]
                                     os_version_regex: r"^10$".to_owned(),
                                 },
                                 supported: Supported {
@@ -1283,12 +1297,14 @@ fi
                                 parent: "DEBIAN12".to_owned(),
                                 detect: Detect {
                                     filename: "/etc/os-release".to_owned(),
+                                    #[allow(clippy::needless_raw_strings)]
                                     regex: r"^
                     PRETTY_NAME= .*
                     Debian \s+ GNU/Linux \s+
                     (?: bullseye | 11 ) (?: \s | / )
                 ".to_owned(),
                                     os_id: "debian".to_owned(),
+                                    #[allow(clippy::needless_raw_strings)]
                                     os_version_regex: r"^11$".to_owned(),
                                 },
                                 supported: Supported {
@@ -1437,12 +1453,14 @@ fi
                                 parent: "DEBIAN13".to_owned(),
                                 detect: Detect {
                                     filename: "/etc/os-release".to_owned(),
+                                    #[allow(clippy::needless_raw_strings)]
                                     regex: r"^
                     PRETTY_NAME= .*
                     Debian \s+ GNU/Linux \s+
                     (?: bookworm | 12 ) (?: \s | / )
                 ".to_owned(),
                                     os_id: "debian".to_owned(),
+                                    #[allow(clippy::needless_raw_strings)]
                                     os_version_regex: r"^12$".to_owned(),
                                 },
                                 supported: Supported {
@@ -1591,12 +1609,14 @@ fi
                                 parent: "".to_owned(),
                                 detect: Detect {
                                     filename: "/etc/os-release".to_owned(),
+                                    #[allow(clippy::needless_raw_strings)]
                                     regex: r"^
                     PRETTY_NAME= .*
                     Debian \s+ GNU/Linux \s+
                     (?: trixie | 13 ) (?: \s | / )
                 ".to_owned(),
                                     os_id: "debian".to_owned(),
+                                    #[allow(clippy::needless_raw_strings)]
                                     os_version_regex: r"^13$".to_owned(),
                                 },
                                 supported: Supported {
@@ -1745,8 +1765,10 @@ fi
                                 parent: "CENTOS7".to_owned(),
                                 detect: Detect {
                                     filename: "/etc/oracle-release".to_owned(),
+                                    #[allow(clippy::needless_raw_strings)]
                                     regex: r"^ Oracle \s+ Linux \s .* \s 7 \.".to_owned(),
                                     os_id: "ol".to_owned(),
+                                    #[allow(clippy::needless_raw_strings)]
                                     os_version_regex: r"^7(?:$|\.[0-9])".to_owned(),
                                 },
                                 supported: Supported {
@@ -1900,8 +1922,10 @@ fi
                                 parent: "CENTOS8".to_owned(),
                                 detect: Detect {
                                     filename: "/etc/redhat-release".to_owned(),
+                                    #[allow(clippy::needless_raw_strings)]
                                     regex: r"^ Red \s+ Hat \s+ Enterprise \s+ Linux \s .* \s 8 \. (?: [4-9] | [1-9][0-9] )".to_owned(),
                                     os_id: "rhel".to_owned(),
+                                    #[allow(clippy::needless_raw_strings)]
                                     os_version_regex: r"^8(?:$|\.[4-9]|\.[1-9][0-9])".to_owned(),
                                 },
                                 supported: Supported {
@@ -2059,8 +2083,10 @@ fi
                                 parent: "CENTOS8".to_owned(),
                                 detect: Detect {
                                     filename: "/etc/redhat-release".to_owned(),
+                                    #[allow(clippy::needless_raw_strings)]
                                     regex: r"^ Rocky \s+ Linux \s .* \s 8 \. (?: [4-9] | [1-9][0-9] )".to_owned(),
                                     os_id: "rocky".to_owned(),
+                                    #[allow(clippy::needless_raw_strings)]
                                     os_version_regex: r"^8(?:$|\.[4-9]|\.[1-9][0-9])".to_owned(),
                                 },
                                 supported: Supported {
@@ -2218,8 +2244,10 @@ fi
                                 parent: "ALMA9".to_owned(),
                                 detect: Detect {
                                     filename: "/etc/redhat-release".to_owned(),
+                                    #[allow(clippy::needless_raw_strings)]
                                     regex: r"^ Rocky \s+ Linux \s .* \s 9 \. [0-9]".to_owned(),
                                     os_id: "rocky".to_owned(),
+                                    #[allow(clippy::needless_raw_strings)]
                                     os_version_regex: r"^8(?:$|\.[0-9])".to_owned(),
                                 },
                                 supported: Supported {
@@ -2377,8 +2405,10 @@ fi
                                 parent: "UBUNTU1804".to_owned(),
                                 detect: Detect {
                                     filename: "/etc/os-release".to_owned(),
+                                    #[allow(clippy::needless_raw_strings)]
                                     regex: r"^ PRETTY_NAME= .* Ubuntu \s+ 16 \. 04 ".to_owned(),
                                     os_id: "ubuntu".to_owned(),
+                                    #[allow(clippy::needless_raw_strings)]
                                     os_version_regex: r"^16\.04$".to_owned(),
                                 },
                                 supported: Supported {
@@ -2529,8 +2559,10 @@ fi
                                 parent: "UBUNTU2004".to_owned(),
                                 detect: Detect {
                                     filename: "/etc/os-release".to_owned(),
+                                    #[allow(clippy::needless_raw_strings)]
                                     regex: r"^ PRETTY_NAME= .* Ubuntu \s+ 18 \. 04 ".to_owned(),
                                     os_id: "ubuntu".to_owned(),
+                                    #[allow(clippy::needless_raw_strings)]
                                     os_version_regex: r"^18\.04$".to_owned(),
                                 },
                                 supported: Supported {
@@ -2679,8 +2711,10 @@ fi
                                 parent: "UBUNTU2204".to_owned(),
                                 detect: Detect {
                                     filename: "/etc/os-release".to_owned(),
+                                    #[allow(clippy::needless_raw_strings)]
                                     regex: r"^ PRETTY_NAME= .* (?: Ubuntu \s+ 20 \. 04 | Mint \s+ 20 ) ".to_owned(),
                                     os_id: "ubuntu".to_owned(),
+                                    #[allow(clippy::needless_raw_strings)]
                                     os_version_regex: r"^20\.04$".to_owned(),
                                 },
                                 supported: Supported {
@@ -2829,8 +2863,10 @@ fi
                                 parent: "UBUNTU2304".to_owned(),
                                 detect: Detect {
                                     filename: "/etc/os-release".to_owned(),
+                                    #[allow(clippy::needless_raw_strings)]
                                     regex: r"^ PRETTY_NAME= .* (?: Ubuntu \s+ 22 \. 04 | Mint \s+ 21 ) ".to_owned(),
                                     os_id: "ubuntu".to_owned(),
+                                    #[allow(clippy::needless_raw_strings)]
                                     os_version_regex: r"^22\.04$".to_owned(),
                                 },
                                 supported: Supported {
@@ -2979,8 +3015,10 @@ fi
                                 parent: "DEBIAN12".to_owned(),
                                 detect: Detect {
                                     filename: "/etc/os-release".to_owned(),
+                                    #[allow(clippy::needless_raw_strings)]
                                     regex: r"^ PRETTY_NAME= .* Ubuntu \s+ 23 \. 04 ".to_owned(),
                                     os_id: "ubuntu".to_owned(),
+                                    #[allow(clippy::needless_raw_strings)]
                                     os_version_regex: r"^23\.04$".to_owned(),
                                 },
                                 supported: Supported {
