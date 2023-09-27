@@ -95,7 +95,7 @@ pub struct Detect {
 #[non_exhaustive]
 pub struct Supported {
     /// Is there a StorPool third-party packages repository?
-    repo: bool,
+    pub repo: bool,
 }
 
 /// Debian package repository data.
