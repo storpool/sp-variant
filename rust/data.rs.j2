@@ -90,8 +90,10 @@ pub fn get_variants() -> &'static VariantDefTop {
                                 parent: "{{ var.parent }}".to_owned(),
                                 detect: Detect {
                                     filename: "{{ var.detect.filename }}".to_owned(),
+                                    #[allow(clippy::needless_raw_strings)]
                                     regex: r"{{ var.detect.regex.pattern }}".to_owned(),
                                     os_id: "{{ var.detect.os_id }}".to_owned(),
+                                    #[allow(clippy::needless_raw_strings)]
                                     os_version_regex: r"{{ var.detect.os_version_regex.pattern }}".to_owned(),
                                 },
                                 supported: Supported {
