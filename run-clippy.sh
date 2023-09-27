@@ -34,6 +34,7 @@ while getopts 'c:n' o; do
 	esac
 done
 
+# The list of allowed and ignored checks is synced with Rust 1.72.
 "$cargo" clippy -- \
 	-W warnings \
 	-W future-incompatible \
@@ -50,5 +51,6 @@ done
 		-A clippy::ref_patterns \
 		-A clippy::std_instead_of_alloc \
 		-A clippy::std_instead_of_core \
+		-A clippy::single_call_fn \
 	-W clippy::pedantic \
 	${run_nursery+-W clippy::nursery}
