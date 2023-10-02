@@ -345,7 +345,7 @@ fn cmd_command_run(varfull: &VariantDefTop, config: CommandRunConfig) -> Result<
 #[allow(clippy::print_stdout)]
 fn cmd_show(varfull: &VariantDefTop, config: &ShowConfig) -> Result<()> {
     if config.name == "all" {
-        print!(
+        println!(
             "{json}",
             json = serde_json::to_string(varfull)
                 .context("Internal error: could not serialize the variant data")?
