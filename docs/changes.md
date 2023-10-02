@@ -12,6 +12,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [3.3.0] - 2023-10-02
+
 ### Fixes
 
 - python:
@@ -511,7 +513,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - First public release.
 
-[Unreleased]: https://github.com/storpool/sp-variant/compare/release/3.2.3...main
+[Unreleased]: https://github.com/storpool/sp-variant/compare/release/3.3.0...main
+[3.3.0]: https://github.com/storpool/sp-variant/compare/release/3.2.3...release/3.3.0
 [3.2.3]: https://github.com/storpool/sp-variant/compare/release/3.2.2...release/3.2.3
 [3.2.2]: https://github.com/storpool/sp-variant/compare/release/3.2.1...release/3.2.2
 [3.2.1]: https://github.com/storpool/sp-variant/compare/release/3.2.0...release/3.2.1
