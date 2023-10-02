@@ -7,14 +7,15 @@ from __future__ import annotations
 import dataclasses
 import functools
 import json
+import logging
 import pathlib
 import typing
 
-import cfg_diag
 import click
 import jinja2
 import trivver
 
+from sp_build_repo import diag
 from sp_variant import defs
 from sp_variant import variant
 
@@ -24,12 +25,13 @@ if typing.TYPE_CHECKING:
 
 
 @dataclasses.dataclass(frozen=True)
-class Config(cfg_diag.Config):
+class Config:
     """Runtime configuration for the variant substitution tool."""
 
     output: pathlib.Path
     output_mode: int
     template: pathlib.Path
+    verbose: bool
 
 
 def regex_un_x(value: str) -> str:
@@ -72,10 +74,10 @@ def build_json(var: variant.Variant) -> str:
 
 def substitute(cfg: Config) -> None:
     """Perform the substitutions."""
-    cfg.diag_("Building the variants data")
+    logging.debug("Building the variants data")
     variants: Final = variant.get_all_variants_in_order()
 
-    cfg.diag_("Preparing the Jinja substitution environment")
+    logging.debug("Preparing the Jinja substitution environment")
     jenv: Final = jinja2.Environment(
         autoescape=False,  # noqa: S701
         loader=jinja2.FileSystemLoader(cfg.template.parent),
@@ -94,15 +96,18 @@ def substitute(cfg: Config) -> None:
         "version": defs.VERSION,
     }
 
-    cfg.diag_("Rendering the template")
+    logging.debug("Rendering the template")
     result: Final = jenv.get_template(cfg.template.name).render(**jvars)
-    cfg.diag(lambda: f"Got {len(result)} characters")
+    logging.debug("Got %(count)d characters", {"count": len(result)})
 
-    cfg.diag(lambda: f"Generating the {cfg.output} output file")
+    logging.debug("Generating the %(filename)s output file", {"filename": cfg.output})
     cfg.output.write_text(result, encoding="UTF-8")
     cfg.output.chmod(cfg.output_mode)
 
-    cfg.diag(lambda: f"Rendered {cfg.template} into {cfg.output}")
+    logging.debug(
+        "Rendered %(template)s into %(filename)s",
+        {"template": cfg.template, "filename": cfg.output},
+    )
 
 
 class OctalInteger(click.ParamType):
@@ -166,6 +171,7 @@ OCTAL_INTEGER: Final = OctalInteger()
 )
 def main(*, mode: int, output: pathlib.Path, template: pathlib.Path, verbose: bool) -> None:
     """Parse command-line arguments, substitute data."""
+    diag.setup_logger(verbose=verbose)
     cfg: Final = Config(
         output=output,
         output_mode=mode,

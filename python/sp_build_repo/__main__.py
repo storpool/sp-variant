@@ -7,17 +7,18 @@ from __future__ import annotations
 import dataclasses
 import datetime
 import functools
+import logging
 import pathlib
 import shutil
 import subprocess
 import sys
 from typing import TYPE_CHECKING, Dict, Optional
 
-import cfg_diag
 import click
 import jinja2
 import typedload.dataloader
 
+from sp_build_repo import diag
 from sp_variant import defs
 from sp_variant import variant
 from sp_variant import vbuild
@@ -90,7 +91,7 @@ class Overrides:
 
 
 @dataclasses.dataclass(frozen=True)
-class Config(cfg_diag.Config):
+class Config:
     """Configuration for the repository setup."""
 
     datadir: pathlib.Path
@@ -98,6 +99,7 @@ class Config(cfg_diag.Config):
     no_date: bool
     overrides: Overrides
     runtime: pathlib.Path
+    verbose: bool
 
 
 class Singles:
@@ -129,11 +131,11 @@ class Singles:
         return loader
 
 
-def ensure_none(cfg: Config, path: pathlib.Path) -> None:
+def ensure_none(path: pathlib.Path) -> None:
     """Remove a file, directory, or other filesystem object altogether."""
     if not path.exists():
         return
-    cfg.diag(lambda: f"Removing the existing {path}")
+    logging.debug("Removing the existing %(path)s", {"path": path})
     try:
         subprocess.check_call(["rm", "-rf", "--", path])
     except subprocess.CalledProcessError as err:
@@ -141,7 +143,6 @@ def ensure_none(cfg: Config, path: pathlib.Path) -> None:
 
 
 def copy_file(
-    cfg: Config,
     src: pathlib.Path,
     dstdir: pathlib.Path,
     *,
@@ -150,7 +151,7 @@ def copy_file(
 ) -> None:
     """Copy a file with the appropriate access permissions."""
     dst: Final = dstdir / (src.name if dstname is None else dstname)
-    ensure_none(cfg, dst)
+    ensure_none(dst)
     try:
         shutil.copy2(src, dst)
     except (OSError, subprocess.CalledProcessError) as err:
@@ -175,7 +176,10 @@ def subst_debian_sources(
     vendor: Final = var.repo.vendor
     codename: Final = var.repo.codename
     dst: Final = dstdir / (src.stem + rtype.extension + src.suffix)
-    cfg.diag(lambda: f"{src} -> {dst} [vendor {vendor}, codename {codename}]")
+    logging.debug(
+        "%(src)s -> %(dst)s [vendor %(vendor)s, codename %(codename)s]",
+        {"src": src, "dst": dst, "vendor": vendor, "codename": codename},
+    )
 
     ovr: Final = cfg.overrides.repo.get(
         rtype.name, OverrideRepo(url=None, slug=None, vendor=None, codename=None)
@@ -211,7 +215,7 @@ def subst_yum_repo(
     """Substitute the placeholder vars in a Debian sources list file."""
     assert isinstance(var.repo, defs.YumRepo)  # noqa: S101  # mypy needs this
     dst: Final = dstdir / (src.stem + rtype.extension + src.suffix)
-    cfg.diag(lambda: f"{src} -> {dst} []")
+    logging.debug("%(src)s -> %(dst)s []", {"src": src, "dst": dst})
 
     ovr: Final = cfg.overrides.repo.get(
         rtype.name, OverrideRepo(url=None, slug=None, vendor=None, codename=None)
@@ -249,11 +253,10 @@ def build_repo(cfg: Config) -> pathlib.Path:
 
     distname: Final = get_distname()
     distdir: Final = cfg.destdir / distname
-    ensure_none(cfg, distdir)
+    ensure_none(distdir)
     distdir.mkdir()
 
     copy_file(
-        cfg,
         cfg.runtime,
         distdir,
         dstname="storpool_variant",
@@ -261,13 +264,11 @@ def build_repo(cfg: Config) -> pathlib.Path:
     )
 
     copy_file(
-        cfg,
         cfg.datadir / "common/scripts/storpool_variant.sh",
         distdir,
         executable=True,
     )
     copy_file(
-        cfg,
         cfg.datadir / "common/scripts/add-storpool-repo.sh",
         distdir,
         executable=True,
@@ -281,27 +282,19 @@ def build_repo(cfg: Config) -> pathlib.Path:
         if isinstance(var.repo, defs.DebRepo):
             for rtype in defs.REPO_TYPES:
                 subst_debian_sources(cfg, var, cfg.datadir / var.repo.sources, vardir, rtype)
-            copy_file(
-                cfg,
-                cfg.datadir / var.repo.keyring,
-                vardir,
-            )
+            copy_file(cfg.datadir / var.repo.keyring, vardir)
         elif isinstance(var.repo, defs.YumRepo):
             for rtype in defs.REPO_TYPES:
                 subst_yum_repo(cfg, var, cfg.datadir / var.repo.yumdef, vardir, rtype)
-            copy_file(
-                cfg,
-                cfg.datadir / var.repo.keyring,
-                vardir,
-            )
+            copy_file(cfg.datadir / var.repo.keyring, vardir)
         else:
             raise NotImplementedError(
                 f"No idea how to handle {type(var.repo).__name__} for {var.name}"
             )
 
     distfile: Final = (cfg.destdir / distname).with_suffix(".tar.gz")
-    ensure_none(cfg, distfile)
-    cfg.diag(lambda: f"Creating {distfile}")
+    ensure_none(distfile)
+    logging.debug("Creating %(distfile)s", {"distfile": distfile})
     try:
         subprocess.check_call(
             ["tar", "-caf", distfile, "-C", cfg.destdir, distname],
@@ -425,6 +418,7 @@ def cmd_build(  # noqa: PLR0913
     """Build the StorPool repository archive and output its name."""
     cfg_hold: Final = ctx.find_object(ConfigHolder)
     assert isinstance(cfg_hold, ConfigHolder)  # noqa: S101  # mypy needs this
+    diag.setup_logger(verbose=cfg_hold.verbose)
     cfg: Final = Config(
         datadir=datadir,
         destdir=destdir,

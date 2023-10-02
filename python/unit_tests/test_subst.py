@@ -6,6 +6,7 @@ import pathlib
 import tempfile
 import typing
 
+from sp_build_repo import diag
 from sp_build_repo import subst
 
 
@@ -17,6 +18,7 @@ def test_subst() -> None:
     """Test the substitution tool."""
     with tempfile.TemporaryDirectory() as tempd_obj:
         tempd: Final = pathlib.Path(tempd_obj)
+        diag.setup_logger(verbose=True)
         cfg: Final = subst.Config(
             output=tempd / "data.txt",
             output_mode=0o612,
@@ -57,6 +59,7 @@ def test_subst_re() -> None:
     """Test the substitution tool."""
     with tempfile.TemporaryDirectory() as tempd_obj:
         tempd: Final = pathlib.Path(tempd_obj)
+        diag.setup_logger(verbose=True)
         cfg: Final = subst.Config(
             output=tempd / "data.txt",
             output_mode=0o747,

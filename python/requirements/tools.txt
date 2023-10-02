@@ -2,7 +2,6 @@
 # SPDX-License-Identifier: BSD-2-Clause
 
 # sp_build_repo
-cfg_diag >= 0.4, < 0.5
 click >= 8.1, < 9
 jinja2 >= 3, < 4
 tomli >= 2, < 3
