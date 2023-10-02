@@ -18,7 +18,13 @@ pkgs.mkShell {
 
   shellHook = ''
     set -e
+    set -x
+
     tox run-parallel
+
+    "$(pwd)/nix/run-basic-tests.sh" "$(pwd)/.tox/unit-tests/bin/sp_variant"
+
+    set +x
     exit
   '';
 }
