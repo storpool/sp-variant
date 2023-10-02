@@ -12,6 +12,47 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixes
+
+- python:
+    - do not pass the `python_version` parameter to mypy, we have other ways of
+      testing with different Python versions
+- rust:
+    - output a newline character in `storpool_variant show all`
+
+### Additions
+
+- add a Nix expression for running the Python Tox tests
+- add a Nix expression for building the Rust implementation
+- python:
+    - add 3.12 to the list of supported Python versions
+- rust:
+    - expose `Variant.supported.repo` as a public struct member
+
+### Other changes
+
+- python:
+    - drop the `cfg-diag` dependency for the `sp_build_repo` and
+      `test_docker` utilities, use Python's `logging` library directly
+    - also run the "format" environment in the first Tox stage
+    - use reuse 2.x for testing with no changes
+    - bump the black version dependency to 23.7 for "py312" support
+    - convert the `tox.ini` file to the Tox 4.x format:
+        - add backslashes for line continuation in multiline variables
+        - add a `minversion` specification and set it to 4.1
+        - add a `requires` specification and list `test-stages` so that
+          it may be installed within the bootstrapped Tox environment to
+          make it possible to be run from the outside
+- rust:
+    - bump MSRV to 1.64 to unbreak the compilation now that we may pull
+      clap >= 4.3 in as a dependency
+    - use the clippy tool from Rust 1.72:
+        - note the clippy version in a code comment in the `run-clippy.sh` file
+        - allow the use of raw strings for the detection regular expressions,
+          those are almost free-form and they may contain special characters
+        - rename a single-character variable to a more descriptive name
+        - allow single-call functions, we break some of those out for clarity
+
 ## [3.2.3] - 2023-08-24
 
 ### Fixes
