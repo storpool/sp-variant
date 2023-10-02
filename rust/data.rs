@@ -3160,7 +3160,7 @@ fi
                     ),
                 ]
             ),
-            version: "3.2.3".to_owned(),
+            version: "3.3.0".to_owned(),
         }
     });
     assert!(
