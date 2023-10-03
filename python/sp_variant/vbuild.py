@@ -571,6 +571,24 @@ fi
         },
     ),
     defs.VariantUpdate(
+        name="CENTOS9",
+        descr="CentOS Stream 9.x",
+        parent="ALMA9",
+        detect=defs.Detect(
+            filename="/etc/redhat-release",
+            regex=re.compile(r"^ CentOS Stream release 9", re.X),
+            os_id="centos",
+            os_version_regex=re.compile(r"^9(?:$|\.[4-9]|\.[1-9][0-9])"),
+        ),
+        updates={
+            "builder": {
+                "alias": "centos9",
+                "base_image": "quay.io/centos/centos:stream9",
+                "branch": "centos/9",
+            },
+        },
+    ),
+    defs.VariantUpdate(
         name="CENTOS8",
         descr="CentOS 8.x",
         parent="ALMA8",
