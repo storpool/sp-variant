@@ -58,6 +58,11 @@ detect_from_os_release()
 		return
 	fi
 	
+	if [ "$os_id" = 'centos' ] && printf -- '%s\n' "$version_id" | grep -Eqe '^9($|\.[4-9]|\.[1-9][0-9])'; then
+		printf -- '%s\n' 'CENTOS9'
+		return
+	fi
+	
 	if [ "$os_id" = 'debian' ] && printf -- '%s\n' "$version_id" | grep -Eqe '^9$'; then
 		printf -- '%s\n' 'DEBIAN9'
 		return
@@ -178,6 +183,11 @@ cmd_detect()
 	
 	if [ -r '/etc/redhat-release' ] && grep -Eqe '^CentOS[[:space:]].*[[:space:]]8\.([3-9]|([12][0-9]))' -- '/etc/redhat-release'; then
 		printf -- '%s\n' 'CENTOS8'
+		return
+	fi
+	
+	if [ -r '/etc/redhat-release' ] && grep -Eqe '^CentOSStreamrelease9' -- '/etc/redhat-release'; then
+		printf -- '%s\n' 'CENTOS9'
 		return
 	fi
 	
@@ -763,6 +773,112 @@ show_CENTOS8()
   },
   "supported": {
     "repo": true
+  },
+  "systemd_lib": "usr/lib/systemd/system"
+}
+EOVARIANT_JSON
+}
+
+show_CENTOS9()
+{
+	cat <<'EOVARIANT_JSON'
+  {
+  "builder": {
+    "alias": "centos9",
+    "base_image": "quay.io/centos/centos:stream9",
+    "branch": "centos/9",
+    "kernel_package": "kernel-core",
+    "utf8_locale": "C.UTF-8"
+  },
+  "commands": {
+    "package": {
+      "install": [
+        "dnf",
+        "--disablerepo=*",
+        "--enablerepo=appstream",
+        "--enablerepo=baseos",
+        "--enablerepo=crb",
+        "--enablerepo=storpool-contrib",
+        "install",
+        "-q",
+        "-y",
+        "--"
+      ],
+      "list_all": [
+        "rpm",
+        "-qa",
+        "--qf",
+        "%{Name}\\t%{EVR}\\t%{Arch}\\tii\\n",
+        "--"
+      ],
+      "purge": [
+        "yum",
+        "remove",
+        "-q",
+        "-y",
+        "--"
+      ],
+      "remove": [
+        "yum",
+        "remove",
+        "-q",
+        "-y",
+        "--"
+      ],
+      "remove_impl": [
+        "rpm",
+        "-e",
+        "--"
+      ],
+      "update_db": [
+        "true"
+      ]
+    },
+    "pkgfile": {
+      "dep_query": [
+        "sh",
+        "-c",
+        "rpm -qpR -- \"$pkg\""
+      ],
+      "install": [
+        "sh",
+        "-c",
+        "\nunset to_install to_reinstall\nfor f in $packages; do\n    package=\"$(rpm -qp \"$f\")\"\n    if rpm -q -- \"$package\"; then\n        to_reinstall=\"$to_reinstall ./$f\"\n    else\n        to_install=\"$to_install ./$f\"\n    fi\ndone\n\nif [ -n \"$to_install\" ]; then\n    dnf install -y --disablerepo='*' --enablerepo=appstream,baseos,crb,storpool-contrib --setopt=localpkg_gpgcheck=0 -- $to_install\nfi\nif [ -n \"$to_reinstall\" ]; then\n    dnf reinstall -y --disablerepo='*' --enablerepo=appstream,baseos,crb,storpool-contrib --setopt=localpkg_gpgcheck=0 -- $to_reinstall\nfi\n"
+      ]
+    }
+  },
+  "descr": "CentOS Stream 9.x",
+  "detect": {
+    "filename": "/etc/redhat-release",
+    "os_id": "centos",
+    "os_version_regex": "^9(?:$|\\.[4-9]|\\.[1-9][0-9])",
+    "regex": "^ CentOS Stream release 9"
+  },
+  "family": "redhat",
+  "file_ext": "rpm",
+  "initramfs_flavor": "mkinitrd",
+  "min_sys_python": "2.7",
+  "name": "CENTOS9",
+  "package": {
+    "KMOD": "kmod",
+    "LIBCGROUP": "bash",
+    "LIBUDEV": "systemd-libs",
+    "OPENSSL": "openssl-libs",
+    "PERL_AUTODIE": "perl-autodie",
+    "PERL_FILE_PATH": "perl-File-Path",
+    "PERL_LWP_PROTO_HTTPS": "perl-LWP-Protocol-https",
+    "PERL_SYS_SYSLOG": "perl-Sys-Syslog",
+    "PROCPS": "procps-ng",
+    "PYTHON_SIMPLEJSON": "bash",
+    "UDEV": "systemd"
+  },
+  "parent": "ALMA9",
+  "repo": {
+    "keyring": "redhat/repo/RPM-GPG-KEY-StorPool",
+    "yumdef": "redhat/repo/storpool-centos.repo"
+  },
+  "supported": {
+    "repo": false
   },
   "systemd_lib": "usr/lib/systemd/system"
 }
@@ -2356,6 +2472,7 @@ cmd_show_all()
     "CENTOS6",
     "CENTOS7",
     "CENTOS8",
+    "CENTOS9",
     "ALMA8",
     "ALMA9",
     "UBUNTU1604",
@@ -2387,6 +2504,9 @@ EOPROLOGUE
   echo ','
   printf -- '    "%s": ' 'CENTOS8'
   show_CENTOS8
+  echo ','
+  printf -- '    "%s": ' 'CENTOS9'
+  show_CENTOS9
   echo ','
   printf -- '    "%s": ' 'DEBIAN9'
   show_DEBIAN9
@@ -2959,6 +3079,104 @@ if [ -n "$to_install" ]; then
 fi
 if [ -n "$to_reinstall" ]; then
     dnf reinstall -y --disablerepo='*' --enablerepo=appstream,baseos,storpool-contrib,powertools --setopt=localpkg_gpgcheck=0 -- $to_reinstall
+fi
+'  "$@"
+							;;
+						
+
+						*)
+							echo "Invalid command '$cmd_item' in the '$cmd_cat' category" 1>&2
+							exit 1
+							;;
+					esac
+					;;
+				
+
+				*)
+					echo "Invalid command category '$cmd_cat'" 1>&2
+					exit 1
+					;;
+			esac
+			;;
+		
+		CENTOS9)
+			case "$cmd_cat" in
+				
+				package)
+					case "$cmd_item" in
+						
+						install)
+							# The commands are quoted exactly as much as necessary.
+							# shellcheck disable=SC2016
+							$noop 'dnf' '--disablerepo=*' '--enablerepo=appstream' '--enablerepo=baseos' '--enablerepo=crb' '--enablerepo=storpool-contrib' 'install' '-q' '-y' '--'  "$@"
+							;;
+						
+						list_all)
+							# The commands are quoted exactly as much as necessary.
+							# shellcheck disable=SC2016
+							$noop 'rpm' '-qa' '--qf' '%{Name}\t%{EVR}\t%{Arch}\tii\n' '--'  "$@"
+							;;
+						
+						purge)
+							# The commands are quoted exactly as much as necessary.
+							# shellcheck disable=SC2016
+							$noop 'yum' 'remove' '-q' '-y' '--'  "$@"
+							;;
+						
+						remove)
+							# The commands are quoted exactly as much as necessary.
+							# shellcheck disable=SC2016
+							$noop 'yum' 'remove' '-q' '-y' '--'  "$@"
+							;;
+						
+						remove_impl)
+							# The commands are quoted exactly as much as necessary.
+							# shellcheck disable=SC2016
+							$noop 'rpm' '-e' '--'  "$@"
+							;;
+						
+						update_db)
+							# The commands are quoted exactly as much as necessary.
+							# shellcheck disable=SC2016
+							$noop 'true'  "$@"
+							;;
+						
+
+						*)
+							echo "Invalid command '$cmd_item' in the '$cmd_cat' category" 1>&2
+							exit 1
+							;;
+					esac
+					;;
+				
+				pkgfile)
+					case "$cmd_item" in
+						
+						dep_query)
+							# The commands are quoted exactly as much as necessary.
+							# shellcheck disable=SC2016
+							$noop 'sh' '-c' 'rpm -qpR -- "$pkg"'  "$@"
+							;;
+						
+						install)
+							# The commands are quoted exactly as much as necessary.
+							# shellcheck disable=SC2016
+							$noop 'sh' '-c' '
+unset to_install to_reinstall
+for f in $packages; do
+    package="$(rpm -qp "$f")"
+    if rpm -q -- "$package"; then
+        to_reinstall="$to_reinstall ./$f"
+    else
+        to_install="$to_install ./$f"
+    fi
+done
+
+if [ -n "$to_install" ]; then
+    dnf install -y --disablerepo='*' --enablerepo=appstream,baseos,crb,storpool-contrib --setopt=localpkg_gpgcheck=0 -- $to_install
+fi
+if [ -n "$to_reinstall" ]; then
+    dnf reinstall -y --disablerepo='*' --enablerepo=appstream,baseos,crb,storpool-contrib --setopt=localpkg_gpgcheck=0 -- $to_reinstall
 fi
 '  "$@"
 							;;
@@ -4352,6 +4570,12 @@ cmd_repo_add()
 			
 			;;
 		
+		CENTOS9)
+			
+			repo_add_yum 'CENTOS9' "$vdir" "$repotype" 'redhat/repo/storpool-centos.repo' 'redhat/repo/RPM-GPG-KEY-StorPool'
+			
+			;;
+		
 		DEBIAN9)
 			
 			repo_add_deb 'DEBIAN9' "$vdir" "$repotype" 'debian/repo/storpool.sources' 'debian/repo/storpool-keyring.gpg' 'apt-transport-https ca-certificates'
@@ -4553,6 +4777,10 @@ case "$1" in
 			
 			CENTOS8)
 				show_variant 'CENTOS8'
+				;;
+			
+			CENTOS9)
+				show_variant 'CENTOS9'
 				;;
 			
 			DEBIAN9)
