@@ -12,6 +12,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Additions
+
+- all:
+    - add CentOS Stream 9 as an unsupported distribution
+
+### Other changes
+
+- rust:
+    - specify the features of the `nix` crate that we use ("fs" and "user")
+
 ## [3.3.0] - 2023-10-02
 
 ### Fixes
