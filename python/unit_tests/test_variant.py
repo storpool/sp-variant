@@ -67,7 +67,7 @@ def test_detect() -> None:
 
 def test_list_all() -> None:
     """Make sure that the package.list_all command does not go amok."""
-    print("")
+    print()
 
     var: Final = variant.detect_variant()
     assert var is not None
