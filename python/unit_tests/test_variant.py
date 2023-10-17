@@ -4,8 +4,10 @@
 
 from __future__ import annotations
 
+import collections
 import dataclasses
 import pathlib
+import re
 import sys
 import typing
 from unittest import mock
@@ -23,6 +25,7 @@ if typing.TYPE_CHECKING:
 
 _MSG_NOT_SEEN = "This should not be seen"
 _MSG_SEEN = "This should be seen"
+_RE_CENTOS_VER = re.compile(r"^ .*? (?P<ver> \d+ ) $", re.X)
 
 
 def test_get() -> None:
@@ -151,3 +154,46 @@ def test_config_diag() -> None:
         cfg.diag(_MSG_NOT_SEEN)
 
     check(seen=False)
+
+
+def test_builder_branches() -> None:
+    """Make sure the builder branch assignments are sane."""
+    all_variants: Final = variant.get_all_variants_in_order()
+
+    # All supported Debian/Ubuntu branches should define a builder.
+    missing: Final = [
+        var
+        for var in all_variants
+        if var.family == "debian" and var.supported.repo and not var.builder.branch
+    ]
+    assert not missing
+
+    # There should be a builder for all supported CentOS/Alma/Rocky numbered variants.
+    def extract_version(var: variant.Variant) -> str:
+        """Extract the version from a single CentOS-like variant."""
+        vdata: Final = _RE_CENTOS_VER.match(var.name)
+        assert vdata
+        ver: Final = vdata.group("ver")
+        assert ver
+        return ver
+
+    versions: Final = sorted(
+        {extract_version(var) for var in all_variants if var.family == "redhat"}
+    )
+    assert versions
+    missing_branches: Final = [
+        branch
+        for branch in (f"centos/{ver}" for ver in versions)
+        if all(var.builder.branch != branch for var in all_variants)
+    ]
+    assert not missing_branches
+
+    # And finally, there should only be one variant to declare a given builder branch.
+    dup_branches: Final = sorted(
+        item
+        for item in collections.Counter(
+            var.builder.branch for var in all_variants if var.builder.branch
+        ).items()
+        if item[1] != 1
+    )
+    assert not dup_branches

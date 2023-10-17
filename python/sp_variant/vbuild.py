@@ -502,7 +502,7 @@ fi
         builder=defs.Builder(
             alias="alma9",
             base_image="almalinux:9",
-            branch="centos/9",
+            branch="",
             kernel_package="kernel-core",
             utf8_locale="C.UTF-8",
         ),
