@@ -500,7 +500,7 @@ fi
                                 builder: Builder {
                                     alias: "alma9".to_owned(),
                                     base_image: "almalinux:9".to_owned(),
-                                    branch: "centos/9".to_owned(),
+                                    branch: "".to_owned(),
                                     kernel_package: "kernel-core".to_owned(),
                                     utf8_locale: "C.UTF-8".to_owned(),
                                 },
