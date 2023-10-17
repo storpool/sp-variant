@@ -3,7 +3,7 @@ SPDX-FileCopyrightText: 2021 - 2023  StorPool <support@storpool.com>
 SPDX-License-Identifier: BSD-2-Clause
 -->
 
-# API reference for stuff and stuff
+# API reference for the Python implementation of sp-variant
 
 ## variant: the top-level functions and structures
 
