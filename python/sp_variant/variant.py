@@ -38,7 +38,10 @@ class VariantRemoteError(VariantError):
     """An error occurred while communicating with a remote host."""
 
     hostname: str
+    """The name of the remote host that we could not communicate with."""
+
     msg: str
+    """The description of the error that occurred."""
 
     def __init__(self, hostname: str, msg: str) -> None:
         """Store the hostname and the error message."""
