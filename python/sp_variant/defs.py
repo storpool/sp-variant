@@ -221,7 +221,7 @@ class RepoType(NamedTuple):
     """The base URL of the StorPool package repository."""
 
 
-VERSION: Final = "3.4.0"
+VERSION: Final = "3.4.1"
 FORMAT_VERSION: Final = (1, 4)
 
 REPO_TYPES: Final = [
