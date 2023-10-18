@@ -12,6 +12,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixes
+
+- all:
+    - remove the duplicate builder definition for `centos/9`; switching to
+      CentOS Stream 9 means that the AlmaLinux 9 one must be dropped
+- docs:
+    - use a more descriptive heading for the Python API reference
+
+### Additions
+
+- python:
+    - add some unit tests for the `builder` attribute of the variants data
+    - use Ruff 0.1.0 for testing with minor adaptations of the configuration
+    - sync some docstrings with the ones used in the Rust implementation
+    - add some more docstrings
+
 ## [3.4.0] - 2023-10-03
 
 ### Additions
