@@ -115,7 +115,8 @@ class Singles:
             return cls._jinja2_env[abspath]
 
         env: Final = jinja2.Environment(
-            autoescape=False, loader=cls.jinja2_loader(path)  # noqa: S701
+            autoescape=False,  # noqa: S701
+            loader=cls.jinja2_loader(path),
         )
         cls._jinja2_env[abspath] = env
         return env
