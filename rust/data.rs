@@ -3327,7 +3327,7 @@ fi
                     ),
                 ]
             ),
-            version: "3.4.1".to_owned(),
+            version: "3.4.2".to_owned(),
         }
     });
     assert!(
