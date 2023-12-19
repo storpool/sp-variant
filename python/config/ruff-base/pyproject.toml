@@ -12,7 +12,7 @@ ignore = [
   # We know what "cls" is, too... we hope.
   "ANN102",
 
-  # We leave most of the formatting to the `black` tool.
+  # Trailing commas are okay if the formatter puts them in; otherwise, no need
   "COM812",
 
   # No blank lines before the class docstring, TYVM
@@ -20,9 +20,6 @@ ignore = [
 
   # The multi-line docstring summary starts on the same line
   "D213",
-
-  # We leave most of the formatting to the `black` tool.
-  "E203",
 
   # Too restrictive.
   "EM",
