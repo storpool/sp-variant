@@ -12,6 +12,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Other changes
+
+- python:
+    - use Ruff 0.1.8 for testing with no changes
+    - use Ruff instead of Black for source code formatting
+    - drop the Tox `requires` specification for `test-stages`: recent
+      versions of the `tox-stages` tool autodetect the need for that
+    - consistently pass `--` before positional arguments in commands
+      invoked by Tox
+    - move the "reuse" test to the first Tox stage
+- rust:
+    - refresh the `Cargo.lock` file
+
 ## [3.4.1] - 2023-10-18
 
 ### Fixes
