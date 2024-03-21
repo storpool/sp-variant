@@ -3,14 +3,10 @@
 
 target-version = "py38"
 line-length = 100
+
+[lint]
 select = []
 ignore = [
-  # We know what "self" is... we hope.
-  "ANN101",
-
-  # We know what "cls" is, too... we hope.
-  "ANN102",
-
   # Trailing commas are okay if the formatter puts them in; otherwise, no need
   "COM812",
 
@@ -36,16 +32,16 @@ ignore = [
   "TRY003",
 ]
 
-[flake8-copyright]
+[lint.flake8-copyright]
 notice-rgx = "(?x) SPDX-FileCopyrightText: \\s \\S"
 
-[isort]
+[lint.isort]
 force-single-line = true
 known-first-party = ["sp_build_repo", "sp_variant", "test_docker"]
 lines-after-imports = 2
 single-line-exclusions = ["defs", "typing"]
 
-[per-file-ignores]
+[lint.per-file-ignores]
 # This is a command-line tool. Console output is part of its task.
 # Also, it needs to be able to run typedload on Python < 3.10, so it cannot
 # leverage the full power of X | Y unions, X | None optional values, etc.

@@ -75,8 +75,10 @@ strict = true
 
 [tool.ruff]
 extend = "ruff-base.toml"
-select = ["ALL"]
 preview = true
+
+[tool.ruff.lint]
+select = ["ALL"]
 
 [tool.test-stages]
 stages = ["@check and @quick and not @manual", "@check and not @manual", "@tests and not @manual"]
