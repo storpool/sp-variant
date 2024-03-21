@@ -7,8 +7,7 @@ set -e
 
 : "${PY_MINVER_MIN:=9}"
 
-# cffi is broken for 3.12 in nixpkgs-unstable
-: "${PY_MINVER_MAX:=11}"
+: "${PY_MINVER_MAX:=12}"
 
 for minor in $(seq -- "$PY_MINVER_MIN" "$PY_MINVER_MAX"); do
 	pyver="3$minor"
