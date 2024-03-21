@@ -26,16 +26,12 @@ pub enum VariantKind {
     ALMA8,
     /// AlmaLinux 9.x
     ALMA9,
-    /// CentOS 6.x
-    CENTOS6,
     /// CentOS 7.x
     CENTOS7,
     /// CentOS 8.x
     CENTOS8,
     /// CentOS Stream 9.x
     CENTOS9,
-    /// Debian 9.x (stretch)
-    DEBIAN9,
     /// Debian 10.x (buster)
     DEBIAN10,
     /// Debian 11.x (bullseye)
@@ -52,8 +48,6 @@ pub enum VariantKind {
     ROCKY8,
     /// Rocky Linux 9.x
     ROCKY9,
-    /// Ubuntu 16.04 LTS (Xenial Xerus)
-    UBUNTU1604,
     /// Ubuntu 18.04 LTS (Bionic Beaver)
     UBUNTU1804,
     /// Ubuntu 20.04 LTS (Focal Fossa)
@@ -67,11 +61,9 @@ pub enum VariantKind {
 impl VariantKind {
     const ALMA8_NAME: &'static str = "ALMA8";
     const ALMA9_NAME: &'static str = "ALMA9";
-    const CENTOS6_NAME: &'static str = "CENTOS6";
     const CENTOS7_NAME: &'static str = "CENTOS7";
     const CENTOS8_NAME: &'static str = "CENTOS8";
     const CENTOS9_NAME: &'static str = "CENTOS9";
-    const DEBIAN9_NAME: &'static str = "DEBIAN9";
     const DEBIAN10_NAME: &'static str = "DEBIAN10";
     const DEBIAN11_NAME: &'static str = "DEBIAN11";
     const DEBIAN12_NAME: &'static str = "DEBIAN12";
@@ -80,7 +72,6 @@ impl VariantKind {
     const RHEL8_NAME: &'static str = "RHEL8";
     const ROCKY8_NAME: &'static str = "ROCKY8";
     const ROCKY9_NAME: &'static str = "ROCKY9";
-    const UBUNTU1604_NAME: &'static str = "UBUNTU1604";
     const UBUNTU1804_NAME: &'static str = "UBUNTU1804";
     const UBUNTU2004_NAME: &'static str = "UBUNTU2004";
     const UBUNTU2204_NAME: &'static str = "UBUNTU2204";
@@ -93,11 +84,9 @@ impl AsRef<str> for VariantKind {
         match *self {
             Self::ALMA8 => Self::ALMA8_NAME,
             Self::ALMA9 => Self::ALMA9_NAME,
-            Self::CENTOS6 => Self::CENTOS6_NAME,
             Self::CENTOS7 => Self::CENTOS7_NAME,
             Self::CENTOS8 => Self::CENTOS8_NAME,
             Self::CENTOS9 => Self::CENTOS9_NAME,
-            Self::DEBIAN9 => Self::DEBIAN9_NAME,
             Self::DEBIAN10 => Self::DEBIAN10_NAME,
             Self::DEBIAN11 => Self::DEBIAN11_NAME,
             Self::DEBIAN12 => Self::DEBIAN12_NAME,
@@ -106,7 +95,6 @@ impl AsRef<str> for VariantKind {
             Self::RHEL8 => Self::RHEL8_NAME,
             Self::ROCKY8 => Self::ROCKY8_NAME,
             Self::ROCKY9 => Self::ROCKY9_NAME,
-            Self::UBUNTU1604 => Self::UBUNTU1604_NAME,
             Self::UBUNTU1804 => Self::UBUNTU1804_NAME,
             Self::UBUNTU2004 => Self::UBUNTU2004_NAME,
             Self::UBUNTU2204 => Self::UBUNTU2204_NAME,
@@ -123,11 +111,9 @@ impl FromStr for VariantKind {
         match value {
             Self::ALMA8_NAME => Ok(Self::ALMA8),
             Self::ALMA9_NAME => Ok(Self::ALMA9),
-            Self::CENTOS6_NAME => Ok(Self::CENTOS6),
             Self::CENTOS7_NAME => Ok(Self::CENTOS7),
             Self::CENTOS8_NAME => Ok(Self::CENTOS8),
             Self::CENTOS9_NAME => Ok(Self::CENTOS9),
-            Self::DEBIAN9_NAME => Ok(Self::DEBIAN9),
             Self::DEBIAN10_NAME => Ok(Self::DEBIAN10),
             Self::DEBIAN11_NAME => Ok(Self::DEBIAN11),
             Self::DEBIAN12_NAME => Ok(Self::DEBIAN12),
@@ -136,7 +122,6 @@ impl FromStr for VariantKind {
             Self::RHEL8_NAME => Ok(Self::RHEL8),
             Self::ROCKY8_NAME => Ok(Self::ROCKY8),
             Self::ROCKY9_NAME => Ok(Self::ROCKY9),
-            Self::UBUNTU1604_NAME => Ok(Self::UBUNTU1604),
             Self::UBUNTU1804_NAME => Ok(Self::UBUNTU1804),
             Self::UBUNTU2004_NAME => Ok(Self::UBUNTU2004),
             Self::UBUNTU2204_NAME => Ok(Self::UBUNTU2204),
@@ -165,18 +150,15 @@ pub fn get_variants() -> &'static VariantDefTop {
                     VariantKind::ROCKY9,
                     VariantKind::RHEL8,
                     VariantKind::ORACLE7,
-                    VariantKind::CENTOS6,
                     VariantKind::CENTOS7,
                     VariantKind::CENTOS8,
                     VariantKind::CENTOS9,
                     VariantKind::ALMA8,
                     VariantKind::ALMA9,
-                    VariantKind::UBUNTU1604,
                     VariantKind::UBUNTU1804,
                     VariantKind::UBUNTU2004,
                     VariantKind::UBUNTU2204,
                     VariantKind::UBUNTU2304,
-                    VariantKind::DEBIAN9,
                     VariantKind::DEBIAN10,
                     VariantKind::DEBIAN11,
                     VariantKind::DEBIAN12,
@@ -312,7 +294,7 @@ fi
                                         ),
                                     ]
                                 ),
-                                min_sys_python: "2.7".to_owned(),
+                                min_sys_python: "3.6".to_owned(),
                                 repo:
                                     Repo::Yum(YumRepo {
                                         yumdef: "redhat/repo/storpool-centos.repo".to_owned(),
@@ -473,7 +455,7 @@ fi
                                         ),
                                     ]
                                 ),
-                                min_sys_python: "2.7".to_owned(),
+                                min_sys_python: "3.9".to_owned(),
                                 repo:
                                     Repo::Yum(YumRepo {
                                         yumdef: "redhat/repo/storpool-centos.repo".to_owned(),
@@ -503,163 +485,6 @@ fi
                                     branch: "".to_owned(),
                                     kernel_package: "kernel-core".to_owned(),
                                     utf8_locale: "C.UTF-8".to_owned(),
-                                },
-                            },
-                    ),
-                    (
-                            VariantKind::CENTOS6,
-                            Variant {
-                                kind: VariantKind::CENTOS6,
-                                descr: "CentOS 6.x".to_owned(),
-                                family: "redhat".to_owned(),
-                                parent: "CENTOS7".to_owned(),
-                                detect: Detect {
-                                    filename: "/etc/redhat-release".to_owned(),
-                                    #[allow(clippy::needless_raw_strings)]
-                                    regex: r"^ CentOS \s .* \s 6 \.".to_owned(),
-                                    os_id: "centos".to_owned(),
-                                    #[allow(clippy::needless_raw_strings)]
-                                    os_version_regex: r"^6(?:$|\.[0-9])".to_owned(),
-                                },
-                                supported: Supported {
-                                    repo: false,
-                                },
-                                commands: HashMap::from(
-                                    [
-                                        (
-                                            "package".to_owned(),
-                                            HashMap::from(
-                                                [
-                                                    (
-                                                        "install".to_owned(),
-                                                        vec![
-                                                            "yum".to_owned(),
-                                                            "--disablerepo=*".to_owned(),
-                                                            "--enablerepo=base".to_owned(),
-                                                            "--enablerepo=updates".to_owned(),
-                                                            "--enablerepo=storpool-contrib".to_owned(),
-                                                            "install".to_owned(),
-                                                            "-q".to_owned(),
-                                                            "-y".to_owned(),
-                                                        ],
-                                                    ),
-                                                    (
-                                                        "list_all".to_owned(),
-                                                        vec![
-                                                            "rpm".to_owned(),
-                                                            "-qa".to_owned(),
-                                                            "--qf".to_owned(),
-                                                            "%{Name}\\t%{EVR}\\t%{Arch}\\tii\\n".to_owned(),
-                                                            "--".to_owned(),
-                                                        ],
-                                                    ),
-                                                    (
-                                                        "purge".to_owned(),
-                                                        vec![
-                                                            "yum".to_owned(),
-                                                            "remove".to_owned(),
-                                                            "-q".to_owned(),
-                                                            "-y".to_owned(),
-                                                            "--".to_owned(),
-                                                        ],
-                                                    ),
-                                                    (
-                                                        "remove".to_owned(),
-                                                        vec![
-                                                            "yum".to_owned(),
-                                                            "remove".to_owned(),
-                                                            "-q".to_owned(),
-                                                            "-y".to_owned(),
-                                                            "--".to_owned(),
-                                                        ],
-                                                    ),
-                                                    (
-                                                        "remove_impl".to_owned(),
-                                                        vec![
-                                                            "rpm".to_owned(),
-                                                            "-e".to_owned(),
-                                                            "--".to_owned(),
-                                                        ],
-                                                    ),
-                                                    (
-                                                        "update_db".to_owned(),
-                                                        vec![
-                                                            "true".to_owned(),
-                                                        ],
-                                                    ),
-                                                ]
-                                            ),
-                                        ),
-                                        (
-                                            "pkgfile".to_owned(),
-                                            HashMap::from(
-                                                [
-                                                    (
-                                                        "dep_query".to_owned(),
-                                                        vec![
-                                                            "sh".to_owned(),
-                                                            "-c".to_owned(),
-                                                            "rpm -qpR -- \"$pkg\"".to_owned(),
-                                                        ],
-                                                    ),
-                                                    (
-                                                        "install".to_owned(),
-                                                        vec![
-                                                            "
-unset to_install to_reinstall
-for f in $packages; do
-    package=\"$(rpm -qp \"$f\")\"
-    if rpm -q -- \"$package\"; then
-        to_reinstall=\"$to_reinstall ./$f\"
-    else
-        to_install=\"$to_install ./$f\"
-    fi
-done
-
-if [ -n \"$to_install\" ]; then
-    yum install -y --disablerepo='*' --enablerepo=base,updates,storpool-contrib --setopt=localpkg_gpgcheck=0 -- $to_install
-fi
-if [ -n \"$to_reinstall\" ]; then
-    yum reinstall -y --disablerepo='*' --enablerepo=base,updates,storpool-contrib --setopt=localpkg_gpgcheck=0 -- $to_reinstall
-fi
-".to_owned(),
-                                                        ],
-                                                    ),
-                                                ]
-                                            ),
-                                        ),
-                                    ]
-                                ),
-                                min_sys_python: "2.6".to_owned(),
-                                repo:
-                                    Repo::Yum(YumRepo {
-                                        yumdef: "redhat/repo/storpool-centos.repo".to_owned(),
-                                        keyring: "redhat/repo/RPM-GPG-KEY-StorPool".to_owned(),
-                                    }),
-                                    package: HashMap::from(
-                                    [
-                                        ("KMOD".to_owned(), "module-init-tools".to_owned()),
-                                        ("LIBCGROUP".to_owned(), "libcgroup".to_owned()),
-                                        ("LIBUDEV".to_owned(), "libudev".to_owned()),
-                                        ("OPENSSL".to_owned(), "openssl".to_owned()),
-                                        ("PERL_AUTODIE".to_owned(), "perl".to_owned()),
-                                        ("PERL_FILE_PATH".to_owned(), "perl".to_owned()),
-                                        ("PERL_LWP_PROTO_HTTPS".to_owned(), "perl".to_owned()),
-                                        ("PERL_SYS_SYSLOG".to_owned(), "perl".to_owned()),
-                                        ("PROCPS".to_owned(), "procps".to_owned()),
-                                        ("PYTHON_SIMPLEJSON".to_owned(), "python-simplejson".to_owned()),
-                                        ("UDEV".to_owned(), "udev".to_owned()),
-                                    ]
-                                ),
-                                systemd_lib: "usr/lib/systemd/system".to_owned(),
-                                file_ext: "rpm".to_owned(),
-                                initramfs_flavor: "mkinitrd".to_owned(),
-                                builder: Builder {
-                                    alias: "centos6".to_owned(),
-                                    base_image: "centos:6".to_owned(),
-                                    branch: "centos/6".to_owned(),
-                                    kernel_package: "kernel".to_owned(),
-                                    utf8_locale: "en_US.utf8".to_owned(),
                                 },
                             },
                     ),
@@ -787,7 +612,7 @@ fi
                                         ),
                                     ]
                                 ),
-                                min_sys_python: "2.7".to_owned(),
+                                min_sys_python: "3.6".to_owned(),
                                 repo:
                                     Repo::Yum(YumRepo {
                                         yumdef: "redhat/repo/storpool-centos.repo".to_owned(),
@@ -948,7 +773,7 @@ fi
                                         ),
                                     ]
                                 ),
-                                min_sys_python: "2.7".to_owned(),
+                                min_sys_python: "3.6".to_owned(),
                                 repo:
                                     Repo::Yum(YumRepo {
                                         yumdef: "redhat/repo/storpool-centos.repo".to_owned(),
@@ -1109,7 +934,7 @@ fi
                                         ),
                                     ]
                                 ),
-                                min_sys_python: "2.7".to_owned(),
+                                min_sys_python: "3.9".to_owned(),
                                 repo:
                                     Repo::Yum(YumRepo {
                                         yumdef: "redhat/repo/storpool-centos.repo".to_owned(),
@@ -1143,23 +968,23 @@ fi
                             },
                     ),
                     (
-                            VariantKind::DEBIAN9,
+                            VariantKind::DEBIAN10,
                             Variant {
-                                kind: VariantKind::DEBIAN9,
-                                descr: "Debian 9.x (stretch)".to_owned(),
+                                kind: VariantKind::DEBIAN10,
+                                descr: "Debian 10.x (buster)".to_owned(),
                                 family: "debian".to_owned(),
-                                parent: "DEBIAN10".to_owned(),
+                                parent: "DEBIAN11".to_owned(),
                                 detect: Detect {
                                     filename: "/etc/os-release".to_owned(),
                                     #[allow(clippy::needless_raw_strings)]
                                     regex: r"^
                     PRETTY_NAME= .*
                     Debian \s+ GNU/Linux \s+
-                    (?: stretch | 9 ) (?: \s | / )
+                    (?: buster | 10 ) (?: \s | / )
                 ".to_owned(),
                                     os_id: "debian".to_owned(),
                                     #[allow(clippy::needless_raw_strings)]
-                                    os_version_regex: r"^9$".to_owned(),
+                                    os_version_regex: r"^10$".to_owned(),
                                 },
                                 supported: Supported {
                                     repo: false,
@@ -1264,164 +1089,7 @@ fi
                                         ),
                                     ]
                                 ),
-                                min_sys_python: "2.7".to_owned(),
-                                repo:
-                                    Repo::Deb(DebRepo {
-                                        codename: "stretch".to_owned(),
-                                        vendor: "debian".to_owned(),
-                                        sources: "debian/repo/storpool.sources".to_owned(),
-                                        keyring: "debian/repo/storpool-keyring.gpg".to_owned(),
-                                        req_packages: vec![
-                                            "apt-transport-https".to_owned(),
-                                            "ca-certificates".to_owned(),
-                                        ],
-                                    }),
-                                    package: HashMap::from(
-                                    [
-                                        ("BINDINGS_PYTHON".to_owned(), "python".to_owned()),
-                                        ("BINDINGS_PYTHON_CONFGET".to_owned(), "python-confget".to_owned()),
-                                        ("BINDINGS_PYTHON_SIMPLEJSON".to_owned(), "python-simplejson".to_owned()),
-                                        ("CGROUP".to_owned(), "cgroup-tools".to_owned()),
-                                        ("CPUPOWER".to_owned(), "linux-cpupower".to_owned()),
-                                        ("LIBSSL".to_owned(), "libssl1.1".to_owned()),
-                                        ("MCELOG".to_owned(), "bash".to_owned()),
-                                    ]
-                                ),
-                                systemd_lib: "lib/systemd/system".to_owned(),
-                                file_ext: "deb".to_owned(),
-                                initramfs_flavor: "update-initramfs".to_owned(),
-                                builder: Builder {
-                                    alias: "debian9".to_owned(),
-                                    base_image: "debian:stretch".to_owned(),
-                                    branch: "debian/stretch".to_owned(),
-                                    kernel_package: "linux-headers".to_owned(),
-                                    utf8_locale: "C.UTF-8".to_owned(),
-                                },
-                            },
-                    ),
-                    (
-                            VariantKind::DEBIAN10,
-                            Variant {
-                                kind: VariantKind::DEBIAN10,
-                                descr: "Debian 10.x (buster)".to_owned(),
-                                family: "debian".to_owned(),
-                                parent: "DEBIAN11".to_owned(),
-                                detect: Detect {
-                                    filename: "/etc/os-release".to_owned(),
-                                    #[allow(clippy::needless_raw_strings)]
-                                    regex: r"^
-                    PRETTY_NAME= .*
-                    Debian \s+ GNU/Linux \s+
-                    (?: buster | 10 ) (?: \s | / )
-                ".to_owned(),
-                                    os_id: "debian".to_owned(),
-                                    #[allow(clippy::needless_raw_strings)]
-                                    os_version_regex: r"^10$".to_owned(),
-                                },
-                                supported: Supported {
-                                    repo: true,
-                                },
-                                commands: HashMap::from(
-                                    [
-                                        (
-                                            "package".to_owned(),
-                                            HashMap::from(
-                                                [
-                                                    (
-                                                        "install".to_owned(),
-                                                        vec![
-                                                            "env".to_owned(),
-                                                            "DEBIAN_FRONTEND=noninteractive".to_owned(),
-                                                            "apt-get".to_owned(),
-                                                            "-q".to_owned(),
-                                                            "-y".to_owned(),
-                                                            "--no-install-recommends".to_owned(),
-                                                            "install".to_owned(),
-                                                            "--".to_owned(),
-                                                        ],
-                                                    ),
-                                                    (
-                                                        "list_all".to_owned(),
-                                                        vec![
-                                                            "dpkg-query".to_owned(),
-                                                            "-W".to_owned(),
-                                                            "-f".to_owned(),
-                                                            "${Package}\\t${Version}\\t${Architecture}\\t${db:Status-Abbrev}\\n".to_owned(),
-                                                            "--".to_owned(),
-                                                        ],
-                                                    ),
-                                                    (
-                                                        "purge".to_owned(),
-                                                        vec![
-                                                            "env".to_owned(),
-                                                            "DEBIAN_FRONTEND=noninteractive".to_owned(),
-                                                            "apt-get".to_owned(),
-                                                            "-q".to_owned(),
-                                                            "-y".to_owned(),
-                                                            "purge".to_owned(),
-                                                            "--".to_owned(),
-                                                        ],
-                                                    ),
-                                                    (
-                                                        "remove".to_owned(),
-                                                        vec![
-                                                            "env".to_owned(),
-                                                            "DEBIAN_FRONTEND=noninteractive".to_owned(),
-                                                            "apt-get".to_owned(),
-                                                            "-q".to_owned(),
-                                                            "-y".to_owned(),
-                                                            "remove".to_owned(),
-                                                            "--".to_owned(),
-                                                        ],
-                                                    ),
-                                                    (
-                                                        "remove_impl".to_owned(),
-                                                        vec![
-                                                            "env".to_owned(),
-                                                            "DEBIAN_FRONTEND=noninteractive".to_owned(),
-                                                            "dpkg".to_owned(),
-                                                            "-r".to_owned(),
-                                                            "--".to_owned(),
-                                                        ],
-                                                    ),
-                                                    (
-                                                        "update_db".to_owned(),
-                                                        vec![
-                                                            "apt-get".to_owned(),
-                                                            "-q".to_owned(),
-                                                            "-y".to_owned(),
-                                                            "update".to_owned(),
-                                                        ],
-                                                    ),
-                                                ]
-                                            ),
-                                        ),
-                                        (
-                                            "pkgfile".to_owned(),
-                                            HashMap::from(
-                                                [
-                                                    (
-                                                        "dep_query".to_owned(),
-                                                        vec![
-                                                            "sh".to_owned(),
-                                                            "-c".to_owned(),
-                                                            "dpkg-deb -f -- \"$pkg\" \"Depends\" | sed -e \"s/ *, */,/g\" | tr \",\" \"\\n\"".to_owned(),
-                                                        ],
-                                                    ),
-                                                    (
-                                                        "install".to_owned(),
-                                                        vec![
-                                                            "sh".to_owned(),
-                                                            "-c".to_owned(),
-                                                            "env DEBIAN_FRONTEND=noninteractive apt-get install --no-install-recommends --reinstall -y -o DPkg::Options::=--force-confnew -- $packages".to_owned(),
-                                                        ],
-                                                    ),
-                                                ]
-                                            ),
-                                        ),
-                                    ]
-                                ),
-                                min_sys_python: "2.7".to_owned(),
+                                min_sys_python: "3.7".to_owned(),
                                 repo:
                                     Repo::Deb(DebRepo {
                                         codename: "buster".to_owned(),
@@ -1733,7 +1401,7 @@ fi
                                         ),
                                     ]
                                 ),
-                                min_sys_python: "3.9".to_owned(),
+                                min_sys_python: "3.11".to_owned(),
                                 repo:
                                     Repo::Deb(DebRepo {
                                         codename: "bookworm".to_owned(),
@@ -1889,7 +1557,7 @@ fi
                                         ),
                                     ]
                                 ),
-                                min_sys_python: "3.9".to_owned(),
+                                min_sys_python: "3.11".to_owned(),
                                 repo:
                                     Repo::Deb(DebRepo {
                                         codename: "unstable".to_owned(),
@@ -2047,7 +1715,7 @@ fi
                                         ),
                                     ]
                                 ),
-                                min_sys_python: "2.7".to_owned(),
+                                min_sys_python: "3.6".to_owned(),
                                 repo:
                                     Repo::Yum(YumRepo {
                                         yumdef: "redhat/repo/storpool-centos.repo".to_owned(),
@@ -2208,7 +1876,7 @@ fi
                                         ),
                                     ]
                                 ),
-                                min_sys_python: "2.7".to_owned(),
+                                min_sys_python: "3.6".to_owned(),
                                 repo:
                                     Repo::Yum(YumRepo {
                                         yumdef: "redhat/repo/storpool-centos.repo".to_owned(),
@@ -2369,7 +2037,7 @@ fi
                                         ),
                                     ]
                                 ),
-                                min_sys_python: "2.7".to_owned(),
+                                min_sys_python: "3.6".to_owned(),
                                 repo:
                                     Repo::Yum(YumRepo {
                                         yumdef: "redhat/repo/storpool-centos.repo".to_owned(),
@@ -2530,7 +2198,7 @@ fi
                                         ),
                                     ]
                                 ),
-                                min_sys_python: "2.7".to_owned(),
+                                min_sys_python: "3.9".to_owned(),
                                 repo:
                                     Repo::Yum(YumRepo {
                                         yumdef: "redhat/repo/storpool-centos.repo".to_owned(),
@@ -2559,160 +2227,6 @@ fi
                                     base_image: "rockylinux:9".to_owned(),
                                     branch: "".to_owned(),
                                     kernel_package: "kernel-core".to_owned(),
-                                    utf8_locale: "C.UTF-8".to_owned(),
-                                },
-                            },
-                    ),
-                    (
-                            VariantKind::UBUNTU1604,
-                            Variant {
-                                kind: VariantKind::UBUNTU1604,
-                                descr: "Ubuntu 16.04 LTS (Xenial Xerus)".to_owned(),
-                                family: "debian".to_owned(),
-                                parent: "UBUNTU1804".to_owned(),
-                                detect: Detect {
-                                    filename: "/etc/os-release".to_owned(),
-                                    #[allow(clippy::needless_raw_strings)]
-                                    regex: r"^ PRETTY_NAME= .* Ubuntu \s+ 16 \. 04 ".to_owned(),
-                                    os_id: "ubuntu".to_owned(),
-                                    #[allow(clippy::needless_raw_strings)]
-                                    os_version_regex: r"^16\.04$".to_owned(),
-                                },
-                                supported: Supported {
-                                    repo: false,
-                                },
-                                commands: HashMap::from(
-                                    [
-                                        (
-                                            "package".to_owned(),
-                                            HashMap::from(
-                                                [
-                                                    (
-                                                        "install".to_owned(),
-                                                        vec![
-                                                            "env".to_owned(),
-                                                            "DEBIAN_FRONTEND=noninteractive".to_owned(),
-                                                            "apt-get".to_owned(),
-                                                            "-q".to_owned(),
-                                                            "-y".to_owned(),
-                                                            "--no-install-recommends".to_owned(),
-                                                            "install".to_owned(),
-                                                            "--".to_owned(),
-                                                        ],
-                                                    ),
-                                                    (
-                                                        "list_all".to_owned(),
-                                                        vec![
-                                                            "dpkg-query".to_owned(),
-                                                            "-W".to_owned(),
-                                                            "-f".to_owned(),
-                                                            "${Package}\\t${Version}\\t${Architecture}\\t${db:Status-Abbrev}\\n".to_owned(),
-                                                            "--".to_owned(),
-                                                        ],
-                                                    ),
-                                                    (
-                                                        "purge".to_owned(),
-                                                        vec![
-                                                            "env".to_owned(),
-                                                            "DEBIAN_FRONTEND=noninteractive".to_owned(),
-                                                            "apt-get".to_owned(),
-                                                            "-q".to_owned(),
-                                                            "-y".to_owned(),
-                                                            "purge".to_owned(),
-                                                            "--".to_owned(),
-                                                        ],
-                                                    ),
-                                                    (
-                                                        "remove".to_owned(),
-                                                        vec![
-                                                            "env".to_owned(),
-                                                            "DEBIAN_FRONTEND=noninteractive".to_owned(),
-                                                            "apt-get".to_owned(),
-                                                            "-q".to_owned(),
-                                                            "-y".to_owned(),
-                                                            "remove".to_owned(),
-                                                            "--".to_owned(),
-                                                        ],
-                                                    ),
-                                                    (
-                                                        "remove_impl".to_owned(),
-                                                        vec![
-                                                            "env".to_owned(),
-                                                            "DEBIAN_FRONTEND=noninteractive".to_owned(),
-                                                            "dpkg".to_owned(),
-                                                            "-r".to_owned(),
-                                                            "--".to_owned(),
-                                                        ],
-                                                    ),
-                                                    (
-                                                        "update_db".to_owned(),
-                                                        vec![
-                                                            "apt-get".to_owned(),
-                                                            "-q".to_owned(),
-                                                            "-y".to_owned(),
-                                                            "update".to_owned(),
-                                                        ],
-                                                    ),
-                                                ]
-                                            ),
-                                        ),
-                                        (
-                                            "pkgfile".to_owned(),
-                                            HashMap::from(
-                                                [
-                                                    (
-                                                        "dep_query".to_owned(),
-                                                        vec![
-                                                            "sh".to_owned(),
-                                                            "-c".to_owned(),
-                                                            "dpkg-deb -f -- \"$pkg\" \"Depends\" | sed -e \"s/ *, */,/g\" | tr \",\" \"\\n\"".to_owned(),
-                                                        ],
-                                                    ),
-                                                    (
-                                                        "install".to_owned(),
-                                                        vec![
-                                                            "sh".to_owned(),
-                                                            "-c".to_owned(),
-                                                            "env DEBIAN_FRONTEND=noninteractive apt-get install --no-install-recommends --reinstall -y -o DPkg::Options::=--force-confnew -- $packages".to_owned(),
-                                                        ],
-                                                    ),
-                                                ]
-                                            ),
-                                        ),
-                                    ]
-                                ),
-                                min_sys_python: "2.7".to_owned(),
-                                repo:
-                                    Repo::Deb(DebRepo {
-                                        codename: "xenial".to_owned(),
-                                        vendor: "ubuntu".to_owned(),
-                                        sources: "debian/repo/storpool.sources".to_owned(),
-                                        keyring: "debian/repo/storpool-keyring.gpg".to_owned(),
-                                        req_packages: vec![
-                                            "apt-transport-https".to_owned(),
-                                            "ca-certificates".to_owned(),
-                                        ],
-                                    }),
-                                    package: HashMap::from(
-                                    [
-                                        ("BINDINGS_PYTHON".to_owned(), "python".to_owned()),
-                                        ("BINDINGS_PYTHON_CONFGET".to_owned(), "python-confget".to_owned()),
-                                        ("BINDINGS_PYTHON_SIMPLEJSON".to_owned(), "python-simplejson".to_owned()),
-                                        ("CGROUP".to_owned(), "cgroup-tools".to_owned()),
-                                        ("CPUPOWER".to_owned(), "linux-tools-generic".to_owned()),
-                                        ("LIBSSL".to_owned(), "libssl1.0.0".to_owned()),
-                                        ("MCELOG".to_owned(), "bash".to_owned()),
-                                        ("mcelog".to_owned(), "mcelog".to_owned()),
-                                    ]
-                                ),
-                                systemd_lib: "lib/systemd/system".to_owned(),
-                                file_ext: "deb".to_owned(),
-                                initramfs_flavor: "update-initramfs".to_owned(),
-                                builder: Builder {
-                                    alias: "ubuntu-16.04".to_owned(),
-                                    base_image: "ubuntu:xenial".to_owned(),
-                                    branch: "ubuntu/xenial".to_owned(),
-                                    kernel_package: "linux-headers".to_owned(),
                                     utf8_locale: "C.UTF-8".to_owned(),
                                 },
                             },
@@ -2835,7 +2349,7 @@ fi
                                         ),
                                     ]
                                 ),
-                                min_sys_python: "2.7".to_owned(),
+                                min_sys_python: "3.6".to_owned(),
                                 repo:
                                     Repo::Deb(DebRepo {
                                         codename: "bionic".to_owned(),
@@ -3139,7 +2653,7 @@ fi
                                         ),
                                     ]
                                 ),
-                                min_sys_python: "3.9".to_owned(),
+                                min_sys_python: "3.10".to_owned(),
                                 repo:
                                     Repo::Deb(DebRepo {
                                         codename: "jammy".to_owned(),
@@ -3189,7 +2703,7 @@ fi
                                     os_version_regex: r"^23\.04$".to_owned(),
                                 },
                                 supported: Supported {
-                                    repo: true,
+                                    repo: false,
                                 },
                                 commands: HashMap::from(
                                     [
@@ -3291,7 +2805,7 @@ fi
                                         ),
                                     ]
                                 ),
-                                min_sys_python: "3.9".to_owned(),
+                                min_sys_python: "3.11".to_owned(),
                                 repo:
                                     Repo::Deb(DebRepo {
                                         codename: "lunar".to_owned(),

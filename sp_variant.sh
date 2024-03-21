@@ -43,11 +43,6 @@ detect_from_os_release()
 		return
 	fi
 	
-	if [ "$os_id" = 'centos' ] && printf -- '%s\n' "$version_id" | grep -Eqe '^6($|\.[0-9])'; then
-		printf -- '%s\n' 'CENTOS6'
-		return
-	fi
-	
 	if [ "$os_id" = 'centos' ] && printf -- '%s\n' "$version_id" | grep -Eqe '^7($|\.[0-9])'; then
 		printf -- '%s\n' 'CENTOS7'
 		return
@@ -60,11 +55,6 @@ detect_from_os_release()
 	
 	if [ "$os_id" = 'centos' ] && printf -- '%s\n' "$version_id" | grep -Eqe '^9($|\.[4-9]|\.[1-9][0-9])'; then
 		printf -- '%s\n' 'CENTOS9'
-		return
-	fi
-	
-	if [ "$os_id" = 'debian' ] && printf -- '%s\n' "$version_id" | grep -Eqe '^9$'; then
-		printf -- '%s\n' 'DEBIAN9'
 		return
 	fi
 	
@@ -105,11 +95,6 @@ detect_from_os_release()
 	
 	if [ "$os_id" = 'rocky' ] && printf -- '%s\n' "$version_id" | grep -Eqe '^8($|\.[0-9])'; then
 		printf -- '%s\n' 'ROCKY9'
-		return
-	fi
-	
-	if [ "$os_id" = 'ubuntu' ] && printf -- '%s\n' "$version_id" | grep -Eqe '^16\.04$'; then
-		printf -- '%s\n' 'UBUNTU1604'
 		return
 	fi
 	
@@ -171,11 +156,6 @@ cmd_detect()
 		return
 	fi
 	
-	if [ -r '/etc/redhat-release' ] && grep -Eqe '^CentOS[[:space:]].*[[:space:]]6\.' -- '/etc/redhat-release'; then
-		printf -- '%s\n' 'CENTOS6'
-		return
-	fi
-	
 	if [ -r '/etc/redhat-release' ] && grep -Eqe '^(CentOS|Virtuozzo)[[:space:]].*[[:space:]]7\.' -- '/etc/redhat-release'; then
 		printf -- '%s\n' 'CENTOS7'
 		return
@@ -201,11 +181,6 @@ cmd_detect()
 		return
 	fi
 	
-	if [ -r '/etc/os-release' ] && grep -Eqe '^PRETTY_NAME=.*Ubuntu[[:space:]]+16\.04' -- '/etc/os-release'; then
-		printf -- '%s\n' 'UBUNTU1604'
-		return
-	fi
-	
 	if [ -r '/etc/os-release' ] && grep -Eqe '^PRETTY_NAME=.*Ubuntu[[:space:]]+18\.04' -- '/etc/os-release'; then
 		printf -- '%s\n' 'UBUNTU1804'
 		return
@@ -223,11 +198,6 @@ cmd_detect()
 	
 	if [ -r '/etc/os-release' ] && grep -Eqe '^PRETTY_NAME=.*Ubuntu[[:space:]]+23\.04' -- '/etc/os-release'; then
 		printf -- '%s\n' 'UBUNTU2304'
-		return
-	fi
-	
-	if [ -r '/etc/os-release' ] && grep -Eqe '^PRETTY_NAME=.*Debian[[:space:]]+GNU/Linux[[:space:]]+(stretch|9)([[:space:]]|/)' -- '/etc/os-release'; then
-		printf -- '%s\n' 'DEBIAN9'
 		return
 	fi
 	
@@ -335,7 +305,7 @@ show_ALMA8()
   "family": "redhat",
   "file_ext": "rpm",
   "initramfs_flavor": "mkinitrd",
-  "min_sys_python": "2.7",
+  "min_sys_python": "3.6",
   "name": "ALMA8",
   "package": {
     "KMOD": "kmod",
@@ -441,7 +411,7 @@ show_ALMA9()
   "family": "redhat",
   "file_ext": "rpm",
   "initramfs_flavor": "mkinitrd",
-  "min_sys_python": "2.7",
+  "min_sys_python": "3.9",
   "name": "ALMA9",
   "package": {
     "KMOD": "kmod",
@@ -457,108 +427,6 @@ show_ALMA9()
     "UDEV": "systemd"
   },
   "parent": "",
-  "repo": {
-    "keyring": "redhat/repo/RPM-GPG-KEY-StorPool",
-    "yumdef": "redhat/repo/storpool-centos.repo"
-  },
-  "supported": {
-    "repo": false
-  },
-  "systemd_lib": "usr/lib/systemd/system"
-}
-EOVARIANT_JSON
-}
-
-show_CENTOS6()
-{
-	cat <<'EOVARIANT_JSON'
-  {
-  "builder": {
-    "alias": "centos6",
-    "base_image": "centos:6",
-    "branch": "centos/6",
-    "kernel_package": "kernel",
-    "utf8_locale": "en_US.utf8"
-  },
-  "commands": {
-    "package": {
-      "install": [
-        "yum",
-        "--disablerepo=*",
-        "--enablerepo=base",
-        "--enablerepo=updates",
-        "--enablerepo=storpool-contrib",
-        "install",
-        "-q",
-        "-y"
-      ],
-      "list_all": [
-        "rpm",
-        "-qa",
-        "--qf",
-        "%{Name}\\t%{EVR}\\t%{Arch}\\tii\\n",
-        "--"
-      ],
-      "purge": [
-        "yum",
-        "remove",
-        "-q",
-        "-y",
-        "--"
-      ],
-      "remove": [
-        "yum",
-        "remove",
-        "-q",
-        "-y",
-        "--"
-      ],
-      "remove_impl": [
-        "rpm",
-        "-e",
-        "--"
-      ],
-      "update_db": [
-        "true"
-      ]
-    },
-    "pkgfile": {
-      "dep_query": [
-        "sh",
-        "-c",
-        "rpm -qpR -- \"$pkg\""
-      ],
-      "install": [
-        "\nunset to_install to_reinstall\nfor f in $packages; do\n    package=\"$(rpm -qp \"$f\")\"\n    if rpm -q -- \"$package\"; then\n        to_reinstall=\"$to_reinstall ./$f\"\n    else\n        to_install=\"$to_install ./$f\"\n    fi\ndone\n\nif [ -n \"$to_install\" ]; then\n    yum install -y --disablerepo='*' --enablerepo=base,updates,storpool-contrib --setopt=localpkg_gpgcheck=0 -- $to_install\nfi\nif [ -n \"$to_reinstall\" ]; then\n    yum reinstall -y --disablerepo='*' --enablerepo=base,updates,storpool-contrib --setopt=localpkg_gpgcheck=0 -- $to_reinstall\nfi\n"
-      ]
-    }
-  },
-  "descr": "CentOS 6.x",
-  "detect": {
-    "filename": "/etc/redhat-release",
-    "os_id": "centos",
-    "os_version_regex": "^6(?:$|\\.[0-9])",
-    "regex": "^ CentOS \\s .* \\s 6 \\."
-  },
-  "family": "redhat",
-  "file_ext": "rpm",
-  "initramfs_flavor": "mkinitrd",
-  "min_sys_python": "2.6",
-  "name": "CENTOS6",
-  "package": {
-    "KMOD": "module-init-tools",
-    "LIBCGROUP": "libcgroup",
-    "LIBUDEV": "libudev",
-    "OPENSSL": "openssl",
-    "PERL_AUTODIE": "perl",
-    "PERL_FILE_PATH": "perl",
-    "PERL_LWP_PROTO_HTTPS": "perl",
-    "PERL_SYS_SYSLOG": "perl",
-    "PROCPS": "procps",
-    "PYTHON_SIMPLEJSON": "python-simplejson",
-    "UDEV": "udev"
-  },
-  "parent": "CENTOS7",
   "repo": {
     "keyring": "redhat/repo/RPM-GPG-KEY-StorPool",
     "yumdef": "redhat/repo/storpool-centos.repo"
@@ -645,7 +513,7 @@ show_CENTOS7()
   "family": "redhat",
   "file_ext": "rpm",
   "initramfs_flavor": "mkinitrd",
-  "min_sys_python": "2.7",
+  "min_sys_python": "3.6",
   "name": "CENTOS7",
   "package": {
     "KMOD": "kmod",
@@ -751,7 +619,7 @@ show_CENTOS8()
   "family": "redhat",
   "file_ext": "rpm",
   "initramfs_flavor": "mkinitrd",
-  "min_sys_python": "2.7",
+  "min_sys_python": "3.6",
   "name": "CENTOS8",
   "package": {
     "KMOD": "kmod",
@@ -857,7 +725,7 @@ show_CENTOS9()
   "family": "redhat",
   "file_ext": "rpm",
   "initramfs_flavor": "mkinitrd",
-  "min_sys_python": "2.7",
+  "min_sys_python": "3.9",
   "name": "CENTOS9",
   "package": {
     "KMOD": "kmod",
@@ -881,121 +749,6 @@ show_CENTOS9()
     "repo": false
   },
   "systemd_lib": "usr/lib/systemd/system"
-}
-EOVARIANT_JSON
-}
-
-show_DEBIAN9()
-{
-	cat <<'EOVARIANT_JSON'
-  {
-  "builder": {
-    "alias": "debian9",
-    "base_image": "debian:stretch",
-    "branch": "debian/stretch",
-    "kernel_package": "linux-headers",
-    "utf8_locale": "C.UTF-8"
-  },
-  "commands": {
-    "package": {
-      "install": [
-        "env",
-        "DEBIAN_FRONTEND=noninteractive",
-        "apt-get",
-        "-q",
-        "-y",
-        "--no-install-recommends",
-        "install",
-        "--"
-      ],
-      "list_all": [
-        "dpkg-query",
-        "-W",
-        "-f",
-        "${Package}\\t${Version}\\t${Architecture}\\t${db:Status-Abbrev}\\n",
-        "--"
-      ],
-      "purge": [
-        "env",
-        "DEBIAN_FRONTEND=noninteractive",
-        "apt-get",
-        "-q",
-        "-y",
-        "purge",
-        "--"
-      ],
-      "remove": [
-        "env",
-        "DEBIAN_FRONTEND=noninteractive",
-        "apt-get",
-        "-q",
-        "-y",
-        "remove",
-        "--"
-      ],
-      "remove_impl": [
-        "env",
-        "DEBIAN_FRONTEND=noninteractive",
-        "dpkg",
-        "-r",
-        "--"
-      ],
-      "update_db": [
-        "apt-get",
-        "-q",
-        "-y",
-        "update"
-      ]
-    },
-    "pkgfile": {
-      "dep_query": [
-        "sh",
-        "-c",
-        "dpkg-deb -f -- \"$pkg\" \"Depends\" | sed -e \"s/ *, */,/g\" | tr \",\" \"\\n\""
-      ],
-      "install": [
-        "sh",
-        "-c",
-        "env DEBIAN_FRONTEND=noninteractive apt-get install --no-install-recommends --reinstall -y -o DPkg::Options::=--force-confnew -- $packages"
-      ]
-    }
-  },
-  "descr": "Debian 9.x (stretch)",
-  "detect": {
-    "filename": "/etc/os-release",
-    "os_id": "debian",
-    "os_version_regex": "^9$",
-    "regex": "^\n                    PRETTY_NAME= .*\n                    Debian \\s+ GNU/Linux \\s+\n                    (?: stretch | 9 ) (?: \\s | / )\n                "
-  },
-  "family": "debian",
-  "file_ext": "deb",
-  "initramfs_flavor": "update-initramfs",
-  "min_sys_python": "2.7",
-  "name": "DEBIAN9",
-  "package": {
-    "BINDINGS_PYTHON": "python",
-    "BINDINGS_PYTHON_CONFGET": "python-confget",
-    "BINDINGS_PYTHON_SIMPLEJSON": "python-simplejson",
-    "CGROUP": "cgroup-tools",
-    "CPUPOWER": "linux-cpupower",
-    "LIBSSL": "libssl1.1",
-    "MCELOG": "bash"
-  },
-  "parent": "DEBIAN10",
-  "repo": {
-    "codename": "stretch",
-    "keyring": "debian/repo/storpool-keyring.gpg",
-    "req_packages": [
-      "apt-transport-https",
-      "ca-certificates"
-    ],
-    "sources": "debian/repo/storpool.sources",
-    "vendor": "debian"
-  },
-  "supported": {
-    "repo": false
-  },
-  "systemd_lib": "lib/systemd/system"
 }
 EOVARIANT_JSON
 }
@@ -1085,7 +838,7 @@ show_DEBIAN10()
   "family": "debian",
   "file_ext": "deb",
   "initramfs_flavor": "update-initramfs",
-  "min_sys_python": "2.7",
+  "min_sys_python": "3.7",
   "name": "DEBIAN10",
   "package": {
     "BINDINGS_PYTHON": "python",
@@ -1107,7 +860,7 @@ show_DEBIAN10()
     "vendor": "debian"
   },
   "supported": {
-    "repo": true
+    "repo": false
   },
   "systemd_lib": "lib/systemd/system"
 }
@@ -1313,7 +1066,7 @@ show_DEBIAN12()
   "family": "debian",
   "file_ext": "deb",
   "initramfs_flavor": "update-initramfs",
-  "min_sys_python": "3.9",
+  "min_sys_python": "3.11",
   "name": "DEBIAN12",
   "package": {
     "BINDINGS_PYTHON": "python3",
@@ -1427,7 +1180,7 @@ show_DEBIAN13()
   "family": "debian",
   "file_ext": "deb",
   "initramfs_flavor": "update-initramfs",
-  "min_sys_python": "3.9",
+  "min_sys_python": "3.11",
   "name": "DEBIAN13",
   "package": {
     "BINDINGS_PYTHON": "python3",
@@ -1530,7 +1283,7 @@ show_ORACLE7()
   "family": "redhat",
   "file_ext": "rpm",
   "initramfs_flavor": "mkinitrd",
-  "min_sys_python": "2.7",
+  "min_sys_python": "3.6",
   "name": "ORACLE7",
   "package": {
     "KMOD": "kmod",
@@ -1636,7 +1389,7 @@ show_RHEL8()
   "family": "redhat",
   "file_ext": "rpm",
   "initramfs_flavor": "mkinitrd",
-  "min_sys_python": "2.7",
+  "min_sys_python": "3.6",
   "name": "RHEL8",
   "package": {
     "KMOD": "kmod",
@@ -1742,7 +1495,7 @@ show_ROCKY8()
   "family": "redhat",
   "file_ext": "rpm",
   "initramfs_flavor": "mkinitrd",
-  "min_sys_python": "2.7",
+  "min_sys_python": "3.6",
   "name": "ROCKY8",
   "package": {
     "KMOD": "kmod",
@@ -1848,7 +1601,7 @@ show_ROCKY9()
   "family": "redhat",
   "file_ext": "rpm",
   "initramfs_flavor": "mkinitrd",
-  "min_sys_python": "2.7",
+  "min_sys_python": "3.9",
   "name": "ROCKY9",
   "package": {
     "KMOD": "kmod",
@@ -1872,122 +1625,6 @@ show_ROCKY9()
     "repo": false
   },
   "systemd_lib": "usr/lib/systemd/system"
-}
-EOVARIANT_JSON
-}
-
-show_UBUNTU1604()
-{
-	cat <<'EOVARIANT_JSON'
-  {
-  "builder": {
-    "alias": "ubuntu-16.04",
-    "base_image": "ubuntu:xenial",
-    "branch": "ubuntu/xenial",
-    "kernel_package": "linux-headers",
-    "utf8_locale": "C.UTF-8"
-  },
-  "commands": {
-    "package": {
-      "install": [
-        "env",
-        "DEBIAN_FRONTEND=noninteractive",
-        "apt-get",
-        "-q",
-        "-y",
-        "--no-install-recommends",
-        "install",
-        "--"
-      ],
-      "list_all": [
-        "dpkg-query",
-        "-W",
-        "-f",
-        "${Package}\\t${Version}\\t${Architecture}\\t${db:Status-Abbrev}\\n",
-        "--"
-      ],
-      "purge": [
-        "env",
-        "DEBIAN_FRONTEND=noninteractive",
-        "apt-get",
-        "-q",
-        "-y",
-        "purge",
-        "--"
-      ],
-      "remove": [
-        "env",
-        "DEBIAN_FRONTEND=noninteractive",
-        "apt-get",
-        "-q",
-        "-y",
-        "remove",
-        "--"
-      ],
-      "remove_impl": [
-        "env",
-        "DEBIAN_FRONTEND=noninteractive",
-        "dpkg",
-        "-r",
-        "--"
-      ],
-      "update_db": [
-        "apt-get",
-        "-q",
-        "-y",
-        "update"
-      ]
-    },
-    "pkgfile": {
-      "dep_query": [
-        "sh",
-        "-c",
-        "dpkg-deb -f -- \"$pkg\" \"Depends\" | sed -e \"s/ *, */,/g\" | tr \",\" \"\\n\""
-      ],
-      "install": [
-        "sh",
-        "-c",
-        "env DEBIAN_FRONTEND=noninteractive apt-get install --no-install-recommends --reinstall -y -o DPkg::Options::=--force-confnew -- $packages"
-      ]
-    }
-  },
-  "descr": "Ubuntu 16.04 LTS (Xenial Xerus)",
-  "detect": {
-    "filename": "/etc/os-release",
-    "os_id": "ubuntu",
-    "os_version_regex": "^16\\.04$",
-    "regex": "^ PRETTY_NAME= .* Ubuntu \\s+ 16 \\. 04 "
-  },
-  "family": "debian",
-  "file_ext": "deb",
-  "initramfs_flavor": "update-initramfs",
-  "min_sys_python": "2.7",
-  "name": "UBUNTU1604",
-  "package": {
-    "BINDINGS_PYTHON": "python",
-    "BINDINGS_PYTHON_CONFGET": "python-confget",
-    "BINDINGS_PYTHON_SIMPLEJSON": "python-simplejson",
-    "CGROUP": "cgroup-tools",
-    "CPUPOWER": "linux-tools-generic",
-    "LIBSSL": "libssl1.0.0",
-    "MCELOG": "bash",
-    "mcelog": "mcelog"
-  },
-  "parent": "UBUNTU1804",
-  "repo": {
-    "codename": "xenial",
-    "keyring": "debian/repo/storpool-keyring.gpg",
-    "req_packages": [
-      "apt-transport-https",
-      "ca-certificates"
-    ],
-    "sources": "debian/repo/storpool.sources",
-    "vendor": "ubuntu"
-  },
-  "supported": {
-    "repo": false
-  },
-  "systemd_lib": "lib/systemd/system"
 }
 EOVARIANT_JSON
 }
@@ -2077,7 +1714,7 @@ show_UBUNTU1804()
   "family": "debian",
   "file_ext": "deb",
   "initramfs_flavor": "update-initramfs",
-  "min_sys_python": "2.7",
+  "min_sys_python": "3.6",
   "name": "UBUNTU1804",
   "package": {
     "BINDINGS_PYTHON": "python",
@@ -2305,7 +1942,7 @@ show_UBUNTU2204()
   "family": "debian",
   "file_ext": "deb",
   "initramfs_flavor": "update-initramfs",
-  "min_sys_python": "3.9",
+  "min_sys_python": "3.10",
   "name": "UBUNTU2204",
   "package": {
     "BINDINGS_PYTHON": "python3",
@@ -2419,7 +2056,7 @@ show_UBUNTU2304()
   "family": "debian",
   "file_ext": "deb",
   "initramfs_flavor": "update-initramfs",
-  "min_sys_python": "3.9",
+  "min_sys_python": "3.11",
   "name": "UBUNTU2304",
   "package": {
     "BINDINGS_PYTHON": "python3",
@@ -2441,7 +2078,7 @@ show_UBUNTU2304()
     "vendor": "ubuntu"
   },
   "supported": {
-    "repo": true
+    "repo": false
   },
   "systemd_lib": "lib/systemd/system"
 }
@@ -2469,18 +2106,15 @@ cmd_show_all()
     "ROCKY9",
     "RHEL8",
     "ORACLE7",
-    "CENTOS6",
     "CENTOS7",
     "CENTOS8",
     "CENTOS9",
     "ALMA8",
     "ALMA9",
-    "UBUNTU1604",
     "UBUNTU1804",
     "UBUNTU2004",
     "UBUNTU2204",
     "UBUNTU2304",
-    "DEBIAN9",
     "DEBIAN10",
     "DEBIAN11",
     "DEBIAN12",
@@ -2496,9 +2130,6 @@ EOPROLOGUE
   printf -- '    "%s": ' 'ALMA9'
   show_ALMA9
   echo ','
-  printf -- '    "%s": ' 'CENTOS6'
-  show_CENTOS6
-  echo ','
   printf -- '    "%s": ' 'CENTOS7'
   show_CENTOS7
   echo ','
@@ -2507,9 +2138,6 @@ EOPROLOGUE
   echo ','
   printf -- '    "%s": ' 'CENTOS9'
   show_CENTOS9
-  echo ','
-  printf -- '    "%s": ' 'DEBIAN9'
-  show_DEBIAN9
   echo ','
   printf -- '    "%s": ' 'DEBIAN10'
   show_DEBIAN10
@@ -2534,9 +2162,6 @@ EOPROLOGUE
   echo ','
   printf -- '    "%s": ' 'ROCKY9'
   show_ROCKY9
-  echo ','
-  printf -- '    "%s": ' 'UBUNTU1604'
-  show_UBUNTU1604
   echo ','
   printf -- '    "%s": ' 'UBUNTU1804'
   show_UBUNTU1804
@@ -2785,104 +2410,6 @@ if [ -n "$to_install" ]; then
 fi
 if [ -n "$to_reinstall" ]; then
     dnf reinstall -y --disablerepo='*' --enablerepo=appstream,baseos,crb,storpool-contrib --setopt=localpkg_gpgcheck=0 -- $to_reinstall
-fi
-'  "$@"
-							;;
-						
-
-						*)
-							echo "Invalid command '$cmd_item' in the '$cmd_cat' category" 1>&2
-							exit 1
-							;;
-					esac
-					;;
-				
-
-				*)
-					echo "Invalid command category '$cmd_cat'" 1>&2
-					exit 1
-					;;
-			esac
-			;;
-		
-		CENTOS6)
-			case "$cmd_cat" in
-				
-				package)
-					case "$cmd_item" in
-						
-						install)
-							# The commands are quoted exactly as much as necessary.
-							# shellcheck disable=SC2016
-							$noop 'yum' '--disablerepo=*' '--enablerepo=base' '--enablerepo=updates' '--enablerepo=storpool-contrib' 'install' '-q' '-y'  "$@"
-							;;
-						
-						list_all)
-							# The commands are quoted exactly as much as necessary.
-							# shellcheck disable=SC2016
-							$noop 'rpm' '-qa' '--qf' '%{Name}\t%{EVR}\t%{Arch}\tii\n' '--'  "$@"
-							;;
-						
-						purge)
-							# The commands are quoted exactly as much as necessary.
-							# shellcheck disable=SC2016
-							$noop 'yum' 'remove' '-q' '-y' '--'  "$@"
-							;;
-						
-						remove)
-							# The commands are quoted exactly as much as necessary.
-							# shellcheck disable=SC2016
-							$noop 'yum' 'remove' '-q' '-y' '--'  "$@"
-							;;
-						
-						remove_impl)
-							# The commands are quoted exactly as much as necessary.
-							# shellcheck disable=SC2016
-							$noop 'rpm' '-e' '--'  "$@"
-							;;
-						
-						update_db)
-							# The commands are quoted exactly as much as necessary.
-							# shellcheck disable=SC2016
-							$noop 'true'  "$@"
-							;;
-						
-
-						*)
-							echo "Invalid command '$cmd_item' in the '$cmd_cat' category" 1>&2
-							exit 1
-							;;
-					esac
-					;;
-				
-				pkgfile)
-					case "$cmd_item" in
-						
-						dep_query)
-							# The commands are quoted exactly as much as necessary.
-							# shellcheck disable=SC2016
-							$noop 'sh' '-c' 'rpm -qpR -- "$pkg"'  "$@"
-							;;
-						
-						install)
-							# The commands are quoted exactly as much as necessary.
-							# shellcheck disable=SC2016
-							$noop '
-unset to_install to_reinstall
-for f in $packages; do
-    package="$(rpm -qp "$f")"
-    if rpm -q -- "$package"; then
-        to_reinstall="$to_reinstall ./$f"
-    else
-        to_install="$to_install ./$f"
-    fi
-done
-
-if [ -n "$to_install" ]; then
-    yum install -y --disablerepo='*' --enablerepo=base,updates,storpool-contrib --setopt=localpkg_gpgcheck=0 -- $to_install
-fi
-if [ -n "$to_reinstall" ]; then
-    yum reinstall -y --disablerepo='*' --enablerepo=base,updates,storpool-contrib --setopt=localpkg_gpgcheck=0 -- $to_reinstall
 fi
 '  "$@"
 							;;
@@ -3179,87 +2706,6 @@ if [ -n "$to_reinstall" ]; then
     dnf reinstall -y --disablerepo='*' --enablerepo=appstream,baseos,crb,storpool-contrib --setopt=localpkg_gpgcheck=0 -- $to_reinstall
 fi
 '  "$@"
-							;;
-						
-
-						*)
-							echo "Invalid command '$cmd_item' in the '$cmd_cat' category" 1>&2
-							exit 1
-							;;
-					esac
-					;;
-				
-
-				*)
-					echo "Invalid command category '$cmd_cat'" 1>&2
-					exit 1
-					;;
-			esac
-			;;
-		
-		DEBIAN9)
-			case "$cmd_cat" in
-				
-				package)
-					case "$cmd_item" in
-						
-						install)
-							# The commands are quoted exactly as much as necessary.
-							# shellcheck disable=SC2016
-							$noop 'env' 'DEBIAN_FRONTEND=noninteractive' 'apt-get' '-q' '-y' '--no-install-recommends' 'install' '--'  "$@"
-							;;
-						
-						list_all)
-							# The commands are quoted exactly as much as necessary.
-							# shellcheck disable=SC2016
-							$noop 'dpkg-query' '-W' '-f' '${Package}\t${Version}\t${Architecture}\t${db:Status-Abbrev}\n' '--'  "$@"
-							;;
-						
-						purge)
-							# The commands are quoted exactly as much as necessary.
-							# shellcheck disable=SC2016
-							$noop 'env' 'DEBIAN_FRONTEND=noninteractive' 'apt-get' '-q' '-y' 'purge' '--'  "$@"
-							;;
-						
-						remove)
-							# The commands are quoted exactly as much as necessary.
-							# shellcheck disable=SC2016
-							$noop 'env' 'DEBIAN_FRONTEND=noninteractive' 'apt-get' '-q' '-y' 'remove' '--'  "$@"
-							;;
-						
-						remove_impl)
-							# The commands are quoted exactly as much as necessary.
-							# shellcheck disable=SC2016
-							$noop 'env' 'DEBIAN_FRONTEND=noninteractive' 'dpkg' '-r' '--'  "$@"
-							;;
-						
-						update_db)
-							# The commands are quoted exactly as much as necessary.
-							# shellcheck disable=SC2016
-							$noop 'apt-get' '-q' '-y' 'update'  "$@"
-							;;
-						
-
-						*)
-							echo "Invalid command '$cmd_item' in the '$cmd_cat' category" 1>&2
-							exit 1
-							;;
-					esac
-					;;
-				
-				pkgfile)
-					case "$cmd_item" in
-						
-						dep_query)
-							# The commands are quoted exactly as much as necessary.
-							# shellcheck disable=SC2016
-							$noop 'sh' '-c' 'dpkg-deb -f -- "$pkg" "Depends" | sed -e "s/ *, */,/g" | tr "," "\n"'  "$@"
-							;;
-						
-						install)
-							# The commands are quoted exactly as much as necessary.
-							# shellcheck disable=SC2016
-							$noop 'sh' '-c' 'env DEBIAN_FRONTEND=noninteractive apt-get install --no-install-recommends --reinstall -y -o DPkg::Options::=--force-confnew -- $packages'  "$@"
 							;;
 						
 
@@ -3994,87 +3440,6 @@ fi
 			esac
 			;;
 		
-		UBUNTU1604)
-			case "$cmd_cat" in
-				
-				package)
-					case "$cmd_item" in
-						
-						install)
-							# The commands are quoted exactly as much as necessary.
-							# shellcheck disable=SC2016
-							$noop 'env' 'DEBIAN_FRONTEND=noninteractive' 'apt-get' '-q' '-y' '--no-install-recommends' 'install' '--'  "$@"
-							;;
-						
-						list_all)
-							# The commands are quoted exactly as much as necessary.
-							# shellcheck disable=SC2016
-							$noop 'dpkg-query' '-W' '-f' '${Package}\t${Version}\t${Architecture}\t${db:Status-Abbrev}\n' '--'  "$@"
-							;;
-						
-						purge)
-							# The commands are quoted exactly as much as necessary.
-							# shellcheck disable=SC2016
-							$noop 'env' 'DEBIAN_FRONTEND=noninteractive' 'apt-get' '-q' '-y' 'purge' '--'  "$@"
-							;;
-						
-						remove)
-							# The commands are quoted exactly as much as necessary.
-							# shellcheck disable=SC2016
-							$noop 'env' 'DEBIAN_FRONTEND=noninteractive' 'apt-get' '-q' '-y' 'remove' '--'  "$@"
-							;;
-						
-						remove_impl)
-							# The commands are quoted exactly as much as necessary.
-							# shellcheck disable=SC2016
-							$noop 'env' 'DEBIAN_FRONTEND=noninteractive' 'dpkg' '-r' '--'  "$@"
-							;;
-						
-						update_db)
-							# The commands are quoted exactly as much as necessary.
-							# shellcheck disable=SC2016
-							$noop 'apt-get' '-q' '-y' 'update'  "$@"
-							;;
-						
-
-						*)
-							echo "Invalid command '$cmd_item' in the '$cmd_cat' category" 1>&2
-							exit 1
-							;;
-					esac
-					;;
-				
-				pkgfile)
-					case "$cmd_item" in
-						
-						dep_query)
-							# The commands are quoted exactly as much as necessary.
-							# shellcheck disable=SC2016
-							$noop 'sh' '-c' 'dpkg-deb -f -- "$pkg" "Depends" | sed -e "s/ *, */,/g" | tr "," "\n"'  "$@"
-							;;
-						
-						install)
-							# The commands are quoted exactly as much as necessary.
-							# shellcheck disable=SC2016
-							$noop 'sh' '-c' 'env DEBIAN_FRONTEND=noninteractive apt-get install --no-install-recommends --reinstall -y -o DPkg::Options::=--force-confnew -- $packages'  "$@"
-							;;
-						
-
-						*)
-							echo "Invalid command '$cmd_item' in the '$cmd_cat' category" 1>&2
-							exit 1
-							;;
-					esac
-					;;
-				
-
-				*)
-					echo "Invalid command category '$cmd_cat'" 1>&2
-					exit 1
-					;;
-			esac
-			;;
-		
 		UBUNTU1804)
 			case "$cmd_cat" in
 				
@@ -4552,12 +3917,6 @@ cmd_repo_add()
 			
 			;;
 		
-		CENTOS6)
-			
-			repo_add_yum 'CENTOS6' "$vdir" "$repotype" 'redhat/repo/storpool-centos.repo' 'redhat/repo/RPM-GPG-KEY-StorPool'
-			
-			;;
-		
 		CENTOS7)
 			
 			repo_add_yum 'CENTOS7' "$vdir" "$repotype" 'redhat/repo/storpool-centos.repo' 'redhat/repo/RPM-GPG-KEY-StorPool'
@@ -4573,12 +3932,6 @@ cmd_repo_add()
 		CENTOS9)
 			
 			repo_add_yum 'CENTOS9' "$vdir" "$repotype" 'redhat/repo/storpool-centos.repo' 'redhat/repo/RPM-GPG-KEY-StorPool'
-			
-			;;
-		
-		DEBIAN9)
-			
-			repo_add_deb 'DEBIAN9' "$vdir" "$repotype" 'debian/repo/storpool.sources' 'debian/repo/storpool-keyring.gpg' 'apt-transport-https ca-certificates'
 			
 			;;
 		
@@ -4627,12 +3980,6 @@ cmd_repo_add()
 		ROCKY9)
 			
 			repo_add_yum 'ROCKY9' "$vdir" "$repotype" 'redhat/repo/storpool-centos.repo' 'redhat/repo/RPM-GPG-KEY-StorPool'
-			
-			;;
-		
-		UBUNTU1604)
-			
-			repo_add_deb 'UBUNTU1604' "$vdir" "$repotype" 'debian/repo/storpool.sources' 'debian/repo/storpool-keyring.gpg' 'apt-transport-https ca-certificates'
 			
 			;;
 		
@@ -4767,10 +4114,6 @@ case "$1" in
 				show_variant 'ALMA9'
 				;;
 			
-			CENTOS6)
-				show_variant 'CENTOS6'
-				;;
-			
 			CENTOS7)
 				show_variant 'CENTOS7'
 				;;
@@ -4781,10 +4124,6 @@ case "$1" in
 			
 			CENTOS9)
 				show_variant 'CENTOS9'
-				;;
-			
-			DEBIAN9)
-				show_variant 'DEBIAN9'
 				;;
 			
 			DEBIAN10)
@@ -4817,10 +4156,6 @@ case "$1" in
 			
 			ROCKY9)
 				show_variant 'ROCKY9'
-				;;
-			
-			UBUNTU1604)
-				show_variant 'UBUNTU1604'
 				;;
 			
 			UBUNTU1804)
