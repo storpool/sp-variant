@@ -222,36 +222,6 @@ _VARIANT_DEF: Final[list[defs.Variant | defs.VariantUpdate]] = [
         },
     ),
     defs.VariantUpdate(
-        name="DEBIAN9",
-        descr="Debian 9.x (stretch)",
-        parent="DEBIAN10",
-        detect=defs.Detect(
-            filename="/etc/os-release",
-            regex=re.compile(
-                r"""^
-                    PRETTY_NAME= .*
-                    Debian \s+ GNU/Linux \s+
-                    (?: stretch | 9 ) (?: \s | / )
-                """,
-                re.X,
-            ),
-            os_id="debian",
-            os_version_regex=re.compile(r"^9$"),
-        ),
-        updates={
-            "supported": {"repo": False},
-            "repo": {
-                "codename": "stretch",
-                "req_packages": ["apt-transport-https", "ca-certificates"],
-            },
-            "builder": {
-                "alias": "debian9",
-                "base_image": "debian:stretch",
-                "branch": "debian/stretch",
-            },
-        },
-    ),
-    defs.VariantUpdate(
         name="UBUNTU2304",
         descr="Ubuntu 23.04 LTS (Lunar Lobster)",
         parent="DEBIAN12",
@@ -363,36 +333,6 @@ _VARIANT_DEF: Final[list[defs.Variant | defs.VariantUpdate]] = [
                 "alias": "ubuntu-18.04",
                 "base_image": "ubuntu:bionic",
                 "branch": "ubuntu/bionic",
-            },
-        },
-    ),
-    defs.VariantUpdate(
-        name="UBUNTU1604",
-        descr="Ubuntu 16.04 LTS (Xenial Xerus)",
-        parent="UBUNTU1804",
-        detect=defs.Detect(
-            filename="/etc/os-release",
-            regex=re.compile(
-                r"^ PRETTY_NAME= .* Ubuntu \s+ 16 \. 04 ",
-                re.X,
-            ),
-            os_id="ubuntu",
-            os_version_regex=re.compile(r"^16\.04$"),
-        ),
-        updates={
-            "supported": {"repo": False},
-            "repo": {
-                "codename": "xenial",
-                "req_packages": ["apt-transport-https", "ca-certificates"],
-            },
-            "package": {
-                "LIBSSL": "libssl1.0.0",
-                "mcelog": "mcelog",
-            },
-            "builder": {
-                "alias": "ubuntu-16.04",
-                "base_image": "ubuntu:xenial",
-                "branch": "ubuntu/xenial",
             },
         },
     ),
@@ -662,39 +602,6 @@ fi
                 "branch": "centos/7",
                 "kernel_package": "kernel",
                 "utf8_locale": "en_US.utf8",
-            },
-        },
-    ),
-    defs.VariantUpdate(
-        name="CENTOS6",
-        descr="CentOS 6.x",
-        parent="CENTOS7",
-        detect=defs.Detect(
-            filename="/etc/redhat-release",
-            regex=re.compile(r"^ CentOS \s .* \s 6 \.", re.X),
-            os_id="centos",
-            os_version_regex=re.compile(r"^6(?:$|\.[0-9])"),
-        ),
-        updates={
-            "supported": {"repo": False},
-            "min_sys_python": "2.6",
-            "package": {
-                "KMOD": "module-init-tools",
-                "LIBCGROUP": "libcgroup",
-                "LIBUDEV": "libudev",
-                "OPENSSL": "openssl",
-                "PERL_AUTODIE": "perl",
-                "PERL_FILE_PATH": "perl",
-                "PERL_LWP_PROTO_HTTPS": "perl",
-                "PERL_SYS_SYSLOG": "perl",
-                "PYTHON_SIMPLEJSON": "python-simplejson",
-                "PROCPS": "procps",
-                "UDEV": "udev",
-            },
-            "builder": {
-                "alias": "centos6",
-                "base_image": "centos:6",
-                "branch": "centos/6",
             },
         },
     ),
