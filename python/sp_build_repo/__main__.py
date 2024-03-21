@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: 2021 - 2023  StorPool <support@storpool.com>
+# SPDX-FileCopyrightText: 2021 - 2024  StorPool <support@storpool.com>
 # SPDX-License-Identifier: BSD-2-Clause
 """Build the "add StorPool repository" archive."""
 
@@ -52,9 +52,9 @@ OVERRIDES_SCHEMAS: Final = {
                 "?url": str,
                 "?vendor": str,
                 "?codename": str,
-            }
-        }
-    }
+            },
+        },
+    },
 }
 
 
@@ -161,7 +161,7 @@ def copy_file(
         dst.chmod(0o755 if executable else 0o644)
     except OSError as err:
         raise variant.VariantFileError(
-            f"Could not set the permissions mode on {dst}: {err}"
+            f"Could not set the permissions mode on {dst}: {err}",
         ) from err
 
 
@@ -183,7 +183,8 @@ def subst_debian_sources(
     )
 
     ovr: Final = cfg.overrides.repo.get(
-        rtype.name, OverrideRepo(url=None, slug=None, vendor=None, codename=None)
+        rtype.name,
+        OverrideRepo(url=None, slug=None, vendor=None, codename=None),
     )
     try:
         result: Final = (
@@ -219,7 +220,8 @@ def subst_yum_repo(
     logging.debug("%(src)s -> %(dst)s []", {"src": src, "dst": dst})
 
     ovr: Final = cfg.overrides.repo.get(
-        rtype.name, OverrideRepo(url=None, slug=None, vendor=None, codename=None)
+        rtype.name,
+        OverrideRepo(url=None, slug=None, vendor=None, codename=None),
     )
     try:
         result: Final = (
@@ -290,7 +292,7 @@ def build_repo(cfg: Config) -> pathlib.Path:
             copy_file(cfg.datadir / var.repo.keyring, vardir)
         else:
             raise NotImplementedError(
-                f"No idea how to handle {type(var.repo).__name__} for {var.name}"
+                f"No idea how to handle {type(var.repo).__name__} for {var.name}",
             )
 
     distfile: Final = (cfg.destdir / distname).with_suffix(".tar.gz")
@@ -303,7 +305,7 @@ def build_repo(cfg: Config) -> pathlib.Path:
         )
     except subprocess.CalledProcessError as err:
         raise variant.VariantFileError(
-            f"Could not package {distdir} up into {distfile}: {err}"
+            f"Could not package {distdir} up into {distfile}: {err}",
         ) from err
     return distfile
 
@@ -335,7 +337,7 @@ def parse_overrides(path: pathlib.Path) -> Overrides:
     if (data_format.version.major, data_format.version.minor) != (0, 1):
         sys.exit(
             f"Unsupported format version for the {path} override files, "
-            f"only 0.1 supported so far"
+            f"only 0.1 supported so far",
         )
 
     try:

@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: 2023  StorPool <support@storpool.com>
+# SPDX-FileCopyrightText: 2023, 2024  StorPool <support@storpool.com>
 # SPDX-License-Identifier: BSD-2-Clause
 """Provide a class that outputs diagnostic messages if configured to."""
 
@@ -28,7 +28,10 @@ def _build_logger(name: str | None = None) -> logging.Logger:
 
 
 def setup_logger(
-    name: str | None = None, *, verbose: bool, propagate: bool = False
+    name: str | None = None,
+    *,
+    verbose: bool,
+    propagate: bool = False,
 ) -> logging.Logger:
     """Set up a logger that sends messages to the standard error stream.
 

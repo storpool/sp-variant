@@ -7,9 +7,6 @@ line-length = 100
 [lint]
 select = []
 ignore = [
-  # Trailing commas are okay if the formatter puts them in; otherwise, no need
-  "COM812",
-
   # No blank lines before the class docstring, TYVM
   "D203",
 

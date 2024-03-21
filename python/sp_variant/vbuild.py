@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: 2021 - 2023  StorPool <support@storpool.com>
+# SPDX-FileCopyrightText: 2021 - 2024  StorPool <support@storpool.com>
 # SPDX-License-Identifier: BSD-2-Clause
 """Build the hierarchical structure of variant definitions."""
 
@@ -741,7 +741,7 @@ fi
                         "-q",
                         "-y",
                         "--",
-                    ]
+                    ],
                 },
                 "pkgfile": {
                     "install": [
@@ -765,7 +765,7 @@ if [ -n "$to_reinstall" ]; then
     dnf reinstall -y --disablerepo='*' --enablerepo=appstream,baseos,storpool-contrib,codeready-builder-for-rhel-8-x86_64-rpms --setopt=localpkg_gpgcheck=0 -- $to_reinstall
 fi
 """,  # noqa: E501
-                    ]
+                    ],
                 },
             },
             "builder": {
@@ -902,7 +902,7 @@ def update_namedtuple(data: _TNamedTuple, updates: dict[str, Any]) -> _TNamedTup
                 break
         else:
             raise defs.VariantConfigError(
-                f"{prefix}: weird {type(value).__name__} update for {name}"
+                f"{prefix}: weird {type(value).__name__} update for {name}",
             )
 
     updated: Final[_TNamedTuple] = type(data)(**newv)  # type: ignore[call-overload]
@@ -910,7 +910,9 @@ def update_namedtuple(data: _TNamedTuple, updates: dict[str, Any]) -> _TNamedTup
 
 
 def merge_into_parent(
-    cfg: defs.Config, parent: defs.Variant, child: defs.VariantUpdate
+    cfg: defs.Config,
+    parent: defs.Variant,
+    child: defs.VariantUpdate,
 ) -> defs.Variant:
     """Merge a child's definitions into the parent."""
     cfg.diag(f"- merging {child.name} into {parent.name}")

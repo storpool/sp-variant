@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: 2021 - 2023  StorPool <support@storpool.com>
+# SPDX-FileCopyrightText: 2021 - 2024  StorPool <support@storpool.com>
 # SPDX-License-Identifier: BSD-2-Clause
 """Substitute variant data using Jinja2 templates."""
 
@@ -116,7 +116,10 @@ class OctalInteger(click.ParamType):
     name = "octal"
 
     def convert(
-        self, value: str | int, param: click.Parameter | None, ctx: click.Context | None
+        self,
+        value: str | int,
+        param: click.Parameter | None,
+        ctx: click.Context | None,
     ) -> int:
         """Convert a string to an integer using base 8."""
         if isinstance(value, int):
@@ -143,7 +146,11 @@ OCTAL_INTEGER: Final = OctalInteger()
     "-o",
     "--output",
     type=click.Path(
-        dir_okay=False, file_okay=True, writable=True, resolve_path=True, path_type=pathlib.Path
+        dir_okay=False,
+        file_okay=True,
+        writable=True,
+        resolve_path=True,
+        path_type=pathlib.Path,
     ),
     required=True,
     help="the output file to generate",

@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: 2021 - 2023  StorPool <support@storpool.com>
+# SPDX-FileCopyrightText: 2021 - 2024  StorPool <support@storpool.com>
 # SPDX-License-Identifier: BSD-2-Clause
 """Run some sp_variant tests using Docker containers."""
 
@@ -51,7 +51,8 @@ class SimpleVariant(NamedTuple):
 
 
 def extract_variants_data(
-    cfg: Config, tempd: pathlib.Path
+    cfg: Config,
+    tempd: pathlib.Path,
 ) -> tuple[pathlib.Path, dict[str, SimpleVariant]]:
     """Extract the variants data into the specified directory."""
     logging.debug("Making sure the %(tempd)s directory is empty", {"tempd": tempd})
@@ -59,7 +60,8 @@ def extract_variants_data(
         sys.exit(f"Unexpected stuff found in {tempd}: {found!r}")
 
     logging.debug(
-        "Extracting %(repo_file)s into %(tempd)s", {"repo_file": cfg.repo_file, "tempd": tempd}
+        "Extracting %(repo_file)s into %(tempd)s",
+        {"repo_file": cfg.repo_file, "tempd": tempd},
     )
     subprocess.check_call(["tar", "-xaf", cfg.repo_file, "-C", tempd], env=cfg.utf8_env)
     logging.debug("Looking for a single directory")
@@ -73,7 +75,9 @@ def extract_variants_data(
         sys.exit(f"Expected an executable {spvar} file")
 
     output: Final = subprocess.check_output(
-        [spvar, "show", "all"], encoding="UTF-8", env=cfg.utf8_env
+        [spvar, "show", "all"],
+        encoding="UTF-8",
+        env=cfg.utf8_env,
     )
     try:
         data: Final = json.loads(output)
@@ -111,7 +115,7 @@ def filter_docker_images(cfg: Config, var_data: dict[str, SimpleVariant]) -> dic
             ["docker", "image", "ls", "--format", "{{.Repository}}:{{.Tag}}"],
             encoding="UTF-8",
             env=cfg.utf8_env,
-        ).splitlines()
+        ).splitlines(),
     )
     images: Final = (
         all_images
@@ -132,7 +136,8 @@ def filter_docker_images(cfg: Config, var_data: dict[str, SimpleVariant]) -> dic
 
 
 async def process_detect_lines(
-    image: str, proc: aprocess.Process
+    image: str,
+    proc: aprocess.Process,
 ) -> tuple[bytes | None, list[str]]:
     """Read the lines output by `storpool_variant detect`, see if they look okay."""
     assert proc.stdout is not None  # noqa: S101  # mypy needs this
@@ -146,7 +151,8 @@ async def process_detect_lines(
         except Exception as err:  # noqa: BLE001
             errors.append(f"Could not read the first line: {err}")
         logging.debug(
-            "%(image)s: first line %(first_line)r", {"image": image, "first_line": first_line}
+            "%(image)s: first line %(first_line)r",
+            {"image": image, "first_line": first_line},
         )
 
         if first_line:
@@ -176,7 +182,9 @@ async def process_detect_lines(
 
 
 async def run_detect_for_image(
-    cfg: Config, spdir: pathlib.Path, image: str
+    cfg: Config,
+    spdir: pathlib.Path,
+    image: str,
 ) -> tuple[str | None, str | None]:
     """Run `storpool_variant detect` in a single new Docker container."""
     logging.debug("%(image)s: starting a container", {"image": image})
@@ -229,7 +237,9 @@ def analyze_detect_single(
 
 
 async def test_detect(
-    cfg: Config, spdir: pathlib.Path, ordered: list[tuple[str, str]]
+    cfg: Config,
+    spdir: pathlib.Path,
+    ordered: list[tuple[str, str]],
 ) -> list[str]:
     """Run `storpool_variant detect` for all the images."""
     logging.debug("Spawning the detect containers")
@@ -247,7 +257,7 @@ async def test_detect(
 
     if len(res) != len(ordered):
         errors.append(
-            f"Internal error: expected {len(ordered)} detect results, got {len(res)} ones"
+            f"Internal error: expected {len(ordered)} detect results, got {len(res)} ones",
         )
 
     return errors
@@ -299,7 +309,8 @@ async def run_add_repo_for_image(
         return res
 
     r_out, r_err = await asyncio.gather(
-        read_stream("stdout", proc.stdout), read_stream("stderr", proc.stderr)
+        read_stream("stdout", proc.stdout),
+        read_stream("stderr", proc.stderr),
     )
     res: Final = await proc.wait()
     return (r_out, r_err, res)
@@ -319,7 +330,7 @@ def analyze_add_repo_single(
     if r_res:
         return [
             f"{image}: the script failed with exit code {r_res}; "
-            f"stdout: {r_out!r} stderr {r_err!r}"
+            f"stdout: {r_out!r} stderr {r_err!r}",
         ]
 
     logging.debug("%(image)s: OK", {"image": image})
@@ -491,7 +502,7 @@ echo 'Done, it seems'
 
     if len(res) != len(ordered):
         errors.append(
-            f"Internal error: expected {len(ordered)} add-repo results, got {len(res)} ones"
+            f"Internal error: expected {len(ordered)} add-repo results, got {len(res)} ones",
         )
 
     return errors

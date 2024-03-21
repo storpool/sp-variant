@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: 2021 - 2023  StorPool <support@storpool.com>
+# SPDX-FileCopyrightText: 2021 - 2024  StorPool <support@storpool.com>
 # SPDX-License-Identifier: BSD-2-Clause
 """Test the functions in the sp.variant module."""
 
@@ -178,7 +178,7 @@ def test_builder_branches() -> None:
         return ver
 
     versions: Final = sorted(
-        {extract_version(var) for var in all_variants if var.family == "redhat"}
+        {extract_version(var) for var in all_variants if var.family == "redhat"},
     )
     assert versions
     missing_branches: Final = [
