@@ -30,18 +30,18 @@ _RE_CENTOS_VER = re.compile(r"^ .*? (?P<ver> \d+ ) $", re.X)
 
 def test_get() -> None:
     """Test the operation of get_variant()."""
-    assert variant.get_variant("CENTOS7").name == "CENTOS7"
-    assert variant.get_variant("CENTOS6").name == "CENTOS6"
+    assert variant.get_variant("CENTOS9").name == "CENTOS9"
+    assert variant.get_variant("CENTOS8").name == "CENTOS8"
 
     repo = variant.get_variant("UBUNTU1804").repo
     assert isinstance(repo, defs.DebRepo)
     assert repo.vendor == "ubuntu"
     assert repo.codename == "bionic"
 
-    repo = variant.get_variant("DEBIAN9").repo
+    repo = variant.get_variant("DEBIAN12").repo
     assert isinstance(repo, defs.DebRepo)
     assert repo.vendor == "debian"
-    assert repo.codename == "stretch"
+    assert repo.codename == "bookworm"
 
     with pytest.raises(variant.VariantKeyError):
         variant.get_variant("whee")
