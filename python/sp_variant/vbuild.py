@@ -174,7 +174,6 @@ _VARIANT_DEF: Final[list[defs.Variant | defs.VariantUpdate]] = [
             os_version_regex=re.compile(r"^11$"),
         ),
         updates={
-            "supported": {"repo": True},
             "min_sys_python": "3.9",
             "repo": {"codename": "bullseye"},
             "package": {
@@ -205,6 +204,7 @@ _VARIANT_DEF: Final[list[defs.Variant | defs.VariantUpdate]] = [
             os_version_regex=re.compile(r"^10$"),
         ),
         updates={
+            "supported": {"repo": False},
             "repo": {
                 "codename": "buster",
             },
@@ -235,6 +235,7 @@ _VARIANT_DEF: Final[list[defs.Variant | defs.VariantUpdate]] = [
             os_version_regex=re.compile(r"^23\.04$"),
         ),
         updates={
+            "supported": {"repo": False},
             "repo": {
                 "vendor": "ubuntu",
                 "codename": "lunar",
