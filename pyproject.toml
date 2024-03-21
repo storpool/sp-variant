@@ -75,6 +75,7 @@ strict = true
 
 [tool.ruff]
 extend = "ruff-base.toml"
+output-format = "concise"
 preview = true
 
 [tool.ruff.lint]
