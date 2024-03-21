@@ -23,6 +23,9 @@ ignore = [
   # Too restrictive.
   "EM",
 
+  # The /x regex modifier is common enough in many languages
+  "FURB167",
+
   # We want to report exceptions with as much context as possible.
   "PERF203",
 
@@ -47,20 +50,20 @@ single-line-exclusions = ["defs", "typing"]
 # Also, it needs to be able to run typedload on Python < 3.10, so it cannot
 # leverage the full power of X | Y unions, X | None optional values, etc.
 # We also make sure to use `subprocess` responsibly.
-"*/sp_build_repo/__main__.py" = ["S603", "S607", "T201", "UP006", "UP007"]
+"*/sp_build_repo/__main__.py" = ["S404", "S603", "S607", "T201", "UP006", "UP007"]
 
 # This is a command-line tool. Console output is part of its task.
 # We also make sure to use `subprocess` responsibly.
-"*/sp_variant/__main__.py" = ["S603", "S607", "T201"]
+"*/sp_variant/__main__.py" = ["S404", "S603", "S607", "T201"]
 
 # We only run commands defined in our variants structure.
-"*/sp_variant/variant.py" = ["S603", "S607"]
+"*/sp_variant/variant.py" = ["S404", "S603", "S607"]
 
 # The "update a named tuple / dictionary functions need to use typing.Any.
 "*/sp_variant/vbuild.py" = ["ANN401"]
 
 # We make sure to use `subprocess` responsibly.
-"*/test_docker/__main__.py" = ["S603", "S607"]
+"*/test_docker/__main__.py" = ["S404", "S603", "S607"]
 
 # This is a test suite.
 "*/unit_tests/*.py" = ["S101", "T201"]
