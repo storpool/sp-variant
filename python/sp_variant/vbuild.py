@@ -101,7 +101,7 @@ _VARIANT_DEF: Final[list[defs.Variant | defs.VariantUpdate]] = [
                 ],
             ),
         ),
-        min_sys_python="3.9",
+        min_sys_python="3.11",
         repo=defs.DebRepo(
             vendor="debian",
             codename="unstable",
@@ -175,6 +175,7 @@ _VARIANT_DEF: Final[list[defs.Variant | defs.VariantUpdate]] = [
         ),
         updates={
             "supported": {"repo": True},
+            "min_sys_python": "3.9",
             "repo": {"codename": "bullseye"},
             "package": {
                 "LIBSSL": "libssl1.1",
@@ -207,7 +208,7 @@ _VARIANT_DEF: Final[list[defs.Variant | defs.VariantUpdate]] = [
             "repo": {
                 "codename": "buster",
             },
-            "min_sys_python": "2.7",
+            "min_sys_python": "3.7",
             "package": {
                 "BINDINGS_PYTHON": "python",
                 "BINDINGS_PYTHON_CONFGET": "python-confget",
@@ -293,6 +294,7 @@ _VARIANT_DEF: Final[list[defs.Variant | defs.VariantUpdate]] = [
         ),
         updates={
             "supported": {"repo": True},
+            "min_sys_python": "3.10",
             "repo": {
                 "vendor": "ubuntu",
                 "codename": "jammy",
@@ -351,7 +353,7 @@ _VARIANT_DEF: Final[list[defs.Variant | defs.VariantUpdate]] = [
             "repo": {
                 "codename": "bionic",
             },
-            "min_sys_python": "2.7",
+            "min_sys_python": "3.6",
             "package": {
                 "BINDINGS_PYTHON": "python",
                 "BINDINGS_PYTHON_CONFGET": "python-confget",
@@ -478,7 +480,7 @@ fi
                 ],
             ),
         ),
-        min_sys_python="2.7",
+        min_sys_python="3.9",
         repo=defs.YumRepo(
             yumdef="redhat/repo/storpool-centos.repo",
             keyring="redhat/repo/RPM-GPG-KEY-StorPool",
@@ -523,6 +525,7 @@ fi
                 "LIBCGROUP": "libcgroup-tools",
                 "PYTHON_SIMPLEJSON": "python2-simplejson",
             },
+            "min_sys_python": "3.6",
             "commands": {
                 "package": {
                     "install": [
