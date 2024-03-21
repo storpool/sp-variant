@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: 2023  StorPool <support@storpool.com>
+# SPDX-FileCopyrightText: 2023, 2024  StorPool <support@storpool.com>
 # SPDX-License-Identifier: BSD-2-Clause
 
 { pkgs ? import <nixpkgs> { }
@@ -22,7 +22,7 @@ pkgs.mkShell {
 
     tox run-parallel
 
-    "$(pwd)/nix/run-basic-tests.sh" "$(pwd)/.tox/unit-tests/bin/sp_variant"
+    "$(pwd)/nix/run-basic-tests.sh" "$(pwd)/.tox/unit-tests-pytest-8/bin/sp_variant"
 
     set +x
     exit
