@@ -1,11 +1,12 @@
 /*
- * SPDX-FileCopyrightText: 2022  StorPool <support@storpool.com>
+ * SPDX-FileCopyrightText: 2022, 2024  StorPool <support@storpool.com>
  * SPDX-License-Identifier: BSD-2-Clause
  */
 
 use std::str::FromStr;
 
-use clap::{Parser, Subcommand};
+use clap::Parser;
+use clap_derive::{Parser, Subcommand};
 use thiserror::Error;
 
 #[derive(Debug, Error)]

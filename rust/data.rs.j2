@@ -1,5 +1,5 @@
 /*
- * SPDX-FileCopyrightText: 2021 - 2023  StorPool <support@storpool.com>
+ * SPDX-FileCopyrightText: 2021 - 2024  StorPool <support@storpool.com>
  * SPDX-License-Identifier: BSD-2-Clause
  */
 //! Partially-generated data for handling build variants.
@@ -11,7 +11,7 @@ use std::str::FromStr;
 
 use enum_iterator::Sequence;
 use once_cell::sync::Lazy;
-use serde::{Deserialize, Serialize};
+use serde_derive::{Deserialize, Serialize};
 
 use crate::{
     Builder, DebRepo, Detect, Repo, Supported, Variant, VariantDefTop, VariantError, VariantFormat,

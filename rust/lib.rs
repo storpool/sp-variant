@@ -1,5 +1,5 @@
 /*
- * SPDX-FileCopyrightText: 2021 - 2023  StorPool <support@storpool.com>
+ * SPDX-FileCopyrightText: 2021 - 2024  StorPool <support@storpool.com>
  * SPDX-License-Identifier: BSD-2-Clause
  */
 //! Detect the OS distribution and version.
@@ -14,7 +14,7 @@ use std::fs;
 use std::io::{Error as IoError, ErrorKind};
 
 use regex::RegexBuilder;
-use serde::{Deserialize, Serialize};
+use serde_derive::{Deserialize, Serialize};
 use thiserror::Error;
 
 use yai::YAIError;
