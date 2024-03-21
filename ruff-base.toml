@@ -1,7 +1,6 @@
-# SPDX-FileCopyrightText: 2021 - 2023  StorPool <support@storpool.com>
+# SPDX-FileCopyrightText: 2021 - 2024  StorPool <support@storpool.com>
 # SPDX-License-Identifier: BSD-2-Clause
 
-[tool.ruff]
 target-version = "py38"
 line-length = 100
 select = []
@@ -34,16 +33,16 @@ ignore = [
   "TRY003",
 ]
 
-[tool.ruff.flake8-copyright]
+[flake8-copyright]
 notice-rgx = "(?x) SPDX-FileCopyrightText: \\s \\S"
 
-[tool.ruff.isort]
+[isort]
 force-single-line = true
 known-first-party = ["sp_build_repo", "sp_variant", "test_docker"]
 lines-after-imports = 2
 single-line-exclusions = ["defs", "typing"]
 
-[tool.ruff.per-file-ignores]
+[per-file-ignores]
 # This is a command-line tool. Console output is part of its task.
 # Also, it needs to be able to run typedload on Python < 3.10, so it cannot
 # leverage the full power of X | Y unions, X | None optional values, etc.

@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: 2021 - 2023  StorPool <support@storpool.com>
+# SPDX-FileCopyrightText: 2021 - 2024  StorPool <support@storpool.com>
 # SPDX-License-Identifier: BSD-2-Clause
 
 [build-system]
@@ -72,6 +72,11 @@ pattern = 'VERSION: Final = "(?P<version>[^"]+)"'
 
 [tool.mypy]
 strict = true
+
+[tool.ruff]
+extend = "ruff-base.toml"
+select = ["ALL"]
+preview = true
 
 [tool.test-stages]
 stages = ["@check and @quick and not @manual", "@check and not @manual", "@tests and not @manual"]
