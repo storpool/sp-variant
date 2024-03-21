@@ -90,7 +90,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "ac495e00dcec98c83465d5ad66c5c4fabd652fd6686e7c6269b117e729a6f17b"
 dependencies = [
  "clap_builder",
- "clap_derive",
 ]
 
 [[package]]
@@ -324,11 +323,13 @@ version = "3.4.2"
 dependencies = [
  "anyhow",
  "clap",
+ "clap_derive",
  "enum-iterator",
  "nix",
  "once_cell",
  "regex",
  "serde",
+ "serde_derive",
  "serde_json",
  "tempfile",
  "thiserror",
