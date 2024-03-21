@@ -1,7 +1,7 @@
-# SPDX-FileCopyrightText: 2023  StorPool <support@storpool.com>
+# SPDX-FileCopyrightText: 2023, 2024  StorPool <support@storpool.com>
 # SPDX-License-Identifier: BSD-2-Clause
 
 mkdocs >= 1.4.2, < 2
 mkdocs-material >= 9.1.2, < 10
-mkdocstrings >= 0.22, < 0.23
+mkdocstrings >= 0.24, < 0.25
 mkdocstrings-python >= 1, < 2
