@@ -12,6 +12,55 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Semi-incompatible changes
+
+- use Python 3.x as `min_sys_python` everywhere
+- drop the definitions for CentOS 6, Debian 9, and Ubuntu 16.04;
+  they will no longer even be recognized
+
+### Fixes
+
+- mark Debian 10 and Ubuntu 23.04 as unsupported
+- documentation:
+    - correct the changelog link for version 3.4.2
+- python:
+    - library:
+        - re-sort the `sp_variant.variant.__all__` list
+    - test suite:
+        - do not expect Debian 9 and CentOS 6 to be present in the variant data
+        - update the `test-stages` requirements file to use Tox 4.x
+
+### Additions
+
+- documentation:
+    - add `publync` configuration to the `pyproject.toml` file
+- python:
+    - tentatively declare Python 3.13 as supported
+
+### Other changes
+
+- documentation:
+    - use `mkdocstrings` 0.24 with no changes
+- python:
+    - test suite:
+        - run the unit tests with pytest 6, 7, and 8, separately
+        - test with Ruff 0.3.3:
+            - simplify the Ruff configuration files layout
+            - override some more checks
+            - push the linter configuration into the `lint.*` TOML hierarchy
+            - use the concise output format even in preview mode
+            - let Ruff insist on trailing commas
+        - add the "docs" environment to the second Tox stage
+        - vendor-import `vetox` version 0.1.3
+- rust:
+    - use the `clap_derive` and `serde_derive` crates instead of features for
+      the respective `clap` and `serde` ones
+- nix:
+    - remove an explanation for not running the Tox tests with Python 3.8;
+      it was dropped from nixpkgs/unstable anyway
+    - also run the Tox tests with Python 3.12
+    - add an expression and a shell helper to run `vetox` with Python 3.9 through 3.13
+
 ## [3.4.2] - 2023-12-19
 
 ### Other changes
