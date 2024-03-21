@@ -1,11 +1,10 @@
 #!/bin/sh
 #
-# SPDX-FileCopyrightText: 2023  StorPool <support@storpool.com>
+# SPDX-FileCopyrightText: 2023, 2024  StorPool <support@storpool.com>
 # SPDX-License-Identifier: BSD-2-Clause
 
 set -e
 
-# backports.zoneinfo is broken for 3.8 in nixpkgs-unstable
 : "${PY_MINVER_MIN:=9}"
 
 # cffi is broken for 3.12 in nixpkgs-unstable
