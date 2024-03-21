@@ -74,6 +74,15 @@ pattern = 'VERSION: Final = "(?P<version>[^"]+)"'
 [tool.mypy]
 strict = true
 
+[tool.publync.format.version]
+major = 0
+minor = 1
+
+[tool.publync.build.tox]
+
+[tool.publync.sync.rsync]
+remote = "root@https-sof.sof-vm.storpool.local:/var/www/repo/public/doc/sp-variant"
+
 [tool.ruff]
 extend = "ruff-base.toml"
 output-format = "concise"
