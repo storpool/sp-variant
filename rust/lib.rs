@@ -208,7 +208,7 @@ pub fn build_variants() -> &'static VariantDefTop {
 /// Propagates any errors from [`detect_from()`].
 #[inline]
 pub fn detect() -> Result<Variant, VariantError> {
-    detect_from(build_variants()).map(Clone::clone)
+    detect_from(build_variants()).cloned()
 }
 
 /// Detect the current host's variant from the supplied data.
