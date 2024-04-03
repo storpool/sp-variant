@@ -113,8 +113,8 @@ detect_from_os_release()
 		return
 	fi
 	
-	if [ "$os_id" = 'ubuntu' ] && printf -- '%s\n' "$version_id" | grep -Eqe '^23\.04$'; then
-		printf -- '%s\n' 'UBUNTU2304'
+	if [ "$os_id" = 'ubuntu' ] && printf -- '%s\n' "$version_id" | grep -Eqe '^24\.04$'; then
+		printf -- '%s\n' 'UBUNTU2404'
 		return
 	fi
 	
@@ -196,8 +196,8 @@ cmd_detect()
 		return
 	fi
 	
-	if [ -r '/etc/os-release' ] && grep -Eqe '^PRETTY_NAME=.*Ubuntu[[:space:]]+23\.04' -- '/etc/os-release'; then
-		printf -- '%s\n' 'UBUNTU2304'
+	if [ -r '/etc/os-release' ] && grep -Eqe '^PRETTY_NAME=.*Ubuntu[[:space:]]+.*Noble' -- '/etc/os-release'; then
+		printf -- '%s\n' 'UBUNTU2404'
 		return
 	fi
 	
@@ -1953,7 +1953,7 @@ show_UBUNTU2204()
     "LIBSSL": "libssl3",
     "MCELOG": "bash"
   },
-  "parent": "UBUNTU2304",
+  "parent": "UBUNTU2404",
   "repo": {
     "codename": "jammy",
     "keyring": "debian/repo/storpool-keyring.gpg",
@@ -1971,14 +1971,14 @@ show_UBUNTU2204()
 EOVARIANT_JSON
 }
 
-show_UBUNTU2304()
+show_UBUNTU2404()
 {
 	cat <<'EOVARIANT_JSON'
   {
   "builder": {
-    "alias": "ubuntu-23.04",
-    "base_image": "ubuntu:lunar",
-    "branch": "ubuntu/lunar",
+    "alias": "ubuntu-24.04",
+    "base_image": "ubuntu:noble",
+    "branch": "ubuntu/noble",
     "kernel_package": "linux-headers",
     "utf8_locale": "C.UTF-8"
   },
@@ -2046,18 +2046,18 @@ show_UBUNTU2304()
       ]
     }
   },
-  "descr": "Ubuntu 23.04 LTS (Lunar Lobster)",
+  "descr": "Ubuntu 24.04 LTS (Noble Numbat)",
   "detect": {
     "filename": "/etc/os-release",
     "os_id": "ubuntu",
-    "os_version_regex": "^23\\.04$",
-    "regex": "^ PRETTY_NAME= .* Ubuntu \\s+ 23 \\. 04 "
+    "os_version_regex": "^24\\.04$",
+    "regex": "^ PRETTY_NAME= .* Ubuntu \\s+ .* Noble "
   },
   "family": "debian",
   "file_ext": "deb",
   "initramfs_flavor": "update-initramfs",
-  "min_sys_python": "3.11",
-  "name": "UBUNTU2304",
+  "min_sys_python": "3.12",
+  "name": "UBUNTU2404",
   "package": {
     "BINDINGS_PYTHON": "python3",
     "BINDINGS_PYTHON_CONFGET": "python3-confget",
@@ -2067,9 +2067,9 @@ show_UBUNTU2304()
     "LIBSSL": "libssl3",
     "MCELOG": "bash"
   },
-  "parent": "DEBIAN12",
+  "parent": "DEBIAN13",
   "repo": {
-    "codename": "lunar",
+    "codename": "noble",
     "keyring": "debian/repo/storpool-keyring.gpg",
     "req_packages": [
       "ca-certificates"
@@ -2114,7 +2114,7 @@ cmd_show_all()
     "UBUNTU1804",
     "UBUNTU2004",
     "UBUNTU2204",
-    "UBUNTU2304",
+    "UBUNTU2404",
     "DEBIAN10",
     "DEBIAN11",
     "DEBIAN12",
@@ -2172,8 +2172,8 @@ EOPROLOGUE
   printf -- '    "%s": ' 'UBUNTU2204'
   show_UBUNTU2204
   echo ','
-  printf -- '    "%s": ' 'UBUNTU2304'
-  show_UBUNTU2304
+  printf -- '    "%s": ' 'UBUNTU2404'
+  show_UBUNTU2404
   
 
 	cat <<'EOEPILOGUE'
@@ -3683,7 +3683,7 @@ fi
 			esac
 			;;
 		
-		UBUNTU2304)
+		UBUNTU2404)
 			case "$cmd_cat" in
 				
 				package)
@@ -4001,9 +4001,9 @@ cmd_repo_add()
 			
 			;;
 		
-		UBUNTU2304)
+		UBUNTU2404)
 			
-			repo_add_deb 'UBUNTU2304' "$vdir" "$repotype" 'debian/repo/storpool.sources' 'debian/repo/storpool-keyring.gpg' 'ca-certificates'
+			repo_add_deb 'UBUNTU2404' "$vdir" "$repotype" 'debian/repo/storpool.sources' 'debian/repo/storpool-keyring.gpg' 'ca-certificates'
 			
 			;;
 		
@@ -4170,8 +4170,8 @@ case "$1" in
 				show_variant 'UBUNTU2204'
 				;;
 			
-			UBUNTU2304)
-				show_variant 'UBUNTU2304'
+			UBUNTU2404)
+				show_variant 'UBUNTU2404'
 				;;
 			
 

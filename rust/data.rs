@@ -54,8 +54,8 @@ pub enum VariantKind {
     UBUNTU2004,
     /// Ubuntu 22.04 LTS (Jammy Jellyfish)
     UBUNTU2204,
-    /// Ubuntu 23.04 LTS (Lunar Lobster)
-    UBUNTU2304,
+    /// Ubuntu 24.04 LTS (Noble Numbat)
+    UBUNTU2404,
 }
 
 impl VariantKind {
@@ -75,7 +75,7 @@ impl VariantKind {
     const UBUNTU1804_NAME: &'static str = "UBUNTU1804";
     const UBUNTU2004_NAME: &'static str = "UBUNTU2004";
     const UBUNTU2204_NAME: &'static str = "UBUNTU2204";
-    const UBUNTU2304_NAME: &'static str = "UBUNTU2304";
+    const UBUNTU2404_NAME: &'static str = "UBUNTU2404";
 }
 
 impl AsRef<str> for VariantKind {
@@ -98,7 +98,7 @@ impl AsRef<str> for VariantKind {
             Self::UBUNTU1804 => Self::UBUNTU1804_NAME,
             Self::UBUNTU2004 => Self::UBUNTU2004_NAME,
             Self::UBUNTU2204 => Self::UBUNTU2204_NAME,
-            Self::UBUNTU2304 => Self::UBUNTU2304_NAME,
+            Self::UBUNTU2404 => Self::UBUNTU2404_NAME,
         }
     }
 }
@@ -125,7 +125,7 @@ impl FromStr for VariantKind {
             Self::UBUNTU1804_NAME => Ok(Self::UBUNTU1804),
             Self::UBUNTU2004_NAME => Ok(Self::UBUNTU2004),
             Self::UBUNTU2204_NAME => Ok(Self::UBUNTU2204),
-            Self::UBUNTU2304_NAME => Ok(Self::UBUNTU2304),
+            Self::UBUNTU2404_NAME => Ok(Self::UBUNTU2404),
             other => Err(VariantError::BadVariant(other.to_owned())),
         }
     }
@@ -158,7 +158,7 @@ pub fn get_variants() -> &'static VariantDefTop {
                     VariantKind::UBUNTU1804,
                     VariantKind::UBUNTU2004,
                     VariantKind::UBUNTU2204,
-                    VariantKind::UBUNTU2304,
+                    VariantKind::UBUNTU2404,
                     VariantKind::DEBIAN10,
                     VariantKind::DEBIAN11,
                     VariantKind::DEBIAN12,
@@ -2541,7 +2541,7 @@ fi
                                 kind: VariantKind::UBUNTU2204,
                                 descr: "Ubuntu 22.04 LTS (Jammy Jellyfish)".to_owned(),
                                 family: "debian".to_owned(),
-                                parent: "UBUNTU2304".to_owned(),
+                                parent: "UBUNTU2404".to_owned(),
                                 detect: Detect {
                                     filename: "/etc/os-release".to_owned(),
                                     #[allow(clippy::needless_raw_strings)]
@@ -2688,19 +2688,19 @@ fi
                             },
                     ),
                     (
-                            VariantKind::UBUNTU2304,
+                            VariantKind::UBUNTU2404,
                             Variant {
-                                kind: VariantKind::UBUNTU2304,
-                                descr: "Ubuntu 23.04 LTS (Lunar Lobster)".to_owned(),
+                                kind: VariantKind::UBUNTU2404,
+                                descr: "Ubuntu 24.04 LTS (Noble Numbat)".to_owned(),
                                 family: "debian".to_owned(),
-                                parent: "DEBIAN12".to_owned(),
+                                parent: "DEBIAN13".to_owned(),
                                 detect: Detect {
                                     filename: "/etc/os-release".to_owned(),
                                     #[allow(clippy::needless_raw_strings)]
-                                    regex: r"^ PRETTY_NAME= .* Ubuntu \s+ 23 \. 04 ".to_owned(),
+                                    regex: r"^ PRETTY_NAME= .* Ubuntu \s+ .* Noble ".to_owned(),
                                     os_id: "ubuntu".to_owned(),
                                     #[allow(clippy::needless_raw_strings)]
-                                    os_version_regex: r"^23\.04$".to_owned(),
+                                    os_version_regex: r"^24\.04$".to_owned(),
                                 },
                                 supported: Supported {
                                     repo: false,
@@ -2805,10 +2805,10 @@ fi
                                         ),
                                     ]
                                 ),
-                                min_sys_python: "3.11".to_owned(),
+                                min_sys_python: "3.12".to_owned(),
                                 repo:
                                     Repo::Deb(DebRepo {
-                                        codename: "lunar".to_owned(),
+                                        codename: "noble".to_owned(),
                                         vendor: "ubuntu".to_owned(),
                                         sources: "debian/repo/storpool.sources".to_owned(),
                                         keyring: "debian/repo/storpool-keyring.gpg".to_owned(),
@@ -2831,9 +2831,9 @@ fi
                                 file_ext: "deb".to_owned(),
                                 initramfs_flavor: "update-initramfs".to_owned(),
                                 builder: Builder {
-                                    alias: "ubuntu-23.04".to_owned(),
-                                    base_image: "ubuntu:lunar".to_owned(),
-                                    branch: "ubuntu/lunar".to_owned(),
+                                    alias: "ubuntu-24.04".to_owned(),
+                                    base_image: "ubuntu:noble".to_owned(),
+                                    branch: "ubuntu/noble".to_owned(),
                                     kernel_package: "linux-headers".to_owned(),
                                     utf8_locale: "C.UTF-8".to_owned(),
                                 },
