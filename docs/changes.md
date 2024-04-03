@@ -15,12 +15,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Semi-incompatible changes
 
 - use Python 3.x as `min_sys_python` everywhere
-- drop the definitions for CentOS 6, Debian 9, and Ubuntu 16.04;
+- drop the definitions for CentOS 6, Debian 9, Ubuntu 16.04, and Ubuntu 23.04;
   they will no longer even be recognized
 
 ### Fixes
 
-- mark Debian 10 and Ubuntu 23.04 as unsupported
+- mark Debian 10 as unsupported
 - documentation:
     - correct the changelog link for version 3.4.2
 - python:
@@ -32,6 +32,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Additions
 
+- all:
+    - add support for Ubuntu 24.04 (Noble Numbat)
 - documentation:
     - add `publync` configuration to the `pyproject.toml` file
 - python:
