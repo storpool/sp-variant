@@ -222,9 +222,39 @@ _VARIANT_DEF: Final[list[defs.Variant | defs.VariantUpdate]] = [
         },
     ),
     defs.VariantUpdate(
+        name="UBUNTU2404",
+        descr="Ubuntu 24.04 LTS (Noble Numbat)",
+        parent="DEBIAN13",
+        detect=defs.Detect(
+            filename="/etc/os-release",
+            regex=re.compile(
+                r"^ PRETTY_NAME= .* Ubuntu \s+ .* Noble ",
+                re.X,
+            ),
+            os_id="ubuntu",
+            os_version_regex=re.compile(r"^24\.04$"),
+        ),
+        updates={
+            "supported": {"repo": False},
+            "repo": {
+                "vendor": "ubuntu",
+                "codename": "noble",
+            },
+            "min_sys_python": "3.12",
+            "package": {
+                "CPUPOWER": "linux-tools-generic",
+            },
+            "builder": {
+                "alias": "ubuntu-24.04",
+                "base_image": "ubuntu:noble",
+                "branch": "ubuntu/noble",
+            },
+        },
+    ),
+    defs.VariantUpdate(
         name="UBUNTU2304",
         descr="Ubuntu 23.04 LTS (Lunar Lobster)",
-        parent="DEBIAN12",
+        parent="UBUNTU2404",
         detect=defs.Detect(
             filename="/etc/os-release",
             regex=re.compile(
@@ -235,13 +265,9 @@ _VARIANT_DEF: Final[list[defs.Variant | defs.VariantUpdate]] = [
             os_version_regex=re.compile(r"^23\.04$"),
         ),
         updates={
-            "supported": {"repo": False},
             "repo": {
                 "vendor": "ubuntu",
                 "codename": "lunar",
-            },
-            "package": {
-                "CPUPOWER": "linux-tools-generic",
             },
             "builder": {
                 "alias": "ubuntu-23.04",
