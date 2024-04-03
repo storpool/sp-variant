@@ -12,6 +12,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [3.5.0] - 2024-04-03
+
 ### Semi-incompatible changes
 
 - use Python 3.x as `min_sys_python` everywhere
@@ -610,7 +612,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - First public release.
 
-[Unreleased]: https://github.com/storpool/sp-variant/compare/release/3.4.2...main
+[Unreleased]: https://github.com/storpool/sp-variant/compare/release/3.5.0...main
+[3.5.0]: https://github.com/storpool/sp-variant/compare/release/3.4.2...release/3.5.0
 [3.4.2]: https://github.com/storpool/sp-variant/compare/release/3.4.1...release/3.4.2
 [3.4.1]: https://github.com/storpool/sp-variant/compare/release/3.4.0...release/3.4.1
 [3.4.0]: https://github.com/storpool/sp-variant/compare/release/3.3.0...release/3.4.0
