@@ -252,34 +252,9 @@ _VARIANT_DEF: Final[list[defs.Variant | defs.VariantUpdate]] = [
         },
     ),
     defs.VariantUpdate(
-        name="UBUNTU2304",
-        descr="Ubuntu 23.04 LTS (Lunar Lobster)",
-        parent="UBUNTU2404",
-        detect=defs.Detect(
-            filename="/etc/os-release",
-            regex=re.compile(
-                r"^ PRETTY_NAME= .* Ubuntu \s+ 23 \. 04 ",
-                re.X,
-            ),
-            os_id="ubuntu",
-            os_version_regex=re.compile(r"^23\.04$"),
-        ),
-        updates={
-            "repo": {
-                "vendor": "ubuntu",
-                "codename": "lunar",
-            },
-            "builder": {
-                "alias": "ubuntu-23.04",
-                "base_image": "ubuntu:lunar",
-                "branch": "ubuntu/lunar",
-            },
-        },
-    ),
-    defs.VariantUpdate(
         name="UBUNTU2204",
         descr="Ubuntu 22.04 LTS (Jammy Jellyfish)",
-        parent="UBUNTU2304",
+        parent="UBUNTU2404",
         detect=defs.Detect(
             filename="/etc/os-release",
             regex=re.compile(
