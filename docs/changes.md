@@ -44,7 +44,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - python:
     - test suite:
         - run the unit tests with pytest 6, 7, and 8, separately
-        - test with Ruff 0.3.3:
+        - test with Ruff 0.3.4:
             - simplify the Ruff configuration files layout
             - override some more checks
             - push the linter configuration into the `lint.*` TOML hierarchy
@@ -55,6 +55,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - rust:
     - use the `clap_derive` and `serde_derive` crates instead of features for
       the respective `clap` and `serde` ones
+    - minor fixes and improvements suggested by Clippy
 - nix:
     - remove an explanation for not running the Tox tests with Python 3.8;
       it was dropped from nixpkgs/unstable anyway
