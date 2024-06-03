@@ -647,6 +647,7 @@ fi
                         "--disablerepo=*",
                         "--enablerepo=ol8_appstream",
                         "--enablerepo=ol8_baseos_latest",
+                        "--enablerepo=ol8_codeready_builder",
                         "--enablerepo=storpool-contrib",
                         "install",
                         "-q",
@@ -670,10 +671,10 @@ for f in $packages; do
 done
 
 if [ -n "$to_install" ]; then
-    dnf install -y --disablerepo='*' --enablerepo=ol8_appstream,ol8_baseos_latest,storpool-contrib --setopt=localpkg_gpgcheck=0 -- $to_install
+    dnf install -y --disablerepo='*' --enablerepo=ol8_appstream,ol8_baseos_latest,ol8_codeready_builder,storpool-contrib --setopt=localpkg_gpgcheck=0 -- $to_install
 fi
 if [ -n "$to_reinstall" ]; then
-    dnf reinstall -y --disablerepo='*' --enablerepo=ol8_appstream,ol8_baseos_latest,storpool-contrib --setopt=localpkg_gpgcheck=0 -- $to_reinstall
+    dnf reinstall -y --disablerepo='*' --enablerepo=ol8_appstream,ol8_baseos_latest,ol8_codeready_builder,storpool-contrib --setopt=localpkg_gpgcheck=0 -- $to_reinstall
 fi
 """,  # noqa: E501
                     ],

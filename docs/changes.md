@@ -12,6 +12,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [3.5.2] - 2024-06-03
+
+### Additions
+
+- all:
+    - fix Oracle 8 support
+
 ## [3.5.1] - 2024-05-28
 
 ### Additions
@@ -620,6 +627,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - First public release.
 
 [Unreleased]: https://github.com/storpool/sp-variant/compare/release/3.5.1...main
+[3.5.2]: https://github.com/storpool/sp-variant/compare/release/3.5.1...release/3.5.2
 [3.5.1]: https://github.com/storpool/sp-variant/compare/release/3.5.0...release/3.5.1
 [3.5.0]: https://github.com/storpool/sp-variant/compare/release/3.4.2...release/3.5.0
 [3.4.2]: https://github.com/storpool/sp-variant/compare/release/3.4.1...release/3.4.2
