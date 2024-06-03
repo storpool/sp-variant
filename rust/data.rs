@@ -1785,6 +1785,7 @@ fi
                                                             "--disablerepo=*".to_owned(),
                                                             "--enablerepo=ol8_appstream".to_owned(),
                                                             "--enablerepo=ol8_baseos_latest".to_owned(),
+                                                            "--enablerepo=ol8_codeready_builder".to_owned(),
                                                             "--enablerepo=storpool-contrib".to_owned(),
                                                             "install".to_owned(),
                                                             "-q".to_owned(),
@@ -1868,10 +1869,10 @@ for f in $packages; do
 done
 
 if [ -n \"$to_install\" ]; then
-    dnf install -y --disablerepo='*' --enablerepo=ol8_appstream,ol8_baseos_latest,storpool-contrib --setopt=localpkg_gpgcheck=0 -- $to_install
+    dnf install -y --disablerepo='*' --enablerepo=ol8_appstream,ol8_codeready_builder,ol8_baseos_latest,storpool-contrib --setopt=localpkg_gpgcheck=0 -- $to_install
 fi
 if [ -n \"$to_reinstall\" ]; then
-    dnf reinstall -y --disablerepo='*' --enablerepo=ol8_appstream,ol8_baseos_latest,storpool-contrib --setopt=localpkg_gpgcheck=0 -- $to_reinstall
+    dnf reinstall -y --disablerepo='*' --enablerepo=ol8_appstream,ol8_codeready_builder,ol8_baseos_latest,storpool-contrib --setopt=localpkg_gpgcheck=0 -- $to_reinstall
 fi
 ".to_owned(),
                                                         ],
@@ -3007,7 +3008,7 @@ fi
                     ),
                 ]
             ),
-            version: "3.5.1".to_owned(),
+            version: "3.5.2".to_owned(),
         }
     });
     assert!(
