@@ -12,6 +12,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [3.5.9] 2026-07-28
+
+### Fixes
+
+- all:
+  - Fix some SLES16 commands 
+  - Fix typos
+
 ## [3.5.8] 2026-07-15
 
 ### Fixes

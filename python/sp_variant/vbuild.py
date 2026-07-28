@@ -1016,9 +1016,10 @@ fi
                     "--",
                 ],
                 list_all=[
-                    "zypper",
-                    "packages",
-                    "--installed-only",
+                    "rpm",
+                    "-qa",
+                    "--qf",
+                    r"%{Name}\t%{EVR}\t%{Arch}\tii\n",
                     "--",
                 ],
                 purge=[
@@ -1050,11 +1051,9 @@ fi
                 ],
                 install=[
                     "sh",
-                    "zypper",
-                    "-q",
-                    "--non-interactive",
-                    "install",
-                    "--no-recommends",
+                    "-c",
+                    "zypper -q --non-interactive "
+                    "install --allow-unsigned-rpm --no-recommends "
                     "-- $packages",
                 ],
             ),

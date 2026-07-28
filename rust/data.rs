@@ -2950,9 +2950,10 @@ fi
                                                     (
                                                         "list_all".to_owned(),
                                                         vec![
-                                                            "zypper".to_owned(),
-                                                            "packages".to_owned(),
-                                                            "--installed-only".to_owned(),
+                                                            "rpm".to_owned(),
+                                                            "-qa".to_owned(),
+                                                            "--qf".to_owned(),
+                                                            "%{Name}\\t%{EVR}\\t%{Arch}\\tii\\n".to_owned(),
                                                             "--".to_owned(),
                                                         ],
                                                     ),
@@ -3012,12 +3013,8 @@ fi
                                                         "install".to_owned(),
                                                         vec![
                                                             "sh".to_owned(),
-                                                            "zypper".to_owned(),
-                                                            "-q".to_owned(),
-                                                            "--non-interactive".to_owned(),
-                                                            "install".to_owned(),
-                                                            "--no-recommends".to_owned(),
-                                                            "-- $packages".to_owned(),
+                                                            "-c".to_owned(),
+                                                            "zypper -q --non-interactive install --allow-unsigned-rpm --no-recommends -- $packages".to_owned(),
                                                         ],
                                                     ),
                                                 ]
@@ -3813,7 +3810,7 @@ fi
                     ),
                 ]
             ),
-            version: "3.5.8".to_owned(),
+            version: "3.5.9".to_owned(),
         }
     });
     assert!(

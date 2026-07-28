@@ -2143,9 +2143,10 @@ show_SLES16()
         "--"
       ],
       "list_all": [
-        "zypper",
-        "packages",
-        "--installed-only",
+        "rpm",
+        "-qa",
+        "--qf",
+        "%{Name}\\t%{EVR}\\t%{Arch}\\tii\\n",
         "--"
       ],
       "purge": [
@@ -2182,12 +2183,8 @@ show_SLES16()
       ],
       "install": [
         "sh",
-        "zypper",
-        "-q",
-        "--non-interactive",
-        "install",
-        "--no-recommends",
-        "-- $packages"
+        "-c",
+        "zypper -q --non-interactive install --allow-unsigned-rpm --no-recommends -- $packages"
       ]
     }
   },
@@ -2909,7 +2906,7 @@ EOPROLOGUE
 
 	cat <<'EOEPILOGUE'
   },
-  "version": "3.5.8"
+  "version": "3.5.9"
 }
 EOEPILOGUE
 }
@@ -2933,7 +2930,7 @@ EOPROLOGUE
 
 	cat <<'EOEPILOGUE'
   ,
-  "version": "3.5.8"
+  "version": "3.5.9"
 }
 EOEPILOGUE
 }
@@ -4561,7 +4558,7 @@ fi
 						list_all)
 							# The commands are quoted exactly as much as necessary.
 							# shellcheck disable=SC2016
-							$noop 'zypper' 'packages' '--installed-only' '--'  "$@"
+							$noop 'rpm' '-qa' '--qf' '%{Name}\t%{EVR}\t%{Arch}\tii\n' '--'  "$@"
 							;;
 						
 						purge)
@@ -4608,7 +4605,7 @@ fi
 						install)
 							# The commands are quoted exactly as much as necessary.
 							# shellcheck disable=SC2016
-							$noop 'sh' 'zypper' '-q' '--non-interactive' 'install' '--no-recommends' '-- $packages'  "$@"
+							$noop 'sh' '-c' 'zypper -q --non-interactive install --allow-unsigned-rpm --no-recommends -- $packages'  "$@"
 							;;
 						
 
@@ -5386,7 +5383,7 @@ cmd_command()
 
 cmd_features()
 {
-	echo 'Features: format=1.4 version=3.5.8'
+	echo 'Features: format=1.4 version=3.5.9'
 }
 
 case "$1" in
