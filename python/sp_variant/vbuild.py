@@ -1080,6 +1080,32 @@ fi
             utf8_locale="C.UTF-8",
         ),
     ),
+    defs.VariantUpdate(
+        name="SLES15",
+        descr="SUSE Linux Enterprise Server 15.x",
+        parent="SLES16",
+        detect=defs.Detect(
+            filename="/etc/os-release",
+            regex=re.compile(
+                r"""^
+                    PRETTY_NAME= .*
+                    SUSE \s+ Linux \s+ Enterprise \s+ Server \s+ 15(\.[0-9]+)?
+                    .*
+                """,
+                re.X,
+            ),
+            os_id="sles",
+            os_version_regex=re.compile(r"^15(\.[0-9]+)?$"),
+        ),
+        updates={
+            "min_sys_python": "3.6",
+            "builder": {
+                "alias": "sles15",
+                "base_image": "registry.suse.com/bci/bci-base:15.7",
+                "branch": "sles/15",
+            },
+        },
+    ),
 ]
 
 VARIANTS: Final[dict[str, defs.Variant]] = {}
