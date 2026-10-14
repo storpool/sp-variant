@@ -12,6 +12,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [3.5.10] 2026-10-14
+
+### Additions
+
+- all:
+    - add SLES 15
+
 ## [3.5.9] 2026-07-28
 
 ### Fixes
@@ -678,7 +685,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - First public release.
 
-[Unreleased]: https://github.com/storpool/sp-variant/compare/release/3.5.8...main
+[Unreleased]: https://github.com/storpool/sp-variant/compare/release/3.5.10...main
+[3.5.10]: https://github.com/storpool/sp-variant/compare/release/3.5.9...release/3.5.10
+[3.5.9]: https://github.com/storpool/sp-variant/compare/release/3.5.8...release/3.5.9
 [3.5.8]: https://github.com/storpool/sp-variant/compare/release/3.5.7...release/3.5.8
 [3.5.7]: https://github.com/storpool/sp-variant/compare/release/3.5.6...release/3.5.7
 [3.5.6]: https://github.com/storpool/sp-variant/compare/release/3.5.5...release/3.5.6
