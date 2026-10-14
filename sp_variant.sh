@@ -118,6 +118,11 @@ detect_from_os_release()
 		return
 	fi
 	
+	if [ "$os_id" = 'sles' ] && printf -- '%s\n' "$version_id" | grep -Eqe '^15(\.[0-9]+)?$'; then
+		printf -- '%s\n' 'SLES15'
+		return
+	fi
+	
 	if [ "$os_id" = 'sles' ] && printf -- '%s\n' "$version_id" | grep -Eqe '^16(\.[0-9]+)?$'; then
 		printf -- '%s\n' 'SLES16'
 		return
@@ -165,6 +170,11 @@ cmd_detect()
 		return
 	fi
 
+	
+	if [ -r '/etc/os-release' ] && grep -Eqe '^PRETTY_NAME=.*SUSE[[:space:]]+Linux[[:space:]]+Enterprise[[:space:]]+Server[[:space:]]+15(\.[0-9]+)?.*' -- '/etc/os-release'; then
+		printf -- '%s\n' 'SLES15'
+		return
+	fi
 	
 	if [ -r '/etc/os-release' ] && grep -Eqe '^PRETTY_NAME=.*SUSE[[:space:]]+Linux[[:space:]]+Enterprise[[:space:]]+Server[[:space:]]+16(\.[0-9]+)?.*' -- '/etc/os-release'; then
 		printf -- '%s\n' 'SLES16'
@@ -2121,6 +2131,104 @@ show_ROCKY9()
 EOVARIANT_JSON
 }
 
+show_SLES15()
+{
+	cat <<'EOVARIANT_JSON'
+  {
+  "builder": {
+    "alias": "sles15",
+    "base_image": "registry.suse.com/bci/bci-base:15.7",
+    "branch": "sles/15",
+    "kernel_package": "kernel-devel",
+    "utf8_locale": "C.UTF-8"
+  },
+  "commands": {
+    "package": {
+      "install": [
+        "zypper",
+        "-q",
+        "--non-interactive",
+        "install",
+        "--no-recommends",
+        "--"
+      ],
+      "list_all": [
+        "rpm",
+        "-qa",
+        "--qf",
+        "%{Name}\\t%{EVR}\\t%{Arch}\\tii\\n",
+        "--"
+      ],
+      "purge": [
+        "zypper",
+        "-q",
+        "--non-interactive",
+        "remove",
+        "--clean-deps",
+        "--"
+      ],
+      "remove": [
+        "zypper",
+        "-q",
+        "--non-interactive",
+        "remove",
+        "--"
+      ],
+      "remove_impl": [
+        "rpm",
+        "-e",
+        "--"
+      ],
+      "update_db": [
+        "zypper",
+        "refresh-services",
+        "--with-repos"
+      ]
+    },
+    "pkgfile": {
+      "dep_query": [
+        "sh",
+        "-c",
+        "rpm -qpR -- \"$pkg\""
+      ],
+      "install": [
+        "sh",
+        "-c",
+        "zypper -q --non-interactive install --allow-unsigned-rpm --no-recommends -- $packages"
+      ]
+    }
+  },
+  "descr": "SUSE Linux Enterprise Server 15.x",
+  "detect": {
+    "filename": "/etc/os-release",
+    "os_id": "sles",
+    "os_version_regex": "^15(\\.[0-9]+)?$",
+    "regex": "^\n                    PRETTY_NAME= .*\n                    SUSE \\s+ Linux \\s+ Enterprise \\s+ Server \\s+ 15(\\.[0-9]+)?\n                    .*\n                "
+  },
+  "family": "suse",
+  "file_ext": "rpm",
+  "initramfs_flavor": "mkinitrd",
+  "min_sys_python": "3.6",
+  "name": "SLES15",
+  "package": {
+    "BINDINGS_PYTHON": "python3",
+    "BINDINGS_PYTHON_CONFGET": "python3-confget",
+    "BINDINGS_PYTHON_SIMPLEJSON": "python3-simplejson",
+    "CPUPOWER": "cpupower"
+  },
+  "parent": "SLES16",
+  "repo": {
+    "keyring": "suse/repo/storpool.asc",
+    "repodef": "suse/repo/storpool.repo"
+  },
+  "supported": {
+    "repo": false
+  },
+  "systemd_lib": "lib/systemd/system"
+}
+EOVARIANT_JSON
+}
+
 show_SLES16()
 {
 	cat <<'EOVARIANT_JSON'
@@ -2806,6 +2914,7 @@ cmd_show_all()
     }
   },
   "order": [
+    "SLES15",
     "SLES16",
     "ROCKY8",
     "ROCKY9",
@@ -2884,6 +2993,9 @@ EOPROLOGUE
   echo ','
   printf -- '    "%s": ' 'ROCKY9'
   show_ROCKY9
+  echo ','
+  printf -- '    "%s": ' 'SLES15'
+  show_SLES15
   echo ','
   printf -- '    "%s": ' 'SLES16'
   show_SLES16
@@ -4543,6 +4655,87 @@ fi
 			esac
 			;;
 		
+		SLES15)
+			case "$cmd_cat" in
+				
+				package)
+					case "$cmd_item" in
+						
+						install)
+							# The commands are quoted exactly as much as necessary.
+							# shellcheck disable=SC2016
+							$noop 'zypper' '-q' '--non-interactive' 'install' '--no-recommends' '--'  "$@"
+							;;
+						
+						list_all)
+							# The commands are quoted exactly as much as necessary.
+							# shellcheck disable=SC2016
+							$noop 'rpm' '-qa' '--qf' '%{Name}\t%{EVR}\t%{Arch}\tii\n' '--'  "$@"
+							;;
+						
+						purge)
+							# The commands are quoted exactly as much as necessary.
+							# shellcheck disable=SC2016
+							$noop 'zypper' '-q' '--non-interactive' 'remove' '--clean-deps' '--'  "$@"
+							;;
+						
+						remove)
+							# The commands are quoted exactly as much as necessary.
+							# shellcheck disable=SC2016
+							$noop 'zypper' '-q' '--non-interactive' 'remove' '--'  "$@"
+							;;
+						
+						remove_impl)
+							# The commands are quoted exactly as much as necessary.
+							# shellcheck disable=SC2016
+							$noop 'rpm' '-e' '--'  "$@"
+							;;
+						
+						update_db)
+							# The commands are quoted exactly as much as necessary.
+							# shellcheck disable=SC2016
+							$noop 'zypper' 'refresh-services' '--with-repos'  "$@"
+							;;
+						
+
+						*)
+							echo "Invalid command '$cmd_item' in the '$cmd_cat' category" 1>&2
+							exit 1
+							;;
+					esac
+					;;
+				
+				pkgfile)
+					case "$cmd_item" in
+						
+						dep_query)
+							# The commands are quoted exactly as much as necessary.
+							# shellcheck disable=SC2016
+							$noop 'sh' '-c' 'rpm -qpR -- "$pkg"'  "$@"
+							;;
+						
+						install)
+							# The commands are quoted exactly as much as necessary.
+							# shellcheck disable=SC2016
+							$noop 'sh' '-c' 'zypper -q --non-interactive install --allow-unsigned-rpm --no-recommends -- $packages'  "$@"
+							;;
+						
+
+						*)
+							echo "Invalid command '$cmd_item' in the '$cmd_cat' category" 1>&2
+							exit 1
+							;;
+					esac
+					;;
+				
+
+				*)
+					echo "Invalid command category '$cmd_cat'" 1>&2
+					exit 1
+					;;
+			esac
+			;;
+		
 		SLES16)
 			case "$cmd_cat" in
 				
@@ -5296,6 +5489,12 @@ cmd_repo_add()
 			
 			;;
 		
+		SLES15)
+			
+			repo_add_suse 'SLES15' "$vdir" "$repotype" 'suse/repo/storpool.repo' 'suse/repo/storpool.asc'
+			
+			;;
+		
 		SLES16)
 			
 			repo_add_suse 'SLES16' "$vdir" "$repotype" 'suse/repo/storpool.repo' 'suse/repo/storpool.asc'
@@ -5497,6 +5696,10 @@ case "$1" in
 			
 			ROCKY9)
 				show_variant 'ROCKY9'
+				;;
+			
+			SLES15)
+				show_variant 'SLES15'
 				;;
 			
 			SLES16)

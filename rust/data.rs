@@ -56,6 +56,8 @@ pub enum VariantKind {
     ROCKY8,
     /// Rocky Linux 9.x
     ROCKY9,
+    /// SUSE Linux Enterprise Server 15.x
+    SLES15,
     /// SUSE Linux Enterprise Server 16.0
     SLES16,
     /// Ubuntu 18.04 LTS (Bionic Beaver)
@@ -88,6 +90,7 @@ impl VariantKind {
     const RHEL8_NAME: &'static str = "RHEL8";
     const ROCKY8_NAME: &'static str = "ROCKY8";
     const ROCKY9_NAME: &'static str = "ROCKY9";
+    const SLES15_NAME: &'static str = "SLES15";
     const SLES16_NAME: &'static str = "SLES16";
     const UBUNTU1804_NAME: &'static str = "UBUNTU1804";
     const UBUNTU2004_NAME: &'static str = "UBUNTU2004";
@@ -117,6 +120,7 @@ impl AsRef<str> for VariantKind {
             Self::RHEL8 => Self::RHEL8_NAME,
             Self::ROCKY8 => Self::ROCKY8_NAME,
             Self::ROCKY9 => Self::ROCKY9_NAME,
+            Self::SLES15 => Self::SLES15_NAME,
             Self::SLES16 => Self::SLES16_NAME,
             Self::UBUNTU1804 => Self::UBUNTU1804_NAME,
             Self::UBUNTU2004 => Self::UBUNTU2004_NAME,
@@ -150,6 +154,7 @@ impl FromStr for VariantKind {
             Self::RHEL8_NAME => Ok(Self::RHEL8),
             Self::ROCKY8_NAME => Ok(Self::ROCKY8),
             Self::ROCKY9_NAME => Ok(Self::ROCKY9),
+            Self::SLES15_NAME => Ok(Self::SLES15),
             Self::SLES16_NAME => Ok(Self::SLES16),
             Self::UBUNTU1804_NAME => Ok(Self::UBUNTU1804),
             Self::UBUNTU2004_NAME => Ok(Self::UBUNTU2004),
@@ -176,6 +181,7 @@ pub fn get_variants() -> &'static VariantDefTop {
                 },
             },
             order: vec![
+                    VariantKind::SLES15,
                     VariantKind::SLES16,
                     VariantKind::ROCKY8,
                     VariantKind::ROCKY9,
@@ -2904,6 +2910,146 @@ fi
                                     base_image: "rockylinux:9".to_owned(),
                                     branch: "".to_owned(),
                                     kernel_package: "kernel-core".to_owned(),
+                                    utf8_locale: "C.UTF-8".to_owned(),
+                                },
+                            },
+                    ),
+                    (
+                            VariantKind::SLES15,
+                            Variant {
+                                kind: VariantKind::SLES15,
+                                descr: "SUSE Linux Enterprise Server 15.x".to_owned(),
+                                family: "suse".to_owned(),
+                                parent: "SLES16".to_owned(),
+                                detect: Detect {
+                                    filename: "/etc/os-release".to_owned(),
+                                    #[allow(clippy::needless_raw_strings)]
+                                    regex: r"^
+                    PRETTY_NAME= .*
+                    SUSE \s+ Linux \s+ Enterprise \s+ Server \s+ 15(\.[0-9]+)?
+                    .*
+                ".to_owned(),
+                                    os_id: "sles".to_owned(),
+                                    #[allow(clippy::needless_raw_strings)]
+                                    os_version_regex: r"^15(\.[0-9]+)?$".to_owned(),
+                                },
+                                supported: Supported {
+                                    repo: false,
+                                },
+                                commands: HashMap::from(
+                                    [
+                                        (
+                                            "package".to_owned(),
+                                            HashMap::from(
+                                                [
+                                                    (
+                                                        "install".to_owned(),
+                                                        vec![
+                                                            "zypper".to_owned(),
+                                                            "-q".to_owned(),
+                                                            "--non-interactive".to_owned(),
+                                                            "install".to_owned(),
+                                                            "--no-recommends".to_owned(),
+                                                            "--".to_owned(),
+                                                        ],
+                                                    ),
+                                                    (
+                                                        "list_all".to_owned(),
+                                                        vec![
+                                                            "rpm".to_owned(),
+                                                            "-qa".to_owned(),
+                                                            "--qf".to_owned(),
+                                                            "%{Name}\\t%{EVR}\\t%{Arch}\\tii\\n".to_owned(),
+                                                            "--".to_owned(),
+                                                        ],
+                                                    ),
+                                                    (
+                                                        "purge".to_owned(),
+                                                        vec![
+                                                            "zypper".to_owned(),
+                                                            "-q".to_owned(),
+                                                            "--non-interactive".to_owned(),
+                                                            "remove".to_owned(),
+                                                            "--clean-deps".to_owned(),
+                                                            "--".to_owned(),
+                                                        ],
+                                                    ),
+                                                    (
+                                                        "remove".to_owned(),
+                                                        vec![
+                                                            "zypper".to_owned(),
+                                                            "-q".to_owned(),
+                                                            "--non-interactive".to_owned(),
+                                                            "remove".to_owned(),
+                                                            "--".to_owned(),
+                                                        ],
+                                                    ),
+                                                    (
+                                                        "remove_impl".to_owned(),
+                                                        vec![
+                                                            "rpm".to_owned(),
+                                                            "-e".to_owned(),
+                                                            "--".to_owned(),
+                                                        ],
+                                                    ),
+                                                    (
+                                                        "update_db".to_owned(),
+                                                        vec![
+                                                            "zypper".to_owned(),
+                                                            "refresh-services".to_owned(),
+                                                            "--with-repos".to_owned(),
+                                                        ],
+                                                    ),
+                                                ]
+                                            ),
+                                        ),
+                                        (
+                                            "pkgfile".to_owned(),
+                                            HashMap::from(
+                                                [
+                                                    (
+                                                        "dep_query".to_owned(),
+                                                        vec![
+                                                            "sh".to_owned(),
+                                                            "-c".to_owned(),
+                                                            "rpm -qpR -- \"$pkg\"".to_owned(),
+                                                        ],
+                                                    ),
+                                                    (
+                                                        "install".to_owned(),
+                                                        vec![
+                                                            "sh".to_owned(),
+                                                            "-c".to_owned(),
+                                                            "zypper -q --non-interactive install --allow-unsigned-rpm --no-recommends -- $packages".to_owned(),
+                                                        ],
+                                                    ),
+                                                ]
+                                            ),
+                                        ),
+                                    ]
+                                ),
+                                min_sys_python: "3.6".to_owned(),
+                                repo:
+                                    Repo::Suse(SuseRepo {
+                                        repodef: "suse/repo/storpool.repo".to_owned(),
+                                        keyring: "suse/repo/storpool.asc".to_owned(),
+                                    }),
+                                    package: HashMap::from(
+                                    [
+                                        ("BINDINGS_PYTHON".to_owned(), "python3".to_owned()),
+                                        ("BINDINGS_PYTHON_CONFGET".to_owned(), "python3-confget".to_owned()),
+                                        ("BINDINGS_PYTHON_SIMPLEJSON".to_owned(), "python3-simplejson".to_owned()),
+                                        ("CPUPOWER".to_owned(), "cpupower".to_owned()),
+                                    ]
+                                ),
+                                systemd_lib: "lib/systemd/system".to_owned(),
+                                file_ext: "rpm".to_owned(),
+                                initramfs_flavor: "mkinitrd".to_owned(),
+                                builder: Builder {
+                                    alias: "sles15".to_owned(),
+                                    base_image: "registry.suse.com/bci/bci-base:15.7".to_owned(),
+                                    branch: "sles/15".to_owned(),
+                                    kernel_package: "kernel-devel".to_owned(),
                                     utf8_locale: "C.UTF-8".to_owned(),
                                 },
                             },
