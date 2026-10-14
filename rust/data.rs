@@ -3810,7 +3810,7 @@ fi
                     ),
                 ]
             ),
-            version: "3.5.9".to_owned(),
+            version: "3.5.10".to_owned(),
         }
     });
     assert!(
