@@ -1,0 +1,20 @@
+# The StorPool software repository for third-party SUSE RPMs
+#
+# SPDX-FileCopyrightText: 2021 - 2026  StorPool <support@storpool.com>
+# SPDX-License-Identifier: BSD-2-Clause
+
+[storpool-{{ name }}]
+name=StorPool third-party packages for SUSE
+baseurl={{ url }}{{ slug }}/suse/$releasever/$basearch/
+enabled=1
+autorefresh=1
+type=rpm-md
+gpgcheck=1
+gpgkey=file:///usr/lib/rpm/gnupg/keys/storpool.asc
+
+[storpool-{{ name }}-source]
+name=StorPool third-party packages for SUSE
+baseurl={{ url }}{{ slug }}/suse/$releasever/SRPMS/
+enabled=0
+gpgcheck=1
+gpgkey=file:///usr/lib/rpm/gnupg/keys/storpool.asc
