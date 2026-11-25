@@ -45,10 +45,13 @@ _VARIANT_DEF: Final[list[defs.Variant | defs.VariantUpdate]] = [
                 install=[
                     "env",
                     "DEBIAN_FRONTEND=noninteractive",
+                    "UCF_FORCE_CONFFOLD=1",
                     "apt-get",
                     "-q",
                     "-y",
                     "--no-install-recommends",
+                    "-o",
+                    "Dpkg::Options::=--force-confold",
                     "install",
                     "--",
                 ],

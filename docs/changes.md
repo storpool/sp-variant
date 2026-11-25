@@ -12,6 +12,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [3.5.11] 2026-11-25
+
+### Fixes
+
+- all:
+    - Debian and Ubuntu `package.install` keeps a locally modified
+      conffile instead of prompting, so an unattended install cannot
+      hang on dpkg's configuration-file question
+
 ## [3.5.10] 2026-10-14
 
 ### Additions
@@ -685,7 +694,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - First public release.
 
-[Unreleased]: https://github.com/storpool/sp-variant/compare/release/3.5.10...main
+[Unreleased]: https://github.com/storpool/sp-variant/compare/release/3.5.11...main
+[3.5.11]: https://github.com/storpool/sp-variant/compare/release/3.5.10...release/3.5.11
 [3.5.10]: https://github.com/storpool/sp-variant/compare/release/3.5.9...release/3.5.10
 [3.5.9]: https://github.com/storpool/sp-variant/compare/release/3.5.8...release/3.5.9
 [3.5.8]: https://github.com/storpool/sp-variant/compare/release/3.5.7...release/3.5.8

@@ -945,10 +945,13 @@ show_DEBIAN10()
       "install": [
         "env",
         "DEBIAN_FRONTEND=noninteractive",
+        "UCF_FORCE_CONFFOLD=1",
         "apt-get",
         "-q",
         "-y",
         "--no-install-recommends",
+        "-o",
+        "Dpkg::Options::=--force-confold",
         "install",
         "--"
       ],
@@ -1059,10 +1062,13 @@ show_DEBIAN11()
       "install": [
         "env",
         "DEBIAN_FRONTEND=noninteractive",
+        "UCF_FORCE_CONFFOLD=1",
         "apt-get",
         "-q",
         "-y",
         "--no-install-recommends",
+        "-o",
+        "Dpkg::Options::=--force-confold",
         "install",
         "--"
       ],
@@ -1173,10 +1179,13 @@ show_DEBIAN12()
       "install": [
         "env",
         "DEBIAN_FRONTEND=noninteractive",
+        "UCF_FORCE_CONFFOLD=1",
         "apt-get",
         "-q",
         "-y",
         "--no-install-recommends",
+        "-o",
+        "Dpkg::Options::=--force-confold",
         "install",
         "--"
       ],
@@ -1287,10 +1296,13 @@ show_DEBIAN13()
       "install": [
         "env",
         "DEBIAN_FRONTEND=noninteractive",
+        "UCF_FORCE_CONFFOLD=1",
         "apt-get",
         "-q",
         "-y",
         "--no-install-recommends",
+        "-o",
+        "Dpkg::Options::=--force-confold",
         "install",
         "--"
       ],
@@ -1401,10 +1413,13 @@ show_DEBIAN14()
       "install": [
         "env",
         "DEBIAN_FRONTEND=noninteractive",
+        "UCF_FORCE_CONFFOLD=1",
         "apt-get",
         "-q",
         "-y",
         "--no-install-recommends",
+        "-o",
+        "Dpkg::Options::=--force-confold",
         "install",
         "--"
       ],
@@ -2343,10 +2358,13 @@ show_UBUNTU1804()
       "install": [
         "env",
         "DEBIAN_FRONTEND=noninteractive",
+        "UCF_FORCE_CONFFOLD=1",
         "apt-get",
         "-q",
         "-y",
         "--no-install-recommends",
+        "-o",
+        "Dpkg::Options::=--force-confold",
         "install",
         "--"
       ],
@@ -2457,10 +2475,13 @@ show_UBUNTU2004()
       "install": [
         "env",
         "DEBIAN_FRONTEND=noninteractive",
+        "UCF_FORCE_CONFFOLD=1",
         "apt-get",
         "-q",
         "-y",
         "--no-install-recommends",
+        "-o",
+        "Dpkg::Options::=--force-confold",
         "install",
         "--"
       ],
@@ -2571,10 +2592,13 @@ show_UBUNTU2204()
       "install": [
         "env",
         "DEBIAN_FRONTEND=noninteractive",
+        "UCF_FORCE_CONFFOLD=1",
         "apt-get",
         "-q",
         "-y",
         "--no-install-recommends",
+        "-o",
+        "Dpkg::Options::=--force-confold",
         "install",
         "--"
       ],
@@ -2685,10 +2709,13 @@ show_UBUNTU2404()
       "install": [
         "env",
         "DEBIAN_FRONTEND=noninteractive",
+        "UCF_FORCE_CONFFOLD=1",
         "apt-get",
         "-q",
         "-y",
         "--no-install-recommends",
+        "-o",
+        "Dpkg::Options::=--force-confold",
         "install",
         "--"
       ],
@@ -2799,10 +2826,13 @@ show_UBUNTU2604()
       "install": [
         "env",
         "DEBIAN_FRONTEND=noninteractive",
+        "UCF_FORCE_CONFFOLD=1",
         "apt-get",
         "-q",
         "-y",
         "--no-install-recommends",
+        "-o",
+        "Dpkg::Options::=--force-confold",
         "install",
         "--"
       ],
@@ -3018,7 +3048,7 @@ EOPROLOGUE
 
 	cat <<'EOEPILOGUE'
   },
-  "version": "3.5.10"
+  "version": "3.5.11"
 }
 EOEPILOGUE
 }
@@ -3042,7 +3072,7 @@ EOPROLOGUE
 
 	cat <<'EOEPILOGUE'
   ,
-  "version": "3.5.10"
+  "version": "3.5.11"
 }
 EOEPILOGUE
 }
@@ -3671,7 +3701,7 @@ fi
 						install)
 							# The commands are quoted exactly as much as necessary.
 							# shellcheck disable=SC2016
-							$noop 'env' 'DEBIAN_FRONTEND=noninteractive' 'apt-get' '-q' '-y' '--no-install-recommends' 'install' '--'  "$@"
+							$noop 'env' 'DEBIAN_FRONTEND=noninteractive' 'UCF_FORCE_CONFFOLD=1' 'apt-get' '-q' '-y' '--no-install-recommends' '-o' 'Dpkg::Options::=--force-confold' 'install' '--'  "$@"
 							;;
 						
 						list_all)
@@ -3752,7 +3782,7 @@ fi
 						install)
 							# The commands are quoted exactly as much as necessary.
 							# shellcheck disable=SC2016
-							$noop 'env' 'DEBIAN_FRONTEND=noninteractive' 'apt-get' '-q' '-y' '--no-install-recommends' 'install' '--'  "$@"
+							$noop 'env' 'DEBIAN_FRONTEND=noninteractive' 'UCF_FORCE_CONFFOLD=1' 'apt-get' '-q' '-y' '--no-install-recommends' '-o' 'Dpkg::Options::=--force-confold' 'install' '--'  "$@"
 							;;
 						
 						list_all)
@@ -3833,7 +3863,7 @@ fi
 						install)
 							# The commands are quoted exactly as much as necessary.
 							# shellcheck disable=SC2016
-							$noop 'env' 'DEBIAN_FRONTEND=noninteractive' 'apt-get' '-q' '-y' '--no-install-recommends' 'install' '--'  "$@"
+							$noop 'env' 'DEBIAN_FRONTEND=noninteractive' 'UCF_FORCE_CONFFOLD=1' 'apt-get' '-q' '-y' '--no-install-recommends' '-o' 'Dpkg::Options::=--force-confold' 'install' '--'  "$@"
 							;;
 						
 						list_all)
@@ -3914,7 +3944,7 @@ fi
 						install)
 							# The commands are quoted exactly as much as necessary.
 							# shellcheck disable=SC2016
-							$noop 'env' 'DEBIAN_FRONTEND=noninteractive' 'apt-get' '-q' '-y' '--no-install-recommends' 'install' '--'  "$@"
+							$noop 'env' 'DEBIAN_FRONTEND=noninteractive' 'UCF_FORCE_CONFFOLD=1' 'apt-get' '-q' '-y' '--no-install-recommends' '-o' 'Dpkg::Options::=--force-confold' 'install' '--'  "$@"
 							;;
 						
 						list_all)
@@ -3995,7 +4025,7 @@ fi
 						install)
 							# The commands are quoted exactly as much as necessary.
 							# shellcheck disable=SC2016
-							$noop 'env' 'DEBIAN_FRONTEND=noninteractive' 'apt-get' '-q' '-y' '--no-install-recommends' 'install' '--'  "$@"
+							$noop 'env' 'DEBIAN_FRONTEND=noninteractive' 'UCF_FORCE_CONFFOLD=1' 'apt-get' '-q' '-y' '--no-install-recommends' '-o' 'Dpkg::Options::=--force-confold' 'install' '--'  "$@"
 							;;
 						
 						list_all)
@@ -4826,7 +4856,7 @@ fi
 						install)
 							# The commands are quoted exactly as much as necessary.
 							# shellcheck disable=SC2016
-							$noop 'env' 'DEBIAN_FRONTEND=noninteractive' 'apt-get' '-q' '-y' '--no-install-recommends' 'install' '--'  "$@"
+							$noop 'env' 'DEBIAN_FRONTEND=noninteractive' 'UCF_FORCE_CONFFOLD=1' 'apt-get' '-q' '-y' '--no-install-recommends' '-o' 'Dpkg::Options::=--force-confold' 'install' '--'  "$@"
 							;;
 						
 						list_all)
@@ -4907,7 +4937,7 @@ fi
 						install)
 							# The commands are quoted exactly as much as necessary.
 							# shellcheck disable=SC2016
-							$noop 'env' 'DEBIAN_FRONTEND=noninteractive' 'apt-get' '-q' '-y' '--no-install-recommends' 'install' '--'  "$@"
+							$noop 'env' 'DEBIAN_FRONTEND=noninteractive' 'UCF_FORCE_CONFFOLD=1' 'apt-get' '-q' '-y' '--no-install-recommends' '-o' 'Dpkg::Options::=--force-confold' 'install' '--'  "$@"
 							;;
 						
 						list_all)
@@ -4988,7 +5018,7 @@ fi
 						install)
 							# The commands are quoted exactly as much as necessary.
 							# shellcheck disable=SC2016
-							$noop 'env' 'DEBIAN_FRONTEND=noninteractive' 'apt-get' '-q' '-y' '--no-install-recommends' 'install' '--'  "$@"
+							$noop 'env' 'DEBIAN_FRONTEND=noninteractive' 'UCF_FORCE_CONFFOLD=1' 'apt-get' '-q' '-y' '--no-install-recommends' '-o' 'Dpkg::Options::=--force-confold' 'install' '--'  "$@"
 							;;
 						
 						list_all)
@@ -5069,7 +5099,7 @@ fi
 						install)
 							# The commands are quoted exactly as much as necessary.
 							# shellcheck disable=SC2016
-							$noop 'env' 'DEBIAN_FRONTEND=noninteractive' 'apt-get' '-q' '-y' '--no-install-recommends' 'install' '--'  "$@"
+							$noop 'env' 'DEBIAN_FRONTEND=noninteractive' 'UCF_FORCE_CONFFOLD=1' 'apt-get' '-q' '-y' '--no-install-recommends' '-o' 'Dpkg::Options::=--force-confold' 'install' '--'  "$@"
 							;;
 						
 						list_all)
@@ -5150,7 +5180,7 @@ fi
 						install)
 							# The commands are quoted exactly as much as necessary.
 							# shellcheck disable=SC2016
-							$noop 'env' 'DEBIAN_FRONTEND=noninteractive' 'apt-get' '-q' '-y' '--no-install-recommends' 'install' '--'  "$@"
+							$noop 'env' 'DEBIAN_FRONTEND=noninteractive' 'UCF_FORCE_CONFFOLD=1' 'apt-get' '-q' '-y' '--no-install-recommends' '-o' 'Dpkg::Options::=--force-confold' 'install' '--'  "$@"
 							;;
 						
 						list_all)
@@ -5582,7 +5612,7 @@ cmd_command()
 
 cmd_features()
 {
-	echo 'Features: format=1.4 version=3.5.10'
+	echo 'Features: format=1.4 version=3.5.11'
 }
 
 case "$1" in
